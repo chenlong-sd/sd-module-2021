@@ -1,0 +1,23 @@
+.layui-form>.layui-form-item>.sc-submit{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: white;
+    z-index: 100;
+    width: 100%;
+    margin: 0!important;
+    padding: 10px;
+    text-align: center;
+}
+.sc-submit> button:not(:first-child){
+    margin-left: 30px;
+}
+body{
+    padding-bottom: 60px;
+    background: white;
+}
+
+
+.layui-inline .layui-form-select .layui-input{
+    width: 182px;
+}

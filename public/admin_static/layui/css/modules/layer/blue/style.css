@@ -1,0 +1,50 @@
+body .demo-class .layui-layer-title{background: #1E9FFF; color:#fff; border: none;}
+body .demo-class .layui-layer-btn{border-top:1px solid #E9E7E7}
+body .demo-class .layui-layer-btn a{background:#1E9FFF;}
+body .demo-class .layui-layer-btn .layui-layer-btn1{background:#fff;}
+
+body .demo-class .layui-layer-setwin a {
+    font-family: layui-icon !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #ffffff;       /* 关闭按钮、最大化按钮颜色 */
+}
+
+/* 关闭按钮 */
+body .demo-class .layui-layer-setwin .layui-layer-close1 {
+    background: none;  /* 去掉背景图片，使用layui图标 */
+}
+
+body .demo-class .layui-layer-setwin .layui-layer-close1:before {
+    content: "\1006";
+}
+
+
+/* 最小化按钮 */
+body .demo-class .layui-layer-setwin .layui-layer-min cite {
+    background-color: #fff;     /* 最小化按钮颜色 */
+}
+body .demo-class .layui-layer-setwin .layui-layer-min:hover  cite{
+    background-color: #1E9FFF;
+}
+
+/* 最大化按钮 */
+body .demo-class .layui-layer-setwin .layui-layer-max {
+    background: none;
+    font-size: 14px;
+    padding-top: 1px;
+}
+
+body .demo-class .layui-layer-setwin .layui-layer-max:before {
+    content: "\e622";
+}
+
+body .demo-class .layui-layer-setwin .layui-layer-maxmin:before {
+    content: "\e758";
+}
+
+body .demo-class .layui-layer-setwin .layui-layer-close1:hover,body .demo-class .layui-layer-setwin .layui-layer-max:hover,body .demo-class .layui-layer-setwin .layui-layer-maxmin:hover{
+    color: #1E9FFF;
+}

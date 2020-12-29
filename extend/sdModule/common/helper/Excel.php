@@ -1,0 +1,250 @@
+<?php
+/**
+ * Date: 2020/11/10 15:13
+ * User: chenlong <vip_chenlong@163.com>
+ */
+
+namespace sdModule\common\helper;
+
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\IReader;
+use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
+/**
+ * Excel 一些常见操作，更复杂的请自行调用office库代码进行处理
+ * Class Excel
+ * @package sdModule\common\helper
+ */
+class Excel
+{
+    /**
+     * @var Spreadsheet
+     */
+    private ?Spreadsheet $office;
+    /**
+     * @var IReader|null
+     */
+    private ?IReader $read;
+
+    /**
+     * @var string 文件路径
+     */
+    private string $excel_path;
+
+    /**
+     * @var string 文件格式
+     */
+    private string $format;
+
+    /**
+     * @var int 当前写入行
+     */
+    private int $currentWriteLine = 1;
+
+    /**
+     * @var string 临时路劲
+     */
+    private string $tmp_path;
+
+    /**
+     * Excel constructor.
+     * @param string $excel_path excel 文件路径
+     * @param string $mode 模式 read | write
+     * @param string $format 文件格式： Xlsx | Xls | Xml | Ods | Slk | Gnumeric | Html | Csv
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     */
+    public function __construct(string $excel_path, string $mode = 'read', string $format = '')
+    {
+        $this->excel_path = $excel_path;
+        $this->format     = $format;
+        $this->tmp_path   = app()->getRuntimePath() . '/tmp/';
+
+        if ($mode === 'read') {
+            if ($format) {
+                $this->read = IOFactory::createReader($format);
+                $this->office = IOFactory::load($excel_path);
+            } else {
+                $this->office = IOFactory::load($excel_path);
+            }
+        }else{
+            $this->office = new Spreadsheet();
+        }
+    }
+
+    /**
+     * 获取活动sheet页面的数据
+     * @param bool $multiple 是否是多个页面
+     * @return array
+     */
+    public function getActiveData(bool $multiple = false)
+    {
+        return $multiple ? $this->getActivesData() : $this->office->getActiveSheet()->toArray();
+    }
+
+    /**
+     * 分批次读取处理
+     * @param callable $callable 回调函数，两个参数，第一个是当前批次数据，$data，第二个是当前sheet的标题，及数据标题
+     * @param int $number 每次处理的数量
+     */
+    public function batchRead(callable $callable, int $number = 500)
+    {
+        $sheet = $this->office->getActiveSheet();
+        $this->batchHandle($sheet, $callable, $number);
+    }
+
+    /**
+     * 分批次读取处理(所有sheet
+     * @param callable $callable 回调函数，两个参数，第一个是当前批次数据，$data，第二个是当前sheet的标题，及数据标题
+     * @param int $number 每次处理的数量
+     */
+    public function allActiveBatchRead(callable $callable, int $number = 500)
+    {
+        foreach ($this->office->getAllSheets() as $worksheet) {
+            $this->batchHandle($worksheet, $callable, $number);
+        }
+    }
+
+    /**
+     * 下载文件
+     * @return mixed
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function download()
+    {
+        $this->downloadHeader();
+        return IOFactory::createWriter($this->office, $this->format)->save("php://output");
+    }
+
+    /**
+     * 写入数据,可多次调用（用于分批次
+     * @param array $data
+     * @param string $sheet_title
+     * @return Excel
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function writeFromArray(array $data, string $sheet_title = null)
+    {
+        $this->office->getActiveSheet()->fromArray($data, null, sprintf('A%d', $this->currentWriteLine));
+        if (($count = count($data)) === count($data, 1)) {
+            $count = 1;
+        }
+
+        $this->currentWriteLine += $count;
+        if ($sheet_title !== null) {
+            $this->office->getActiveSheet()->setTitle($sheet_title);
+        }
+
+        $this->dirCheckAndMake($this->tmp_path);
+        IOFactory::createWriter($this->office, $this->format)->save($this->tmp_path . basename($this->excel_path));
+        $this->office = IOFactory::load($this->tmp_path . basename($this->excel_path));
+
+        return $this;
+    }
+
+    /**
+     * 到文件名数据
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function save()
+    {
+        $this->dirCheckAndMake();
+        IOFactory::createWriter($this->office, $this->format)->save($this->excel_path);
+    }
+
+    /**
+     * 下载文件头
+     */
+    private function downloadHeader()
+    {
+        $file_name = basename($this->excel_path);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=\"{$file_name}\"");
+        header('Cache-Control: max-age=0');
+    }
+
+    /**
+     * 文件夹判断并创建
+     * @param string|null $path
+     */
+    private function dirCheckAndMake(string $path = null)
+    {
+        $path = $path ?: dirname($this->excel_path);
+        is_dir($path) or mkdir($path, 0777, true);
+    }
+
+
+    /**
+     * 获取多个sheet页面的数据
+     * @return array
+     */
+    private function getActivesData()
+    {
+        $data = [];
+        foreach ($this->office->getAllSheets() as $worksheet) {
+            $data[] = [
+                'sheet_title' => $worksheet->getTitle(),
+                'data' => $worksheet->toArray()
+            ];
+        }
+        return $data;
+    }
+
+    /**
+     * 分批量处理
+     * @param Worksheet $sheet
+     * @param callable $callable
+     * @param int $number
+     */
+    private function batchHandle(Worksheet $sheet, callable $callable, int $number)
+    {
+        list('row' => $row, 'column' => $column) = $sheet->getHighestRowAndColumn();
+
+        $sheet_param = [
+            'sheet_title' => $sheet->getTitle(),
+            'data_title'  => current($sheet->rangeToArray(sprintf("A1:%s1", $column))),
+        ];
+
+        for ($i = 2; $i <= $row; $i += $number) {
+            $end = ($row >= ($i + $number)) ? $i + $number : $row;
+            call_user_func($callable, $sheet->rangeToArray(sprintf("A%d:%s%d", $i, $column, $end)), $sheet_param);
+        }
+    }
+
+
+    /**
+     * 过滤器
+     * @return mixed
+     */
+    private function chuckReadFilter()
+    {
+        $filter = new class implements IReadFilter
+        {
+            private int $startRow;
+
+            private int $endRow;
+
+            /**  Set the list of rows that we want to read
+             * @param int $startRow
+             * @param int $chunkSize
+             */
+            public function setRows(int $startRow, int $chunkSize)
+            {
+                $this->startRow = $startRow;
+                $this->endRow = $startRow + $chunkSize;
+            }
+
+            public function readCell($column, $row, $worksheetName = '')
+            {
+                if (($row == 1) || ($row >= $this->startRow && $row < $this->endRow)) {
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        return new $filter;
+    }
+}

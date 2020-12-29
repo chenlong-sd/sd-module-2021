@@ -1,0 +1,118 @@
+<?php
+/**
+ * Test.php
+ * Date: 2020-12-23 15:43:53
+ * User: chenlong <vip_chenlong@163.com>
+ */
+
+namespace app\admin\page;
+
+use app\common\BasePage;
+use sdModule\layui\TablePage;
+use sdModule\layui\tablePage\TableAux;
+use sdModule\layuiSearch\Form;
+use sdModule\layui\defaultForm\Form as DefaultForm;
+use sdModule\layui\defaultForm\FormData;
+use app\admin\model\Test as MyModel;
+use app\admin\model\system\Administrators;
+use sdModule\layuiSearch\SearchForm;
+use sdModule\layuiSearch\generate\TimeRange;
+
+
+/**
+ * Class Test
+ * @package app\admin\page
+ */
+class Test extends BasePage
+{
+    /**
+     * 获取创建列表table的数据
+     * @return TablePage
+     */
+    public function getTablePageData(): TablePage
+    {
+        $table = TablePage::create([
+            TableAux::column(['type' => 'checkbox']),
+            TableAux::column('id', 'ID'),
+            TableAux::column('title', '标题'),
+            TableAux::column('cover', '封面', '@image'),
+            TableAux::column('intro', '简介'),
+            TableAux::column('status', '状态'),
+            TableAux::column('administrators_name', '管理员'),
+            TableAux::column('parent_title', '上级'),
+            TableAux::column('create_time', '创建时间'),
+            TableAux::column('update_time', '修改时间'),
+            TableAux::column('delete_time', '删除时间'),
+        ]);
+
+        $table->setHandleWidth(150);
+        return $table;
+    }
+
+    /**
+    * 生成表单的数据
+    * @param string $scene
+    * @param array $default_data
+    * @return DefaultForm
+    * @throws \ReflectionException
+    * @throws \app\common\SdException
+    */
+    public function formData(string $scene, array $default_data = []): DefaultForm
+    {
+        $unit = [
+            FormData::hidden('id'),
+            FormData::text('title', '标题'),
+            FormData::image('cover', '封面'),
+            FormData::images('show_images', '展示图'),
+            FormData::text('intro', '简介'),
+            FormData::radio('status', '状态', MyModel::getStatusSc(false)),
+            FormData::select('administrators_id', '管理员', Administrators::addSoftDelWhere()->column('name', 'id')),
+            FormData::select('pid', '上级', MyModel::addSoftDelWhere()->column('title', 'id')),
+            FormData::u_editor('content', '详情'),
+        ];
+
+        $form = DefaultForm::create($unit)->setDefaultData($default_data);
+
+        return $form->setSkinToPane()->complete();
+    }
+
+    /**
+     * 列表页面的名字
+     * @return string
+     */
+    public function listPageName(): string
+    {
+        return "测试表";
+    }
+
+    /**
+     * 创建搜索表单的数据
+     * @return string
+     */
+    public function searchFormData():string
+    {
+        $form_data = [
+            SearchForm::Text('i.id', "ID")->label(true)->html(),
+            SearchForm::Text('i.title%%', "标题")->label(true)->html(),
+            SearchForm::Text('i.intro%%', "简介")->label(true)->html(),
+            SearchForm::Select('i.status', "状态")->label(true)->html(MyModel::getStatusSc(false)),
+            SearchForm::Text('administrators.name%%', "管理员")->label(true)->html(),
+            SearchForm::Text('test.title%%', "上级")->label(true)->html(),
+            SearchForm::TimeRange("i.create_time_~", "创建时间")->label(true)->html(TimeRange::TYPE_DATETIME),
+            SearchForm::TimeRange("i.update_time_~", "修改时间")->label(true)->html(TimeRange::TYPE_DATETIME),
+            SearchForm::Text('i.delete_time', "删除时间")->label(true)->html(),
+        ];
+        return Form::CreateHTML($form_data);
+    }
+
+    /**
+     * @return array 设置快捷搜索
+     */
+    public function setQuickSearchField():array
+    {
+        return [
+            
+        ];
+    }
+
+}

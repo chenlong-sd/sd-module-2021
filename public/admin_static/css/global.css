@@ -1,0 +1,92 @@
+@charset "utf-8";
+/*Css Document*/
+html { -ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; height: 100%;font: inherit;overflow-x: hidden;}
+body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, code, del, dfn, em, q, dl, dt, dd, fieldset, form, legend, caption, tbody, tfoot, thead, article, aside, dialog, figure, footer, header, hgroup, nav, section{ margin:0;padding:0;border:0;vertical-align:baseline;}
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary { display: block;}
+audio,canvas,progress,video { display: inline-block;vertical-align: baseline;}
+audio:not([controls]) { display: none;height: 0;}
+a { background: transparent;outline: none; }
+a:active,a:hover { outline: 0;}
+img { border: 0;/*max-width:100%; 影响百度地图*/height:auto;width:auto\9;-ms-interpolation-mode: bicubic;}/*确保图片显示宽度不会超过父容器*/
+img.inherit { max-width:  inherit; *width: auto;}
+table,tr,td{ max-width: 100%;width:auto\9;}
+.video embed,.video object,.video iframe { width:100%;height:auto;}
+svg:not(:root) { overflow: hidden;}
+
+button,input,optgroup,select,textarea { color: inherit;font: inherit;margin: 0;}
+button { overflow: visible;}
+button,select { text-transform: none;}
+button,html input[type="button"],input[type="reset"],input[type="submit"] { -webkit-appearance: button;cursor: pointer;}
+button[disabled],html input[disabled] { cursor: default;}
+button::-moz-focus-inner,input::-moz-focus-inner { border: 0;padding: 0;}
+input { line-height: normal;}
+input[type="checkbox"],input[type="radio"] { box-sizing: border-box;padding: 0;}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button { height: auto;}
+input[type="search"] { -webkit-appearance: textfield;-moz-box-sizing: content-box;-webkit-box-sizing: content-box; box-sizing: content-box;}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration { -webkit-appearance: none;}
+textarea { overflow: auto;font-size: 1em;}
+i{font-style:normal;}
+
+*:before,*:after,.sizing { -webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;}
+ul.ul,ul.list,ul.grid { margin: 0;padding: 0;}/*需要清除掉默认样式的ul  自己加上class名   list  li 竖着跑   grid li 横着跑*/
+dl dt,dl dd,ul li,ol li { list-style:none; }
+dl.grid dt,ul.grid> li { float:left; }
+ul.grid ul{
+    margin: 0;
+    padding: 0;
+}
+
+
+.opacity-9 { opacity: 0.9;filter:alpha(opacity=90);}.opacity-8 { opacity: 0.8;filter:alpha(opacity=80);}.opacity-7 { opacity: 0.7;filter:alpha(opacity=70);}.opacity-6 { opacity: 0.6;filter:alpha(opacity=60);}.opacity-5 { opacity: 0.5;filter:alpha(opacity=50);}.opacity-4 { opacity: 0.4;filter:alpha(opacity=40);}.opacity-3 { opacity: 0.3;filter:alpha(opacity=30);}.opacity-2 { opacity: 0.2;filter:alpha(opacity=20);}.opacity-1 { opacity: 0.1;filter:alpha(opacity=10);}
+.img-gray { /*filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");*/filter: gray;-webkit-filter: grayscale(100%);}
+.img-circle { border-radius: 50%;}
+.img-blur { filter: url(blur.svg#blur); -webkit-filter: blur(10px); -moz-filter: blur(10px);-ms-filter: blur(10px);filter: blur(10px);filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false); }
+.en-font { font-family: Arial,Verdana,sans-serif;}
+.coverBg { background-position: center center; background-size: cover;background-repeat: no-repeat;}
+
+.left ,.fl { float:left; }
+.right,.fr { float:right;}
+.hidden,.r-hidden { display:none; }
+.relative { position:relative;}
+.absolute { position: absolute; left: 0; top: 0;}
+.clear { clear:both; height:0px; overflow:hidden; }
+.clearfix:after,ul.grid:after { content: " ";display: block;clear: both;height: 0;}/*如果有浮动，给浮动元素父级元素加上clearfix类即可清除浮动*/
+.clearfix,ul.grid { zoom: 1;}
+.transition { -webkit-transition: all 0.4s ease-in;-moz-transition: all 0.4s ease-in;-o-transition: all 0.4s ease-in;-ms-transition: all 0.4s ease-in;transition: all 0.4s ease-in;}
+.transition-delay { -webkit-transition: all 0.4s ease-in 0.4s;-moz-transition: all 0.4s ease-in 0.4s;-o-transition: all 0.4s ease 0.4s;-ms-transition: all 0.4s ease-in 0.4s;transition: all 0.4s ease-in 0.4s;}
+
+h1,.h1 { font-size: 33px;}
+h2,.h2 { font-size: 27px;}
+h3,.h3 { font-size: 23px;}
+h4,.h4 { font-size: 17px;}
+h5,.h5 { font-size: 13px;}
+h6,.h6 { font-size: 12px;}
+p { margin: 10px 0;}
+
+@font-face
+{ font-family: lighterFont;src: url('../font/FZLTCXHJW.ttf');}
+
+/*-----------------------------*/
+
+body { color: #333333;/*整站默认颜色*/ height:100%;font-size: 12px;/*整站默认字体大小*/ line-height: 1.5; font-family: Microsoft YaHei,Arial,Verdana,sans-serif;}
+
+.wrap { width: 100%; margin: 0 auto;max-width:px;/*PC端，中间主体宽度*/}
+.reset { margin:0px; padding:0px; font-size: 12px;font-weight: normal;}
+a { color: #333333;/*整站a连接默认颜色*/text-decoration: none;}
+a:hover,a:focus { color: #e98eff;/*整站a连接移入默认颜色*/ }
+
+
+/*=========前面是reset.css，不建议删除；下面的是你自己的全局css=========*/
+
+.conent{
+    margin: 15px;
+    margin-right:240px;
+    width: 98%;
+    background: #fff;
+    height: 95%;
+}
+
+
+
+
+

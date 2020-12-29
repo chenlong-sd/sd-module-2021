@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>示例demo</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button type="button" lay-event="testBtn" class="layui-btn  layui-btn-sm">提交</button>
+    </div>
+</script>
+<body>
+<table class="layui-hide" id="tableId" lay-filter="tableEvent"></table>
+</body>
+<script src="../layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'module/'
+    }).extend({
+        tableEdit:'js/tableEdit'
+    }).use(['table','layer','tableEdit'], function () {
+        var table = layui.table, $ = layui.$,layer = layui.layer,tableEdit=layui.tableEdit;
+        var thisTable=table.render({
+            elem: '#tableId'
+            , id: 'id3'
+            , url: 'module/json/data1.json'
+            , page: true
+            ,toolbar: '#toolbarDemo'
+            , cols: [[
+                {type:'checkbox'}
+                ,{field:'productId',title: '产品id',width:180}
+                ,{field:'productName',title: '产品名称',width:180,sort:true,config:{verify:{type:'number'}}}
+                ,{field:'productImage',title: '产品照片路径',width:180,config:{verify:{type:'required',msg:'产品照片路径不能为空'}}}
+                ,{field:'productCategoryName',title: '分类名称',width:180}
+                ,{field:'price',title: '单价',width:180}
+                ,{field:'stockCount',title: '库存量',width:180,event:'stockCount',totalRow: true,config:{type:'select',data:[{name:1,value:'asdasdad'}]}}
+                ,{field:'cost',title: '金额',width:180,event:'price',totalRow: true,config:{type:'input', verify:{type:'number'}}}
+            ]]
+        });
+        var aopTable = tableEdit.aopObj(thisTable.config.cols);
+
+        aopTable.on('tool(tableEvent)',function (obj) {
+            console.log(obj);
+            if (obj.event === 'stockCount') {
+                obj.update({stockCount:obj.value.value});
+            }else{
+                obj.update({price:obj.value});
+            }
+
+        });
+
+        table.on('toolbar(tableEvent)', function(obj){
+            var tableChecked = table.checkStatus('id3');
+            //elem => 表格id data => 校验数据
+            //verifyKey => 数据中唯一值字段，且该字段必须在cols中以及字段值不能为空。
+            var result = aopTable.submitValidate({elem:'#tableId',data:tableChecked.data,verifyKey:'productId'})
+            console.log(result);
+            if(result.length > 0)console.log("数据校验不符合要求");
+        });
+    });
+</script>
+</html>
