@@ -13,6 +13,7 @@ use think\Model;
 
 /**
  * Class //=={Table}==//
+//=={property}==//
  * @package app\common\model\//=={Table}==//
  * @author chenlong <vip_chenlong@163.com>
  */

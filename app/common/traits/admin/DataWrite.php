@@ -60,11 +60,12 @@ trait DataWrite
         try {
             if ($type === 'add'){
                 $write_model = $this->getModel();
-                $data = data_only($data, get_class_attr($write_model, 'schema', []));
+                $data = data_only($data, array_keys(get_class_attr($write_model, 'schema', [])));
                 $id   = $write_model->insertGetId($data);
                 $this->afterAdd($id, $data);
             }else{
                 $write_model = $this->getModel()->find($data[$this->primary]);
+                $data = data_only($data, array_keys(get_class_attr($write_model, 'schema', [])));
                 $write_model->save($data);
                 $primary = $this->primary;
                 $id      = $write_model->$primary;

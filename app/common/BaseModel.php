@@ -26,7 +26,7 @@ trait BaseModel
     /**
      * 根据ID获取数据
      * @param int $id
-     * @return mixed|Collection|Model
+     * @return self
      * @throws SdException
      */
     public static function getDataById(int $id)
@@ -38,7 +38,7 @@ trait BaseModel
      * 根据条件获取数据
      * @param array $where
      * @param bool $is_one
-     * @return mixed|Collection|Model
+     * @return mixed|Collection|Model|self
      * @throws SdException
      */
     public static function getDataByWhere(array $where, bool $is_one = false)
@@ -54,7 +54,7 @@ trait BaseModel
      * 静态添加软删除条件
      * @param array $where
      * @param string $alias
-     * @return mixed|Collection|Model
+     * @return mixed|Collection|Model|self
      */
     public static function addSoftDelWhere(array $where = [], $alias = 'i')
     {

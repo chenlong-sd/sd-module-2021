@@ -66,7 +66,7 @@ class Index extends Admin
      */
     public function main(Route $route)
     {
-        return view('index_1', [
+        return view('index', [
             'menu' => $route->getMenu(),
         ]);
     }

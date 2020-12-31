@@ -109,7 +109,7 @@ class Install
             if ($result === false) {
                 return ResponseJson::fail("文件:{$middleware_config_path},无写权限");
             }
-            return ResponseJson::mixin('数据库初始化成功！初始账号：admin，密码：123456。');
+            return ResponseJson::success('数据库初始化成功！初始账号：admin，密码：123456。');
         }
 
         return ResponseJson::success('数据库初始化成功！初始账号：admin，密码：123456。配置文件设置失败，请手动配置，参考:' . $this->getEnvFile());

@@ -64,6 +64,11 @@
                         <i class="layui-icon layui-icon-theme"></i>
                     </a>
                 </li>
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="javascript:;" lay-event="surprised">
+                        <i class="layui-icon layui-icon-face-surprised"></i>
+                    </a>
+                </li>
 
 
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -202,6 +207,9 @@
             },
             'defend':()=>{
                 custom.frame("{:url('system.administrators/defend')}", '修改资料')
+            },
+            'surprised':()=>{
+                custom.frame("{:url('system.index/game')}", '修改资料', {area:['880px', "890px"]})
             }
         })
 

@@ -30,11 +30,12 @@ class CommonModel implements Item
     {
         $this->CURD    = $CURD;
         $this->replace = [
-            'Table'  => parse_name($this->CURD->table, 1),
-            'date'   => datetime(),
-            'schema' => '',
-            'attr'   => '',
-            'use'    => ''
+            'Table'     => parse_name($this->CURD->table, 1),
+            'date'      => datetime(),
+            'schema'    => '',
+            'attr'      => '',
+            'use'       => '',
+            'property'  => ''
         ];
 
         $this->useAdd(BaseModel::class);
@@ -58,9 +59,12 @@ class CommonModel implements Item
      */
     private function getSchema()
     {
+        $property = [];
         foreach ($this->CURD->field_info as $field => $data) {
             $this->replace['schema'] .= "'{$field}' => '{$data['data_type']}'," . $this->CURD->indentation(2);
+            $property[] = " * @property \${$field}";
         }
+        $this->replace['property'] = implode("\r\n", $property);
     }
 
     /**
@@ -72,8 +76,8 @@ class CommonModel implements Item
         $replace = [];
         foreach ($this->replace as $key => $value) {
             $replace["//=={{$key}}==//"] = is_array($value)
-                ? implode($key  === "use" ? "\r\n"
-                : $this->CURD->indentation(3), $value) : $value;
+                ? implode($key  === "use" ? "\r\n" : $this->CURD->indentation(3), $value)
+                : $value;
 
         }
         return $replace;

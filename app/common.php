@@ -87,7 +87,7 @@ if (!function_exists('admin_url')) {
         if (config('app.domain_bind')) {
             return url('/' .  $url, $vars, $suffix, $domain);
         }
-        return url(sprintf("/%s/{$url}", env('APP.ADMIN_ALIAS', 'admin')), $vars, $suffix, $domain);
+        return url(sprintf("/%s/{$url}", env('APP.ADMIN_ALIAS') ?: 'admin'), $vars, $suffix, $domain);
     }
 }
 
