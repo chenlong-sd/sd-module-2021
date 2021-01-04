@@ -176,7 +176,7 @@ trait ListRequest
     private function getPageListData()
     {
         $limit = $this->request->get('limit', null);
-        $data  = $this->hasPagination() ? $this->query->select() : $this->query->paginate($limit);
+        $data  = $this->hasPagination() ? $this->query->paginate($limit) : $this->query->select();
 
         return empty($this->each) ? $data->toArray() : $data->each($this->each)->toArray();
     }

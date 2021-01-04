@@ -51,7 +51,7 @@ class Administrators extends BasePage
         ];
 
         $table = TablePage::create($field_data);
-        $table->addEvent(['directly_under', 'all']);
+        $table->addBarEvent(['directly_under', 'all']);
         $table->setBarEventHtml('directly_under', Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'));
         $table->setBarEventHtml('all', Layui::button('全部', 'group')->setEvent('all')->normal('sm'));
         $table->setBarEventJs('directly_under', TableAux::searchWhere(['mode' => 'directly_under']));

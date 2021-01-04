@@ -48,7 +48,7 @@ class Role extends BasePage
         ]);
 
         $table->setHandleWidth(250);
-        $table->addEvent(['directly_under', 'all'], true);
+        $table->addBarEvent(['directly_under', 'all']);
         $table->addEvent(['power']);
         $table->setBarEventHtml('directly_under', Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'));
         $table->setBarEventHtml('all', Layui::button('全部', 'group')->setEvent('all')->normal('sm'));

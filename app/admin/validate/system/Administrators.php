@@ -23,7 +23,7 @@ class Administrators extends BaseValidate
         'account' => 'require|length:4,16|unique:administrators,delete_time=0',
         'password' => 'require|length:6,16',
         'password_old' => 'require|length:6,16',
-        'password_confirm|password' => 'require|confirm',
+        'password_confirm|password' => 'requireWith:password|confirm',
         'captcha' => 'require|captcha',
         'status' => 'require|in:1,2',
         'role_id' => 'require',
@@ -48,14 +48,14 @@ class Administrators extends BaseValidate
     protected $scene = [
         'login' => ['account', 'password', 'captcha'],
         'add' => ['account', 'password', 'password_confirm', 'name', 'role_id', 'status'],
-        'edit' => ['account', 'password.length', 'password_confirm.confirm', 'name', 'role_id', 'status', 'id'],
+        'edit' => ['account', 'password', 'password_confirm', 'name', 'role_id', 'status', 'id'],
         'password' => ['password_old', 'password', 'password_confirm']
     ];
 
     public function sceneEdit()
     {
         return $this->only(['account', 'password', 'password_confirm.confirm', 'name', 'role_id', 'status', 'id'])
-            ->remove('password', 'require')->remove('password_confirm', 'require');
+            ->remove('password', 'require');
     }
 
     public function sceneLogin()
