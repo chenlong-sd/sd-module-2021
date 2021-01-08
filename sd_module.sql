@@ -279,6 +279,7 @@ CREATE TABLE `sd_api`  (
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'token参数',
   `describe` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '描述',
   `response` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '响应示例',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '对接状态：1=未对接，2=已对接',
   `create_time` datetime(0) NOT NULL COMMENT '创建时间',
   `update_time` datetime(0) NOT NULL COMMENT '修改时间',
   `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',

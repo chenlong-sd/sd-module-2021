@@ -346,7 +346,7 @@ trait ListRequest
      */
     private function quickSearchValueMatch($expr, $value)
     {
-        return $expr !== '=' ? "%{$value}%" : $value;
+        return $expr === '=' ? $value : "%{$value}%";
     }
 
     /**

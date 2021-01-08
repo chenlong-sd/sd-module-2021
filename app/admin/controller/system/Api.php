@@ -7,6 +7,7 @@
 
 namespace app\admin\controller\system;
 
+use app\admin\model\system\Api as ApiM;
 use \app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
@@ -33,8 +34,9 @@ class Api extends Admin
     public function listData()
     {
         return $this->setNoPage()
-            ->setField('i.id,i.api_name,i.path,i.describe,i.update_time,i.method')
-            ->setSort('update_time,desc')
+            ->setField('i.id,i.api_name,i.path,i.describe,i.update_time,i.method,i.status,i.status status_1')
+            ->setSort('status', 'asc')
+            ->setSort('update_time', 'desc')
             ->listsRequest();
     }
 
@@ -57,7 +59,7 @@ class Api extends Admin
      */
     public function edit($id)
     {
-        $data = \app\admin\model\system\Api::getDataById($id)->getData();
+        $data = ApiM::getDataById($id)->getData();
         $api = \app\admin\model\system\ApiModule::getDataById($data['api_module_id'] ?? 0)->toArray();
         $param = \app\admin\model\system\QueryParams::getDataByWhere(['api_id' => $id]);
 
@@ -82,14 +84,15 @@ class Api extends Admin
         Db::startTrans();
         try {
             $body['update_time'] = datetime();
+            $body['status'] = 1;
             $body['response']  = $body['response'] ?? '';
             if (empty($body['id'])) {
                 $body['create_time'] = datetime();
-                $id = \app\admin\model\system\Api::insertGetId($body);
+                $id = ApiM::insertGetId($body);
                 if (!$id) throw new SdException('保存失败！');
             }else{
                 $id = $body['id'];
-                if (!\app\admin\model\system\Api::update($body, ['id' => $id])) {
+                if (!ApiM::update($body, ['id' => $id])) {
                     throw new SdException('更新失败！');
                 }
             }
@@ -127,5 +130,24 @@ class Api extends Admin
             $item['update_time'] = datetime();
         }
         return $data;
+    }
+
+
+    /**
+     * 改接口已对接操作
+     * @param ApiM $api
+     * @param int $id
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function docking(ApiM $api, $id = 0): \think\response\Json
+    {
+        $api_info =$api->find($id);
+        $api_info->status = 2;
+        $api_info->save();
+
+        return ResponseJson::success();
     }
 }

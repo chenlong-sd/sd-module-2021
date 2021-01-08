@@ -10,8 +10,11 @@ namespace sdModule\common\helper;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\IReader;
 use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;
+use PhpOffice\PhpSpreadsheet\Settings;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use think\facade\Cache;
+use function Matrix\identity;
 
 /**
  * Excel 一些常见操作，更复杂的请自行调用office库代码进行处理
@@ -48,6 +51,10 @@ class Excel
      * @var string 临时路劲
      */
     private string $tmp_path;
+    /**
+     * @var bool
+     */
+    private bool $stop_read = false;
 
     /**
      * Excel constructor.
@@ -56,19 +63,16 @@ class Excel
      * @param string $format 文件格式： Xlsx | Xls | Xml | Ods | Slk | Gnumeric | Html | Csv
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
-    public function __construct(string $excel_path, string $mode = 'read', string $format = '')
+    public function __construct(string $excel_path, string $mode = 'read', string $format = 'Xls')
     {
         $this->excel_path = $excel_path;
         $this->format     = $format;
         $this->tmp_path   = app()->getRuntimePath() . '/tmp/';
 
         if ($mode === 'read') {
-            if ($format) {
-                $this->read = IOFactory::createReader($format);
-                $this->office = IOFactory::load($excel_path);
-            } else {
-                $this->office = IOFactory::load($excel_path);
-            }
+            $this->format = $this->format ?: IOFactory::identify($excel_path);
+            $this->read   = IOFactory::createReader($this->format);
+            $this->office = $this->read->load($excel_path);
         }else{
             $this->office = new Spreadsheet();
         }
@@ -103,6 +107,9 @@ class Excel
     public function allActiveBatchRead(callable $callable, int $number = 500)
     {
         foreach ($this->office->getAllSheets() as $worksheet) {
+            if ($this->stop_read) {
+                break;
+            }
             $this->batchHandle($worksheet, $callable, $number);
         }
     }
@@ -137,10 +144,6 @@ class Excel
             $this->office->getActiveSheet()->setTitle($sheet_title);
         }
 
-        $this->dirCheckAndMake($this->tmp_path);
-        IOFactory::createWriter($this->office, $this->format)->save($this->tmp_path . basename($this->excel_path));
-        $this->office = IOFactory::load($this->tmp_path . basename($this->excel_path));
-
         return $this;
     }
 
@@ -153,6 +156,30 @@ class Excel
         $this->dirCheckAndMake();
         IOFactory::createWriter($this->office, $this->format)->save($this->excel_path);
     }
+
+    /**
+     * 停止读取数据
+     */
+    public function stopRead()
+    {
+        $this->stop_read = true;
+    }
+
+    public function newBatchHandle($c)
+    {
+        $chunkFilter = $this->chuckReadFilter('A', 'K');
+        $this->read->setReadFilter($chunkFilter);
+        /**  Loop to read our worksheet in "chunk size" blocks  **/
+        for ($startRow = 2; $startRow <= 1000; $startRow += 500) {
+            /**  Tell the Read Filter which rows we want this iteration  **/
+            $chunkFilter->setRows($startRow, 500);
+            /**  Load only the rows that match our filter  **/
+            $spreadsheet = $this->read->load($this->excel_path);
+            //    Do some processing here
+            call_user_func($c, $spreadsheet->getActiveSheet()->toArray(),  $spreadsheet->getActiveSheet()->getTitle());
+        }
+    }
+
 
     /**
      * 下载文件头
@@ -208,23 +235,38 @@ class Excel
         ];
 
         for ($i = 2; $i <= $row; $i += $number) {
-            $end = ($row >= ($i + $number)) ? $i + $number : $row;
-            call_user_func($callable, $sheet->rangeToArray(sprintf("A%d:%s%d", $i, $column, $end)), $sheet_param);
+            $end = ($row > ($i + $number)) ? $i + $number - 1 : $row;
+            if ($this->stop_read) {
+                break;
+            }
+            call_user_func($callable, $sheet->rangeToArray(sprintf("A%d:%s%d", $i, $column, $end)), $sheet_param, $this);
         }
     }
 
 
     /**
      * 过滤器
+     * @param string $start_line
+     * @param string $end_line
      * @return mixed
      */
-    private function chuckReadFilter()
+    private function chuckReadFilter(string $start_line, string $end_line)
     {
-        $filter = new class implements IReadFilter
+        return new class($start_line, $end_line) implements IReadFilter
         {
-            private int $startRow;
+            private int $startRow = 1;
 
-            private int $endRow;
+            private int $endRow = 1;
+
+            private string $start_line;
+
+            private string $end_line;
+
+            public function __construct($start_line, $end_line)
+            {
+                $this->start_line = $start_line;
+                $this->end_line   = $end_line;
+            }
 
             /**  Set the list of rows that we want to read
              * @param int $startRow
@@ -233,18 +275,18 @@ class Excel
             public function setRows(int $startRow, int $chunkSize)
             {
                 $this->startRow = $startRow;
-                $this->endRow = $startRow + $chunkSize;
+                $this->endRow   = $startRow + $chunkSize;
             }
 
             public function readCell($column, $row, $worksheetName = '')
             {
                 if (($row == 1) || ($row >= $this->startRow && $row < $this->endRow)) {
-                    return true;
+                    if ($column >= $this->start_line && $column <= $this->end_line) {
+                        return true;
+                    }
                 }
                 return false;
             }
         };
-
-        return new $filter;
     }
 }

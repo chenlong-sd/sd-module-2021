@@ -32,6 +32,7 @@ class Api extends Model
         'token' => 'varchar',
         'describe' => 'varchar',
         'response' => 'text',
+        'status' => 'tinyint',
         'create_time' => 'datetime',
         'update_time' => 'datetime',
         'delete_time' => 'int',
@@ -58,6 +59,24 @@ class Api extends Model
     }
 
     /**
+     * 请求参数类型返回值处理
+     * @param bool $tag
+     * @return array
+     */
+    public static function getStatusSc($tag = true)
+    {
+        return $tag === true
+            ? [
+                '1' => Layui::tag()->gray('未对接'),
+                '2' => Layui::tag()->red('已对接'),
+            ]
+            : [
+                '1' => '未对接',
+                '2' => '已对接',
+            ];
+    }
+
+    /**
      * 展示处理
      * @param $value
      * @return string
@@ -65,6 +84,18 @@ class Api extends Model
     public function getMethodAttr($value)
     {
         $field = self::getMethodSc();
+
+        return $field[$value] ?? $value;
+    }
+
+    /**
+     * 展示处理
+     * @param $value
+     * @return string
+     */
+    public function getStatusAttr($value)
+    {
+        $field = self::getStatusSc();
 
         return $field[$value] ?? $value;
     }

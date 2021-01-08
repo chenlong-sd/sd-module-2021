@@ -196,10 +196,10 @@ class SystemUpload
     private function fileCheck(string $path)
     {
         $root = in_array($this->verify_type, ['image', 'video'])
-            ? config('filesystem.disk.public.root')
-            : config('filesystem.disk.file.root');
+            ? config('filesystem.disks.public.root')
+            : config('filesystem.disks.file.root');
 
-        return file_exists($root . strtr($path, ['\\' => '/']));
+        return file_exists(realpath($root . strtr($path, ['\\' => '/'])));
     }
 
     /**

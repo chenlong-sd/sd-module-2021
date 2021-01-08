@@ -36,19 +36,26 @@ class Api extends BasePage
             TableAux::column('api_name', '接口名'),
             TableAux::column('method', '请求方式'),
             TableAux::column('path', '路径'),
+            TableAux::column('status', '对接状态'),
             TableAux::column('update_time', '修改时间'),
         ]);
 
-        $table->setHandleWidth(200);
+        $table->setHandleWidth(220);
         $table->addEvent('see');
         $table->setConfig([
             'where' => ['search' => ['api_module_id' => request()->get('id')]],
             'page' => false,
         ]);
+        $table->removeEvent('delete');
         $table->setBarEventJs('create', TableAux::openPage(url(sprintf('system.api/create?api_module_id=%s', request()->get('id'))), '创建', ['area' => ['90%', '90%']]));
         $table->setEventhtml('see', Layui::button('查看', 'read')->setEvent('see')->normal('xs'));
         $table->setEventjs('see', TableAux::openPage([url('update?see=1')], '查看', ['area' => ['90%', "90%"]]));
         $table->setEventjs('update', TableAux::openPage([url('update')], '编辑', ['area' => ['90%', "90%"]]));
+
+        $table->addEvent('docking', Layui::button('已对接')->setEvent('docking')->warm('xs'));
+        $table->setEventJs('docking', TableAux::ajax(url('docking'), 'post'));
+        $table->setEventWhere('docking', 'd.status_1 == 1');
+
         return $table;
     }
 
