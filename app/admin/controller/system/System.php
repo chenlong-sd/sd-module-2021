@@ -21,14 +21,6 @@ use sdModule\makeAdminBasics\Basics;
  */
 class System extends Admin
 {
-    /**
-     * @return bool|int|string|\think\response\Json
-     * @throws \ReflectionException
-     */
-    public function aux()
-    {
-        return Basics::auxCall();
-    }
 
     /**
      * @param Resource $resource

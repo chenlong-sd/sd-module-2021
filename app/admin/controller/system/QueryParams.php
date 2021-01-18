@@ -17,16 +17,5 @@ use \app\common\controller\Admin;
  */
 class QueryParams extends Admin
 {
-    /**
-     * 列表数据接口
-     * @return mixed|string|\think\Collection|\think\response\Json
-     * @throws \app\common\SdException
-     */
-    public function listData()
-    {
-        return $this
-            ->setField('i.id,i.method,i.param_type,i.name,i.test_value,i.describe,i.update_time,i.delete_time')
-            ->listsRequest();
-    }
 
 }

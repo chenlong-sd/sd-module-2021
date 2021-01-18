@@ -10,6 +10,7 @@ namespace app\admin\controller\system;
 
 use app\common\ResponseJson;
 use app\common\SdException;
+use app\common\service\BackstageListService;
 
 /**
  * Class Route
@@ -23,9 +24,9 @@ class Route extends \app\common\controller\Admin
      * @return array|\Closure|mixed|string|\think\Collection|\think\response\Json
      * @throws SdException
      */
-    public function listData()
+    public function listData(BackstageListService $service)
     {
-        return $this->setJoin([
+        return $service->setModel($this->getModel())->setJoin([
             ['route', 'i.pid = route.id', 'left'],
         ])
             ->setField('i.id,i.title,i.route,i.pid,route.title parent,i.type,i.weigh,i.icon,i.create_time')

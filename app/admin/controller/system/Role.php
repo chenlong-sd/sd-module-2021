@@ -9,6 +9,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\system\Role as RoleModel;
+use app\common\service\BackstageListService;
 use sdModule\common\Sc;
 
 /**
@@ -23,16 +24,16 @@ class Role extends \app\common\controller\Admin
      * @return array|\Closure|mixed|string|\think\Collection|\think\response\Json
      * @throws \app\common\SdException
      */
-    public function listData()
+    public function listData(BackstageListService $service)
     {
-        return $this->setJoin([
-            ['administrators', 'i.administrators_id = administrators.id'],
-            ['role ip', 'i.pid = ip.id', 'left']
-        ])
-            ->setField('i.id,i.id role_id,i.role,i.pid,administrators.name administrators_id,i.create_time,ip.role parent_role')
+        return $service->setModel(RoleModel::class)
+            ->setJoin([
+                ['administrators', 'i.administrators_id = administrators.id'],
+                ['role ip', 'i.pid = ip.id', 'left']
+            ])->setField('i.id,i.id role_id,i.role,i.pid,administrators.name administrators_id,i.create_time,ip.role parent_role')
+            ->listSearchParamHandle([$this, 'listSearchParamHandle'])
             ->listsRequest();
     }
-
 
     protected function beforeWrite(&$data)
     {
@@ -48,7 +49,7 @@ class Role extends \app\common\controller\Admin
         }
     }
 
-    public function listSearchParamHandle(&$search)
+    public function listSearchParamHandle($search)
     {
         if (isset($search['mode']) && $search['mode'] === 'all'){
             $all_role = RoleModel::addSoftDelWhere()->field('id,pid,role,administrators_id')->select()->toArray();
@@ -59,5 +60,6 @@ class Role extends \app\common\controller\Admin
             $search['i.administrators_id'] = admin_session('id');
         }
         unset($search['mode']);
+        return $search;
     }
 }

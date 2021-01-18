@@ -34,7 +34,7 @@ use think\Model;
  */
 class Admin extends BaseController
 {
-    use ListRequest, DataWrite, AdminMiddleware,
+    use DataWrite, AdminMiddleware,
         DataDelete, RequestMerge, CallNotExistMethod, Lang;
 
     /** @var string 带命名空间的模型名，默认为当前控制器对应的模型 */
@@ -45,8 +45,8 @@ class Admin extends BaseController
      */
     private $model_instance;
 
-   /**
-     * @var BasePage
+    /**
+     * @var BasePage|null
      */
     private ?BasePage $page_instance = null;
 
@@ -175,15 +175,15 @@ class Admin extends BaseController
      * @param bool $all 是否全部过滤,二维数组
      * @return array
      */
-    final public function filter($data, $all = true)
+    final public static function filter($data, $all = true): array
     {
         if ($all !== true) {
-            return array_filter($data, [$this, 'filterCallback']);
+            return array_filter($data, 'app\common\controller\Admin::filterCallback');
         }
 
         foreach ($data as $key => $value) {
-            $value = is_array($value) ? $this->filter($value) : $value;
-            if (!$this->filterCallback($value)) {
+            $value = is_array($value) ? self::filter($value) : $value;
+            if (!self::filterCallback($value)) {
                 unset($data[$key]);
             }
         }
@@ -195,7 +195,7 @@ class Admin extends BaseController
      * @param $value
      * @return bool
      */
-    private function filterCallback($value)
+    private static function filterCallback($value): bool
     {
         $value = is_string($value) ? trim($value) : $value;
         $value = is_numeric($value) && !$value ? 0 : $value;

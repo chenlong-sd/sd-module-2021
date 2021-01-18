@@ -10,6 +10,7 @@
 namespace app\common\traits\admin;
 
 use app\common\BasePage;
+use app\common\service\BackstageListService;
 use sdModule\common\Sc;
 use sdModule\layui\defaultForm\Form;
 use think\Request;
@@ -30,7 +31,7 @@ trait RequestMerge
     public function index()
     {
         if ($this->request->isPost() || $this->request->isAjax()) {
-            return method_exists($this, 'listData') ? $this->listData() : $this->listsRequest();
+            return method_exists($this, 'listData') ? $this->listData(new BackstageListService()) : $this->listsRequest();
         }
         return $this->lists();
     }

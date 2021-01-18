@@ -11,6 +11,7 @@ use app\admin\model\system\Api as ApiM;
 use \app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
+use app\common\service\BackstageListService;
 use think\facade\Db;
 
 
@@ -31,9 +32,9 @@ class Api extends Admin
      * @return mixed|string|\think\Collection|\think\response\Json
      * @throws \app\common\SdException
      */
-    public function listData()
+    public function listData(BackstageListService $service)
     {
-        return $this->setNoPage()
+        return $service->setModel(ApiM::class)->setNoPage()
             ->setField('i.id,i.api_name,i.path,i.describe,i.update_time,i.method,i.status,i.status status_1')
             ->setSort('status', 'asc')
             ->setSort('update_time', 'desc')

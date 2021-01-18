@@ -8,10 +8,7 @@
 
 namespace app\admin\controller\system;
 
-use sdModule\layuiSearch\SearchForm;
-use sdModule\layuiSearch\generate\TimeRange;
-use app\admin\model\Route;
-use app\admin\model\system\Administrators;
+use app\common\service\BackstageListService;
 
 /**
  * Class Log
@@ -23,15 +20,13 @@ class Log extends \app\common\controller\Admin
 
     /**
      * 列表数据接口
+     * @param BackstageListService $service
      * @return array|\Closure|mixed|string|\think\Collection|\think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \Exception
+     * @throws \app\common\SdException
      */
-    public function listData()
+    public function listData(BackstageListService $service)
     {
-        return $this->setJoin([
+        return $service->setModel(\app\admin\model\system\Log::class)->setJoin([
                 ['route', 'i.route_id = route.id ', 'left'],
                 ['administrators', 'i.administrators_id = administrators.id ', 'left'],
             ])
