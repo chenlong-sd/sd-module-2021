@@ -5,13 +5,13 @@
  * DateTime: //=={date}==//
  */
 
-namespace app\common\validate;
+namespace //=={namespace}==//;
 
 use app\common\BaseValidate;
 //=={use}==//
 /**
  * Class //=={Table}==//
- * @package app\common\validate\//=={Table}==//
+ * @package //=={namespace}==//\//=={Table}==//
  * @author chenlong <vip_chenlong@163.com>
  */
 class //=={Table}==// extends BaseValidate

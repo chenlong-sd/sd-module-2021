@@ -4,7 +4,7 @@
  * User: chenlong <vip_chenlong@163.com>
  */
 
-namespace app\admin\page;
+namespace //=={namespace}==//;
 
 use app\common\BasePage;
 use sdModule\layui\TablePage;
@@ -16,7 +16,7 @@ use sdModule\layui\defaultForm\Form as DefaultForm;
 
 /**
  * Class //=={Table}==//
- * @package app\admin\page
+ * @package //=={namespace}==//\//=={Table}==//
  */
 class //=={Table}==// extends BasePage
 {

@@ -37,7 +37,8 @@ class Page implements Item
             'form_data'     => [],
             'page_name'     => $this->CURD->page_name ?: $this->CURD->table_comment,
             'quick_search'  => [],
-            'use'           => ''
+            'use'           => '',
+            'namespace'    => $this->CURD->config('namespace.page'),
         ];
 
         $this->formData();

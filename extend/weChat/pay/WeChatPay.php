@@ -14,9 +14,9 @@ use weChat\common\Helper;
  * Class WeChatPay
  * @package weChat\pay
  */
-class WeChatPay
+class WeChatPay implements \ArrayAccess
 {
-    use BasicsAction,BasicsProperty;
+    use BasicsAction,BasicsProperty,ArrayAccess;
 
     // 请求地址
     const REQUEST_URL = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
@@ -90,7 +90,7 @@ class WeChatPay
      * @param callable|null $errHandle 处理错误的函数
      * @return bool|mixed
      */
-    public static function wxNotice(callable $errHandle = null)
+    public function wxPayCallbackNotice(callable $errHandle = null)
     {
 //        获取微信返回的xml数据
         $xmlData = file_get_contents('php://input');

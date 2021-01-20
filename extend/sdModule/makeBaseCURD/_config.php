@@ -79,7 +79,7 @@ return [
         // validate 命名空间
         'validate'      => 'app\\common\\validate',
         // page 命名空间
-        'page'          => 'app\\common\\validate',
+        'page'          => 'app\\admin\\page',
     ],
 ];
 

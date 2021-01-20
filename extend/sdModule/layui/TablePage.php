@@ -535,8 +535,8 @@ class TablePage
                 layui.laytpl(html).render(data[index], function (html) {
                     let menu = $('#sc-menu');
                     menu.html(html);
-                    var hw = $('html').width();
-                    var hh = $('html').height();
+                    var hw = $('html').offsetWidth;
+                    var hh = $('html').offsetHeight;
                     let mw = menu.width();
                     let mh = menu.height();
                     x = (hw - x - 20) < mw ? (x - mw) : x;

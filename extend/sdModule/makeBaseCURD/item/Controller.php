@@ -44,8 +44,8 @@ class Controller implements Item
             'search_form'  => [],
             'list_join'    => [],
             'use'          => '',
-            'quick_search' => []
-
+            'quick_search' => [],
+            'namespace'    => $this->CURD->config('namespace.controller'),
         ];
     }
 

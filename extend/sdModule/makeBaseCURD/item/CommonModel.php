@@ -35,7 +35,7 @@ class CommonModel implements Item
             'schema'    => '',
             'attr'      => '',
             'use'       => '',
-            'property'  => ''
+            'property'  => '',
         ];
 
         $this->useAdd(BaseModel::class);

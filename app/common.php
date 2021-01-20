@@ -122,7 +122,10 @@ if (!function_exists('soft_delete_join')) {
     function soft_delete_join(array $join)
     {
         if (config('admin.soft_delete')) {
-            list($tables, $join_where) = $join;
+            list($tables, $join_where, $mode) = array_pad($join, 3, 'INNER');
+            if (is_array($tables)) {
+                $tables = current($tables);
+            }
             $tables = strtr(strtolower(trim($tables)), [' as ' => ' ']);
             if (strpos($tables, ' ') !== false && $tables = explode(' ', $tables)) {
                 $table = $tables[0];
@@ -133,8 +136,8 @@ if (!function_exists('soft_delete_join')) {
 
             if (in_array(config('admin.soft_delete.field'), array_keys(get_model_schema(parse_name($table, 1))))) {
                 $join_where .= config('admin.soft_delete.default') === null
-                    ? sprintf(" AND {$alias}.%s IS NULL", config('admin.soft_delete.field'))
-                    : sprintf(" AND {$alias}.%s = %s", config('admin.soft_delete.field'), config('admin.soft_delete.default'));
+                    ? sprintf(" AND %s.%s IS NULL", $alias, config('admin.soft_delete.field'))
+                    : sprintf(" AND %s.%s = %s", $alias, config('admin.soft_delete.field'), config('admin.soft_delete.default'));
                 $join[1] = $join_where;
             }
         }

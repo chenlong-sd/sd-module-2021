@@ -38,6 +38,7 @@ class Model implements Item
             'attr'        => '',
             'use'         => '',
             'search_form' => [],
+            'namespace'   => $this->CURD->config('namespace.model'),
         ];
 
         $this->getAttr();

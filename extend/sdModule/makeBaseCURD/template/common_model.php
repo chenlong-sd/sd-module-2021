@@ -6,7 +6,7 @@
  */
 
 
-namespace app\common\model;
+namespace //=={namespace}==//;
 
 use think\Model;
 //=={use}==//
@@ -14,7 +14,7 @@ use think\Model;
 /**
  * Class //=={Table}==//
 //=={property}==//
- * @package app\common\model\//=={Table}==//
+ * @package //=={namespace}==//\//=={Table}==//
  * @author chenlong <vip_chenlong@163.com>
  */
 class //=={Table}==// extends Model

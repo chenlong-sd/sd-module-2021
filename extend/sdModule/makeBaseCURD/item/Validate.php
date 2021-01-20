@@ -33,15 +33,16 @@ class Validate implements Item
 
         $this->replace = [
             'Table' => parse_name($this->CURD->table, 1),
-            'date' => datetime(),
-            'use' => '',
-            'rule' => [
+            'date'  => datetime(),
+            'use'   => '',
+            'rule'  => [
                 "'{$this->primary_key}|{$this->CURD->table_comment}' => 'require|number',"
             ],
             'scene' => [
-                'add' => [],
+                'add'  => [],
                 'edit' => [$this->primary_key]
-            ]
+            ],
+            'namespace' => $this->CURD->config('namespace.validate'),
         ];
 
         $this->fieldRuleHandle();
@@ -51,7 +52,7 @@ class Validate implements Item
     {
         $file_content = file_get_contents($this->CURD->config('template.validate'));
 
-        $this->replace['scene']['add'] = "'add' => ['" . implode('\', \'', $this->replace['scene']['add']) . "'],";
+        $this->replace['scene']['add']  = "'add' => ['" . implode('\', \'', $this->replace['scene']['add']) . "'],";
         $this->replace['scene']['edit'] = "'edit' => ['" . implode('\', \'', $this->replace['scene']['edit']) . "'],";
 
         return "<?php\r\n" . strtr($file_content, $this->replaceHandle());
@@ -62,9 +63,9 @@ class Validate implements Item
      */
     private function fieldRuleHandle()
     {
-        $tableInfo = $this->CURD->field_info;
+        $tableInfo    = $this->CURD->field_info;
         $tableComment = array_column($tableInfo, 'column_comment', 'column_name');
-        $fieldType = array_column($tableInfo, 'data_type', 'column_name');
+        $fieldType    = array_column($tableInfo, 'data_type', 'column_name');
 
         foreach ($this->CURD->data as $field => $makeDatum) {
             if (!$makeDatum['type']) continue;

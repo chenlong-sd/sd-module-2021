@@ -4,14 +4,14 @@
  * DateTime: //=={date}==//
  */
 
-namespace app\admin\controller;
+namespace //=={namespace}==//;
 
 use \app\common\controller\Admin;
 //=={use}==//
 
 /**
  * Class //=={Table}==//
- * @package app\admin\controller\//=={Table}==//
+ * @package //=={namespace}==//\//=={Table}==//
  * @author chenlong <vip_chenlong@163.com>
  */
 class //=={Table}==// extends Admin

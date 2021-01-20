@@ -64,7 +64,7 @@ class CURD
      * @return \think\response\Json|void
      * @throws SdException
      */
-    public static function work()
+    public static function work(): \think\response\Json
     {
         $CURD = new self();
         $CURD->loadConfig();
@@ -102,7 +102,7 @@ class CURD
      * @return string
      * @throws SdException
      */
-    private function run()
+    private function run(): string
     {
         $this->data        = request()->post();
         $this->table       = $this->data['table_name'] ?? '';
@@ -120,7 +120,7 @@ class CURD
             return $v;
          }, $this->data);
 
-        $this->moduleFileGenerate();
+        $this->fileGenerate();
         return '';
     }
 
@@ -128,7 +128,7 @@ class CURD
      * @param $data
      * @return array
      */
-    private function joinDataHandle($data)
+    private function joinDataHandle($data): array
     {
         $new_data = [];
         foreach ($data as $item) {
@@ -142,42 +142,46 @@ class CURD
      * 模块文件创建
      * @param Item|null $item
      * @return mixed|void
+     * @throws SdException
      */
-    private function moduleFileGenerate(Item $item = null)
+    private function fileGenerate(Item $item = null)
     {
         if ($item !== null) {
             return $item->make();
         }
 
-        $replace_pairs = ['{:class}' => parse_name($this->table, 1)];
         foreach ($this->make_module as $v){
             switch (true) {
                 case ($v & self::CONTROLLER) > 0:
-                    $content   = $this->moduleFileGenerate(new Controller($this));
-                    $file_path = $this->dirMake(strtr($this->config("file_path.{$v}"), $replace_pairs));
-                    file_put_contents($file_path, $content);
+                    $this->moduleFileCreate(new Controller($this), $this->config("file_path.{$v}"));
                     break;
                 case ($v & self::MODEL) > 0:
-                    $content   = $this->moduleFileGenerate(new CommonModel($this));
-                    $file_path = $this->dirMake(strtr($this->config("file_path.{$v}.common"), $replace_pairs));
-                    file_put_contents($file_path, $content);
-
-                    $content   = $this->moduleFileGenerate(new Model($this));
-                    $file_path = $this->dirMake(strtr($this->config("file_path.{$v}.admin"), $replace_pairs));
-                    file_put_contents($file_path, $content);
+                    $this->moduleFileCreate(new CommonModel($this), $this->config("file_path.{$v}.common"));
+                    $this->moduleFileCreate(new Model($this), $this->config("file_path.{$v}.admin"));
                     break;
                 case ($v & self::VALIDATE) > 0:
-                    $content   = $this->moduleFileGenerate(new Validate($this));
-                    $file_path = $this->dirMake(strtr($this->config("file_path.{$v}"), $replace_pairs));
-                    file_put_contents($file_path, $content);
+                    $this->moduleFileCreate(new Validate($this), $this->config("file_path.{$v}"));
                     break;
                 case ($v & self::PAGE) > 0:
-                    $content   = $this->moduleFileGenerate(new Page($this));
-                    $file_path = $this->dirMake(strtr($this->config("file_path.{$v}"), $replace_pairs));
-                    file_put_contents($file_path, $content);
+                    $this->moduleFileCreate(new Page($this), $this->config("file_path.{$v}"));
                     break;
             }
         }
+    }
+
+    /**
+     * 模块文件创建
+     * @param Item $model
+     * @param string $path
+     * @throws SdException
+     */
+    private function moduleFileCreate(Item $model, string $path)
+    {
+        $replace_pairs  = ['{:class}' => parse_name($this->table, 1)];
+        $content        = $this->fileGenerate($model);
+        $file_path      = $this->dirMake(strtr($path, $replace_pairs));
+
+        file_put_contents($file_path, $content);
     }
 
     /**
@@ -225,7 +229,7 @@ class CURD
      * @param array $make_item 要创建的项目
      * @throws SdException
      */
-    private function fileCheck($table, $make_item)
+    private function fileCheck(string $table, array $make_item)
     {
         $have_item = [];
 
@@ -259,7 +263,7 @@ class CURD
      * @return array
      * @throws SdException
      */
-    public function getTableInfo(string $table)
+    public function getTableInfo(string $table): array
     {
         $sql = "SELECT
             `column_name`, `data_type`, `column_comment`,`CHARACTER_MAXIMUM_LENGTH` length, `column_default`, `column_key`
@@ -288,7 +292,7 @@ class CURD
      * @return string
      * @throws SdException
      */
-    public function getTableComment(string $table)
+    public function getTableComment(string $table): string
     {
         $sql = "SELECT table_comment FROM INFORMATION_SCHEMA.TABLES  WHERE TABLE_NAME = :table_names AND TABLE_SCHEMA = :schemas LIMIT 1";
         try {
@@ -308,7 +312,7 @@ class CURD
      * @return string
      * @throws SdException
      */
-    public function getTablePrimary(string $table)
+    public function getTablePrimary(string $table): string
     {
         $sql = "SELECT
                 k.column_name
@@ -337,7 +341,7 @@ class CURD
      * @return array
      * @throws SdException
      */
-    public function getFieldInfo(string $table)
+    public function getFieldInfo(string $table): array
     {
         $table_info = $this->getTableInfo($table);
 
@@ -356,7 +360,7 @@ class CURD
      * @param array $field_info
      * @return array
      */
-    private function writeDefaultFormType(array $field_info)
+    private function writeDefaultFormType(array $field_info): array
     {
         $default_form = [
             'char'      => 'text',
@@ -416,7 +420,7 @@ class CURD
      * @param array $field_info
      * @return array
      */
-    private function listDefaultShowType(array $field_info)
+    private function listDefaultShowType(array $field_info): array
     {
         if (in_array($field_info['form_type'], ['images', 'editor', 'textarea', 'password'])) {
             $field_info['show_type'] = '';
@@ -434,7 +438,7 @@ class CURD
      * @return array
      * @throws SdException
      */
-    private function getJoinData(array $field_info)
+    private function getJoinData(array $field_info): array
     {
         if (substr($field_info['column_name'], -3) !== '_id' && $field_info['column_name'] !== 'pid'){
             return $field_info;
@@ -466,7 +470,7 @@ class CURD
      * @param array $field_info
      * @return array
      */
-    private function labelAndSelectData(array $field_info)
+    private function labelAndSelectData(array $field_info): array
     {
         $comment = strtr($field_info['column_comment'], ['：' => ':', '，' => ',']);
         $join = [];
@@ -491,7 +495,7 @@ class CURD
      * @param string $before 缩进之前
      * @return string
      */
-    public function indentation(int $number, $before = "\r\n")
+    public function indentation(int $number, $before = "\r\n"): string
     {
         return $before . str_pad('', $number * 4, ' ');
     }

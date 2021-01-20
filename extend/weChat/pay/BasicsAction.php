@@ -19,9 +19,9 @@ trait BasicsAction
         $this->getIp();                                     // 获取ip
         $this->random();                                    // 生成随机数
         $this->outTradeNo();                                // 生成订单号
-        $this->time_start = date('YmdHis', $_SERVER['REQUEST_TIME']);                   // 开始时间
+        $this->time_start  = date('YmdHis', $_SERVER['REQUEST_TIME']);                   // 开始时间
         $this->time_expire = date('YmdHis', $_SERVER['REQUEST_TIME'] + 3600);// 结束时间
-        $this->sign_type = 'MD5';                           // 签名加密方式
+        $this->sign_type   = 'MD5';                           // 签名加密方式
     }
 
     /**
@@ -67,13 +67,12 @@ trait BasicsAction
      */
     private function random()
     {
-        $array = array_merge(range('A', 'Z'), range('a', 'z'), range(0, 9));
-        $random = mt_rand(24, 31);
-        $length = count($array);
+        $array   = array_merge(range('A', 'Z'), range('a', 'z'), range(0, 9));
+        $random  = mt_rand(24, 31);
         $array[] = substr(time(), -1);
-        $string = '';
+        $string  = '';
         for ($i = 0; $i <= $random; ++$i) {
-            $string .= $array[mt_rand(0, $length)];
+            $string .= $array[array_rand($array)];
         }
         $this->nonce_str = $string;
         return $string;
@@ -97,8 +96,8 @@ trait BasicsAction
             $signString .= $key . '=' . $value . '&';
         }
         $signString .= 'key=' . $this->key;
-        $sign_type = $this->sign_type ?? 'md5';
-        $this->sign = strtoupper($sign_type($signString));
+        $signType = $this->sign_type ?? 'md5';
+        $this->sign = strtoupper(call_user_func($signType, $signString));
         return $this->sign;
     }
 
@@ -145,7 +144,7 @@ trait BasicsAction
      * @param $appId
      * @return $this
      */
-    public function setAppId($appId)
+    public function setAppId(string $appId)
     {
         if ($appId) {
             $this->appid = $appId;
@@ -160,7 +159,7 @@ trait BasicsAction
      * @param $key  string  秘钥
      * @return $this
      */
-    public function setMchAndKey($mch, $key)
+    public function setMchAndKey(string $mch, string $key)
     {
         if (!empty($mch) && !empty($key)) {
             $this->mch_id = $mch;
@@ -175,7 +174,7 @@ trait BasicsAction
      * @param $url  string  网站地址
      * @param $name string  网站名字
      */
-    public function setSceneInfo($url, $name)
+    public function setSceneInfo(string $url, string $name)
     {
         $scene_info = [
             'store_info' => [
@@ -197,7 +196,7 @@ trait BasicsAction
      * @return mixed
      * @throws Exception
      */
-    private static function postRequest($url, $data, array $cert = null)
+    private static function postRequest(string $url, $data, array $cert = null)
     {
         $headerArray = array("Content-type:application/xml;charset='utf-8'");
         $curl = curl_init();
@@ -212,7 +211,7 @@ trait BasicsAction
         if ($cert !== null){
             curl_setopt($curl, CURLOPT_SSLCERTTYPE, 'pem');
             curl_setopt($curl, CURLOPT_SSLCERT, $cert['cert']);
-            curl_setopt($curl, CURLOPT_SSLCERTTYPE, 'pem');
+            curl_setopt($curl, CURLOPT_SSLKEYTYPE, 'pem');
             curl_setopt($curl, CURLOPT_SSLKEY, $cert['key']);
         }
         $output = curl_exec($curl);
