@@ -17,10 +17,8 @@ use think\Model;
  * @package app\admin\controller\ApiModule
  * @author chenlong <vip_chenlong@163.com>
  */
-class ApiModule extends Model
+class ApiModule extends BaseModel
 {
-
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',

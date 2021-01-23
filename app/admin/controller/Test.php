@@ -2,15 +2,13 @@
 /**
  * Test.php
  * User: ChenLong
- * DateTime: 2020-11-25 17:38:39
+ * DateTime: 2021-01-22 13:16:37
  */
 
 namespace app\admin\controller;
 
 use \app\common\controller\Admin;
-use app\common\ResponseJson;
-use sdModule\layui\defaultForm\Form;
-use sdModule\layui\defaultForm\FormData;
+use app\common\service\BackstageListsService;
 
 
 /**
@@ -22,28 +20,18 @@ class Test extends Admin
 {
     /**
      * 列表数据接口
-     * @return mixed|string|\think\Collection|\think\response\Json
+     * @param BackstageListsService $service
+     * @return false|mixed|\think\response\Json
      * @throws \app\common\SdException
      */
-    public function listData()
+    public function listData(BackstageListsService $service)
     {
-        return $this->setJoin([
-                ['administrators', 'i.administrators_id = administrators.id ', 'left'],
-                ['test', 'i.pid = test.id ', 'left'],
-            ])
-            ->setField('i.id,i.title,i.cover,i.intro,i.status,administrators.name administrators_name,i.administrators_id,test.title parent_title,i.pid,i.create_time')
-            ->listsRequest();
+        $mode = $this->getModel()
+            ->join('administrators', 'i.administrators_id = administrators.id ', 'left')
+            ->join('test', 'i.pid = test.id ', 'left')
+            ->field('i.id,i.title,i.cover,i.intro,i.status,administrators.name administrators_name,i.administrators_id,test.title parent_title,i.pid,i.create_time,i.update_time,i.delete_time');
+
+        return $service->setModel($mode)->getListsData();
     }
 
-    public function ff()
-    {
-        if ($this->request->isPost()){
-            return ResponseJson::success();
-        }
-        return $this->fetch('common/save_page', [
-            'form' => Form::create([
-                FormData::text('vv', 'dd')
-            ])
-        ]);
-    }
 }

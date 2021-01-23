@@ -7,6 +7,8 @@
 namespace app\event;
 
 
+use think\facade\Route;
+
 class ApiLog
 {
     public function handle($event)

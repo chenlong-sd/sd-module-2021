@@ -23,9 +23,15 @@ class Backup
 
     private string $driver = '';
 
+    public static string $filename = '';
+
     public function __construct(string $host, string $database, int $port = 3306, string $driver = 'mysql', string $charset = 'utf8mb4')
     {
         $this->driver = $driver;
+        self::$filename = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . "{$database}_" . date('YmdHis') . '.sql';
+        if (!is_dir(dirname(self::$filename))) {
+            mkdir(dirname(self::$filename), '0777', true);
+        }
         $this->dsn = sprintf(self::DSN, $driver, $host, $database, $port, $charset);
     }
 
@@ -53,14 +59,11 @@ class Backup
     /**
      * 备份文件写入
      * @param string $data
-     * @param bool $before
      * @return false|int
      */
-    public static function backupFileWrite(string $data, $before = false)
+    public static function backupFileWrite(string $data)
     {
-        $filename = __DIR__ . '/drivertest.sql';
-        return $before ? file_put_contents($filename, $data)
-            : file_put_contents($filename, $data, FILE_APPEND);
+        return file_put_contents(self::$filename, $data, FILE_APPEND);
     }
 
     /**

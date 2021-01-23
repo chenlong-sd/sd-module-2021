@@ -36,9 +36,9 @@ class CommonModel implements Item
             'attr'      => '',
             'use'       => '',
             'property'  => '',
+            'namespace'    => $this->CURD->config('namespace.common_model'),
         ];
 
-        $this->useAdd(BaseModel::class);
         $this->getSchema();
         $this->getAttr();
     }

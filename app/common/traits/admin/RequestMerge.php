@@ -10,7 +10,9 @@
 namespace app\common\traits\admin;
 
 use app\common\BasePage;
+use app\common\SdException;
 use app\common\service\BackstageListService;
+use app\common\service\BackstageListsService;
 use sdModule\common\Sc;
 use sdModule\layui\defaultForm\Form;
 use think\Request;
@@ -27,13 +29,35 @@ trait RequestMerge
     /**
      * 列表页数据
      * @return mixed
+     * @throws SdException
      */
     public function index()
     {
         if ($this->request->isPost() || $this->request->isAjax()) {
-            return method_exists($this, 'listData') ? $this->listData(new BackstageListService()) : $this->listsRequest();
+            $service = new BackstageListsService();
+            return method_exists($this, 'listData') ? $this->listData($service) : $service->setModel($this->getModel())->getListsData();
         }
         return $this->lists();
+    }
+
+    /**
+     * @return array|\think\response\View
+     * @throws SdException
+     */
+    private function lists()
+    {
+        if (empty($this->getPage()->listPageName())) {
+            throw new SdException('please set the page title');
+        }
+
+        $assign = [
+            'search'            => $this->getPage()->searchFormData(),
+            'page_name'         => $this->getPage()->listPageName(),
+            'quick_search_word' => $this->quickWord(),
+            'table'             => $this->getPage()->getTablePageData()
+        ];
+
+        return $this->fetch($this->getPage()->list_template, $assign);
     }
 
     /**
@@ -58,8 +82,11 @@ trait RequestMerge
 
     /**
      * 数据更新
-     * @return mixed
+     * @return array|mixed|\think\response\Json|\think\response\View
      * @throws \ReflectionException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function update()
     {
@@ -72,7 +99,7 @@ trait RequestMerge
             return Sc::reflex()->invoke($this, $page, [$this->primary => $this->request->param('id', 0)]);
         }
 
-        $data = $this->getModel()::getDataById($this->request->param('id', 0))->getData();
+        $data = $this->getModel()::find($this->request->param('id', 0))->getData();
         return $this->fetch($this->getPage()->form_template, [
                 'form' => $this->getPage()->formData($page, $data)
             ]);

@@ -12,7 +12,6 @@ namespace app\admin\controller\system;
 use app\admin\model\system\Resource;
 use app\common\controller\Admin;
 use app\common\ResponseJson;
-use sdModule\makeAdminBasics\Basics;
 
 /**
  * Class System
@@ -34,12 +33,11 @@ class System extends Admin
     public function resource(Resource $resource, $page = 1, $limit = 10)
     {
         if ($this->request->isAjax()) {
-            return ResponseJson::mixin($resource::addSoftDelWhere()->page($page, $limit)->field('path,id,tag,type')->select());
+            return ResponseJson::mixin($resource::page($page, $limit)->field('path,id,tag,type')->select());
         }
 
         return view('', [
-            'count' => $resource::addSoftDelWhere()->count(),
-
+            'count' => $resource::count(),
         ]);
     }
 

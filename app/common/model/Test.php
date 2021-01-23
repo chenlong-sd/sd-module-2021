@@ -3,24 +3,34 @@
  *
  * Test.php
  * User: ChenLong
- * DateTime: 2020-11-25 17:38:39
+ * DateTime: 2021-01-22 13:16:37
  */
 
 
 namespace app\common\model;
 
-use think\Model;
 use app\common\BaseModel;
 use sdModule\layui\Layui;
 
 /**
  * Class Test
+ * @property $id
+ * @property $title
+ * @property $cover
+ * @property $show_images
+ * @property $intro
+ * @property $status
+ * @property $administrators_id
+ * @property $pid
+ * @property $content
+ * @property $create_time
+ * @property $update_time
+ * @property $delete_time
  * @package app\common\model\Test
  * @author chenlong <vip_chenlong@163.com>
  */
-class Test extends Model
+class Test extends BaseModel
 {
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',
@@ -49,8 +59,8 @@ class Test extends Model
     {
         return $tag === true 
             ? [
-                '1' => Layui::tag()->blue('正常'),
-                '2' => Layui::tag()->red('冻结'),
+                '1' => Layui::tag()->green('正常'),
+                '2' => Layui::tag()->cyan('冻结'),
                 
             ]
             : [

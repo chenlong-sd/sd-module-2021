@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2020-12-23 15:43:53
+ * Date: 2021-01-22 13:16:38
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -21,7 +21,7 @@ use sdModule\layuiSearch\generate\TimeRange;
 
 /**
  * Class Test
- * @package app\admin\page
+ * @package app\admin\page\Test
  */
 class Test extends BasePage
 {
@@ -66,14 +66,14 @@ class Test extends BasePage
             FormData::images('show_images', '展示图'),
             FormData::text('intro', '简介'),
             FormData::radio('status', '状态', MyModel::getStatusSc(false)),
-            FormData::select('administrators_id', '管理员', Administrators::addSoftDelWhere()->column('name', 'id')),
-            FormData::select('pid', '上级', MyModel::addSoftDelWhere()->column('title', 'id')),
+            FormData::select('administrators_id', '管理员', Administrators::column('name', 'id')),
+            FormData::select('pid', '上级', MyModel::column('title', 'id')),
             FormData::u_editor('content', '详情'),
         ];
 
         $form = DefaultForm::create($unit)->setDefaultData($default_data);
 
-        return $form->setSkinToPane()->complete();
+        return $form->complete();
     }
 
     /**
@@ -103,16 +103,6 @@ class Test extends BasePage
             SearchForm::Text('i.delete_time', "删除时间")->label(true)->html(),
         ];
         return Form::CreateHTML($form_data);
-    }
-
-    /**
-     * @return array 设置快捷搜索
-     */
-    public function setQuickSearchField():array
-    {
-        return [
-            
-        ];
     }
 
 }

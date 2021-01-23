@@ -12,9 +12,8 @@ use app\common\BaseModel;
 use think\Model;
 
 
-class DataAuth extends Model
+class DataAuth extends BaseModel
 {
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',

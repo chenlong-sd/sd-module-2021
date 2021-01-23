@@ -16,6 +16,7 @@ use app\common\traits\admin\{AdminMiddleware,
 use app\common\BaseModel;
 use app\common\BasePage;
 use app\common\SdException;
+use app\common\service\BackstageListsService;
 use app\common\traits\Lang;
 use sdModule\common\Sc;
 use sdModule\layuiSearch\Form;
@@ -61,26 +62,6 @@ class Admin extends BaseController
     {
         $this->registerMiddleware();
         $this->setModel();
-    }
-
-    /**
-     * @return array|\think\response\View
-     * @throws SdException|\Exception
-     */
-    public function lists()
-    {
-        if (empty($this->getPage()->listPageName())) {
-            throw new SdException('please set the page title');
-        }
-
-        $assign = [
-            'search'            => $this->getPage()->searchFormData(),
-            'page_name'         => $this->getPage()->listPageName(),
-            'quick_search_word' => $this->quickWord(),
-            'table'             => $this->getPage()->getTablePageData()
-        ];
-
-        return $this->fetch($this->getPage()->list_template, $assign);
     }
 
     /**
@@ -166,40 +147,6 @@ class Admin extends BaseController
     {
         $vars['primary'] = $this->primary;
         return view($template, $vars);
-    }
-
-
-    /**
-     * 数据过滤
-     * @param      $data
-     * @param bool $all 是否全部过滤,二维数组
-     * @return array
-     */
-    final public static function filter($data, $all = true): array
-    {
-        if ($all !== true) {
-            return array_filter($data, 'app\common\controller\Admin::filterCallback');
-        }
-
-        foreach ($data as $key => $value) {
-            $value = is_array($value) ? self::filter($value) : $value;
-            if (!self::filterCallback($value)) {
-                unset($data[$key]);
-            }
-        }
-        return $data;
-    }
-
-    /**
-     * 过滤数据的回调函数
-     * @param $value
-     * @return bool
-     */
-    private static function filterCallback($value): bool
-    {
-        $value = is_string($value) ? trim($value) : $value;
-        $value = is_numeric($value) && !$value ? 0 : $value;
-        return is_bool($value) || $value === 0 || $value;
     }
 
     /**

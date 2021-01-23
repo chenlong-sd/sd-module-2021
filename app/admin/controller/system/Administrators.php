@@ -15,7 +15,7 @@ use app\admin\model\system\Role as RoleModel;
 use app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
-use app\common\service\BackstageListService;
+use app\common\service\BackstageListsService;
 use sdModule\common\Sc;
 use app\admin\model\system\Administrators as MyModel;
 
@@ -29,19 +29,19 @@ class Administrators extends Admin
     private const LOGIN_SESSION_KEY = 'Administrators__Sd__';
 
     /**
-     * @param BackstageListService $service
+     * @param BackstageListsService $service
      * @return mixed|string|\think\Collection|\think\response\Json
      * @throws SdException
      */
-    public function listData(BackstageListService $service)
+    public function listData(BackstageListsService $service)
     {
-        return $service->setModel($this->getModel())->setJoin([
-            ['administrators_role ar', 'ar.administrators_id = i.id'],
-            ['role r', 'r.id = ar.role_id']
-        ])->setField('i.id,i.name,i.account,i.status, i.status status_sc,GROUP_CONCAT(r.role) role,i.lately_time,i.create_time')
-            ->listSearchParamHandle([$this, 'listSearchParamHandle'])
-            ->setGroup('i.id')
-            ->listsRequest();
+        $model = $this->getModel()
+            ->join('administrators_role ar', 'ar.administrators_id = i.id')
+            ->join('role r', 'r.id = ar.role_id')
+            ->field('i.id,i.name,i.account,i.status, i.status status_sc,GROUP_CONCAT(r.role) role,i.lately_time,i.create_time')
+            ->group('i.id');
+
+        return $service->setModel($model)->setListSearchParamHandle([$this, 'listSearchParamHandle'])->getListsData();
     }
 
 
@@ -55,7 +55,7 @@ class Administrators extends Admin
     {
         if ($this->request->isPost()) {
             $data = $this->verify('password');
-            $password = $administrators::addSoftDelWhere(['id' => admin_session('id')])->value('password');
+            $password = $administrators::where(['id' => admin_session('id')])->value('password');
 
             if (!Sc::password()->verify($data['password_old'], $password)){
                 return ResponseJson::fail(lang('administrator.old password error'));
@@ -64,7 +64,7 @@ class Administrators extends Admin
                 return ResponseJson::fail(lang('administrator.password Unanimous'));
             }
 
-            $result = $administrators::addSoftDelWhere(['id' => admin_session('id')])->update([
+            $result = $administrators::where(['id' => admin_session('id')])->update([
                 'password' => Sc::password()->encryption($data['password']),
                 'update_time' => date('Y-m-d H:i:s')
             ]);
@@ -124,7 +124,7 @@ class Administrators extends Admin
     public function listSearchParamHandle($search)
     {
         if (isset($search['mode']) && $search['mode'] === 'all'){
-            $all_role = RoleModel::addSoftDelWhere()->field('id,pid,role,administrators_id')->select()->toArray();
+            $all_role = RoleModel::field('id,pid,role,administrators_id')->select()->toArray();
             $mySubordinate = Sc::infinite($all_role)->handle(['administrators_id' => admin_session('id')], true);
 
             $search['r.id_I'] = array_column($mySubordinate, 'id');

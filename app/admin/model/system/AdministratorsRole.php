@@ -11,9 +11,8 @@ namespace app\admin\model\system;
 use app\common\BaseModel;
 use think\Model;
 
-class AdministratorsRole extends Model
+class AdministratorsRole extends BaseModel
 {
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',

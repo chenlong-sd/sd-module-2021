@@ -636,6 +636,7 @@ JS;
 
     /**
      * 默认事件js
+     * @throws \app\common\SdException
      */
     private function defaultEventJs()
     {

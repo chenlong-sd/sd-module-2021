@@ -40,7 +40,7 @@ trait DataDelete
             if (method_exists(static::class, 'delete')) {
                 $this->delete($id);
             } else {
-                $this->getModel()::softDelete([$this->primary => (array)$id]);
+                $this->getModel()->destroy((array)$id);
             }
             $this->afterDelete($id);
             Db::commit();

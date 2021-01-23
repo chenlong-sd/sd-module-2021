@@ -17,9 +17,8 @@ use think\Model;
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */
-class Power extends Model
+class Power extends BaseModel
 {
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',
@@ -37,7 +36,7 @@ class Power extends Model
      * @return bool
      * @throws SdException
      */
-    public function setPower($power_route, $role_id)
+    public function setPower(array $power_route, int $role_id)
     {
         $power_data = [];
         foreach ($power_route as $item) {
@@ -51,9 +50,7 @@ class Power extends Model
 
         $this->startTrans();
         try {
-            $this->where('role_id', $role_id)->update([
-                'delete_time' => time()
-            ]);
+            $this->destroy(['role_id' => $role_id]);
 
             $this->insertAll($power_data);
 

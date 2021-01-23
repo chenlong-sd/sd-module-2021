@@ -24,9 +24,10 @@ use think\Model;
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */
-class Administrators extends Model
+class Administrators extends BaseModel
 {
-    use BaseModel;
+
+    protected $defaultSoftDelete = 0;
 
     private const LOGIN_SESSION_KEY = 'Administrators__Sd__';
 
@@ -142,7 +143,7 @@ class Administrators extends Model
             ['id' => $administrators['id']])) {
 
             $administrators->set('maintain', $this->maintain);
-            $administrators->set('route', Power::addSoftDelWhere(['role_id' => explode(',', $administrators['role_id'])])->column('route_id'));
+            $administrators->set('route', Power::where(['role_id' => explode(',', $administrators['role_id'])])->column('route_id'));
 
             self::setSession(data_only($administrators->toArray(),
                 ['id', 'name', 'account', 'maintain', 'role_id', 'route']));

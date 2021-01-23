@@ -8,7 +8,7 @@
 
 namespace //=={namespace}==//;
 
-use think\Model;
+use app\common\BaseModel;
 //=={use}==//
 
 /**
@@ -17,9 +17,8 @@ use think\Model;
  * @package //=={namespace}==//\//=={Table}==//
  * @author chenlong <vip_chenlong@163.com>
  */
-class //=={Table}==// extends Model
+class //=={Table}==// extends BaseModel
 {
-    use BaseModel;
 
     protected $schema = [
         //=={schema}==//

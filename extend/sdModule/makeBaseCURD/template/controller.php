@@ -7,6 +7,7 @@
 namespace //=={namespace}==//;
 
 use \app\common\controller\Admin;
+use app\common\service\BackstageListsService;
 //=={use}==//
 
 /**
@@ -18,14 +19,16 @@ class //=={Table}==// extends Admin
 {
     /**
      * 列表数据接口
-     * @return mixed|string|\think\Collection|\think\response\Json
+     * @param BackstageListsService $service
+     * @return false|mixed|\think\response\Json
      * @throws \app\common\SdException
      */
-    public function listData()
+    public function listData(BackstageListsService $service)
     {
-        return $this//=={list_join}==//
-            ->setField('//=={list_field}==//')
-            ->listsRequest();
+        $mode = $this->getModel()//=={list_join}==//
+            ->field('//=={list_field}==//');
+
+        return $service->setModel($mode)->getListsData();
     }
 
 }

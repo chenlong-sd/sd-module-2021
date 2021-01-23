@@ -122,7 +122,7 @@ class Page implements Item
                     $this->useAdd($this->CURD->config('namespace.model') . '\\' .  $this->replace['Table'] . ' as MyModel');
                     $table = 'MyModel';
                 }
-                $select_data = ", {$table}::addSoftDelWhere()->column('{$title}', '{$value}')";
+                $select_data = ", {$table}::column('{$title}', '{$value}')";
             }
             $field = parse_name($field);
             $this->replace['form_data'][] = "FormData::{$type}('{$field}', '{$item['label']}'$select_data),";

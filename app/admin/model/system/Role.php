@@ -24,9 +24,8 @@ use think\Model;
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */
-class Role extends Model
+class Role extends BaseModel
 {
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',
@@ -43,11 +42,13 @@ class Role extends Model
      * 获取创建角色的管理员
      * @param $role_id
      * @return mixed
-     * @throws \app\common\SdException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public static function getCreateAdministrators($role_id)
     {
-        return self::getDataById($role_id)->administrators_id;
+        return self::find($role_id)->administrators_id;
     }
 
     /**

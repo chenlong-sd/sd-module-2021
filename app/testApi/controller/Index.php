@@ -22,6 +22,7 @@ use sdModule\common\helper\JWT;
 use sdModule\common\helper\SCRedis;
 use sdModule\common\helper\SdRedis;
 use sdModule\common\Sc;
+use sdModule\dataBackup\Backup;
 use sdModule\image\Image;
 use sdModule\layui\formMake\FormMake;
 use sdModule\makeAdminBasics\Basics;
@@ -147,8 +148,8 @@ HTML;
 
     public function file()
     {
-//        FileStorage::instance('vim')->set(['1231231231' => 'asdasd'], 10);
-        halt(FileStorage::instance('vim')->get());
+        $backup = new Backup('127.0.0.1', 'epidemic');
+        $backup->connect('root', 'Admin@123')->backup(Backup::ALL);
     }
 
     public function wx()

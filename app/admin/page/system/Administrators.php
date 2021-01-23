@@ -111,8 +111,7 @@ class Administrators extends BasePage
         }
 
         try {
-            return Db::name($table)->where(BaseModel::getSoftDeleteData())
-                ->column("{$data_auth[$table]['field']}", "id");
+            return Db::name($table)->column("{$data_auth[$table]['field']}", "id");
         } catch (\Exception $exception) {
            return [];
         }

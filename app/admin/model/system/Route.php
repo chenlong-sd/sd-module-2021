@@ -22,9 +22,8 @@ use think\Model;
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */
-class Route extends Model
+class Route extends BaseModel
 {
-    use BaseModel;
 
     const TYPE_MENU = 1;
     const TYPE_HANDLE = 2;
@@ -91,11 +90,11 @@ class Route extends Model
         if (admin_session('id') === 1) {
             $left_route = $this->routeFromType(self::TYPE_MENU, 'id,title,route,pid,icon');
         }else{
-            $left_route = self::addSoftDelWhere([
+            $left_route = self::where([
                     ['p.role_id', 'in', admin_session('role_id')],
                     ['i.type', '=', self::TYPE_MENU],
                 ])
-                ->join(...soft_delete_join(['power p', 'p.route_id = i.id']))
+                ->join('power p', 'p.route_id = i.id')
                 ->field('i.id,i.title,i.route,i.pid,i.icon')
                 ->select()->toArray();
         }
@@ -133,9 +132,9 @@ class Route extends Model
     public function routeFromType($type = null, $field = '*')
     {
         if ($type === null) {
-            return self::addSoftDelWhere()->field($field)->order('weigh')->select()->toArray();
+            return self::field($field)->order('weigh')->select()->toArray();
         }
-        return  self::addSoftDelWhere()->field($field)->order('weigh')->where('type',$type)->select()->toArray();
+        return  self::field($field)->order('weigh')->where('type',$type)->select()->toArray();
     }
 
 
@@ -145,7 +144,7 @@ class Route extends Model
      */
     public static function cacheAllRoute()
     {
-        $route       = self::addSoftDelWhere()->column('route', 'id');
+        $route       = self::column('route', 'id');
         $cache_route = array_map(fn($value) => parse_name($value, 1), $route);
 
         cache(config('admin.route_cache'), $cache_route);
@@ -232,13 +231,13 @@ class Route extends Model
     {
         $this->startTrans();
         try {
-            $all = self::addSoftDelWhere()->column('id,pid');
+            $all = self::column('id,pid');
 
             $delArr = Sc::infinite($all)->handle($id, true);
             $delAll = array_column($delArr, 'id');
 
-            self::softDelete(['id' => $delAll]);
-            Power::softDelete(['route_id' => $delAll]);
+            self::destroy(['id' => $delAll]);
+            Power::destroy(['route_id' => $delAll]);
 
             $this->commit();
         } catch (\Exception $exception) {

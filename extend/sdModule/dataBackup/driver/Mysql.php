@@ -8,6 +8,8 @@ namespace sdModule\dataBackup\driver;
 
 
 
+use sdModule\dataBackup\Backup;
+
 /**
  * Class Mysql
  * @package sdModule\dataBackup\driver
@@ -20,7 +22,7 @@ class Mysql
 
     private int $batch = 500;
 
-    const INSERT = "INSERT INTO %s (%s) VALUES (%s);";
+    const INSERT = "INSERT INTO `%s` VALUES %s;";
 
     /**、
      * Mysql constructor.
@@ -39,13 +41,14 @@ class Mysql
     public function backup()
     {
         $time = date('Y-m-d H:i:s');
-        $this->contentWrite("/** 数据备份时间  {$time} */\r\n\r\n");
+        Backup::backupFileWrite("/** 数据备份时间  {$time} */\r\n\r\n");
         self::tipPrint('开始备份..');
+        self::tipPrint("内存：" . ($start = memory_get_usage() / 8192) . '.开始备份..');
 
         $start_time = microtime(true);
-        $this->contentWrite("SET NAMES utf8mb4;\r\nSET FOREIGN_KEY_CHECKS = 0;\r\n\r\n");
+        Backup::backupFileWrite("SET NAMES utf8mb4;\r\nSET FOREIGN_KEY_CHECKS = 0;\r\n\r\n");
         $this->structure();
-        self::tipPrint("备份结束,耗时:" . (microtime(true) - $start_time));
+        self::tipPrint("内存：" . ($start = memory_get_usage() / 8192) . ".备份结束,耗时:" . (microtime(true) - $start_time));
     }
 
     /**
@@ -53,21 +56,21 @@ class Mysql
      */
     public function structure()
     {
-        $this->contentWrite("-- 数据备份开始 \r\n\r\n");
+        Backup::backupFileWrite("-- 数据备份开始 \r\n\r\n");
         self::tipPrint("数据备份开始..");
         $start_time = microtime(true);
 
         foreach ($this->tables as $table) {
-            $this->contentWrite("-- {$table}数据结构备份开始 \r\n\r\n");
+            Backup::backupFileWrite("-- {$table}数据结构备份开始 \r\n\r\n");
             $data = $this->PDO->prepare("SHOW CREATE TABLE `$table`");
             $data->execute();
             $sql = $data->fetch(\PDO::FETCH_ASSOC)['Create Table'] . ";\r\n\r\n";
-            $this->contentWrite($sql);
-            $this->contentWrite("-- {$table}数据结构备份完成 \r\n\r\n");
+            Backup::backupFileWrite($sql);
+            Backup::backupFileWrite("-- {$table}数据结构备份完成 \r\n\r\n");
             $this->data($table);
         }
 
-        $this->contentWrite("-- 数据份结束 \r\n\r\n");
+        Backup::backupFileWrite("-- 数据份结束 \r\n\r\n");
         self::tipPrint("数据备份结束,耗时" . (microtime(true) - $start_time));
     }
 
@@ -77,17 +80,23 @@ class Mysql
      */
     public function data($table)
     {
-        $this->contentWrite("-- {$table} 数据备份开始。\r\n\r\n");
-        self::tipPrint("{$table} 数据备份开始。请稍候...");
+        Backup::backupFileWrite("-- {$table} 数据备份开始。\r\n\r\n");
+        self::tipPrint("{$table} 数据备份开始。请稍候....");
         $start_time = microtime(true);
-        $sql = $this->PDO->prepare("SELECT * FROM `$table`");
+        $sql = $this->PDO->prepare("SELECT * FROM `{$table}`", [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
         $sql->execute();
-        $data = $sql->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($data) {
-            $this->contentWrite($this->insertIntoValueHandle($data, $table));
-            $this->contentWrite("-- {$table} 数据备份结束。\r\n\r\n");
+//        $data = $sql->fetchAll(\PDO::FETCH_ASSOC);
+        $fd = fopen(Backup::$filename, 'a');
+        while ($row = $sql->fetch(\PDO::FETCH_NUM)) {
+            $s = sprintf(self::INSERT, $table, implode(',', $row)) . "\r\n";
+            fwrite($fd, $s);
         }
+        fclose($fd);
+
+//        if ($data) {
+//            Backup::backupFileWrite($this->insertIntoValueHandle($data, $table));
+//            Backup::backupFileWrite("-- {$table} 数据备份结束。\r\n\r\n");
+//        }
 
         self::tipPrint("{$table} 数据完成。耗时" . (microtime(true) - $start_time));
     }
@@ -126,16 +135,6 @@ class Mysql
             }
         }
         return substr($v_str, 1);
-    }
-
-    /**
-     * 内容写入
-     * @param string $content
-     * @return false|int
-     */
-    private function contentWrite(string $content)
-    {
-        return file_put_contents(__DIR__ . '/test.sql', $content, FILE_APPEND);
     }
 
     /**

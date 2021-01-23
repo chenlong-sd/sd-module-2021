@@ -74,14 +74,4 @@ class //=={Table}==// extends BasePage
         return Form::CreateHTML($form_data);
     }
 
-    /**
-     * @return array 设置快捷搜索
-     */
-    public function setQuickSearchField():array
-    {
-        return [
-            //=={quick_search}==//
-        ];
-    }
-
 }

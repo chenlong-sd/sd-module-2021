@@ -18,10 +18,8 @@ use think\Model;
  * @package app\admin\controller\QueryParams
  * @author chenlong <vip_chenlong@163.com>
  */
-class QueryParams  extends Model
+class QueryParams  extends BaseModel
 {
-
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',

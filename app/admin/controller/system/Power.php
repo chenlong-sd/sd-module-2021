@@ -29,12 +29,12 @@ class Power extends Admin
         $field = 'i.id,i.pid,i.title';
 
         $tree_data = admin_session('id') === config('admin.super', 1)
-            ? $route::addSoftDelWhere()->alias('i')->field($field)->select()->toArray()
-            : $route::addSoftDelWhere(['p.role_id' => admin_session('role_id')], 'i')
-                ->join(...soft_delete_join(['power p', 'p.route_id = i.id']))
+            ? $route::alias('i')->field($field)->select()->toArray()
+            : $route::where(['p.role_id' => admin_session('role_id')], 'i')
+                ->join('power p', 'p.route_id = i.id')
                 ->field($field)->select()->toArray();
 
-        $role_have_route = \app\admin\model\system\Power::addSoftDelWhere(['role_id' => $role_id])->column('route_id');
+        $role_have_route = \app\admin\model\system\Power::where(['role_id' => $role_id])->column('route_id');
 
 
         $tree_data = Sc::infinite($tree_data)->setCall(function ($value) use ($role_have_route){
@@ -62,7 +62,7 @@ class Power extends Admin
 
         if (admin_session('id') === config('admin.super', 1)) goto set;
 
-        $role_have_route = $power::addSoftDelWhere()->where('role_id', $role_id)->column('route_id');
+        $role_have_route = $power::where('role_id', $role_id)->column('route_id');
 
         if ($data && array_diff(array_column($data, 'id'), $role_have_route)) {
             return ResponseJson::fail('权限错误！');

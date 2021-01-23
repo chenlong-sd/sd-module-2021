@@ -19,9 +19,8 @@ use think\Model;
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */
-class Resource extends Model
+class Resource extends BaseModel
 {
-    use BaseModel;
 
     protected $schema = [
         'id' => 'int',

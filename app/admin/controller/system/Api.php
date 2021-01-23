@@ -11,7 +11,7 @@ use app\admin\model\system\Api as ApiM;
 use \app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
-use app\common\service\BackstageListService;
+use app\common\service\BackstageListsService;
 use think\facade\Db;
 
 
@@ -29,16 +29,16 @@ class Api extends Admin
 
     /**
      * 列表数据接口
+     * @param BackstageListsService $service
      * @return mixed|string|\think\Collection|\think\response\Json
-     * @throws \app\common\SdException
+     * @throws SdException
      */
-    public function listData(BackstageListService $service)
+    public function listData(BackstageListsService $service)
     {
-        return $service->setModel(ApiM::class)->setNoPage()
-            ->setField('i.id,i.api_name,i.path,i.describe,i.update_time,i.method,i.status,i.status status_1')
-            ->setSort('status', 'asc')
-            ->setSort('update_time', 'desc')
-            ->listsRequest();
+        $model = ApiM::field('i.id,i.api_name,i.path,i.describe,i.update_time,i.method,i.status,i.status status_1')
+            ->order('status', 'asc')
+            ->order('update_time', 'desc');
+        return $service->setModel($model)->setPagination(false)->getListsData();
     }
 
     /**
@@ -47,7 +47,7 @@ class Api extends Admin
      */
     public function add()
     {
-        $api = \app\admin\model\system\ApiModule::getDataById(request()->get('api_module_id', 0))->toArray();
+        $api = \app\admin\model\system\ApiModule::find(request()->get('api_module_id', 0))->toArray();
         return $this->fetch('add', [
             'data' => $api,
         ]);
@@ -60,9 +60,9 @@ class Api extends Admin
      */
     public function edit($id)
     {
-        $data = ApiM::getDataById($id)->getData();
-        $api = \app\admin\model\system\ApiModule::getDataById($data['api_module_id'] ?? 0)->toArray();
-        $param = \app\admin\model\system\QueryParams::getDataByWhere(['api_id' => $id]);
+        $data = ApiM::find($id)->getData();
+        $api = \app\admin\model\system\ApiModule::find($data['api_module_id'] ?? 0)->toArray();
+        $param = \app\admin\model\system\QueryParams::where(['api_id' => $id])->select();
 
         $new_param = [];
         foreach ($param as $item) {
@@ -80,7 +80,7 @@ class Api extends Admin
     public function save()
     {
         $data = $this->request->post();
-        $this->validate($body = $this->filter($data['body']), \app\admin\validate\system\Api::class . '.add');
+        $this->validate($body = data_filter($data['body']), \app\admin\validate\system\Api::class . '.add');
 
         Db::startTrans();
         try {
@@ -97,7 +97,7 @@ class Api extends Admin
                     throw new SdException('更新失败！');
                 }
             }
-            \app\admin\model\system\QueryParams::softDelete(['api_id' => $id]);
+            \app\admin\model\system\QueryParams::destroy(['api_id' => $id]);
 
             $param = array_merge(
                 $this->paramHandle($data['get'] ?? [], $id, self::PARAM_TYPE_GET),
@@ -145,7 +145,7 @@ class Api extends Admin
      */
     public function docking(ApiM $api, $id = 0): \think\response\Json
     {
-        $api_info =$api->find($id);
+        $api_info = $api::find($id);
         $api_info->status = 2;
         $api_info->save();
 

@@ -9,7 +9,6 @@
 
 namespace app\common\model;
 
-use think\Model;
 use app\common\BaseModel;
 
 /**
@@ -17,7 +16,7 @@ use app\common\BaseModel;
  * @package app\common\model\Api
  * @author chenlong <vip_chenlong@163.com>
  */
-class Api extends Model
+class Api extends BaseModel
 {
 
     

@@ -64,7 +64,7 @@ class CURD
      * @return \think\response\Json|void
      * @throws SdException
      */
-    public static function work(): \think\response\Json
+    public static function work()
     {
         $CURD = new self();
         $CURD->loadConfig();

@@ -98,9 +98,7 @@ class Index extends Admin
         }
 
         try {
-            $data = Db::name($table)->where(BaseModel::getSoftDeleteData())
-                ->field("id value, {$data_auth[$table]['field']} name")
-                ->select();
+            $data = Db::name($table)->field("id value, {$data_auth[$table]['field']} name")->select();
         } catch (\Exception $exception) {
             $data = [];
         }

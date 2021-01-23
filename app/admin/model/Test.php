@@ -3,15 +3,19 @@
  *
  * Test.php
  * User: ChenLong
- * DateTime: 2020-11-25 17:38:39
+ * DateTime: 2021-01-22 13:16:37
  */
 
 namespace app\admin\model;
 
 use \app\common\model\Test as commonTest;
-use sdModule\layui\TablePage;
 
 
+/**
+ * Class Test
+ * @package app\admin\model\Test
+ * @author chenlong <vip_chenlong@163.com>
+ */
 class Test extends commonTest
 {
 

@@ -82,10 +82,11 @@ class Controller implements Item
         $replace = [];
 
         foreach ($this->replace as $key => $value) {
-            if ($key === 'list_join') {
-                $replace["//=={{$key}}==//"] = $value
-                    ? "->setJoin([". $this->CURD->indentation(4) . implode($this->warp($key), $value) . $this->CURD->indentation(3) ."])"
-                    : "";
+            $replace["//=={{$key}}==//"] = '';
+            if ($key === 'list_join' && $value) {
+                foreach ($value as $v) {
+                    $replace["//=={{$key}}==//"] .= "{$this->CURD->indentation(3)}->join($v)";
+                }
             }else{
                 $replace["//=={{$key}}==//"] = is_array($value) ? implode($this->warp($key), $value) : $value;
             }
@@ -158,7 +159,7 @@ class Controller implements Item
             ? sprintf('i.pid = %s.%s %s', $table, $field, $where)
             : sprintf('i.%s_id = %1$s.%s %s', $table, $field, $where);
 
-        $this->replace['list_join'][$table . '-' .$field] = "['{$table}', '{$joinStr}', 'left'],";
+        $this->replace['list_join'][$table . '-' .$field] = "'{$table}', '{$joinStr}', 'left'";
     }
 }
 

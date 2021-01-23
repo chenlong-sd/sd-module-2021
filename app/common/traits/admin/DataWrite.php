@@ -89,7 +89,7 @@ trait DataWrite
      */
     protected function verify(string $type)
     {
-        $data = $this->filter($this->request->post());
+        $data = data_filter($this->request->post());
 
         if ($this->validate === true || (is_array($this->validate) && in_array($type, $this->validate))) {
             $validate = strtr(static::class, ['controller' => 'validate']);

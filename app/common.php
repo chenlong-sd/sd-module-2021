@@ -91,111 +91,6 @@ if (!function_exists('admin_url')) {
     }
 }
 
-
-if (!function_exists('soft_delete_sql')) {
-    /**
-     * 软删除查询
-     * @param \think\Model|\think\db\Query $sql   模型实例
-     * @param string                       $alias 别名
-     * @deprecated
-     * @return \think\Model|\think\db\Query
-     */
-    function soft_delete_sql($sql, string $alias = 'i')
-    {
-        $sql = $sql->alias($alias);
-        $prefix = env('DATABASE.PREFIX');
-        $table = parse_name(preg_replace("/^{$prefix}/", '', $sql->getTable()), 1);
-        if (config('admin.soft_delete') && in_array(config('admin.soft_delete.field'), array_keys(get_model_schema($table)))) {
-            $sql = $sql->where(implode('.', [$alias, config('admin.soft_delete.field')]), config('admin.soft_delete.default'));
-        }
-
-        return $sql;
-    }
-}
-
-if (!function_exists('soft_delete_join')) {
-    /**
-     * 软删除关联组建
-     * @param array $join
-     * @return array
-     */
-    function soft_delete_join(array $join)
-    {
-        if (config('admin.soft_delete')) {
-            list($tables, $join_where, $mode) = array_pad($join, 3, 'INNER');
-            if (is_array($tables)) {
-                $tables = current($tables);
-            }
-            $tables = strtr(strtolower(trim($tables)), [' as ' => ' ']);
-            if (strpos($tables, ' ') !== false && $tables = explode(' ', $tables)) {
-                $table = $tables[0];
-                $alias = end($tables);
-            } else {
-                $table = $alias = $tables;
-            }
-
-            if (in_array(config('admin.soft_delete.field'), array_keys(get_model_schema(parse_name($table, 1))))) {
-                $join_where .= config('admin.soft_delete.default') === null
-                    ? sprintf(" AND %s.%s IS NULL", $alias, config('admin.soft_delete.field'))
-                    : sprintf(" AND %s.%s = %s", $alias, config('admin.soft_delete.field'), config('admin.soft_delete.default'));
-                $join[1] = $join_where;
-            }
-        }
-        return $join;
-    }
-}
-
-if (!function_exists('data_auth_join')) {
-
-    /**
-     * 数据权限的join处理
-     * @param array $join
-     * @return array
-     * @throws \app\common\SdException
-     */
-    function data_auth_join(array $join)
-    {
-        if (env('APP.DATA_AUTH')){
-            $tables = explode('=', preg_replace(['/\sas\s/', '/\s+/',], ['=', ''], $join[0]));
-            $alias  = empty($tables[1]) ? $tables[0] : $tables[1];
-
-            $primary = strtr(config('admin.primary'), ['{table}' => $tables[0]]);
-            if ($where   = \app\common\BaseModel::dataAuthWhere($tables[0])){
-                $join[1] .= " AND {$alias}.$primary IN ($where)";
-            }
-        }
-
-        return $join;
-    }
-}
-
-
-
-
-if (!function_exists('get_model_schema')) {
-    /**
-     * 获取模型的schema
-     * @param $model
-     * @return array|mixed
-     * @author chenlong <vip_chenlong@163.com>
-     */
-    function get_model_schema($model)
-    {
-        $object = $model;
-        if (is_string($model)) {
-            $model = in_array($model, ['Administrators', 'Log', 'Power', 'Role', 'Route', 'Resource', 'DataAuth', 'AdministratorsRole'])
-                ? '\\app\\admin\\model\\system\\' . $model
-                : '\\app\\admin\\model\\' . $model;
-            $object = class_exists($model) ? new $model : null;
-        }
-
-        return $object ? (function () {
-            return $this->schema;
-        })->call($object) : [];
-    }
-}
-
-
 if (!function_exists('admin_session')) {
     /**
      * 后台管理员session获取
@@ -206,49 +101,6 @@ if (!function_exists('admin_session')) {
     function admin_session($key = null, $default = null)
     {
         return \app\admin\model\system\Administrators::getSession($key) ?? $default;
-    }
-}
-
-if (!function_exists('soft_delete_query')) {
-    /**
-     * @param \think\db\Query|string $object
-     * @return \think\db\Query
-     * @author chenlong <vip_chenlong@163.com>
-     */
-    function soft_delete_query($object)
-    {
-        if (is_string($object)) $object = new $object();
-
-        if(!$object->getOptions('alias') ){
-            $object = $object->alias($object->getTable());
-        }
-
-        $soft_handle_call = function () {
-            $soft_delete_field = config('admin.soft_delete.field');
-            $soft_delete_default = config('admin.soft_delete.default');
-            $table_alias = $this->getOptions('alias')
-                ? $this->getOptions('alias')[$this->getTable()]
-                : $this->getTable();
-            $option = [];
-
-            foreach ($this->getOptions('join') ?: [] as $item) {
-                $table = parse_name(strtr(array_keys($item[0])[0], [env('DATABASE.PREFIX') => '']), 1);
-                $alias = array_values($item[0])[0];
-                if (in_array(config('admin.soft_delete.field'), array_keys(get_model_schema($table)))) {
-                    $item[2] .= config('admin.soft_delete.default') === null
-                        ? sprintf(" AND `{$alias}`.`%s` IS NULL", $soft_delete_field)
-                        : sprintf(" AND `{$alias}`.`%s` = %s", $soft_delete_field, $soft_delete_default);
-                }
-                $option[] = $item;
-            }
-            $this->setOption('join', $option);
-
-            $this->where($table_alias . '.' . $soft_delete_field, $soft_delete_default);
-        };
-
-        $soft_handle_call->call($object);
-
-        return $object;
     }
 }
 
@@ -356,5 +208,19 @@ if (!function_exists('get_class_attr')) {
         return $default;
     }
 
+}
+
+if (!function_exists('data_filter')) {
+
+    /**
+     * 数据过滤
+     * @param array $data
+     * @return array
+     */
+    function data_filter(array $data): array
+    {
+        $data = array_map('trim', $data);
+        return array_filter($data, fn($v) => !empty($v) || $v === 0);
+    }
 }
 

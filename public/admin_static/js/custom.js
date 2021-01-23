@@ -69,7 +69,10 @@ custom = {
             , title: title
             , moveOut: true
             , skin: 'demo-class'
-            , id: 'sc-iframe'
+            , zIndex: layer.zIndex //重点1
+            ,success: function(layero){
+                layer.setTop(layero); //重点2
+            }
         };
 
         if (param && typeof param == 'object') {
