@@ -65,7 +65,10 @@
 <div class="layui-card">
     <div class="layui-card-header"><?=$page_name ?? lang("List")?></div>
     <div class="layui-card-body">
-        <?=html_entity_decode($search ?? '')?>
+        <?php /** @var  \sdModule\layui\defaultForm\Form $search */?>
+        <form class="layui-form <?= $search->getSkin() ?>" action="" lay-filter="sd">
+            <?=$search->getHtml(); /** 加载的表单html */ ?>
+        </form>
         <table class="layui-hide" id="sc" lay-filter="sc"></table>
     </div>
 </div>
@@ -83,12 +86,6 @@
             <i class="layui-icon layui-icon-search"></i><?= lang('more search') ?>
         </button>
     <?php } ?>
-    <?php if (!empty($quick_search_word)){?>
-        <div class="layui-inline">
-            <input style="height: 30px;" id="quick-search" type="text" placeholder="<?= lang($quick_search_word) ?>" autocomplete='off' class="layui-input">
-        </div>
-    <?php }?>
-
 </script>
 
 <!-- table_line 模板-->
@@ -195,24 +192,7 @@
         }
     });
 
-    <?php if (!empty($quick_search_word)){ /** 有快捷搜索的时候 */ ?>
-    document.onkeyup = (e) => {
-        if (e.key === 'Enter') {
-            let val = $('#quick-search').val();
-            table.reload('sc', {
-                where: {
-                    quick_search: val
-                }
-                , page: {
-                    curr: 1
-                }
-            });
-            $('#quick-search').val(val).focus();
-        }
-    };
-    <?php } ?>
-
-    form.on('submit(search)', function (object) {
+    form.on('submit(sc-form)', function (object) {
         table.reload('sc', {
             where: {
                 search: object.field
@@ -263,5 +243,6 @@
         });
     })();
 
+    <?= $search->getUnitJs();?>
 </script>
 {/block}

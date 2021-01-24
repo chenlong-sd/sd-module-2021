@@ -48,6 +48,7 @@ class Ciphertext
      * @param string $key 不传则使用默认的
      * @param string $method 加密方式
      * @return array|bool|string
+     * @throws \Exception
      */
     public function encrypt(string $text, string $key = self::KEY, string $method = self::DEFAULT_METHOD)
     {
@@ -60,7 +61,7 @@ class Ciphertext
 
             return implode('.', [$ciphertext, base64_encode($iv), empty($tag) ? '' : base64_encode($tag)]);
         }
-        return false;
+        throw new \Exception("加密方式【{$method}】不存在，加密方式请查看函数： penssl_get_cipher_methods()");
     }
 
     /**
@@ -81,7 +82,7 @@ class Ciphertext
                 ? openssl_decrypt($ciphertext, $method, $key, $options = 0, $iv, $tag)
                 : openssl_decrypt($ciphertext, $method, $key, $options = 0, $iv);
         }
-        return false;
+        throw new \Exception("解密方式【{$method}】不存在，加密方式请查看函数： penssl_get_cipher_methods()");
     }
 
     /**

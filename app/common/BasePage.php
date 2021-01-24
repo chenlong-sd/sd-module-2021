@@ -9,7 +9,6 @@ namespace app\common;
 use app\common\traits\Lang;
 use sdModule\layui\defaultForm\Form as DefaultForm;
 use sdModule\layui\TablePage;
-use sdModule\layuiSearch\Form;
 
 /**
  * Class BasePage
@@ -54,17 +53,9 @@ abstract class BasePage
      * 创建搜索表单的数据
      * @return string
      */
-    public function searchFormData():string
+    public function searchFormData(): DefaultForm
     {
-        return Form::CreateHTML([]);
-    }
-
-    /**
-     * @return array 设置快捷搜索
-     */
-    public function setQuickSearchField():array
-    {
-        return [];
+        return DefaultForm::create([])->complete();
     }
 
 }

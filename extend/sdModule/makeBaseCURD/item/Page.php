@@ -8,7 +8,6 @@ namespace sdModule\makeBaseCURD\item;
 
 
 use sdModule\layui\defaultForm\FormData;
-use sdModule\layuiSearch\generate\TimeRange;
 use sdModule\layuiSearch\SearchForm;
 use sdModule\makeBaseCURD\CURD;
 
@@ -44,6 +43,7 @@ class Page implements Item
         $this->formData();
         $this->tablePage();
         $this->searchHandle();
+        $this->replace['search_form'][] = "FormData::custom('', '', DefaultForm::searchSubmit())";
     }
 
     /**
@@ -64,6 +64,10 @@ class Page implements Item
     {
         $replace = [];
         foreach ($this->replace as $key => $value) {
+            if ($key === 'search_form') {
+                $replace["//=={{$key}}==//"] = implode($this->CURD->indentation(4), $value);
+                continue;
+            }
             $replace["//=={{$key}}==//"] = is_array($value)
                 ? implode($key  === "use" ? "\r\n" : $this->CURD->indentation(3), $value)
                 : $value;
@@ -139,7 +143,6 @@ class Page implements Item
             if (empty($item['show_type'])) {
                 continue;
             }
-            $this->quickSearch($field, $item);
             if(is_string($item['join']) && strpos($item['join'], ':') !== false
                 && strpos($item['join'], '=') !== false) {
 
@@ -151,30 +154,6 @@ class Page implements Item
             $this->replace['table_page'][] = "TableAux::column('{$field}', '{$item['label']}'{$image}),";
         }
     }
-
-    /**
-     * 快捷搜索的创建
-     * @param string $field
-     * @param array $datum
-     */
-    private function quickSearch(string $field, array $datum)
-    {
-        if (empty($datum['quick_search'])) {
-            return;
-        }
-        if (!empty($datum['join']) && is_string($datum['join']) && strpos($datum['join'], ':') !== false){
-            $table = explode(':', $datum['join'])[0] ?: $this->CURD->table;
-            $field = explode('=', $datum['join'])[1];
-            $this->replace['quick_search'][$field] = "'{$table}.{$field}%%' => '{$datum['label']}',";
-
-        }elseif (in_array($this->CURD->field_info[$field]['data_type'], ['int', 'tinyint', 'smallint', 'bigint']) ) {
-            $this->replace['quick_search'][$field] = "'$field' => '{$datum['label']}',";
-
-        }else{
-            $this->replace['quick_search'][$field] = "'$field%%' => '{$datum['label']}',";
-        }
-    }
-
 
     /**
      * 搜索处理
@@ -233,15 +212,8 @@ class Page implements Item
      */
     private function timeRangeSearch(string $field, string $placeholder, string $alias)
     {
-        $this->useAdd(TimeRange::class);
-
-        $rangeSign = [
-            'date'      => 'TimeRange::TYPE_DATE',
-            'datetime'  => 'TimeRange::TYPE_DATETIME'
-        ];
-
-        $replace = [$alias, $field, $placeholder, $this->searchLabel(), $rangeSign[$this->CURD->field_info[$field]['data_type']]];
-        $this->replace['search_form'][] = sprintf("SearchForm::TimeRange(\"%s.%s_~\", \"%s\")%s->html(%s),", ...$replace);
+        $replace = [$alias, $field, $this->CURD->field_info[$field]['data_type'], $placeholder];
+        $this->replace['search_form'][] = sprintf("FormData::time(\"%s.%s_~\", \"\", '%s', '~', '%s'),", ...$replace);
     }
 
     /**
@@ -252,8 +224,8 @@ class Page implements Item
      */
     private function selectSearch(string $field, string $placeholder, $data, string $alias)
     {
-        $replace = [$alias, $field, $placeholder, $this->searchLabel(), $data];
-        $this->replace['search_form'][] = sprintf("SearchForm::Select('%s.%s', \"%s\")%s->html(%s),", ...$replace);
+        $replace = [$alias, $field, $data, $placeholder];
+        $this->replace['search_form'][] = sprintf("FormData::Select('%s.%s', \"\", %s, '%s'),", ...$replace);
     }
 
     /**
@@ -263,8 +235,8 @@ class Page implements Item
      */
     private function Text(string $field, string $placeholder, string $alias)
     {
-        $replace = [$alias, $field, $placeholder, $this->searchLabel()];
-        $this->replace['search_form'][] .= sprintf("SearchForm::Text('%s.%s', \"%s\")%s->html(),", ...$replace);
+        $replace = [$alias, $field, $placeholder];
+        $this->replace['search_form'][] .= sprintf("FormData::Text('%s.%s', \"\", '%s'),", ...$replace);
     }
 
     /**
@@ -277,15 +249,6 @@ class Page implements Item
         $this->Text($field .'%%', $placeholder, $alias);
     }
 
-
-    /**
-     * 搜索是否需要label
-     * @return string
-     */
-    private function searchLabel()
-    {
-        return $this->CURD->config('list_search_label') ? "->label(true)" : "";
-    }
 
     /**
      * 多属性字段获取

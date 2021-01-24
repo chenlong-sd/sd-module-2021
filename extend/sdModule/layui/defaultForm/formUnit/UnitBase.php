@@ -103,4 +103,12 @@ abstract class UnitBase
      * @return mixed
      */
     abstract public function getHtml(string $attr);
+
+    /**
+     * @return string
+     */
+    protected function nameReplace(): string
+    {
+        return strtr($this->name, ['>' => '', '%' => '', '~'  => '', '<' => '', '=' => '', '.' => '']);
+    }
 }

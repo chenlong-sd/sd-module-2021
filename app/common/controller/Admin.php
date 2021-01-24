@@ -148,21 +148,5 @@ class Admin extends BaseController
         $vars['primary'] = $this->primary;
         return view($template, $vars);
     }
-
-    /**
-     * 快捷搜索的文本提示
-     * @return string
-     */
-    private function quickWord()
-    {
-        if (!$word = $this->getPage()->setQuickSearchField()) {
-            return '';
-        }
-
-        $word = array_values($word);
-
-        return $word[0] . (empty($word[1]) ? '' : lang('or') . $word[1]);
-    }
-
 }
 

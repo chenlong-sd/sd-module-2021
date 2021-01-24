@@ -17,7 +17,7 @@ class Time extends UnitBase
     {
         $placeholder = $this->placeholder ?: $this->lang('please enter');
         return <<<HTML
-                <input type="text" id="{$this->name}-sc" {$attr} name="{$this->name}" placeholder="{$placeholder}" value='' autocomplete="off" class="layui-input">
+                <input type="text" id="{$this->nameReplace()}-sc" {$attr} name="{$this->name}" placeholder="{$placeholder}" value='' autocomplete="off" class="layui-input">
 HTML;
     }
 
@@ -33,7 +33,7 @@ HTML;
 
         return <<<JS
         layui.laydate.render({
-            elem: '#{$this->name}-sc'
+            elem: '#{$this->nameReplace()}-sc'
             ,type: '{$type}'
             ,range: {$range}
         });

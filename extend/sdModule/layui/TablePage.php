@@ -141,26 +141,6 @@ class TablePage
         return $this;
     }
 
-    /**
-     * 表格列数据
-     * @param string|array $field 字段,或数组（直接返回数组信息
-     * @param string $title 字段label
-     * @param string|\Closure $templet 模板id或匿名函数返回js代码
-     * @param array $params 有以下参数， 详情参考 <https://www.layui.com/doc/modules/table.html#cols>
-     * width，minWidth，type，LAY_CHECKED，fixed，hide，totalRow，totalRowText，sort，unresize，edit，style，event
-     * align，colspan，rowspan，templet，toolbar
-     * @deprecated
-     * @uses \sdModule\layui\tablePage\TableAux::column()
-     * @return array
-     */
-    public static function column($field, $title = '', $templet = '', array $params = [])
-    {
-        if (is_array($field)) {
-            return $field;
-        }
-
-        return array_merge(compact('field', 'title', 'templet'), $params);
-    }
 
     /**
      * 获取字段信息
@@ -221,16 +201,6 @@ class TablePage
     public function getSize(): string
     {
         return $this->size;
-    }
-
-    /**
-     * 设置事件
-     * @deprecated
-     * @param array $event
-     */
-    public function setEvent(array $event): void
-    {
-        $this->tool_event = $event;
     }
 
     /**
@@ -321,15 +291,6 @@ class TablePage
         return $this;
     }
 
-    /**
-     * 设置头部事件
-     * @deprecated
-     * @param array $event
-     */
-    public function setBarEvent(array $event)
-    {
-        $this->toolbar_event = $event;
-    }
 
     /**
      * 设置事件html
@@ -660,92 +621,6 @@ JS;
             'update' => TableAux::openPage([$update_url], $this->lang('edit')),
             'delete' => "del(obj.data[primary]);"
         ];
-    }
-
-    /**
-     * 打开页面的js代码
-     * @param string|array $url
-     * @param string $title
-     * @param array $config
-     * @param bool $is_parent
-     * @return string
-     * @deprecated
-     * @uses \sdModule\layui\tablePage\TableAux::openPage()
-     * @throws \app\common\SdException
-     */
-    public function openPage($url, string $title, array $config = [], $is_parent = false)
-    {
-        return TableAux::openPage($url, $title, $config, $is_parent);
-    }
-
-    /**
-     * 跳转
-     * @param $url
-     * @return string
-     * @throws \app\common\SdException
-     * @deprecated
-     * @uses \sdModule\layui\tablePage\TableAux::jump()
-     */
-    public function jump(string $url)
-    {
-        return TableAux::jump($url);
-    }
-
-    /**
-     * 打开新的tab标签
-     * @param string|array $url
-     * @param string $title
-     * @return string
-     * @deprecated
-     * @throws \app\common\SdException
-     * @uses \sdModule\layui\tablePage\TableAux::openTabs()
-     */
-    public function openTabsPage($url, string $title)
-    {
-        return TableAux::openTabs($url, $title);
-    }
-
-    /**
-     * ajax请求的js代码
-     * @param string $url
-     * @param string $type
-     * @param string $tip
-     * @param string $title
-     * @return string
-     * @deprecated
-     * @uses \sdModule\layui\tablePage\TableAux::ajax()
-     * @throws \app\common\SdException
-     */
-    public function ajax(string $url, $type = 'get', string $tip = '' ,string $title = '警告')
-    {
-        return TableAux::ajax($url, $type, $tip, $title);
-    }
-
-    /**
-     * ajax请求的js代码
-     * @param string $url
-     * @param string $type
-     * @param string $tip
-     * @return string
-     * @deprecated
-     * @uses \sdModule\layui\tablePage\TableAux::batchAjax()
-     * @throws \app\common\SdException
-     */
-    public function batchAjax(string $url, $type = 'get', string $tip = '')
-    {
-        return TableAux::batchAjax($url, $type, $tip);
-    }
-
-    /**
-     * 增加搜索条件
-     * @param array $search
-     * @deprecated
-     * @uses \sdModule\layui\tablePage\TableAux::searchWhere()
-     * @return string
-     */
-    public function searchWhere(array $search)
-    {
-        return TableAux::searchWhere($search);
     }
 
     /**

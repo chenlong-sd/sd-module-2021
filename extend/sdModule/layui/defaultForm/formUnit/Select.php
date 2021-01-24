@@ -15,7 +15,7 @@ class Select extends UnitBase
      */
     public function getHtml(string $attr)
     {
-        $option = '<option></option>';
+        $option = "<option value=''>{$this->placeholder}</option>";
         foreach ($this->select_data as $value => $label) {
             $option .= "<option value='{$value}' {$this->getCheck($value)}>{$label}</option>";
         }

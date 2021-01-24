@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-01-22 13:16:38
+ * Date: 2021-01-24 21:34:08
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -16,7 +16,6 @@ use sdModule\layui\defaultForm\FormData;
 use app\admin\model\Test as MyModel;
 use app\admin\model\system\Administrators;
 use sdModule\layuiSearch\SearchForm;
-use sdModule\layuiSearch\generate\TimeRange;
 
 
 /**
@@ -41,8 +40,6 @@ class Test extends BasePage
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
             TableAux::column('create_time', '创建时间'),
-            TableAux::column('update_time', '修改时间'),
-            TableAux::column('delete_time', '删除时间'),
         ]);
 
         $table->setHandleWidth(150);
@@ -87,22 +84,25 @@ class Test extends BasePage
 
     /**
      * 创建搜索表单的数据
-     * @return string
+     * @return DefaultForm
+     * @throws \ReflectionException
+     * @throws \app\common\SdException
      */
-    public function searchFormData():string
+    public function searchFormData(): DefaultForm
     {
         $form_data = [
-            SearchForm::Text('i.id', "ID")->label(true)->html(),
-            SearchForm::Text('i.title%%', "标题")->label(true)->html(),
-            SearchForm::Text('i.intro%%', "简介")->label(true)->html(),
-            SearchForm::Select('i.status', "状态")->label(true)->html(MyModel::getStatusSc(false)),
-            SearchForm::Text('administrators.name%%', "管理员")->label(true)->html(),
-            SearchForm::Text('test.title%%', "上级")->label(true)->html(),
-            SearchForm::TimeRange("i.create_time_~", "创建时间")->label(true)->html(TimeRange::TYPE_DATETIME),
-            SearchForm::TimeRange("i.update_time_~", "修改时间")->label(true)->html(TimeRange::TYPE_DATETIME),
-            SearchForm::Text('i.delete_time', "删除时间")->label(true)->html(),
+            FormData::build(
+                FormData::Text('i.id', "", 'ID'),
+                FormData::Text('i.title%%', "", '标题'),
+                FormData::Text('i.intro%%', "", '简介'),
+                FormData::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
+                FormData::Text('administrators.name%%', "", '管理员'),
+                FormData::Text('test.title%%', "", '上级'),
+                FormData::time("i.create_time_~", "", 'datetime', '~', '创建时间'),
+                FormData::custom('', '', DefaultForm::searchSubmit())
+            )
         ];
-        return Form::CreateHTML($form_data);
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 
 }

@@ -1,8 +1,18 @@
 # sd-module 外包快速开发
-#####version 3.0
+#####`version 3.1` `php version 7.4~`
+
+> ### 3.1 更新内容
+> 
+> 1.取消快捷搜功能
+> 
+> 2.软删除取消自定义的逻辑，采用TP自带的软删除，所有查询都不需要考虑软删除了
+> 
+> 3.数据列表查询方式更新,取消采用trait，采取依赖注入的方式，避免所有请求都加载对应内容
+> 
+> 4.启用全部TablePage废弃的方法函数
 
 
-##数据库推荐规则
+##数据库规则
 * 主键：`id` 类型`int`
 * 创建时间：`create_time` 类型`datetime`
 * 修改时间：`update_time` 类型`datetime`
@@ -27,34 +37,27 @@
 
 ##listData 数据调用
 ```php
-    public function listData(){}
-```
+    use \app\common\service\BackstageListsService;
+    use \app\common\controller\Admin;
+    
+    class Test extends Admin
+    {
+        public function listData(BackstageListsService $service)
+        {
+            // 新版所有查询自带软删除，无需无需考虑了，放心写查询代码，提示： 必须为模型查询
+            $Model = $this->getModel()->alias('i')
+                ->join('user u', 'u.id = i.id')
+                ->field('i.*,u.name');
+                
+            return $service
+              ->setModel($Model)                          // 设置查询模型
+              ->setListSearchParamHandle(fn()=>1)         // 设置搜索之前参数处理，回调需返回新的参数
+              ->setPagination(true)                       // 设置是否分页
+              ->setReturnHandle(fn()=>1)                  // 设置返回值处理
+              ->getListsData(true);                       // 获取返回的数据,传 true 查看sql
+        }
+    }
 
-```
- *    ->setAlias(string $alias)       设置表别名
- *    ->setSort(string $field, string $mode = 'desc')         设置排序字段
- *    ->setEach(callable $callback)   设置数据处理
- *    ->setMore(callable $callback)   设置更多tp自带的数据库操作，函数有一个参数为当前查询的model
- *    ->setJoin(array $join)          设置关联,二维数组
- *    ->setWith($whit)                设置TP关联
- *    ->setField(string $field)       设置查询字段
- *    ->setWhere(array $where)        设置查询条件
- *    ->setGroup(string $group)       设置分组条件
- *    ->setCustomReturn($return)      设置返回格式
-
-```
-
-例子：
-```php
-    return $this->setJoin([
-        ['role r', 'r.id = i.role_id']
-    ])->setField('i.id,i.name,i.account,i.status,r.role,i.lately_time,i.create_time')
-        ->setWhere(['r.administrators_id' => admin_session('id')])
-        ->setSort('i,id', 'desc') 
-        ->setMore(function($query){
-            $query->field('member');
-        })
-        ->listsRequest();
 ```
 
 
@@ -235,8 +238,6 @@ class test
         ]);
 
         $table->setHandleWidth(300); // 设置行操作栏宽度
-        $table->setEvent(['update', 'delete', 'detail', 'incd']);// 设置行操作事件
-        $table->setBarEvent(['create', 'delete',]);// 设置表格头部操作事件
         $table->setEventWhere('create', 'd.status == 1', true); // 设置行事件的显示与隐藏
         $table->addEvent('event'); // 添加事件
         $table->addEvent(['event', 'event1']); // 添添加多个事件

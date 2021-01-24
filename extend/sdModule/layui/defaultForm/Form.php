@@ -73,6 +73,11 @@ class Form
     private string $skin = '';
 
     /**
+     * @var bool 不需要submit
+     */
+    private bool $noSubmit = false;
+
+    /**
      * 创建表单
      * @param array $form_data  创建表单数据
      * @param string $scene     场景值
@@ -243,7 +248,7 @@ class Form
         $common_attr = $unit_item->get('input_attr')['-'] ?? '' . ($unit_item->get('input_attr')['*'] ?? '');
         $attr = implode(' ', [$attr, $common_attr]);
 
-        if ($build_index){
+        if ($build_index !== null){
             if (is_string($build_index)){
                 return [$name => $unit->getHtml($attr)];
             }
@@ -297,7 +302,7 @@ class Form
             $html .= sprintf(self::ITEM_TEMPLATE, $html_item);
         }
 
-        return $html . sprintf(self::SUBMIT_TEMPLATE, lang('submit'), lang('close'));
+        return $this->noSubmit ? $html : $html . sprintf(self::SUBMIT_TEMPLATE, lang('submit'), lang('close'));
     }
 
     /**
@@ -340,6 +345,25 @@ class Form
     }
 
     /**
+     * 设置没有提交
+     * @return $this
+     */
+    public function setNoSubmit(): Form
+    {
+        $this->noSubmit = true;
+        return $this;
+    }
+
+
+    /**
+     * 搜索的提交html
+     */
+    public static function searchSubmit():string
+    {
+        return '<button  class="layui-btn" lay-submit lay-filter="sc-form">搜索</button>
+                <button class="layui-btn layui-btn-normal" type="reset">重置</button>';
+    }
+    /**
      * 获取js代码
      * @return string
      */
@@ -347,9 +371,18 @@ class Form
     {
         return implode("\n\r", [
             implode("\n\r", $this->js),
-            $this->getDefault(),
+            $this->getDefaultValueJs(),
             $this->submitJs()
         ]);
+    }
+
+    /**
+     * 获取表单单元的js
+     * @return string
+     */
+    public function getUnitJs()
+    {
+        return implode("\n\r", $this->js);
     }
 
     /**
@@ -365,7 +398,7 @@ class Form
      * 表单默认值代码
      * @return false|string
      */
-    private function getDefault()
+    public function getDefaultValueJs()
     {
         $default = json_encode($this->default_data, JSON_UNESCAPED_UNICODE);
         return <<<JS

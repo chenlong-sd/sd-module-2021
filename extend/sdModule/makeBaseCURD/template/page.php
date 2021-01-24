@@ -64,14 +64,18 @@ class //=={Table}==// extends BasePage
 
     /**
      * 创建搜索表单的数据
-     * @return string
+     * @return DefaultForm
+     * @throws \ReflectionException
+     * @throws \app\common\SdException
      */
-    public function searchFormData():string
+    public function searchFormData(): DefaultForm
     {
         $form_data = [
-            //=={search_form}==//
+            FormData::build(
+                //=={search_form}==//
+            )
         ];
-        return Form::CreateHTML($form_data);
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 
 }
