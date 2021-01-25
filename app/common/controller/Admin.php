@@ -36,7 +36,7 @@ use think\Model;
 class Admin extends BaseController
 {
     use DataWrite, AdminMiddleware,
-        DataDelete, RequestMerge, CallNotExistMethod, Lang;
+        DataDelete, RequestMerge, Lang;
 
     /** @var string 带命名空间的模型名，默认为当前控制器对应的模型 */
     private string $model = '';
@@ -147,6 +147,21 @@ class Admin extends BaseController
     {
         $vars['primary'] = $this->primary;
         return view($template, $vars);
+    }
+
+    /**
+     * @param $method
+     * @param $vars
+     * @return $this|array|\think\response\View
+     */
+    public function __call($method, $vars)
+    {
+        if (substr($method, 0, 3) === 'set') {
+            $property = parse_name(substr($method, 3), 0, false);
+            $this->$property = $vars[0] ?? $vars;
+            return $this;
+        }
+        return $this->fetch($method, $vars);
     }
 }
 

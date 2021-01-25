@@ -159,6 +159,7 @@ class Install
         $replace[':SD_jwt_secret']      = Sc::binarySystem()->notAppointTo(time(), $range_arr[1]);
         $replace[':SD_jwt_refresh']     = Sc::binarySystem()->notAppointTo(time(), $range_arr[2]);
         $replace[':SD__upload_dir']     = 'upload_resource';
+        $replace[':SD__data_back_up_link'] = realpath(App::getRootPath() . '/dataBackUp');
 
         $content = strtr(file_get_contents($this->getEnvFile()), $replace);
         $file    = strtr($this->getEnvFile(), ['.example.env' => '.env']);

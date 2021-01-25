@@ -17,10 +17,13 @@ use app\common\BaseModel;
 use app\common\controller\Admin;
 use app\middleware\admin\PowerAuth;
 use app\common\ResponseJson;
+use sdModule\common\helper\Md;
+use sdModule\common\helper\Md2;
 use sdModule\common\Sc;
 use sdModule\layui\defaultForm\Form;
 use sdModule\layui\defaultForm\FormData;
 use sdModule\layui\Layui;
+use think\facade\App;
 use think\facade\Db;
 use think\Request;
 

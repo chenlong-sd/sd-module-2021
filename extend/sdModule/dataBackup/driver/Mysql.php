@@ -21,7 +21,7 @@ class Mysql implements Driver
 
     private array $tables;
 
-    private int $batch = 500;
+    private int $type;
 
     const INSERT = "INSERT INTO `%s` VALUES %s;\r\n";
 
@@ -32,50 +32,54 @@ class Mysql implements Driver
      */
     public function __construct(\PDO $PDO, int $type)
     {
-        $this->PDO = $PDO;
+        $this->PDO    = $PDO;
+        $this->type   = $type;
         $this->tables = $this->PDO->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     /**
      * 备份
+     * @param null $table
      * @return mixed|void
      */
-    public function backup()
+    public function backup($table = null)
     {
         $time = date('Y-m-d H:i:s');
         Backup::backupFileWrite("/** 数据备份时间  {$time} */\r\n\r\n");
         Backup::outputTip('开始备份..');
-        Backup::outputTip("内存：" . ($start = memory_get_usage() / 8192) . '.开始备份..');
+        Backup::outputTip("内存消耗：" . ($start = memory_get_usage() / 8192) . '.开始备份..');
 
         $start_time = microtime(true);
         Backup::backupFileWrite("SET NAMES utf8mb4;\r\nSET FOREIGN_KEY_CHECKS = 0;\r\n\r\n");
-        $this->backupStructure();
+        foreach ($this->tables as $table_b) {
+            if ($table && $table != $table_b){
+                continue;
+            }
+            if ($this->type & Backup::STRUCTURE) {
+                $this->backupStructure($table_b);
+            }
+            if ($this->type & Backup::DATA) {
+                $this->backupData($table_b);
+            }
+        }
         Backup::backupFileWrite("SET FOREIGN_KEY_CHECKS = 0;\r\n");
-        Backup::outputTip("内存：" . ($start = memory_get_usage() / 8192) . ".备份结束,耗时:" . (microtime(true) - $start_time));
+        Backup::outputTip("备份结束,内存消耗：" . ($start = memory_get_usage() / 8192) . ".耗时:" . (microtime(true) - $start_time) . '秒');
     }
 
     /**
      * 数据结构备份
      */
-    private function backupStructure()
+    private function backupStructure(string $table)
     {
-        Backup::backupFileWrite("-- 数据备份开始 \r\n\r\n");
-        Backup::outputTip("数据备份开始..");
-        $start_time = microtime(true);
-
-        foreach ($this->tables as $table) {
-            Backup::backupFileWrite("-- {$table}数据结构备份开始 \r\n\r\n");
-            $data = $this->PDO->prepare("SHOW CREATE TABLE `$table`");
-            $data->execute();
-            $sql = $data->fetch(\PDO::FETCH_ASSOC)['Create Table'] . ";\r\n\r\n";
-            Backup::backupFileWrite("DROP TABLE IF EXISTS `{$table}`;\r\n");
-            Backup::backupFileWrite($sql);
-            Backup::backupFileWrite("-- {$table}数据结构备份完成 \r\n\r\n");
-            $this->backupData($table);
-        }
-
-        Backup::backupFileWrite("-- 数据份结束 \r\n\r\n");
-        Backup::outputTip("数据备份结束,耗时" . (microtime(true) - $start_time));
+        Backup::backupFileWrite("-- {$table}数据结构备份开始 \r\n\r\n");
+        Backup::outputTip("-- {$table}数据结构备份开始");
+        $data = $this->PDO->prepare("SHOW CREATE TABLE `$table`");
+        $data->execute();
+        $sql = $data->fetch(\PDO::FETCH_ASSOC)['Create Table'] . ";\r\n\r\n";
+        Backup::backupFileWrite("DROP TABLE IF EXISTS `{$table}`;\r\n");
+        Backup::backupFileWrite($sql);
+        Backup::backupFileWrite("-- {$table}数据结构备份完成 \r\n\r\n");
+        Backup::outputTip("-- {$table}数据结构备份完成");
     }
 
     /**
@@ -86,6 +90,10 @@ class Mysql implements Driver
     {
         Backup::backupFileWrite("-- {$table} 数据备份开始。\r\n\r\n");
         Backup::outputTip("{$table} 数据备份开始。请稍候....");
+        if (!($this->type & Backup::STRUCTURE)) {
+            Backup::backupFileWrite("TRUNCATE `{$table}`;\r\n\r\n");
+        }
+
         $start_time = microtime(true);
         $sql = $this->PDO->prepare("SELECT * FROM `{$table}`", [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
         $sql->execute();
@@ -93,6 +101,7 @@ class Mysql implements Driver
         $value = [];
         $length = $i = 0;
         while ($row = $sql->fetch(\PDO::FETCH_NUM)) {
+            $row = array_map('addslashes', $row);
             $value[] = "('" . implode("','", $row) . "')";
             if (!$length) {
                 $length = strlen(current($value));
@@ -109,15 +118,6 @@ class Mysql implements Driver
             fwrite($fd, sprintf(self::INSERT, $table, implode(',', $value)));
         }
         fclose($fd);
-        Backup::outputTip("{$table} 数据完成。耗时" . (microtime(true) - $start_time));
-    }
-
-    /**
-     * 输出提示
-     * @param string $print
-     */
-    private static function tipPrint(string $print)
-    {
-        dump($print);
+        Backup::outputTip("{$table} 数据备份完成。耗时" . (microtime(true) - $start_time) . "秒");
     }
 }

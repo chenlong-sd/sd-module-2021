@@ -148,10 +148,11 @@ HTML;
 
     public function file()
     {
-//        $backup = new Backup('127.0.0.1', 'epidemic');
+//        halt(2 & 1, 3 & 1);
+//        $backup = new Backup('127.0.0.1', 'golf');
         $backup = new Backup('127.0.0.1', 'golf_test');
-//        $backup->connect('root', 'Admin@123')->backup(Backup::ALL);
-        $backup->connect('root', 'Admin@123')->dataRecovery('database_20210124111917.sql');
+//        $backup->connect('root', 'Admin@123')->backup(Backup::DATA);
+        $backup->connect('root', 'Admin@123')->dataRecovery('database_20210125172709.sql');
     }
 
     public function wx()

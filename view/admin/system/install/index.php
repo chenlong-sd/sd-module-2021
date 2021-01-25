@@ -4,7 +4,6 @@
 
 <div class="layui-container layui-bg-gray">
     <div class="layui-row">
-        <div class="layui-col-md3"><br/></div>
         <div class="layui-col-md6">
             <h1 style="text-align: center;margin:50px 0;">数据库初始化</h1>
             <form class="layui-form" style="margin-bottom: 100px" action="">
@@ -71,7 +70,34 @@
                 </div>
             </form>
         </div>
-        <div class="layui-col-md3"></div>
+        <div class="layui-col-md6" style="padding: 20px">
+            <div class="layui-card">
+                <div class="layui-card-header">更新记录</div>
+                <div class="layui-card-body">
+                    <ul class="layui-timeline">
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">Version 3.1 </h3>
+                                <ul>
+                                    <li> 取消快捷搜功能。 </li>
+                                    <li> 软删除取消自定义的逻辑，采用TP自带的软删除，所有查询都不需要考虑软删除了。 </li>
+                                    <li> 数据列表查询方式更新,取消采用trait，采取依赖注入的方式，避免所有请求都加载对应内容。 </li>
+                                    <li> 弃用全部TablePage废弃的方法函数, 列表页的搜索表单采用 defaultForm 类，弃用原来的 searchForm 冗余模块</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
+                                <div class="layui-timeline-title">过去</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 

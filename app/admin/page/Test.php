@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-01-24 21:34:08
+ * Date: 2021-01-25 12:06:59
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -10,12 +10,10 @@ namespace app\admin\page;
 use app\common\BasePage;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layuiSearch\Form;
 use sdModule\layui\defaultForm\Form as DefaultForm;
 use sdModule\layui\defaultForm\FormData;
 use app\admin\model\Test as MyModel;
 use app\admin\model\system\Administrators;
-use sdModule\layuiSearch\SearchForm;
 
 
 /**

@@ -23,7 +23,9 @@ Route::post('file-upload', 'app\\SystemUpload@fileUpload');/** @see \app\SystemU
 Route::rule('login', 'system.Index/login', 'GET|POST'); /** @see \app\admin\controller\system\Index::login() */
 // 主页
 Route::get('home', 'system.Index/home');/** @see \app\admin\controller\system\Index::home() */
-// 主页
+// 数据权限的数据
 Route::get('data-auth', 'system.Index/dataAuth');/** @see \app\admin\controller\system\Index::dataAuth() */
 // 退出登陆
 Route::get('login-out', 'system.Index/loginOut');/** @see \app\admin\controller\system\Index::loginOut() */
+// 数据 备份
+Route::get('data-back-up', 'system.System/databaseBackUp');/** @see \app\admin\controller\system\System::databaseBackUp() */

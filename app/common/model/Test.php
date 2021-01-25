@@ -3,7 +3,7 @@
  *
  * Test.php
  * User: ChenLong
- * DateTime: 2021-01-22 13:16:37
+ * DateTime: 2021-01-25 12:06:59
  */
 
 
@@ -60,7 +60,7 @@ class Test extends BaseModel
         return $tag === true 
             ? [
                 '1' => Layui::tag()->green('正常'),
-                '2' => Layui::tag()->cyan('冻结'),
+                '2' => Layui::tag()->orange('冻结'),
                 
             ]
             : [

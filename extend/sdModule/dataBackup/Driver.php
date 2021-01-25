@@ -23,7 +23,8 @@ interface Driver
 
     /**
      * 备份操作
+     * @param null $table
      * @return mixed|void
      */
-    public function backup();
+    public function backup($table = null);
 }

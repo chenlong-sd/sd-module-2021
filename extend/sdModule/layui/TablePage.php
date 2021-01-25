@@ -559,7 +559,7 @@ JS;
         foreach ($this->$event_js_var as $event => $js){
             in_array($event, $this->$event_var) and $js_exit .= "{$event}(obj){{$js}},";
         }
-        return "{{$js_exit}};";
+        return "{{$js_exit}}";
     }
 
     /**

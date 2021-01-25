@@ -8,7 +8,6 @@ namespace sdModule\makeBaseCURD\item;
 
 
 use sdModule\layui\defaultForm\FormData;
-use sdModule\layuiSearch\SearchForm;
 use sdModule\makeBaseCURD\CURD;
 
 class Page implements Item
@@ -165,7 +164,6 @@ class Page implements Item
                 continue;
             }
 
-            $this->useAdd(SearchForm::class);
             if (!is_array($datum['join']) && strpos($datum['join'], ':') !== false
                 && strpos($datum['join'], '=') !== false) {
                 $this->search(explode('=', $datum['join'])[1], $datum, explode(':', $datum['join'])[0]);

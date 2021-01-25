@@ -66,7 +66,7 @@
     <div class="layui-card-header"><?=$page_name ?? lang("List")?></div>
     <div class="layui-card-body">
         <?php /** @var  \sdModule\layui\defaultForm\Form $search */?>
-        <form class="layui-form <?= $search->getSkin() ?>" action="" lay-filter="sd">
+        <form class="layui-form" action="" lay-filter="sd">
             <?=$search->getHtml(); /** 加载的表单html */ ?>
         </form>
         <table class="layui-hide" id="sc" lay-filter="sc"></table>
@@ -79,18 +79,11 @@
 {block name="custom"}
 <!-- table_head 模板-->
 <script id='table_head' type='text/html'>
-
     <?= $table->getToolbar(); ?>
-    <?php if (!empty($search)) { ?>
-        <button type="button" lay-event="search" class="layui-btn layui-btn-sm layui-btn-normal">
-            <i class="layui-icon layui-icon-search"></i><?= lang('more search') ?>
-        </button>
-    <?php } ?>
 </script>
 
 <!-- table_line 模板-->
 <script id='table_line' type='text/html'>
-
     <?= $table->getTool(); ?>
 </script>
 
@@ -98,9 +91,7 @@
     <?= $table->getContextHtml() ?>
 </script>
 
-<div id="sc-menu" style="display: none;min-width: 100px; position: absolute">
-
-</div>
+<div id="sc-menu" style="display: none;min-width: 100px; position: absolute"></div>
 
 {/block}
 
@@ -138,47 +129,31 @@
         table_render_data[x] = sys_config[x];
     }
 
-    let page_height_miscellaneous = table_render_data.size === 'lg' ? 250 : 235;
-
     /**
      * 表格渲染
      * */
     table.render(table_render_data);
 
-    let table_page = {}
+    let table_page = {
+        // toolbar事件定义
+        toolbar_event:<?= $table->getToolbarJs(); ?>,
+        // tool事件定义
+        tool_event:<?= $table->getToolJs(); ?>,
+    }
 
     /**
-     * toolbar事件定义
-     * @type {{search(): void, create(): void, del(): void}}
+     * toolbar 事件
      */
-    table_page.toolbar_event = <?= $table->getToolbarJs(); ?>
-        table_page.toolbar_event.search = function () {
-            let h = $('#search-sd').toggleClass('layui-hide').height();
-            h = h ? h + 30 : 0;
-            $('.layui-table-body.layui-table-main').css({
-                'maxHeight': (wh-page_height_miscellaneous-h) + 'px',
-            });
-        }
-
-    /**
-     * tool事件定义
-     * @type {{update(*): void, del(*): void}}
-     */
-    table_page.tool_event = <?= $table->getToolJs(); ?>
-
-        /**
-         * toolbar 事件
-         */
-        table.on('toolbar(sc)', function (obj) {
-            try {
-                if (!/^LAYTABLE_/.test(obj.event)){
-                    table_page.toolbar_event[obj.event](obj);
-                }
-            }catch (e) {
-                console.log(e)
-                notice.error('<?= lang("Operation is undefined") ?>');
+    table.on('toolbar(sc)', function (obj) {
+        try {
+            if (!/^LAYTABLE_/.test(obj.event)){
+                table_page.toolbar_event[obj.event](obj);
             }
-        });
+        }catch (e) {
+            console.log(e)
+            notice.error('<?= lang("Operation is undefined") ?>');
+        }
+    });
 
     /**
      * tool 事件
@@ -234,14 +209,6 @@
             });
         })
     }
-
-
-    (function (){
-        wh = $('html').css('height', '100%').height();
-        $('.layui-table-body.layui-table-main').css({
-            'maxHeight': (wh-page_height_miscellaneous) + 'px'
-        });
-    })();
 
     <?= $search->getUnitJs();?>
 </script>

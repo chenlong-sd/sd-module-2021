@@ -11,10 +11,8 @@ namespace app\common\traits\admin;
 
 use app\common\BasePage;
 use app\common\SdException;
-use app\common\service\BackstageListService;
 use app\common\service\BackstageListsService;
 use sdModule\common\Sc;
-use sdModule\layui\defaultForm\Form;
 use think\Request;
 
 /**
@@ -29,7 +27,7 @@ trait RequestMerge
     /**
      * 列表页数据
      * @return mixed
-     * @throws SdException
+     * @throws SdException|\ReflectionException
      */
     public function index()
     {
@@ -42,7 +40,7 @@ trait RequestMerge
 
     /**
      * @return array|\think\response\View
-     * @throws SdException
+     * @throws SdException|\ReflectionException
      */
     private function lists()
     {
@@ -51,10 +49,9 @@ trait RequestMerge
         }
 
         $assign = [
-            'search'            => $this->getPage()->searchFormData(),
-            'page_name'         => $this->getPage()->listPageName(),
-            'quick_search_word' => $this->quickWord(),
-            'table'             => $this->getPage()->getTablePageData()
+            'search'    => $this->getPage()->searchFormData(),
+            'page_name' => $this->getPage()->listPageName(),
+            'table'     => $this->getPage()->getTablePageData()
         ];
 
         return $this->fetch($this->getPage()->list_template, $assign);

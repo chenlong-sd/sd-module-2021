@@ -51,11 +51,13 @@ abstract class BasePage
 
     /**
      * 创建搜索表单的数据
-     * @return string
+     * @return DefaultForm
+     * @throws SdException
+     * @throws \ReflectionException
      */
     public function searchFormData(): DefaultForm
     {
-        return DefaultForm::create([])->complete();
+        return DefaultForm::create([])->setNoSubmit()->complete();
     }
 
 }

@@ -33,9 +33,9 @@ class TableAux
     /**
      * 打开页面
      * @param $url
-     * @param string $title
-     * @param array $config
-     * @param bool $is_parent
+     * @param string $title 标题，可用使用行数据的变量值， 例：编辑【{title}】, {title}会替换为该行的title字段
+     * @param array $config 弹窗的其他配置项，如宽高
+     * @param bool $is_parent 是否在负极
      * @return bool|string
      * @throws \app\common\SdException
      */
@@ -65,7 +65,7 @@ class TableAux
 
     /**
      * 路径参数处理
-     * @param array|string $url
+     * @param array|string $url, 是数组时，后面的参数从该行获取并拼接到链接中
      * @return string
      */
     private static function pageUrlHandle($url)
@@ -101,9 +101,9 @@ class TableAux
 
     /**
      * ajax请求的js代码
-     * @param string $url
-     * @param string $type
-     * @param string $tip
+     * @param string $url 路径
+     * @param string $type get|post
+     * @param string $tip 可用使用行数据的变量值， 例：编辑【{title}】, {title}会替换为该行的title字段
      * @param string $title
      * @return string
      * @throws \app\common\SdException
@@ -115,7 +115,7 @@ class TableAux
         $tip     = $tip ? self::pageTitleHandle($tip) : lang('Confirm this operation');
         $success = lang('success');
         return <<<JS
-        ScXHR.confirm('{$tip}',{title:"{$title}"}).ajax({url:"{$url}",type:"{$type}",data:obj.data,success(res){
+        ScXHR.confirm('{$tip}',{title:"{$title}",icon:3}).ajax({url:"{$url}",type:"{$type}",data:obj.data,success(res){
                 layer.close(window.load___);
                 if (res.code === 200) {
                     layNotice.success('{$success}');
@@ -147,7 +147,7 @@ JS;
         return <<<JS
 
        function aj(id) {
-          ScXHR.confirm("{$tip}").ajax({url:"{$url}",type:"{$type}",data:{id:id},success(res){
+          ScXHR.confirm("{$tip}",{icon:3}).ajax({url:"{$url}",type:"{$type}",data:{id:id},success(res){
                 layer.close(load);
                 if (res.code === 200) {
                     layNotice.success('{$success}');
