@@ -614,7 +614,7 @@ JS;
 
         $this->toolbar_event_js = [
             'create' => TableAux::openPage($create_url, $this->lang('add')),
-            'delete' => TableAux::batchDataHandle('del')
+            'delete' => TableAux::batchAjax(url('del'), 'post')->setConfig(['icon' => 3])->setTip('确认删除数据吗？')
         ];
 
         $this->tool_event_js = [

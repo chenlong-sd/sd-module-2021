@@ -95,26 +95,23 @@ class Role extends BasePage
      * @inheritDoc
      * @return string
      */
-    public function searchFormData():string
+    public function searchFormData():DefaultForm
     {
+
+
+
         $form_data = [
-            SearchForm::Text('i.id', "ID")->label(true)->html(),
-            SearchForm::Text('i.role%%', "角色名")->label(true)->html(),
-            SearchForm::Text('ip.role%%', "父级角色")->label(true)->html(),
-            SearchForm::Text('administrators.name%%', "创建者")->label(true)->html(),
-            SearchForm::TimeRange("i.create_time_~", "创建时间")->label(true)->html(TimeRange::TYPE_DATETIME),
+            FormData::build(
+                FormData::text('i.id', '', 'ID'),
+                FormData::text('i.role%%', '', '角色名'),
+                FormData::text('ip.role%%', '', '父级角色'),
+                FormData::text('administrators.name%%', '', '创建者'),
+                FormData::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
+                FormData::custom('', '', DefaultForm::searchSubmit())
+            )
         ];
 
-        return Form::CreateHTML($form_data);
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 
-    /**
-     * @return array
-     */
-    public function setQuickSearchField(): array
-    {
-        return [
-            'role%%' => lang('role.role')
-        ];
-    }
 }

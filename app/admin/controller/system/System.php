@@ -12,6 +12,7 @@ namespace app\admin\controller\system;
 use app\admin\model\system\Resource;
 use app\common\controller\Admin;
 use app\common\ResponseJson;
+use app\common\SdException;
 use app\common\service\BackstageListsService;
 use sdModule\dataBackup\Backup;
 use sdModule\layui\defaultForm\Form;
@@ -74,16 +75,19 @@ class System extends Admin
         $table->removeBarEvent(['create', 'delete']);
 
         $table->addBarEvent('all_back', Layui::button('备份全部数据', 'slider')->setEvent('all_back')->warm('sm'));
+        $table->setBarEventJs('all_back', TableAux::openPage(url('system.System/backUp'), '备份数据中')->setConfirm('确认备份数据吗？', ['icon' => 3]));
+
         $table->addBarEvent('see_all', Layui::button('查看备份数据', 'slider')->setEvent('see_all')->normal('sm'));
+        $table->setBarEventJs('see_all', TableAux::openPage(url('system.System/viewBackupFiles'), '已备份的文件'));
 
         $table->addEvent('see', Layui::button('备份文件', 'read')->setEvent('see')->normal('xs'));
+        $table->setEventJs('see', TableAux::openPage([url(  'system.System/viewBackupFiles'), 'name'], '【{comment}】已备份的文件'));
+
         $table->addEvent('back_up', Layui::button('开始备份', 'slider')->setEvent('back_up')->warm('xs'));
+        $table->setEventJs('back_up', TableAux::openPage([url('system.System/backUp'), 'name'], '备份{comment}数据中')->setConfirm('确认备份{comment}数据吗？', ['icon' => 3]));
+
         $table->setHandleWidth(220);
 
-        $table->setEventJs('back_up', TableAux::openPage([url('system.System/backUp'), 'name'], '备份{comment}数据中'));
-        $table->setBarEventJs('all_back', TableAux::openPage(url('system.System/backUp'), '备份数据中'));
-        $table->setBarEventJs('see_all', TableAux::openPage(url('system.System/viewBackupFiles'), '已备份的文件'));
-        $table->setEventJs('see', TableAux::openPage([url('system.System/viewBackupFiles'), 'name'], '【{comment}】已备份的文件'));
         return $this->fetch('common/list_page', [
             'table' => $table,
             'search' => Form::create([])->setNoSubmit()->complete(),
@@ -96,8 +100,7 @@ class System extends Admin
      */
     public function backUp()
     {
-        $backup = new Backup(env('DATABASE.HOSTNAME'), env('DATABASE.DATABASE'));
-        $backup->connect(env('DATABASE.USERNAME'), env('DATABASE.PASSWORD'));
+        $backup = $this->dataBackUpConnect();
         if (!$table = $this->request->get('name')) {
             $backup->backup(Backup::ALL);
         }else{
@@ -135,17 +138,41 @@ class System extends Admin
         $tables->addEvent('recover', Layui::button('恢复', 'time')->setEvent('recover')->normal('xs'));
         $tables->addEvent('del', Layui::button('删除', 'delete')->setEvent('del')->danger('xs'));
 
-        $tables->setEventJs('del', TableAux::ajax(url('system.System/backUpDelete?table=' . $this->request->get('name')), 'post'));
-
+        $tables->setEventJs('del', TableAux::ajax(url('system.System/backUpDelete?table=' . $this->request->get('name')), '确认删除数据？')
+            ->setConfig(['title' => '警告']));
+        $tables->setEventJs('recover', TableAux::openPage([url('system.System/dataRecover?table=' . $this->request->get('name')), 'filename'], '数据恢复中....')
+            ->setConfirm('确认恢复当前数据吗？', ['icon' => 3, 'title' => '提示']));
+        $tables->setConfig(['page' => false]);
         return $this->fetch('common/list_page', [
             'table' => $tables,
             'search' => Form::create([])->setNoSubmit()->complete(),
         ]);
     }
 
-    public function backUpDelete()
+    /**
+     * 数据恢复
+     * @param string $table
+     * @param string $filename
+     * @throws SdException
+     */
+    public function dataRecover(string $table = '', string $filename = '')
     {
-        halt($this->request->param());
+        $path   = $this->dataFileCheck($table, $filename);
+        $backup = $this->dataBackUpConnect();
+        $backup->dataRecovery($filename, $table);
+    }
+
+    /**
+     * 备份文件删除
+     * @param string $table
+     * @param string $filename
+     * @return \think\response\Json
+     * @throws SdException
+     */
+    public function backUpDelete(string $table = '', string $filename = '')
+    {
+        unlink($this->dataFileCheck($table, $filename));
+        return ResponseJson::success();
     }
 
     /**
@@ -169,6 +196,42 @@ class System extends Admin
         }
         closedir($handler);
         return $files;
+    }
+
+    /**
+     * 数据文件判断
+     * @param string $table
+     * @param string $filename
+     * @return false|string
+     * @throws SdException
+     */
+    private function dataFileCheck(string $table = '', string $filename = '')
+    {
+        if (!$filename) {
+            throw new SdException('文件错误');
+        }
+
+        $dir = \env('DATABASE.BACK_UP_LINK');
+        if ($table) {
+            $dir = implode(DIRECTORY_SEPARATOR, [$dir, 'table', $table]);
+        }
+        $path = realpath($dir . '/' . $filename);
+        if (!is_file($path)) {
+            throw new SdException('文件不存在');
+        }
+
+        return $path;
+    }
+
+    /**
+     * 数据备份的数据库连接
+     * @return Backup
+     */
+    private function dataBackUpConnect()
+    {
+        $backup = new Backup(env('DATABASE.HOSTNAME'), env('DATABASE.DATABASE'));
+        $backup->connect(env('DATABASE.USERNAME'), env('DATABASE.PASSWORD'));
+        return $backup;
     }
 
 }

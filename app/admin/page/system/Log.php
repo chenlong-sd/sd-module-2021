@@ -9,6 +9,7 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\defaultForm\Form as DefaultForm;
+use sdModule\layui\defaultForm\FormData;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layuiSearch\Form;
@@ -17,6 +18,10 @@ use sdModule\layuiSearch\SearchForm;
 
 class Log extends BasePage
 {
+    public function formData(string $scene, array $default_data = []): DefaultForm
+    {
+        // TODO: Implement formData() method.
+    }
 
     /**
      * 获取创建列表table的数据
@@ -42,17 +47,6 @@ class Log extends BasePage
     }
 
     /**
-     * 生成表单的数据
-     * @param string $scene
-     * @param array $default_data
-     * @return DefaultForm
-     */
-    public function formData(string $scene, array $default_data = []): DefaultForm
-    {
-        return DefaultForm::create([]);
-    }
-
-    /**
      * 列表页面的名字
      * @return string
      */
@@ -61,29 +55,19 @@ class Log extends BasePage
         return $this->lang('lists title');
     }
 
-    public function searchFormData():string
+    public function searchFormData():DefaultForm
     {
-        $data = [
-            SearchForm::Text("i.id", "ID")->label(true)->html(),
-            SearchForm::Select("i.method", lang('log.request type'))->label(true)->html(\app\admin\model\system\Log::getMethodSc(false)),
-            SearchForm::Text("route.title%%", lang('log.route title'))->label(true)->html(),
-            SearchForm::Text("administrators.name%%", lang('log.administrator'))->label(true)->html(),
-            SearchForm::Text("i.param%%", lang('log.request param'))->label(true)->html(),
-            SearchForm::Text("i.route%%", lang('log.request url'))->label(true)->html(),
-            SearchForm::TimeRange("i.create_time_~", lang('create_time'))->label(true)->html(TimeRange::TYPE_DATETIME),
-
+        $form_data = [
+            FormData::build(
+                FormData::text('i.id', '', 'ID'),
+                FormData::text('i.role%%', '', '角色名'),
+                FormData::text('ip.role%%', '', '父级角色'),
+                FormData::text('administrators.name%%', '', '创建者'),
+                FormData::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
+                FormData::custom('', '', DefaultForm::searchSubmit())
+            )
         ];
-        return Form::CreateHTML($data);
-    }
 
-    /**
-     * @return array
-     */
-    public function setQuickSearchField():array
-    {
-        return [
-            'route.title%%' => lang('route.route_title'),
-            'administrators.name%%' => lang('administrator.administrator')
-        ];
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 }

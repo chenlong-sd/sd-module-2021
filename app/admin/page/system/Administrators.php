@@ -118,22 +118,27 @@ class Administrators extends BasePage
     }
 
     /**
-     * @inheritDoc
-     * @return string
+     * @return DefaultForm
+     * @throws \ReflectionException
+     * @throws \app\common\SdException
      */
-    public function searchFormData():string
+    public function searchFormData():DefaultForm
     {
         $form_data = [
-            SearchForm::Text('account%%', lang('administrator.account'))->label(true)->html(),
-            SearchForm::Text('name%%', lang('administrator.administrator'))->label(true)->html(),
-            SearchForm::Text('r.role%%', lang('administrator.role'))->label(true)->html(),
-            SearchForm::Select('status', lang('administrator.status'))->label(true)->html([
-                AdministratorsM::STATUS_NORMAL => lang('normal'),
-                AdministratorsM::STATUS_FROZEN => lang('disable'),
-            ]),
+            FormData::build(
+                FormData::text('account%%', '', lang('administrator.account')),
+                FormData::text('name%%', '', lang('administrator.administrator')),
+                FormData::text('r.role%%', '', lang('administrator.role')),
+                FormData::select('r.role%%', '', [
+                    AdministratorsM::STATUS_NORMAL => lang('normal'),
+                    AdministratorsM::STATUS_FROZEN => lang('disable'),
+                ], lang('administrator.status')),
+                FormData::custom('', '', DefaultForm::searchSubmit())
+            ),
+
         ];
 
-        return Form::CreateHTML($form_data);
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 
     /**

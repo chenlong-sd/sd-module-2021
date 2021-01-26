@@ -36,7 +36,7 @@ class TableAux
      * @param string $title 标题，可用使用行数据的变量值， 例：编辑【{title}】, {title}会替换为该行的title字段
      * @param array $config 弹窗的其他配置项，如宽高
      * @param bool $is_parent 是否在负极
-     * @return bool|string
+     * @return false|OpenPage
      * @throws \app\common\SdException
      */
     public static function openPage($url, string $title, array $config = [], $is_parent = false)
@@ -46,21 +46,25 @@ class TableAux
         $window   = $is_parent ? 'parent' : '';
         $config   = json_encode($config, JSON_UNESCAPED_UNICODE);
 
-        return sprintf("custom.frame(%s, '%s', %s, %s);", $url_, self::pageTitleHandle($title), $config, $window);
+        $pageCode = sprintf("custom.frame(%s, '%s', %s, %s);", $url_, self::pageTitleHandle($title), $config, $window);
+
+        return new OpenPage($pageCode);
     }
 
     /**
      * 打开 tab 页面
      * @param $url
      * @param string $title
-     * @return bool|string
+     * @return false|OpenPage
      * @throws \app\common\SdException
      */
     public static function openTabs($url, string $title)
     {
         $url_ = self::pageUrlHandle($url);
         if (!access_control($url_)) return false;
-        return sprintf("custom.openTabsPage(%s + '&__sc_tab__=1', '%s')", $url_, self::pageTitleHandle($title));
+        $pageCode = sprintf("custom.openTabsPage(%s + '&__sc_tab__=1', '%s')", $url_, self::pageTitleHandle($title));
+
+        return new OpenPage($pageCode);
     }
 
     /**
@@ -90,7 +94,7 @@ class TableAux
      * @param string $title
      * @return string|string[]|null
      */
-    private static function pageTitleHandle(string $title)
+    public static function pageTitleHandle(string $title)
     {
         return preg_replace_callback('/\{\w+\}/', function ($v) {
             $var = strtr(current($v), ['{' => '', '}' => '']);
@@ -98,69 +102,34 @@ class TableAux
         }, $title);
     }
 
-
     /**
      * ajax请求的js代码
-     * @param string $url 路径
-     * @param string $type get|post
-     * @param string $tip 可用使用行数据的变量值， 例：编辑【{title}】, {title}会替换为该行的title字段
-     * @param string $title
-     * @return string
+     * @param string $url
+     * @param string $tip
+     * @param string $type
+     * @return false|Ajax
      * @throws \app\common\SdException
      */
-    public static function ajax(string $url, $type = 'get', string $tip = '' ,string $title = '警告')
+    public static function ajax(string $url, string $tip, string $type = 'get')
     {
         if (!access_control($url)) return false;
 
         $tip     = $tip ? self::pageTitleHandle($tip) : lang('Confirm this operation');
-        $success = lang('success');
-        return <<<JS
-        ScXHR.confirm('{$tip}',{title:"{$title}",icon:3}).ajax({url:"{$url}",type:"{$type}",data:obj.data,success(res){
-                layer.close(window.load___);
-                if (res.code === 200) {
-                    layNotice.success('{$success}');
-                    table.reload('sc');
-                } else {
-                    layNotice.warning(res.msg);
-                } 
-            }
-        });
-JS;
+        return (new Ajax($url))->method($type)->setConfig(['icon' => 3])->setTip($tip)->dataCode('obj.data');
     }
 
     /**
      * ajax请求的js代码
      * @param string $url
      * @param string $type
-     * @param string $tip
-     * @return string
+     * @return false|Ajax
      * @throws \app\common\SdException
      */
-    public static function batchAjax(string $url, $type = 'get', string $tip = '')
+    public static function batchAjax(string $url, $type = 'get')
     {
         if (!access_control($url)) return false;
 
-        $tip     = $tip ?: lang('Confirm this operation');
-        $success = lang('success');
-        $batch_handle = self::batchDataHandle('aj');
-
-        return <<<JS
-
-       function aj(id) {
-          ScXHR.confirm("{$tip}",{icon:3}).ajax({url:"{$url}",type:"{$type}",data:{id:id},success(res){
-                layer.close(load);
-                if (res.code === 200) {
-                    layNotice.success('{$success}');
-                    table.reload('sc');
-                } else {
-                    layNotice.warning(res.msg);
-                } 
-            }
-          });
-       }
-        
-       {$batch_handle}
-JS;
+        return (new Ajax($url))->method($type)->setBatch('id')->dataCode('{id:id}');
     }
 
     /**

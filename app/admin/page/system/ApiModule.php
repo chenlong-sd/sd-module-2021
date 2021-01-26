@@ -81,26 +81,20 @@ class ApiModule extends BasePage
 
     /**
      * 创建搜索表单的数据
-     * @return string
+     * @return DefaultForm
+     * @throws \ReflectionException
+     * @throws \app\common\SdException
      */
-    public function searchFormData():string
+    public function searchFormData():DefaultForm
     {
         $form_data = [
-//            SearchForm::Text('i.id', "")->label(true)->html(),
-            SearchForm::Text('i.item_name%%', "模块名")->label(true)->html(),
-            SearchForm::TimeRange("i.update_time_~", "修改时间")->label(true)->html(TimeRange::TYPE_DATETIME),
+            FormData::build(
+                FormData::text('i.item_name%%', '', '模块名'),
+                FormData::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
+                FormData::custom('', '', DefaultForm::searchSubmit())
+            ),
         ];
-        return Form::CreateHTML($form_data);
-    }
-
-    /**
-     * @return array 设置快捷搜索
-     */
-    public function setQuickSearchField():array
-    {
-        return [
-            
-        ];
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 
 }

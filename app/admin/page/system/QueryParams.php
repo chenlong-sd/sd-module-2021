@@ -79,33 +79,4 @@ class QueryParams extends BasePage
         return "请求参数表";
     }
 
-    /**
-     * 创建搜索表单的数据
-     * @return string
-     */
-    public function searchFormData():string
-    {
-        $form_data = [
-            SearchForm::Text('i.id', "")->label(true)->html(),
-            SearchForm::Select('i.method', "请求参数类型")->label(true)->html(MyModel::getMethodSc(false)),
-            SearchForm::Select('i.param_type', "参数类型")->label(true)->html(MyModel::getParamTypeSc(false)),
-            SearchForm::Text('i.name%%', "参数名")->label(true)->html(),
-            SearchForm::Text('i.test_value%%', "测试值")->label(true)->html(),
-            SearchForm::Text('i.describe%%', "描述")->label(true)->html(),
-            SearchForm::TimeRange("i.update_time_~", "修改时间")->label(true)->html(TimeRange::TYPE_DATETIME),
-            SearchForm::TimeRange("i.delete_time_~", "删除时间")->label(true)->html(TimeRange::TYPE_DATETIME),
-        ];
-        return Form::CreateHTML($form_data);
-    }
-
-    /**
-     * @return array 设置快捷搜索
-     */
-    public function setQuickSearchField():array
-    {
-        return [
-            
-        ];
-    }
-
 }

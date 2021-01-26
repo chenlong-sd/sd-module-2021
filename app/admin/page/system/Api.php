@@ -92,19 +92,24 @@ class Api extends BasePage
     }
 
     /**
-     * 创建搜索表单的数据
-     * @return string
+     * DefaultForm
+     * @return DefaultForm
+     * @throws \ReflectionException
+     * @throws \app\common\SdException
      */
-    public function searchFormData():string
+    public function searchFormData():DefaultForm
     {
         $form_data = [
-            SearchForm::Text('i.id', "")->label(true)->html(),
-            SearchForm::Text('i.api_name%%', "接口名")->label(true)->html(),
-            SearchForm::Text('i.path%%', "路径")->label(true)->html(),
-            SearchForm::Text('i.describe%%', "描述")->label(true)->html(),
-            SearchForm::TimeRange("i.update_time_~", "修改时间")->label(true)->html(TimeRange::TYPE_DATETIME),
+            FormData::build(
+                FormData::text('i.id', '', 'ID'),
+                FormData::text('i.api_name%%', '', ''),
+                FormData::text('i.path%%', '', '接口名'),
+                FormData::text('i.describe%%', '', '路径'),
+                FormData::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
+                FormData::custom('', '', DefaultForm::searchSubmit())
+            ),
         ];
-        return Form::CreateHTML($form_data);
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 
     /**
