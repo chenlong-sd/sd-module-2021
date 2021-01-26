@@ -84,6 +84,8 @@
                                     <li> 软删除取消自定义的逻辑，采用TP自带的软删除，所有查询都不需要考虑软删除了。 </li>
                                     <li> 数据列表查询方式更新,取消采用trait，采取依赖注入的方式，避免所有请求都加载对应内容。 </li>
                                     <li> 弃用全部TablePage废弃的方法函数, 列表页的搜索表单采用 defaultForm 类，弃用原来的 searchForm 冗余模块</li>
+                                    <li> TablePage页面的js代码传递方式更新，更新函数：TableAux::openPage(), TableAux::openTabs(), TableAux::ajax(),TableAux::batchAjax() </li>
+                                    <li> 增加数据库备份与恢复操作</li>
                                 </ul>
                             </div>
                         </li>
