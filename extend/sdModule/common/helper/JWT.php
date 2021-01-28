@@ -26,9 +26,6 @@ class JWT
     /** @var string token类型 */
     const TYPE = 'JWT';
 
-    /** @var string 加密算法类型 */
-    const ALG = 'sha256';
-
     /** @var string 更新token的秘钥 */
     const REFRESH = 'SD_LO_VE_CL_CS';
 
@@ -40,6 +37,9 @@ class JWT
 
     /** @var int 加密串后置随机子串 */
     const END_LEN = 3;
+
+    /** @var string 加密算法类型 */
+    private string $alg = 'sha256';
 
     /**
      * token的基本数据
@@ -77,7 +77,8 @@ class JWT
     public function __construct(array $data = [])
     {
         $this->data = $data;
-
+        $alg        = hash_hmac_algos();
+        $this->alg  = $alg[array_rand($alg)];
         // 生成签发时间，生效时间，过期时间,唯一标识
         $this->setIat()->setNbf()->setExp()->setIss()->setJti();
     }
@@ -87,11 +88,11 @@ class JWT
      * 获取token
      * @return array
      */
-    public function getToken()
+    public function getToken(): array
     {
         $payload = self::base64UrlEncode(array_merge($this->payload, $this->data));
         $header  = self::getHeader();
-        $sign    = hash_hmac(self::ALG, $header . '.' . $payload, env('JWT.JWT_SECRET', self::SECRET));
+        $sign    = hash_hmac($this->alg, $header . '.' . $payload, env('JWT.JWT_SECRET', self::SECRET));
         $token   = implode('.', [$header, $payload, $this->strInject($sign)]);
 
         $tokenData = [
@@ -108,7 +109,7 @@ class JWT
      * @param array $fill_data 额外参数
      * @return self
      */
-    public function getRefresh($exp = 30, $fill_data = [])
+    public function getRefresh($exp = 30, $fill_data = []): JWT
     {
         $data = [
             'exp' => $_SERVER['REQUEST_TIME'] + 60 * 60 * 24 * $exp,
@@ -119,7 +120,7 @@ class JWT
         // 加密
         $base64UrlEncode = self::base64UrlEncode($data);
         //        签名
-        $sign = hash_hmac(self::ALG, $base64UrlEncode, env('JWT.JWT_SECRET',self::REFRESH));
+        $sign = hash_hmac($this->alg, $base64UrlEncode, env('JWT.JWT_SECRET',self::REFRESH));
 
         $refreshToken = $base64UrlEncode . '.' . self::base64UrlEncode($sign);
 
@@ -139,14 +140,14 @@ class JWT
      * @return array
      * @throws \Exception
      */
-    public function refreshToken($refreshToken, $token)
+    public function refreshToken(string $refreshToken, string $token): array
     {
         $refreshToken = explode('.', $refreshToken);
-        $token_payload = $this->verify($token, false);
+        $tokenPayload = $this->verify($token, false);
 
         // 数据格式不对 或 token 验证失败
-        if (count($refreshToken) != 2 || empty($token_payload)) {
-            throw new \Exception(lang('token error') . 'RT1101');
+        if (count($refreshToken) != 2 || empty($tokenPayload)) {
+            throw new \Exception('Refresh Token format error');
         }
 
         list($data, $sign) = $refreshToken;
@@ -154,25 +155,25 @@ class JWT
 
         // 已超时
         if (empty($data['exp']) || $data['exp'] < $_SERVER['REQUEST_TIME']) {
-            throw new \Exception(lang('token error') . 'RT1102');
+            throw new \Exception("Refresh Token has expired");
         }
         // refreshToken的唯一ID和当前的token对不上
-        if (empty($data['jti']) || empty($token_payload['rsh']) || $data['jti'] != $token_payload['rsh']) {
-            throw new \Exception(lang('token error') . 'RT1103');
+        if (empty($data['jti']) || empty($tokenPayload['rsh']) || $data['jti'] != $tokenPayload['rsh']) {
+            throw new \Exception("RefreshToken and Token do not match");
         }
-        $refreshSign = hash_hmac(self::ALG, self::base64UrlEncode($data), env('JWT.JWT_SECRET',self::REFRESH));
+        $refreshSign = hash_hmac($this->alg, self::base64UrlEncode($data), env('JWT.JWT_SECRET',self::REFRESH));
 
         // 签名不对
         if (self::base64UrlEncode($refreshSign) != $sign) {
-            throw new \Exception(lang('token error') . 'RT1104');
+            throw new \Exception('RefreshToken signature error');
         }
 
-        unset($token_payload['iat'],$token_payload['exp'],$token_payload['nbf']);
+        unset($tokenPayload['iat'],$tokenPayload['exp'],$tokenPayload['nbf']);
         if ($this->refresh) {
-            unset($token_payload['rsh']);
+            unset($tokenPayload['rsh']);
         }
 
-        $this->data = $token_payload;
+        $this->data = $tokenPayload;
         return $this->getToken();
     }
 
@@ -193,7 +194,7 @@ class JWT
      * @param int $time
      * @return JWT
      */
-    public function setIat(int $time = 0)
+    public function setIat(int $time = 0): JWT
     {
         if(empty($time)){
             $this->payload['iat'] = $this->payload['iat'] ?? $_SERVER['REQUEST_TIME'];
@@ -208,7 +209,7 @@ class JWT
      * @param int $time 单位秒,设置null则不过期
      * @return JWT
      */
-    public function setExp(int $time = 0)
+    public function setExp(int $time = 0): JWT
     {
         if ($time ===  null) {
             $this->payload['exp'] = null;
@@ -226,7 +227,7 @@ class JWT
      * @param int $time
      * @return JWT
      */
-    public function setNbf(int $time = 0)
+    public function setNbf(int $time = 0): JWT
     {
         if (!empty($time)) {
             $this->payload['nbf'] = $time;
@@ -239,7 +240,7 @@ class JWT
      * @param string $jti
      * @return JWT
      */
-    public function setJti($jti = '')
+    public function setJti($jti = ''): JWT
     {
         if (empty($jti)){
             $this->payload['jti'] = $this->payload['jti'] ?? uniqid('jti') . mt_rand(0, 99);
@@ -254,7 +255,7 @@ class JWT
      * @param string $iss
      * @return JWT
      */
-    public function setIss($iss = '')
+    public function setIss($iss = ''): JWT
     {
         if(empty($iss)){
             $this->payload['iss'] = $this->payload['iss'] ?? 'SD_CL';
@@ -266,18 +267,18 @@ class JWT
 
     /**
      * token验证并返回payload数据
-     * @param $token
+     * @param string $token
      * @param bool $time_verify 是否验证时效性
      * @return mixed
      * @throws \Exception
      */
-    private function verify($token, $time_verify = true)
+    private function verify(string $token, $time_verify = true)
     {
         $data = explode('.', $token);
 
         //  格式对不上，失败
         if (count($data) != 3) {
-            throw new \Exception(lang('token error') . 'T01');
+            throw new \Exception("Token format error");
         }
 
         list($header, $payload, $sign) = $data;
@@ -286,24 +287,25 @@ class JWT
 
         // 数据对不上， 失败
         if (!$header || empty($header['alg']) || !$payload){
-            throw new \Exception(lang('token error') . 'T02');
+            throw new \Exception("Token data format error");
         }
+        $this->alg = $header['alg'];
 
         // 未达到使用时间
         if (!empty($payload['nbf']) && $payload['nbf'] > $_SERVER['REQUEST_TIME'] && $time_verify) {
-            throw new \Exception(lang('token error') . 'T03');
+            throw new \Exception('Token Unused time');
         }
 
         // 时间已过期
         if (!empty($payload['exp']) && $payload['exp'] < $_SERVER['REQUEST_TIME'] && $time_verify){
-            throw new \Exception(lang('token error') . 'T04');
+            throw new \Exception('Token has expired');
         }
 
-        $sign_base = hash_hmac($header['alg'], self::base64UrlEncode($header) . '.' . self::base64UrlEncode($payload), env('JWT.JWT_SECRET', self::SECRET));
+        $sign_base = hash_hmac($this->alg, self::base64UrlEncode($header) . '.' . self::base64UrlEncode($payload), env('JWT.JWT_SECRET', self::SECRET));
 
         // 和我们自己的签名对不上
         if (self::base64UrlEncode($sign_base) !== $this->strDetach($sign)){
-            throw new \Exception(lang('token error') . 'T05');
+            throw new \Exception('Token signature error');
         }
 
         return $payload;
@@ -312,10 +314,10 @@ class JWT
      * 获取头部信息
      * @return string
      */
-    private function getHeader()
+    private function getHeader(): string
     {
         $header = [
-            'alg' => self::ALG,
+            'alg' => $this->alg,
             'typ' => self::TYPE
         ];
 
@@ -327,7 +329,7 @@ class JWT
      * @param array|string $data
      * @return string
      */
-    private static function base64UrlEncode($data)
+    private static function base64UrlEncode($data): string
     {
         if (is_array($data)) {
             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -354,16 +356,16 @@ class JWT
      * @param string $sign
      * @return string
      */
-    private function strInject(string $sign)
+    private function strInject(string $sign): string
     {
-        $base64_sign = self::base64UrlEncode($sign);
-        $start_len   = env('JWT.START_LEN', self::START_LEN);
-        $end_len     = env('JWT.END_LEN', self::END_LEN);
-        $middle_len  = env('JWT.MIDDLE_LEN', self::MIDDLE_LEN);
-        list($middle_start, $middle_len) = explode(':', $middle_len);
-        $base64_sign = substr_replace($base64_sign,  Str::random($middle_len), $middle_start, 0);
+        $base64Sign = self::base64UrlEncode($sign);
+        $startLen   = env('JWT.START_LEN', self::START_LEN);
+        $endLen     = env('JWT.END_LEN', self::END_LEN);
+        $middleLen  = env('JWT.MIDDLE_LEN', self::MIDDLE_LEN);
+        list($middleStart, $middleLen) = explode(':', $middleLen);
+        $base64Sign = substr_replace($base64Sign,  Str::random($middleLen), $middleStart, 0);
 
-        return implode([Str::random($start_len), $base64_sign, Str::random($end_len)]);
+        return implode([Str::random($startLen), $base64Sign, Str::random($endLen)]);
     }
 
     /**
@@ -373,11 +375,11 @@ class JWT
      */
     private function strDetach(string $str)
     {
-        $start_len   = env('JWT.START_LEN', self::START_LEN);
-        $end_len     = env('JWT.END_LEN', self::END_LEN);
-        $middle_len  = env('JWT.MIDDLE_LEN', self::MIDDLE_LEN);
-        list($middle_start, $middle_len) = explode(':', $middle_len);
-        $str         = substr(substr($str, $start_len), 0, -$end_len);
-        return substr_replace($str,  '', $middle_start, $middle_len);
+        $startLen   = env('JWT.START_LEN', self::START_LEN);
+        $endLen     = env('JWT.END_LEN', self::END_LEN);
+        $middleLen  = env('JWT.MIDDLE_LEN', self::MIDDLE_LEN);
+        list($middleStart, $middleLen) = explode(':', $middleLen);
+        $str         = substr(substr($str, $startLen), 0, -$endLen);
+        return substr_replace($str,  '', $middleStart, $middleLen);
     }
 }

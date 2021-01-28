@@ -19,16 +19,37 @@ class Backup
      */
     private \PDO $PDO;
 
+    /**
+     * @var string 链接数据库的dsn
+     */
     private string $dsn = '';
 
+    /**
+     * @var string 数据库驱动类型
+     */
     private string $driver = '';
-
+    /**
+     * @var string 表名
+     */
     private string $table = '';
-
+    /**
+     * @var string 文件路径
+     */
     public static string $filename = '';
-
+    /**
+     * 数据存储文件夹
+     * @var string|mixed
+     */
     public static string $dir = '';
 
+    /**
+     * Backup constructor.
+     * @param string $host
+     * @param string $database
+     * @param int $port
+     * @param string $driver
+     * @param string $charset
+     */
     public function __construct(string $host, string $database, int $port = 3306, string $driver = 'mysql', string $charset = 'utf8mb4')
     {
         $this->driver = $driver;
@@ -39,8 +60,13 @@ class Backup
         $this->dsn = sprintf(self::DSN, $driver, $host, $database, $port, $charset);
     }
 
-
-    public function connect(string $user, string $password, array $options = [])
+    /**
+     * @param string $user
+     * @param string $password
+     * @param array $options
+     * @return $this
+     */
+    public function connect(string $user, string $password, array $options = []): Backup
     {
         $this->PDO = new \PDO($this->dsn, $user, $password, $options);
         return $this;

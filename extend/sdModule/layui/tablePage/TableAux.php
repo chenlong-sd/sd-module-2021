@@ -35,15 +35,15 @@ class TableAux
      * @param $url
      * @param string $title 标题，可用使用行数据的变量值， 例：编辑【{title}】, {title}会替换为该行的title字段
      * @param array $config 弹窗的其他配置项，如宽高
-     * @param bool $is_parent 是否在负极
+     * @param bool $isParent 是否在负极
      * @return false|OpenPage
      * @throws \app\common\SdException
      */
-    public static function openPage($url, string $title, array $config = [], $is_parent = false)
+    public static function openPage($url, string $title, array $config = [], $isParent = false)
     {
         $url_ = self::pageUrlHandle($url);
         if (!access_control($url_)) return false;
-        $window   = $is_parent ? 'parent' : '';
+        $window   = $isParent ? 'parent' : '';
         $config   = json_encode($config, JSON_UNESCAPED_UNICODE);
 
         $pageCode = sprintf("custom.frame(%s, '%s', %s, %s);", $url_, self::pageTitleHandle($title), $config, $window);
@@ -78,9 +78,9 @@ class TableAux
             $url_ = array_shift($url);
             $url_ = strpos($url_, '?') !== false ? "'{$url_}&id=' + obj.data[primary]" : "'{$url_}?id=' + obj.data[primary]";
             foreach ($url as $value) {
-                $v_arr = explode('->', $value);
-                $field = $v_arr[0];
-                $alias = $v_arr[1] ?? $v_arr[0];
+                $vArr = explode('->', $value);
+                $field = $vArr[0];
+                $alias = $vArr[1] ?? $vArr[0];
                 $url_ .= " + '&{$alias}=' + obj.data.{$field}";
             }
         }else{

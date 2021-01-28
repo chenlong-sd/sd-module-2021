@@ -11,6 +11,12 @@
 > 3.数据列表查询方式更新,取消采用trait，采取依赖注入的方式，避免所有请求都加载对应内容
 > 
 > 4.启用全部TablePage废弃的方法函数, 列表页的搜索表单采用defaultForm，弃用原来的searchForm冗余模块
+> 
+> 5.TablePage页面的js代码传递方式更新，更新函数：TableAux::openPage(), TableAux::openTabs(), TableAux::ajax(),TableAux::batchAjax()
+> 
+> 6.增加数据库备份与恢复操作
+> 
+> 7.修改TablePage页面事件添加方式
 
 
 ##数据库规则
@@ -65,14 +71,10 @@
 ## 列表搜索表单创建
 
 支持4种类型表单：
-1.  文本 `SearchForm::Text(string $name, string $placehoder)`
-2.  下拉单选 `SearchForm::Select(string $name, string $placehoder)`
-3.  时间 `SearchForm::Time(string $name, string $placehoder)`
-4.  时间范围 `SearchForm::TimeRange(string $name, string $placehoder)`
+1.  文本 `FormData::text()`
+2.  下拉单选 `FormData::select()`
+3.  时间 `FormData::time()`
 
-> 生成表单调用：`->html()`; 时间和时间范围表单可传参数： `date` `datetime` `month` `year`，默认： `date`
-> 下拉单选需传数组：[ value => title,.... ], 例：`[1 => 待付款， 2 => 已付款，...]`，
-> 调用`->label(true)`可生成表单label
 >> 参数 `name` 最后两位匹配搜索规则，匹配不上则表示 `=`
 >> ```php
 >>        [
@@ -101,41 +103,27 @@
 
 ```php
 // model
-use sdModule\layuiSearch\SearchForm;
+use sdModule\layui\defaultForm\Form as DefaultForm;
+use sdModule\layui\defaultForm\FormData;
 use sdModule\layui\Layui;
 
 class test 
 {
-    public static function searchFormData():array
+    public function searchFormData(): DefaultForm
     {
-         return [
-                    SearchForm::Text('i.id', "ID")->label(true)->html(),
-                    SearchForm::Text('i.title%%', "标题")->label(true)->html(),
-                    SearchForm::Text('i.intro%%', "简介")->label(true)->html(),
-                    SearchForm::Select('i.status', "状态")->label(true)->html(self::getStatusSc(false)),
-                    SearchForm::Text('administrators.name%%', "管理员")->label(true)->html(),
-                    SearchForm::Text('test.title%%', "上级")->label(true)->html(),
-                    SearchForm::TimeRange("i.create_time_~", "创建时间")->label(true)->html(TimeRange::TYPE_DATETIME),
-         ];
-    }
-
-    public static function getStatusSc($tag = true)
-    {
-        return $tag === true 
-            ? [
-                '1' => Layui::tag()->green('正常'),
-                '2' => Layui::tag()->red('冻结'),
-                '3' => Layui::tag()->blue('隐藏'),
-                '4' => Layui::tag()->black('你好'),
-                
-            ]
-            : [
-                '1' => '正常',
-                '2' => '冻结',
-                '3' => '隐藏',
-                '4' => '你好',
-                
-            ];
+        $form_data = [
+            FormData::build(
+                FormData::Text('i.id', "", 'ID'),
+                FormData::Text('i.title%%', "", '标题'),
+                FormData::Text('i.intro%%', "", '简介'),
+                FormData::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
+                FormData::Text('administrators.name%%', "", '管理员'),
+                FormData::Text('test.title%%', "", '上级'),
+                FormData::time("i.create_time_~", "", 'datetime', '~', '创建时间'),
+                FormData::custom('', '', DefaultForm::searchSubmit())
+            )
+        ];
+        return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 }
 
@@ -240,32 +228,32 @@ class test
 
         $table->setHandleWidth(300); // 设置行操作栏宽度
         $table->setEventWhere('create', 'd.status == 1', true); // 设置行事件的显示与隐藏
-        $table->addEvent('event'); // 添加事件
-        $table->addEvent(['event', 'event1']); // 添添加多个事件
-        $table->addBarEvent('event'); // 添添加头部事件
-        $table->addBarEvent(['event', 'event1']); // 添添加多个头部事件
+        // 添加事件并设置对应的HTML和JS
+        $table->addBarEvent('event')->setDefaultBtn('asd', 'add-1', 'xs')->setJs(TableAux::openPage(url('tetest'), 'veve'));
+        // 添加事件并设置对应的自定义HTML和JS
+        $table->addBarEvent('event')->setHtml('<btn  lay-event="event">点我<btn>')->setJs(TableAux::openPage(url('tetest'), 'veve'));
         
         $table->setConfig(['skin' => 'row']); // 设置layui渲染table的属性值
         
         // 设置layui渲染table的属性值，有页面参数条件时
         $table->setConfig(['where' => ['search' => ['id' => request()->get('id')]]]); 
         
-
-
-        // 设置事件html(行
-        $table->setEventHtml('detail', Layui::button('详情', 'read')->setEvent('detail')->primary('xs'));
-        // 设置事件html(头部
-        $table->setBarEventHtml('incd', Layui::button('异步', 'ii')->setEvent('incd')->primary('xs'));
-        // 设置事件js(头部，打开新的弹窗页面      
-        $table->setEventJs('detail', TableAux::openPage([url('detail')], '详情', ['area' => ['90%', '50%']], true));
+        // js 封装的组件调用方式
+        // 打开新的弹窗页面 
+        TableAux::openPage([url('detail')], '详情', ['area' => ['90%', '50%']], true);
+        // 打开新的弹窗页面前加确认操作 
+        TableAux::openPage([url('detail')], '详情', ['area' => ['90%', '50%']], true)->setConfirm('缺人吗？');
         // 打开新的tabs页面  路劲带参数,第一个参数以数组方式传，后面的回取当前行的数据
-        $table->setEventJs('detail', TableAux::openTabs([url('detail'), 'id', 'status'], '详情'));
-        // 打开新的tabs页面  标题带参数 参数方式：{var}
-        $table->setEventJs('detail', TableAux::openTabs([url('detail'), 'id'], '【{title}】详情'));
-        // 设置事件js(头部，异步ajax请求   
-        $table->setEventJs('incd', TableAux::ajax(url('incd'), 'get', '确认通过此审核此吗？'));
-        // 设置js事件，增加列表搜索条件，并重置表格
-        $table->setEventJs('incd', TableAux::searchWhere(['id' => 1]));
+        TableAux::openTabs([url('detail'), 'id', 'status'], '详情');
+         // 打开新的tabs页面  标题带参数 参数方式：{var}
+        TableAux::openTabs([url('detail'), 'id'], '【{title}】详情');
+         // 设置事件js(头部，异步ajax请求   
+        TableAux::ajax(url('incd'), 'get', '确认通过此审核此吗？');
+         // 设置事件js(头部，异步ajax请求  ,配置确认框
+        TableAux::ajax(url('incd'), 'get', '确认通过此审核此吗？')->setConfig(['icon' => 3, 'title' => '警告']);
+          // 设置js事件，增加列表搜索条件，并重置表格
+        TableAux::searchWhere(['id' => 1]);
+
         // 设置行事件的展示条件， d :当前行数据的对象， 要id => d.id
         $table->setEventWhere('event', 'd.status_ == 1');
         //设置表格大小

@@ -96,8 +96,10 @@ class Ajax
         return $this;
     }
 
-
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
         if ($this->confirm) {
             $config = json_encode($this->confirm['config'] ?? []);

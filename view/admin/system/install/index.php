@@ -86,6 +86,7 @@
                                     <li> 弃用全部TablePage废弃的方法函数, 列表页的搜索表单采用 defaultForm 类，弃用原来的 searchForm 冗余模块</li>
                                     <li> TablePage页面的js代码传递方式更新，更新函数：TableAux::openPage(), TableAux::openTabs(), TableAux::ajax(),TableAux::batchAjax() </li>
                                     <li> 增加数据库备份与恢复操作</li>
+                                    <li> 修改TablePage页面事件添加方式</li>
                                 </ul>
                             </div>
                         </li>

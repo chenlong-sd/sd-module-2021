@@ -8,6 +8,7 @@
 namespace app\admin\page;
 
 use app\common\BasePage;
+use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layui\defaultForm\Form as DefaultForm;
@@ -39,6 +40,15 @@ class Test extends BasePage
             TableAux::column('parent_title', '上级'),
             TableAux::column('create_time', '创建时间'),
         ]);
+
+        $table->addBarEvent('asda')->setDefaultBtn('asd', 'add-1', 'xs')->setJs(TableAux::openPage(url('tetest'), 'veve'));
+        $table->addBarEvent('sss')
+            ->setHtml(Layui::button('enen', 'read')->setEvent('sss')->normal('xs'))
+            ->setJs(TableAux::openPage(url('tetest'), 'veve'));
+
+        $table->addEvent('sss')
+            ->setHtml(Layui::button('enen', 'read')->setEvent('sss')->normal('xs'))
+            ->setJs(TableAux::openPage(url('tetest'), 'veve'));
 
         $table->setHandleWidth(150);
         return $table;

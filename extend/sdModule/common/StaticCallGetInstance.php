@@ -25,7 +25,10 @@ abstract class StaticCallGetInstance extends Singleton
      */
     abstract protected function getNamespace();
 
-    protected function init(){}
+    protected function init()
+    {
+        // TODO: Implement init() method.
+    }
 
     /**
      * @param $method

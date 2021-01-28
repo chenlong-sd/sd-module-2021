@@ -4,6 +4,7 @@
 namespace sdModule\layui;
 
 use sdModule\layui\item\Button;
+use sdModule\layui\tablePage\Event;
 use sdModule\layui\tablePage\TableAux;
 
 /**
@@ -23,7 +24,7 @@ class TablePage
     /**
      * @var int
      */
-    private int $handle_width = 150;
+    private int $handleWidth = 150;
     /**
      * @var string 操作胡id
      */
@@ -32,12 +33,12 @@ class TablePage
     /**
      * @var array 字段数据
      */
-    private array $field_data;
+    private array $fieldData;
 
     /**
      * @var array 函数替换的数据
      */
-    private array $function_replace = [];
+    private array $functionReplace = [];
 
     /**
      * @var string 行大小
@@ -47,42 +48,42 @@ class TablePage
     /**
      * @var array|string[] 事件
      */
-    private array $tool_event = ['update', 'delete'];
+    private array $toolEvent = ['update', 'delete'];
 
     /**
      * @var array|string[] html
      */
-    private array $tool_event_html = [];
+    private array $toolEventHtml = [];
 
     /**
      * @var array|string[] js
      */
-    private array $tool_event_js = [];
+    private array $toolEventJs = [];
 
     /**
      * @var array|string[] 事件
      */
-    private array $toolbar_event = ['create', 'delete'];
+    private array $toolbarEvent = ['create', 'delete'];
 
     /**
      * @var array|string[] html
      */
-    private array $toolbar_event_html = [];
+    private array $toolbarEventHtml = [];
 
     /**
      * @var array|string[] js
      */
-    private array $toolbar_event_js = [];
+    private array $toolbarEventJs = [];
 
     /**
      * @var array|string[] js
      */
-    private array $event_where = [];
+    private array $eventWhere = [];
 
     /**
      * @var bool 不满租条件的事件是否隐藏
      */
-    private bool $where_not_meet = false;
+    private bool $whereNotMeet = false;
     /**
      * @var array 表格配置
      */
@@ -91,31 +92,32 @@ class TablePage
     /**
      * @var int 设置表格操作样式
      */
-    private int $handle_style = self::HANDLE_STYLE_ALL;
+    private int $handleStyle = self::HANDLE_STYLE_ALL;
 
     /**
      * 设置操作栏宽度
      * @param int $width
      * @return $this
      */
-    public function setHandleWidth(int $width)
+    public function setHandleWidth(int $width): TablePage
     {
-        $this->handle_width = $width;
+        $this->handleWidth = $width;
         return $this;
     }
 
     /**
      * 创建页面
-     * @param array $field_data 字段数据
+     * @param array $fieldData 字段数据
      * @return TablePage
+     * @throws \app\common\SdException
      */
-    public static function create(array $field_data)
+    public static function create(array $fieldData): TablePage
     {
         $table = new self();
         $table->defaultEventHtml();
         $table->defaultEventJs();
         $table->config     = array_filter(config('admin.layui_config'));
-        $table->field_data = array_map(fn($v) => array_filter($v), $field_data);
+        $table->fieldData = array_map(fn($v) => array_filter($v), $fieldData);
         $table->functionHandle();
         return $table;
     }
@@ -125,7 +127,7 @@ class TablePage
      * @param string $handle
      * @return $this
      */
-    public function setHandle(string $handle)
+    public function setHandle(string $handle): TablePage
     {
         $this->handle = $handle;
         return $this;
@@ -135,9 +137,9 @@ class TablePage
      * @param int $style  1, 2, 3
      * @return TablePage
      */
-    public function setHandleStyle(int $style = self::HANDLE_STYLE_NORMAL)
+    public function setHandleStyle(int $style = self::HANDLE_STYLE_NORMAL): TablePage
     {
-        $this->handle_style = $style;
+        $this->handleStyle = $style;
         return $this;
     }
 
@@ -146,43 +148,43 @@ class TablePage
      * 获取字段信息
      * @return string
      */
-    public function getField()
+    public function getField(): string
     {
-        if ($this->handle && $this->tool_event && ($this->handle_style & self::HANDLE_STYLE_NORMAL)) {
-            $this->field_data[] = [
-                "width"   => $this->handle_width,
+        if ($this->handle && $this->toolEvent && ($this->handleStyle & self::HANDLE_STYLE_NORMAL)) {
+            $this->fieldData[] = [
+                "width"   => $this->handleWidth,
                 "title"   => lang("operating"),
                 "templet" => $this->handle
             ];
         }
 
-        $data = json_encode($this->field_data, JSON_UNESCAPED_UNICODE);
+        $data = json_encode($this->fieldData, JSON_UNESCAPED_UNICODE);
 
-        return strtr($data, $this->function_replace);
+        return strtr($data, $this->functionReplace);
     }
 
     /**
      * 函数处理
      * @return mixed
      */
-    private function functionHandle()
+    private function functionHandle(): array
     {
-        foreach ($this->field_data as &$item) {
+        foreach ($this->fieldData as &$item) {
             if (empty($item['templet'])) {
                 continue;
             }
 
             if ($item['templet'] instanceof \Closure) {
                 $js_code = call_user_func($item['templet']);
-                $this->function_replace["\"@{$item['field']}\""] = "function(obj){{$js_code}}";
+                $this->functionReplace["\"@{$item['field']}\""] = "function(obj){{$js_code}}";
                 $item['templet'] = empty($item['field']) ? '' : "@{$item['field']}";
             } elseif ($item['templet'] === '@image') {
                 $this->config['size'] = 'lg';
-                $this->function_replace["\"@{$item['field']}\""] = "function (obj) {return custom.tableImageShow(obj.{$item['field']});}";
+                $this->functionReplace["\"@{$item['field']}\""] = "function (obj) {return custom.tableImageShow(obj.{$item['field']});}";
                 $item['templet'] = empty($item['field']) ? '' : "@{$item['field']}";
             }
         }
-        return $this->field_data;
+        return $this->fieldData;
     }
 
     /**
@@ -190,7 +192,7 @@ class TablePage
      * @param $vars
      * @return mixed|string
      */
-    public function __call($method, $vars)
+    public function __call($method, $vars): string
     {
         return function_exists($method) ? call_user_func_array($method, $vars) : '';
     }
@@ -205,54 +207,26 @@ class TablePage
 
     /**
      * 添加事件
-     * @param array|string $event
+     * @param $event
      * @param null $html
      * @param null $js
-     * @return TablePage
+     * @return Event
      */
-    public function addEvent($event, $html = null, $js = null)
+    public function addEvent($event, $html = null, $js = null): Event
     {
-        return $this->addEventHandle($event, $html, $js);
+        return new Event($this, $event);
     }
 
     /**
      * 添加事件头部bar的事件
-     * @param array|string $event
-     * @param null $html
-     * @param null $js
-     * @return TablePage
-     */
-    public function addBarEvent($event, $html = null, $js = null)
-    {
-        return $this->addEventHandle($event, $html, $js, true);
-    }
-
-    /**
-     * Event 添加处理
      * @param $event
      * @param null $html
      * @param null $js
-     * @param bool $is_bar
-     * @return TablePage
+     * @return Event
      */
-    private function addEventHandle($event, $html = null, $js = null, $is_bar = false)
+    public function addBarEvent($event, $html = null, $js = null):Event
     {
-        if (is_string($event)){
-            if ($is_bar) {
-                $this->toolbar_event[] = $event;
-                $html and $this->toolbar_event_html[$event] = $html;
-                $js   and $this->toolbar_event_js[$event]   = $js;
-            }else{
-                $this->tool_event[] = $event;
-                $html and $this->tool_event_html[$event] = $html;
-                $js   and $this->tool_event_js[$event]   = $js;
-            }
-        }elseif(is_array($event)){
-            $is_bar
-                ? $this->toolbar_event = array_merge($this->toolbar_event, $event)
-                : $this->tool_event    = array_merge($this->tool_event, $event);
-        }
-        return $this;
+        return new Event($this, $event, true);
     }
 
     /**
@@ -260,7 +234,7 @@ class TablePage
      * @param array|string $event
      * @return TablePage
      */
-    public function removeEvent($event)
+    public function removeEvent($event): TablePage
     {
         return $this->removeEventHandle($event);
     }
@@ -270,7 +244,7 @@ class TablePage
      * @param array|string $event
      * @return TablePage
      */
-    public function removeBarEvent($event)
+    public function removeBarEvent($event): TablePage
     {
         return $this->removeEventHandle($event, true);
     }
@@ -281,99 +255,12 @@ class TablePage
      * @param bool $is_bar
      * @return TablePage
      */
-    private function removeEventHandle($event, bool $is_bar = false)
+    private function removeEventHandle($event, bool $is_bar = false): TablePage
     {
         if ($is_bar){
-            $this->toolbar_event = array_diff($this->toolbar_event, (array)$event);
+            $this->toolbarEvent = array_diff($this->toolbarEvent, (array)$event);
         }else{
-            $this->tool_event    = array_diff($this->tool_event, (array)$event);
-        }
-        return $this;
-    }
-
-
-    /**
-     * 设置事件html
-     * @param string $event
-     * @param string $html
-     * @return $this
-     */
-    public function setEventHtml(string $event, $html)
-    {
-        return $this->setEventHtmlHandle($event, $html);
-    }
-
-    /**
-     * 设置头部事件html
-     * @param string $event
-     * @param string $html
-     * @return $this
-     */
-    public function setBarEventHtml(string $event, string $html)
-    {
-        return $this->setEventHtmlHandle($event, $html, true);
-    }
-
-    /**
-     * 设置事件html
-     * @param string $event
-     * @param $html
-     * @param bool $is_toolbar
-     * @return $this
-     */
-    private function setEventHtmlHandle(string $event, $html, $is_toolbar = false)
-    {
-        if ($is_toolbar) {
-            $this->toolbar_event_html[$event] = $html;
-        }else{
-            $this->tool_event_html[$event] = $html;
-        }
-        return $this;
-    }
-
-    /**
-     * 设置事件js
-     * @param string $event
-     * @param string|bool $js_code
-     * @return $this
-     */
-    public function setEventJs(string $event, $js_code)
-    {
-        return $this->setEventJsHandle($event, $js_code);
-    }
-
-    /**
-     * 设置事件js
-     * @param string $event
-     * @param string $js_code
-     * @return $this
-     */
-    public function setBarEventJs(string $event, $js_code)
-    {
-        return $this->setEventJsHandle($event, $js_code, true);
-    }
-
-    /**
-     * 设置事件js处理
-     * @param string $event
-     * @param $js_code
-     * @param bool $is_toolbar
-     * @return $this
-     */
-    private function setEventJsHandle(string $event, $js_code, bool $is_toolbar = false)
-    {
-        if ($is_toolbar) {
-            if ($js_code === false){
-                $this->removeBarEvent($event);
-            }else{
-                $this->toolbar_event_js[$event] = $js_code;
-            }
-        }else{
-            if ($js_code === false){
-                $this->removeEvent($event);
-            }else {
-                $this->tool_event_js[$event] = $js_code;
-            }
+            $this->toolEvent    = array_diff($this->toolEvent, (array)$event);
         }
         return $this;
     }
@@ -382,94 +269,94 @@ class TablePage
      * 展示条件
      * @param array|string $event
      * @param null|string|bool $where 条件
-     * @param bool $is_hidden 是否隐藏按钮（不满足条件）
+     * @param bool $isHidden 是否隐藏按钮（不满足条件）
      */
-    public function setEventWhere($event, $where = null, $is_hidden = false)
+    public function setEventWhere($event, $where = null, $isHidden = false)
     {
         if (is_array($event)){
-            $this->event_where    = array_merge($this->event_where, $event);
-            $this->where_not_meet = $where === null ? $is_hidden : $where;
+            $this->eventWhere    = array_merge($this->eventWhere, $event);
+            $this->whereNotMeet  = $where === null ? $isHidden : $where;
         }else{
-            $this->event_where[$event] = $where;
-            $this->where_not_meet      = $is_hidden;
+            $this->eventWhere[$event] = $where;
+            $this->whereNotMeet       = $isHidden;
         }
     }
 
     /**
      * @return string 获取头部工具栏html
      */
-    public function getToolbar()
+    public function getToolbar(): string
     {
-        return implode(array_map(fn($v) => ($this->toolbar_event_html[$v] ?? ''), $this->toolbar_event));
+        return implode(array_map(fn($v) => ($this->toolbarEventHtml[$v] ?? ''), $this->toolbarEvent));
     }
 
     /**
      * @return string 获取工具栏html
      */
-    public function getTool()
+    public function getTool(): string
     {
-        if (!($this->handle_style & self::HANDLE_STYLE_NORMAL)) {
+        if (!($this->handleStyle & self::HANDLE_STYLE_NORMAL)) {
             return '';
         }
 
-        $where_template = $this->where_not_meet
+        $whereTemplate = $this->whereNotMeet
             ? "{{# if (:where) { }} :html {{# } }}"
             : "{{# if (:where) { }} :html {{# }else{ }} :disable {{# } }}";
 
-        return implode(array_map(function ($v) use ($where_template){
-            if (empty($this->tool_event_html[$v])){
+        return implode(array_map(function ($v) use ($whereTemplate){
+            if (empty($this->toolEventHtml[$v])){
                 return '';
             }
 
-            $disable = preg_replace('/lay-event="\w+"/', '', $this->tool_event_html[$v]);
+            $disable = preg_replace('/lay-event="\w+"/', '', $this->toolEventHtml[$v]);
             if (!preg_match('/(btn-danger)|(btn-warm)|(btn-normal)|(btn-primary)/', $disable)){
                 $disable = strtr($disable, ['layui-btn ' => 'layui-btn layui-btn-disabled ']);
             }else{
                 $disable = preg_replace(['/danger/', '/warm/', '/normal/', '/primary/'], 'disabled', $disable);
             }
 
-            return isset($this->event_where[$v])
-                ? strtr($where_template, [
-                    ':where'    => $this->event_where[$v],
-                    ':html'     => $this->tool_event_html[$v],
+            return isset($this->eventWhere[$v])
+                ? strtr($whereTemplate, [
+                    ':where'    => $this->eventWhere[$v],
+                    ':html'     => $this->toolEventHtml[$v],
                     ':disable'  => $disable
                 ])
-                : $this->tool_event_html[$v];
-        }, $this->tool_event));
+                : $this->toolEventHtml[$v];
+        }, $this->toolEvent));
     }
 
     /**
      * 获取上下文操作
      * @return string
      */
-    public function getContextHtml()
+    public function getContextHtml(): string
     {
-        if (!($this->handle_style & (self::HANDLE_STYLE_CONTEXT_BUTTON + self::HANDLE_STYLE_CONTEXT_LI))) {
+        if (!($this->handleStyle & (self::HANDLE_STYLE_CONTEXT_BUTTON + self::HANDLE_STYLE_CONTEXT_LI))) {
             return '';
         }
 
-        $where_template = $this->where_not_meet
+        $where_template = $this->whereNotMeet
             ? "{{# if (:where) { }} :html {{# } }}"
             : "{{# if (:where) { }} :html {{# }else{ }} :disable {{# } }}";
         $li         = '<div class="shadow" %s>%s %s</div>';
         $disable_li = '<div class="shadow layui-disabled" %s>%s %s</div>';
         $html = "";
-        foreach ($this->tool_event as $event){
-            if (empty($this->tool_event_html[$event]) || !$this->tool_event_html[$event] instanceof Button){
+        foreach ($this->toolEvent as $event){
+            if (empty($this->toolEventHtml[$event]) || !$this->toolEventHtml[$event] instanceof Button){
                 continue;
             }
-            $icon  = (fn() => $this->icon())->call($this->tool_event_html[$event]);
-            $title = (fn() => $this->title)->call($this->tool_event_html[$event]);
-            $li_normal   = sprintf($li, "lay-event='{$event}'", $icon, $title);
-            $li_disabled = sprintf($disable_li, "", $icon, $title);
+            $icon  = (fn() => $this->icon())->call($this->toolEventHtml[$event]);
+            $title = (fn() => $this->title)->call($this->toolEventHtml[$event]);
+            $liNormal   = sprintf($li, "lay-event='{$event}'", $icon, $title);
+            $liDisabled = sprintf($disable_li, "", $icon, $title);
 
-            $html .= isset($this->event_where[$event])
+            $html .= isset($this->eventWhere[$event])
                 ? strtr($where_template, [
-                    ":where"   => $this->event_where[$event],
-                    ":html"    => $li_normal,
-                    ":disable" => $li_disabled
+                    ":where"   => $this->eventWhere[$event],
+                    ":html"    => $liNormal,
+                    ":disable" => $liDisabled
                 ])
-                : ($this->handle_style & self::HANDLE_STYLE_CONTEXT_LI ? $li_normal : $this->tool_event_html[$event]);
+                : ($this->handleStyle & self::HANDLE_STYLE_CONTEXT_LI ? $liNormal : $this->toolEventHtml[$event]);
         }
         return $html;
     }
@@ -478,9 +365,9 @@ class TablePage
      * 获取上下文的js
      * @return string
      */
-    public function getContextJs()
+    public function getContextJs(): string
     {
-        if (!($this->handle_style & (self::HANDLE_STYLE_CONTEXT_BUTTON + self::HANDLE_STYLE_CONTEXT_LI))) {
+        if (!($this->handleStyle & (self::HANDLE_STYLE_CONTEXT_BUTTON + self::HANDLE_STYLE_CONTEXT_LI))) {
             return '';
         }
 
@@ -541,25 +428,25 @@ JS;
      * 获取toolbar事件js
      * @return string
      */
-    public function getToolbarJs()
+    public function getToolbarJs(): string
     {
         return $this->getJsHandle(true);
     }
 
     /**
      * js事件处理
-     * @param bool $is_bar
+     * @param bool $isBar
      * @return string
      */
-    private function getJsHandle($is_bar = false)
+    private function getJsHandle($isBar = false): string
     {
-        $js_exit = "";
-        $event_js_var = $is_bar ? "toolbar_event_js" : "tool_event_js";
-        $event_var    = $is_bar ? "toolbar_event" : "tool_event";
-        foreach ($this->$event_js_var as $event => $js){
-            in_array($event, $this->$event_var) and $js_exit .= "{$event}(obj){{$js}},";
+        $jsExit = "";
+        $eventJsVar = $isBar ? "toolbar_event_js" : "tool_event_js";
+        $eventVar    = $isBar ? "toolbar_event" : "tool_event";
+        foreach ($this->$eventJsVar as $event => $js){
+            in_array($event, $this->$eventVar) and $jsExit .= "{$event}(obj){{$js}},";
         }
-        return "{{$js_exit}}";
+        return "{{$jsExit}}";
     }
 
     /**
@@ -584,12 +471,12 @@ JS;
      */
     private function defaultEventHtml()
     {
-        $this->toolbar_event_html = [
+        $this->toolbarEventHtml = [
             'create' => Layui::button($this->lang('add'), 'add-1')->setEvent('create')->defaults('sm'),
             'delete' => Layui::button($this->lang('batch deletion'), 'delete')->setEvent('delete')->danger('sm')
         ];
 
-        $this->tool_event_html = [
+        $this->toolEventHtml = [
             'update' => Layui::button($this->lang('edit'), 'edit')->setEvent('update')->defaults('xs'),
             'delete' => Layui::button($this->lang('delete'), 'delete')->setEvent('delete')->danger('xs')
         ];
@@ -601,10 +488,10 @@ JS;
      */
     private function defaultEventJs()
     {
-        if (!access_control($create_url = $this->url('create'))){
+        if (!access_control($createUrl = $this->url('create'))){
             $this->removeBarEvent('create');
         }
-        if (!access_control($update_url = $this->url('update'))){
+        if (!access_control($updateUrl = $this->url('update'))){
             $this->removeEvent('update');
         }
         if (!access_control($this->url('del'))){
@@ -612,13 +499,13 @@ JS;
             $this->removeBarEvent('delete');
         }
 
-        $this->toolbar_event_js = [
-            'create' => TableAux::openPage($create_url, $this->lang('add')),
+        $this->toolbarEventJs = [
+            'create' => TableAux::openPage($createUrl, $this->lang('add')),
             'delete' => TableAux::batchAjax(url('del'), 'post')->setConfig(['icon' => 3])->setTip('确认删除数据吗？')
         ];
 
-        $this->tool_event_js = [
-            'update' => TableAux::openPage([$update_url], $this->lang('edit')),
+        $this->toolEventJs = [
+            'update' => TableAux::openPage([$updateUrl], $this->lang('edit')),
             'delete' => "del(obj.data[primary]);"
         ];
     }
