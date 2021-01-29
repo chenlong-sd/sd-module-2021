@@ -1,14 +1,13 @@
 <?php
 /**
  * Test.php
- * Date: 2021-01-25 12:06:59
+ * Date: 2021-01-28 16:33:07
  * User: chenlong <vip_chenlong@163.com>
  */
 
 namespace app\admin\page;
 
 use app\common\BasePage;
-use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layui\defaultForm\Form as DefaultForm;
@@ -40,15 +39,6 @@ class Test extends BasePage
             TableAux::column('parent_title', '上级'),
             TableAux::column('create_time', '创建时间'),
         ]);
-
-        $table->addBarEvent('asda')->setDefaultBtn('asd', 'add-1', 'xs')->setJs(TableAux::openPage(url('tetest'), 'veve'));
-        $table->addBarEvent('sss')
-            ->setHtml(Layui::button('enen', 'read')->setEvent('sss')->normal('xs'))
-            ->setJs(TableAux::openPage(url('tetest'), 'veve'));
-
-        $table->addEvent('sss')
-            ->setHtml(Layui::button('enen', 'read')->setEvent('sss')->normal('xs'))
-            ->setJs(TableAux::openPage(url('tetest'), 'veve'));
 
         $table->setHandleWidth(150);
         return $table;
@@ -102,11 +92,7 @@ class Test extends BasePage
             FormData::build(
                 FormData::Text('i.id', "", 'ID'),
                 FormData::Text('i.title%%', "", '标题'),
-                FormData::Text('i.intro%%', "", '简介'),
                 FormData::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
-                FormData::Text('administrators.name%%', "", '管理员'),
-                FormData::Text('test.title%%', "", '上级'),
-                FormData::time("i.create_time_~", "", 'datetime', '~', '创建时间'),
                 FormData::custom('', '', DefaultForm::searchSubmit())
             )
         ];

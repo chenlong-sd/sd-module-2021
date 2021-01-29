@@ -132,7 +132,7 @@
             <th style="text-align: center">字段名</th>
             <th style="text-align: center">字段标题</th>
             <th style="text-align: center">表单类型</th>
-            <th style="text-align: center;width: 10px">S</th>
+            <th style="text-align: center;width: 10px" class="S">S</th>
             <th style="text-align: center">列表页展示字段类型</th>
             <th style="text-align: center" id="inin">字段初始数据展示</th>
         </tr>
@@ -230,6 +230,10 @@
 
         $(document).on('mouseover ', '.inin', function () {
             layer.tips('可填写：\n【表:值字段=显示字段】或者【双击编辑】更多', this, {tips:3})
+        });
+
+        $(document).on('mouseover ', '.S', function () {
+            layer.tips('勾选搜索字段', this, {tips:3});
         });
 
         util.event('lay-event',{

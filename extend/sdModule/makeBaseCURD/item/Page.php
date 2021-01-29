@@ -160,7 +160,7 @@ class Page implements Item
     private function searchHandle()
     {
         foreach ($this->CURD->data as $field => $datum){
-            if ($datum['show_type'] == 'image' || !$datum['show_type']){
+            if ($datum['show_type'] == 'image' || empty($datum['quick_search'])){
                 continue;
             }
 

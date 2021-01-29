@@ -207,24 +207,24 @@ class TablePage
 
     /**
      * 添加事件
-     * @param $event
+     * @param string $event
      * @param null $html
      * @param null $js
      * @return Event
      */
-    public function addEvent($event, $html = null, $js = null): Event
+    public function addEvent(string $event, $html = null, $js = null): Event
     {
         return new Event($this, $event);
     }
 
     /**
      * 添加事件头部bar的事件
-     * @param $event
+     * @param string $event
      * @param null $html
      * @param null $js
      * @return Event
      */
-    public function addBarEvent($event, $html = null, $js = null):Event
+    public function addBarEvent(string $event, $html = null, $js = null):Event
     {
         return new Event($this, $event, true);
     }
@@ -441,8 +441,8 @@ JS;
     private function getJsHandle($isBar = false): string
     {
         $jsExit = "";
-        $eventJsVar = $isBar ? "toolbar_event_js" : "tool_event_js";
-        $eventVar    = $isBar ? "toolbar_event" : "tool_event";
+        $eventJsVar  = $isBar ? "toolbarEventJs" : "toolEventJs";
+        $eventVar    = $isBar ? "toolbarEvent" : "toolEvent";
         foreach ($this->$eventJsVar as $event => $js){
             in_array($event, $this->$eventVar) and $jsExit .= "{$event}(obj){{$js}},";
         }

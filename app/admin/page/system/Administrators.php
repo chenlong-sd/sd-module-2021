@@ -51,11 +51,11 @@ class Administrators extends BasePage
         ];
 
         $table = TablePage::create($field_data);
-        $table->addBarEvent(['directly_under', 'all']);
-        $table->setBarEventHtml('directly_under', Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'));
-        $table->setBarEventHtml('all', Layui::button('全部', 'group')->setEvent('all')->normal('sm'));
-        $table->setBarEventJs('directly_under', TableAux::searchWhere(['mode' => 'directly_under']));
-        $table->setBarEventJs('all', TableAux::searchWhere(['mode' => 'all']));
+        $table->addBarEvent('directly_under')->setHtml(Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'))
+            ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
+
+        $table->addBarEvent('all')->setHtml(Layui::button('全部', 'group')->setEvent('all')->normal('sm'))
+            ->setJs(TableAux::searchWhere(['mode' => 'all']));
         return $table;
     }
 
@@ -129,7 +129,7 @@ class Administrators extends BasePage
                 FormData::text('account%%', '', lang('administrator.account')),
                 FormData::text('name%%', '', lang('administrator.administrator')),
                 FormData::text('r.role%%', '', lang('administrator.role')),
-                FormData::select('r.role%%', '', [
+                FormData::select('i.status%%', '', [
                     AdministratorsM::STATUS_NORMAL => lang('normal'),
                     AdministratorsM::STATUS_FROZEN => lang('disable'),
                 ], lang('administrator.status')),

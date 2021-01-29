@@ -48,15 +48,15 @@ class Role extends BasePage
         ]);
 
         $table->setHandleWidth(250);
-        $table->addBarEvent(['directly_under', 'all']);
-        $table->addEvent(['power']);
-        $table->setBarEventHtml('directly_under', Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'));
-        $table->setBarEventHtml('all', Layui::button('全部', 'group')->setEvent('all')->normal('sm'));
-        $table->setEventHtml('power', Layui::button('权限设置', 'auz')->setEvent('power')->normal('xs'));
 
-        $table->setBarEventJs('directly_under', TableAux::searchWhere(['mode' => 'directly_under']));
-        $table->setBarEventJs('all', TableAux::searchWhere(['mode' => 'all']));
-        $table->setEventJs('power', TableAux::openPage([url('system.Power/power'), 'role_id'], '权限设置'));
+        $table->addBarEvent('directly_under')->setHtml(Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'))
+            ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
+
+        $table->addBarEvent('all')->setHtml(Layui::button('全部', 'group')->setEvent('all')->normal('sm'))
+            ->setJs(TableAux::searchWhere(['mode' => 'all']));
+
+        $table->addEvent('power')->setHtml(Layui::button('权限设置', 'auz')->setEvent('power')->normal('xs'))
+            ->setJs(TableAux::openPage([url('system.Power/power'), 'role_id'], '权限设置'));
 
         return $table;
     }
@@ -97,9 +97,6 @@ class Role extends BasePage
      */
     public function searchFormData():DefaultForm
     {
-
-
-
         $form_data = [
             FormData::build(
                 FormData::text('i.id', '', 'ID'),
