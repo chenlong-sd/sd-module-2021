@@ -40,7 +40,10 @@ class Test extends BasePage
             TableAux::column('create_time', '创建时间'),
         ]);
 
-        $table->setHandleWidth(150);
+        $table->addEvent('test')->setDangerBtn('test', 'user', 'xs')->setJs('');
+
+
+        $table->setHandleWidth(220);
         return $table;
     }
 

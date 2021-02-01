@@ -74,17 +74,17 @@ class System extends Admin
         $table->removeEvent(['update', 'delete']);
         $table->removeBarEvent(['create', 'delete']);
 
-        $table->addBarEvent('all_back', Layui::button('备份全部数据', 'slider')->setEvent('all_back')->warm('sm'));
-        $table->setBarEventJs('all_back', TableAux::openPage(url('system.System/backUp'), '备份数据中')->setConfirm('确认备份数据吗？', ['icon' => 3]));
+        $table->addBarEvent('all_back')->setWarmBtn('备份全部数据', 'slider', 'sm')
+            ->setJs(TableAux::openPage(url('system.System/backUp'), '备份数据中')->setConfirm('确认备份数据吗？', ['icon' => 3]));
 
-        $table->addBarEvent('see_all', Layui::button('查看备份数据', 'slider')->setEvent('see_all')->normal('sm'));
-        $table->setBarEventJs('see_all', TableAux::openPage(url('system.System/viewBackupFiles'), '已备份的文件'));
+        $table->addBarEvent('see_all')->setNormalBtn('查看备份数据', 'slider', 'sm')
+            ->setJs(TableAux::openPage(url('system.System/viewBackupFiles'), '已备份的文件'));
 
-        $table->addEvent('see', Layui::button('备份文件', 'read')->setEvent('see')->normal('xs'));
-        $table->setEventJs('see', TableAux::openPage([url(  'system.System/viewBackupFiles'), 'name'], '【{comment}】已备份的文件'));
+        $table->addEvent('see')->setNormalBtn('查看备份', 'read', 'xs')
+            ->setJs(TableAux::openPage([url(  'system.System/viewBackupFiles'), 'name'], '【{comment}】已备份的文件'));
 
-        $table->addEvent('back_up', Layui::button('开始备份', 'slider')->setEvent('back_up')->warm('xs'));
-        $table->setEventJs('back_up', TableAux::openPage([url('system.System/backUp'), 'name'], '备份{comment}数据中')->setConfirm('确认备份{comment}数据吗？', ['icon' => 3]));
+        $table->addEvent('back_up')->setWarmBtn('开始备份', 'slider', 'xs')
+            ->setJs(TableAux::openPage([url('system.System/backUp'), 'name'], '备份{comment}数据中')->setConfirm('确认备份{comment}数据吗？', ['icon' => 3]));
 
         $table->setHandleWidth(220);
 
@@ -128,6 +128,7 @@ class System extends Admin
 
         $tables = TablePage::create([
             TableAux::column('filename', '文件'),
+            TableAux::column('time', '备份时间'),
             TableAux::column('size', '文件大小',  function (){
                 return "return (obj.size / 1024) + ' KB'";
             })
@@ -135,13 +136,15 @@ class System extends Admin
 
         $tables->removeEvent(['update', 'delete']);
         $tables->removeBarEvent(['create', 'delete']);
-        $tables->addEvent('recover', Layui::button('恢复', 'time')->setEvent('recover')->normal('xs'));
-        $tables->addEvent('del', Layui::button('删除', 'delete')->setEvent('del')->danger('xs'));
 
-        $tables->setEventJs('del', TableAux::ajax(url('system.System/backUpDelete?table=' . $this->request->get('name')), '确认删除数据？')
-            ->setConfig(['title' => '警告']));
-        $tables->setEventJs('recover', TableAux::openPage([url('system.System/dataRecover?table=' . $this->request->get('name')), 'filename'], '数据恢复中....')
-            ->setConfirm('确认恢复当前数据吗？', ['icon' => 3, 'title' => '提示']));
+        $tables->addEvent('recover')->setNormalBtn('恢复', 'time', 'xs')
+            ->setJs(TableAux::openPage([url('system.System/dataRecover?table=' . $this->request->get('name')), 'filename'], '数据恢复中....')
+                ->setConfirm('确认恢复当前数据吗？', ['icon' => 3, 'title' => '提示']));
+
+        $tables->addEvent('del')->setDangerBtn('删除', 'delete', 'xs')
+            ->setJs(TableAux::ajax(url('system.System/backUpDelete?table=' . $this->request->get('name')), '确认删除数据？')
+                ->setConfig(['title' => '警告']));
+
         $tables->setConfig(['page' => false]);
         return $this->fetch('common/list_page', [
             'table' => $tables,
@@ -190,7 +193,8 @@ class System extends Admin
             if (is_file($file = realpath($dir . '/' . $filename))) {
                 $files[] = [
                     'filename' => $filename,
-                    'size' => filesize($file)
+                    'size' => filesize($file),
+                    'time' => date('Y-m-d H:i:s', filectime($file))
                 ];
             }
         }

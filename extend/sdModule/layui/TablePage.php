@@ -208,11 +208,9 @@ class TablePage
     /**
      * 添加事件
      * @param string $event
-     * @param null $html
-     * @param null $js
      * @return Event
      */
-    public function addEvent(string $event, $html = null, $js = null): Event
+    public function addEvent(string $event): Event
     {
         return new Event($this, $event);
     }
@@ -220,11 +218,9 @@ class TablePage
     /**
      * 添加事件头部bar的事件
      * @param string $event
-     * @param null $html
-     * @param null $js
      * @return Event
      */
-    public function addBarEvent(string $event, $html = null, $js = null):Event
+    public function addBarEvent(string $event):Event
     {
         return new Event($this, $event, true);
     }
