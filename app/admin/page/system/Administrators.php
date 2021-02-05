@@ -75,7 +75,7 @@ class Administrators extends BasePage
             FormData::textShort('account', lang('administrator.account'), '', lang('administrator.login account')),
             FormData::password('password', lang('administrator.password'), lang('administrator.password require')),
             FormData::password('password_confirm', lang('administrator.password confirm'), lang('administrator.password require')),
-            FormData::selects('role_id', lang('administrator.role'), Role::addSoftDelWhere(['administrators_id' => AdministratorsM::getSession('id')])->column('role', 'id')),
+            FormData::selects('role_id', lang('administrator.role'), Role::where(['administrators_id' => AdministratorsM::getSession('id')])->column('role', 'id')),
             FormData::radio('status', lang('administrator.status'), AdministratorsM::getStatusSc())->preset(AdministratorsM::STATUS_NORMAL),
         ];
         if (env('APP.DATA_AUTH', false)){

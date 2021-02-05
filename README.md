@@ -291,6 +291,7 @@ class test
 ## 表单生成
 
 示例代码
+
 ```php
 use sdModule\layui\defaultForm\FormData;
 
@@ -304,7 +305,7 @@ $form = \sdModule\layui\defaultForm\Form::create([
     FormData::radio('status', '状态', self::getStatusSc(false))->unitConfig(['ss' => 'ss']), // 设置该表单的js配置项，目前只针对selects表单
     FormData::select('administrators_id', '管理员', Administrators::addSoftDelWhere()->column('name', 'id')),
     FormData::select('pid', '上级', Test::addSoftDelWhere()->column('title', 'id')),
-    FormData::u_editor('content', '详情'),
+    FormData::uEditor('content', '详情'),
     FormData::switch_('switch', '开关', ['1' => '打开', '2' => '关闭'], '打开的值,eg:2'),
     FormData::auxTitle('asdsad', 'line'), // 辅助标题
     FormData::custom('asdsad', 'line', ['html' => '<div></div>']), // 自定义

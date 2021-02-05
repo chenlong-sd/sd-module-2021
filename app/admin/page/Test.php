@@ -66,7 +66,7 @@ class Test extends BasePage
             FormData::radio('status', '状态', MyModel::getStatusSc(false)),
             FormData::select('administrators_id', '管理员', Administrators::column('name', 'id')),
             FormData::select('pid', '上级', MyModel::column('title', 'id')),
-            FormData::u_editor('content', '详情'),
+            FormData::uEditor('content', '详情'),
         ];
 
         $form = DefaultForm::create($unit)->setDefaultData($default_data);

@@ -75,7 +75,7 @@ class Api extends BasePage
             FormData::text('api_name', '接口名'),
             FormData::text('path', '路径'),
             FormData::text('describe', '描述'),
-            FormData::u_editor('response', '响应示例'),
+            FormData::uEditor('response', '响应示例'),
         ];
         $form = DefaultForm::create($unit)->setDefaultData($default_data);
 

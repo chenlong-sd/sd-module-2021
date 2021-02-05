@@ -191,7 +191,7 @@ class FormData
      * @param string $label
      * @return UnitData
      */
-    public static function u_editor(string $name, string $label = '')
+    public static function uEditor(string $name, string $label = '')
     {
         return self::generate($name, $label, self::U_EDITOR);
     }
