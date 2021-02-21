@@ -43,15 +43,14 @@ class Log
      */
     private function logDataMake(Request $request)
     {
-        $param = json_encode($this->param(), JSON_UNESCAPED_UNICODE);
         return [
-            'method' => array_search($request->method(), \app\admin\model\system\Log::getMethodSc(false)) ?: 1,
-            'route_id' => array_search($request->middleware('route_path'), cache(config('admin.route_cache')) ?: []) ?: 0,
+            'method'            => array_search($request->method(), \app\admin\model\system\Log::getMethodSc(false)) ?: 1,
+            'route_id'          => array_search($request->middleware('route_path'), cache(config('admin.route_cache')) ?: []) ?: 0,
             'administrators_id' => admin_session('id', 0),
-            'param' => mb_strlen($param) >= 2048 ? mb_substr($param, 0, 2045) . '...' : $param,
-            'route' => $request->middleware('route_path'),
-            'create_time' => ($time = date('Y-m-d H:i:s')),
-            'update_time' => $time,
+            'param'             => json_encode($this->param(), JSON_UNESCAPED_UNICODE),
+            'route'             => $request->middleware('route_path'),
+            'create_time'       => ($time = date('Y-m-d H:i:s')),
+            'update_time'       => $time,
         ];
     }
 
@@ -64,11 +63,6 @@ class Log
         $param = [];
         $params = $params === null ? \request()->param() : $params;
         foreach ($params as $item => $value) {
-            if (is_array($value)) {
-                $value = $this->param($value);
-            }else if (strlen($value) > 32){
-                $value = substr($value, 0, 29) . '...';
-            }
             preg_match('/password|pwd/', $item) or $param[$item] = $value;
         }
 

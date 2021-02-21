@@ -12,6 +12,7 @@ use think\facade\App;
 use think\file\UploadedFile;
 use app\common\SdException;
 use app\common\ResponseJson;
+use think\helper\Arr;
 
 class SystemUpload
 {
@@ -86,7 +87,7 @@ class SystemUpload
         }
 
         if (!$allow) {
-            throw new SdException('文件错误');
+            throw new SdException('上传文件格式不对，请确认');
         }
     }
 
@@ -96,7 +97,7 @@ class SystemUpload
      * @param UploadedFile $file
      * @throws SdException
      */
-    private function mimeVerify($file)
+    private function mimeVerify(UploadedFile $file)
     {
         $allow = $this->verify_type === 'all';
         foreach (explode('*', $this->verify_type) as $verify_type) {
@@ -108,7 +109,7 @@ class SystemUpload
         }
 
         if (!$allow) {
-            throw new SdException('上传文件错误');
+            throw new SdException('上传文件MIME格式错误');
         }
     }
 
@@ -147,12 +148,13 @@ class SystemUpload
     {
         try {
             // 判断是否已经存在
-            $hasFile = Resource::getDataByWhere(['md5' => $file->md5()],  true);
+            $hasFile = Resource::where(['md5' => $file->md5()])->allowEmpty()->find();
             if (!$hasFile->isEmpty() && $this->fileCheck($hasFile->path)) {
                 $this->thumbnail($hasFile->path);
 
-                $data = $this->verify_type === 'image' ? strtr($hasFile->path, ['\\' => '/'])
-                    : data_only($hasFile->toArray(), ['id', 'tag']);
+                $data = $this->verify_type === 'image'
+                    ? strtr($hasFile->path, ['\\' => '/'])
+                    : Arr::only($hasFile->toArray(), ['id', 'tag']);
 
                 return ResponseJson::success($data);
             }
@@ -164,9 +166,9 @@ class SystemUpload
             $this->thumbnail($save_name);
 
             $data = [
-                'tag' => substr($file->getOriginalName(), 0, 255),
+                'tag'  => substr($file->getOriginalName(), 0, 255),
                 'path' => strtr($save_name, ['\\' => '/']),
-                'md5' => $file->md5(),
+                'md5'  => $file->md5(),
             ];
 
             if ($hasFile->isEmpty()) {
@@ -176,8 +178,9 @@ class SystemUpload
                 $id = $hasFile->id;
             }
 
-            $data = $this->verify_type === 'image' ? strtr($save_name, ['\\' => '/'])
-                :  ['id' => $id, 'tag' => $data['tag']];
+            $data = $this->verify_type === 'image'
+                ? strtr($save_name, ['\\' => '/'])
+                : ['id' => $id, 'tag' => $data['tag']];
 
             return ResponseJson::success($data);
         } catch (\Throwable $e) {
@@ -210,7 +213,7 @@ class SystemUpload
     {
         $file = App::getRootPath() . '/public/' . $save_name;
         if(env('THUMBNAIL') && $this->verify_type === 'image' && file_exists($file)){
-            Image::thumbnail($file, 0.5)->compressImg(explode('.', $save_name)[0] . "_thumbnail");
+            Image::thumbnail($file, 0.5)->compressImg(current(explode('.', $save_name)) . "_thumbnail");
         }
     }
 
@@ -249,7 +252,7 @@ class SystemUpload
 
         $path = implode(DIRECTORY_SEPARATOR, [env('UPLOAD_DIR', self::UPLOAD_DIR), date('Ym'), date('d'), $md5 . '.' . $result[2]]);
 
-        $hasFile = Resource::addSoftDelWhere(['md5' => $md5])->value('path');
+        $hasFile = Resource::where(['md5' => $md5])->value('path');
 
         if ($hasFile) {
             return ResponseJson::success(strtr($hasFile, ['\\' => '/']));

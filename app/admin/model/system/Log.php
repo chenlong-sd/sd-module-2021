@@ -27,7 +27,7 @@ class Log extends BaseModel
         'method' => 'tinyint',
         'route_id' => 'int',
         'administrators_id' => 'int',
-        'param' => 'varchar',
+        'param' => 'json',
         'route' => 'varchar',
         'create_time' => 'datetime',
         'update_time' => 'datetime',

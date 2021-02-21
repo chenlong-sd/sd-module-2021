@@ -27,6 +27,7 @@ class ExceptionHandle extends Handle
         ModelNotFoundException::class,
         DataNotFoundException::class,
         ValidateException::class,
+        SdException::class,
     ];
 
     /**
@@ -58,7 +59,7 @@ class ExceptionHandle extends Handle
         }
 
         if (!env('APP_DEBUG')) {
-            return Response::create(null,'html',404);
+            return Response::create(null, 'html', 404);
         }
 
         // 其他错误交给系统处理
