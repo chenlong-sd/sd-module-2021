@@ -89,6 +89,7 @@ class BackstageListsService
     }
 
     /**
+     * 数据权限处理
      * @param BaseModel|Query $model
      * @return mixed
      * @throws \app\common\SdException

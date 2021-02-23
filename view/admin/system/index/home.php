@@ -49,30 +49,14 @@
                 <div class="layui-card-header">系统信息</div>
                 <div class="layui-card-body">
                     <table class="layui-table">
-                        <tr>
-                            <td width="70">PHP 版本</td>
-                            <td><?= phpversion() ?></td>
-                        </tr>
-                        <tr>
-                            <td>mysql 版本</td>
-                            <td><?= current(\think\facade\Db::query('SELECT VERSION() AS ver'))['ver'] ?></td>
-                        </tr>
-                        <tr>
-                            <td>系统信息 </td>
-                            <td><?= php_uname() ?></td>
-                        </tr>
-                        <tr>
-                            <td>本机IP </td>
-                            <td><?= $_SERVER['REMOTE_ADDR'] ?></td>
-                        </tr>
-                        <tr>
-                            <td>上传限制 </td>
-                            <td><?= ini_get('upload_max_filesize') ?></td>
-                        </tr>
-                        <tr>
-                            <td>空间剩余 </td>
+                        <tr><td width="70">PHP版本</td><td><?= phpversion() ?></td></tr>
+                        <tr><td>mysql版本</td><td><?= current(\think\facade\Db::query('SELECT VERSION() AS ver'))['ver'] ?></td></tr>
+                        <tr><td>系统信息  </td><td><?= php_uname() ?></td></tr>
+                        <tr><td>本机IP   </td><td><?= $_SERVER['REMOTE_ADDR'] ?></td></tr>
+                        <tr><td>上传限制  </td><td><?= ini_get('upload_max_filesize') ?></td></tr>
+                        <tr><td>空间剩余  </td>
                             <td>
-                                <?php $space = disk_free_space(".")/(1024*1024);
+                                <?php $space = disk_free_space(".") / (1024*1024);
                                     echo $space > 1024 ? round($space / 1024, 3) . ' G' : $space . ' M'
                                 ?>
                             </td>

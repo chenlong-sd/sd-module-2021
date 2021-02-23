@@ -37,18 +37,13 @@ custom = {
         if (typeof msg == 'function') {
             closeCallback = msg;
         }
-        msg = typeof msg == 'string' ? msg : LOADING;
-        if (typeof closeCallback != 'function') {
-            closeCallback = function () {
-            }
-        }
-
+        msg = typeof msg == 'string' ? msg : '该操作可能需要一些时间，请稍候...';
         return layer.msg(msg, {
             icon: 16
             , time: 0
             , shade: 0.1
         }, function () {
-            closeCallback();
+            typeof closeCallback == 'function' && closeCallback();
         });
     }
     /**
