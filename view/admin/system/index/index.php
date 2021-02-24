@@ -216,9 +216,14 @@
                 custom.frame("{:url('system.administrators/defend')}", '修改资料')
             },
             'surprised':()=>{
-                custom.frame("{:url('system.index/game')}", '修改资料', {area:['880px', "890px"]})
+                custom.frame("{:url('system.index/game')}", '休息一下', {area:['880px', "890px"]})
             }
-        })
+        });
+        // tab 双击创建弹窗并关闭 tab
+        layui.jquery(document).on('dblclick', '#LAY_app_tabsheader>li', function () {
+            custom.frame(layui.jquery(this).attr('lay-id'), layui.jquery(this).find('span').text());
+            layui.jquery(this).find('.layui-tab-close').click();
+        });
 
     })
 

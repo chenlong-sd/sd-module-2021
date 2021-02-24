@@ -67,14 +67,21 @@ custom = {
             , zIndex: layer.zIndex //重点1
             , success: function(layero, index){
                 layer.setTop(layero); //重点2
+                layero.find('.layui-layer-setwin').prepend('<a id="sc-window-tab'+ layer.zIndex +'" href="#"><i class="layui-icon layui-icon-up"></i></a>');
                 let iframeWin = window[layero.find('iframe')[0]['name']];
-                $(iframeWin.document).on('click', function (){
+                layui.jquery(document).on('click', '#sc-window-tab' + layer.zIndex, function () {
+                    let hf = /\?/.test(iframeWin.location.href) ? "&__sc_tab__=1" : "?__sc_tab__=1";
+                    custom.openTabsPage(layero.find('iframe').attr('src') + hf + '#' + layero.attr('times'), layero.find('.layui-layer-title').text());
+                    layer.close(index);
+                });
+
+                layui.jquery(iframeWin.document).on('click', function (){
                     layero.css('z-Index', ++layer.zIndex);
                 });
             }
         };
 
-        if ($('.layui-layer-iframe').length > 0) {
+        if (layui.jquery('.layui-layer-iframe').length > 0) {
             frame.offset = [parseInt(Math.random()*(21),10) + '%', parseInt(Math.random()*(21),10) + '%'];
         }
 
@@ -119,6 +126,7 @@ custom = {
      */
     , closeTabsPage() {
         let url = window.location.href.replace(location.origin, '');
+        console.log(url);
         top.layui.jquery('#LAY_app_tabsheader').find("li[lay-id='" + url + "']>i").click();
     }
     /**
