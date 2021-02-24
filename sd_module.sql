@@ -84,7 +84,7 @@ CREATE TABLE `sd_log`  (
   `method` tinyint(1) NOT NULL DEFAULT 1 COMMENT '请求方式：1=GET,2=POST',
   `route_id` int(11) NOT NULL DEFAULT 0 COMMENT '路由ID',
   `administrators_id` int(11) NOT NULL DEFAULT 0 COMMENT '操作管理员',
-  `param` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '请求参数',
+  `param` json NOT NULL COMMENT '请求参数',
   `route` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '路由地址',
   `create_time` datetime(0) NOT NULL COMMENT '创建时间',
   `update_time` datetime(0) NOT NULL COMMENT '修改时间',
