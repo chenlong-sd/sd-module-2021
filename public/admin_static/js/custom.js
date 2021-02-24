@@ -65,10 +65,18 @@ custom = {
             , moveOut: true
             , skin: 'demo-class'
             , zIndex: layer.zIndex //重点1
-            ,success: function(layero){
+            , success: function(layero, index){
                 layer.setTop(layero); //重点2
+                let iframeWin = window[layero.find('iframe')[0]['name']];
+                $(iframeWin.document).on('click', function (){
+                    layero.css('z-Index', ++layer.zIndex);
+                });
             }
         };
+
+        if ($('.layui-layer-iframe').length > 0) {
+            frame.offset = [parseInt(Math.random()*(21),10) + '%', parseInt(Math.random()*(21),10) + '%'];
+        }
 
         if (param && typeof param == 'object') {
             for (let i in param) {
