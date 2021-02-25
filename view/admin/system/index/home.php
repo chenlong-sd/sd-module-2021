@@ -29,7 +29,7 @@
     </style>
     {include file='predefine'/}
 </head>
-<body>
+<body >
 
 
     <div class="layui-row">
@@ -72,10 +72,8 @@
 </body>
 <script type="text/javascript" src="__PUBLIC__/admin_static/layui/layui.all.js"></script>
 <script type="text/javascript" src="__PUBLIC__/admin_static/js/custom.js"></script>
-
 <script>
     let $ = layui.jquery;
-
     $('.i-sc').on('click', function () {
         let s = $(this).attr('data-href');
         parent.layui.jquery('a[lay-href="' + s + '"]').click()

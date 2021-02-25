@@ -219,15 +219,26 @@
                 custom.frame("{:url('system.index/game')}", '休息一下', {area:['880px', "890px"]})
             }
         });
-        // tab 双击创建弹窗并关闭 tab
+        // tab 双击创建弹窗并关闭 tab,以及拉取
+        let DY,DO = false,TMP_LAYER;
         layui.jquery(document).on('dblclick', '#LAY_app_tabsheader>li', function () {
             custom.frame(layui.jquery(this).attr('lay-id'), layui.jquery(this).find('span').text());
             layui.jquery(this).find('.layui-tab-close').click();
+        }).on('dragstart', '#LAY_app_tabsheader>li', function (e) {
+            DY = e.screenY;
+        }).on('dragend', '#LAY_app_tabsheader>li', function (e) {
+            if (DO){
+                console.log(e.screenY - DY);
+                e.screenY - DY < 50 ? layer.close(TMP_LAYER) : layui.jquery(this).find('.layui-tab-close').click();
+            }
+            DO = false;
+        }).on('dragleave', '#LAY_app_tabsheader>li', function (e) {
+            if (!DO) {
+                TMP_LAYER = custom.frame(layui.jquery(this).attr('lay-id'), layui.jquery(this).find('span').text());
+            }
+            DO = true;
         });
-
     })
-
-
 </script>
 </body>
 </html>
