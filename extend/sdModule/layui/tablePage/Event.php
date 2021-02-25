@@ -62,7 +62,7 @@ class Event
      * @param $html
      * @return $this
      */
-    public function setHtml(string $html): Event
+    public function setHtml($html): Event
     {
         $event = $this->event;
         $fn = $this->isBar
