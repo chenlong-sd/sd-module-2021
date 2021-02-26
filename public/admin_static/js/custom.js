@@ -67,17 +67,19 @@ custom = {
             , zIndex: layer.zIndex //重点1
             , success: function(layero, index){
                 layer.setTop(layero); //重点2
-                layero.find('.layui-layer-setwin').prepend('<a id="sc-window-tab'+ layer.zIndex +'" href="#"><i class="layui-icon layui-icon-up"></i></a>');
-                let iframeWin = window[layero.find('iframe')[0]['name']];
-                layui.jquery(document).on('click', '#sc-window-tab' + layer.zIndex, function () {
-                    let hf = /\?/.test(iframeWin.location.href) ? "&__sc_tab__=1" : "?__sc_tab__=1";
-                    custom.openTabsPage(layero.find('iframe').attr('src') + hf + '#' + layero.attr('times'), layero.find('.layui-layer-title').text());
-                    layer.close(index);
-                });
+                if (layero.find('.layui-layer-setwin').find('[id^=sc-window-tab]').length < 1) {
+                    layero.find('.layui-layer-setwin').prepend('<a id="sc-window-tab'+ layer.zIndex +'" href="#"><i class="layui-icon layui-icon-up"></i></a>');
+                    let iframeWin = window[layero.find('iframe')[0]['name']];
+                    layui.jquery(document).on('click', '#sc-window-tab' + layer.zIndex, function () {
+                        let hf = /\?/.test(iframeWin.location.href) ? "&__sc_tab__=1" : "?__sc_tab__=1";
+                        custom.openTabsPage(layero.find('iframe').attr('src') + hf + '#' + layero.attr('times'), layero.find('.layui-layer-title').text());
+                        layer.close(index);
+                    });
 
-                layui.jquery(iframeWin.document).on('click', function (){
-                    layero.css('z-Index', ++layer.zIndex);
-                });
+                    layui.jquery(iframeWin.document).on('click', function (){
+                        layero.css('z-Index', ++layer.zIndex);
+                    });
+                }
             }
         };
 

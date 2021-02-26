@@ -30,7 +30,7 @@ class Power extends Admin
 
         $tree_data = admin_session('id') === config('admin.super', 1)
             ? $route::alias('i')->field($field)->select()->toArray()
-            : $route::where(['p.role_id' => admin_session('role_id')], 'i')
+            : $route::alias('i')->where(['p.role_id' => admin_session('role_id')], 'i')
                 ->join('power p', 'p.route_id = i.id')
                 ->field($field)->select()->toArray();
 

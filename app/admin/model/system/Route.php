@@ -93,7 +93,7 @@ class Route extends BaseModel
             $left_route = self::where([
                     ['p.role_id', 'in', admin_session('role_id')],
                     ['i.type', '=', self::TYPE_MENU],
-                ])
+                ])->alias('i')
                 ->join('power p', 'p.route_id = i.id')
                 ->field('i.id,i.title,i.route,i.pid,i.icon')
                 ->select()->toArray();
