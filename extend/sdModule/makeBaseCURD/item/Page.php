@@ -33,10 +33,10 @@ class Page implements Item
             'date'          => date('Y-m-d H:i:s'),
             'search_form'   => [],
             'form_data'     => [],
-            'page_name'     => $this->CURD->page_name ?: $this->CURD->table_comment,
+            'page_name'     => $this->CURD->pageName ?: $this->CURD->tableComment,
             'quick_search'  => [],
             'use'           => '',
-            'namespace'    => $this->CURD->config('namespace.page'),
+            'namespace'     => $this->CURD->getNamespace($this->CURD->config('namespace.page')),
         ];
 
         $this->formData();
@@ -93,7 +93,7 @@ class Page implements Item
         $primary_key = $this->CURD->getTablePrimary($this->CURD->table);
         $this->useAdd(FormData::class);
         foreach ($this->CURD->data as $field => $item) {
-            $type = $item['type'] === 'editor' ? "u_editor" : $item['type'];
+            $type = $item['type'] === 'editor' ? "uEditor" : $item['type'];
             if ($field === $primary_key){
                 $this->replace['form_data'][] = "FormData::hidden('{$field}'),";
                 continue;
@@ -106,7 +106,7 @@ class Page implements Item
             $select_data = '';
             if ($item['join'] && is_array($item['join'])){
                 $field       = parse_name($field, 1);
-                $this->useAdd($this->CURD->config('namespace.model') . '\\'  . $this->replace['Table'] . ' as MyModel');
+                $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');
                 $select_data = ", MyModel::get{$field}Sc(false)";
             }elseif (in_array($type, ['date', 'time', 'month', 'range'])){
                 $select_data = $type === 'range' ? ", 'date', true" : ", '{$type}'";
@@ -122,7 +122,7 @@ class Page implements Item
                     $system = in_array($table, ['Administrators', 'Role']) ? 'system\\' : '';
                     $this->useAdd($this->CURD->config('namespace.model') . '\\' . $system . $table);
                 }else{
-                    $this->useAdd($this->CURD->config('namespace.model') . '\\' .  $this->replace['Table'] . ' as MyModel');
+                    $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\' .  $this->replace['Table'] . ' as MyModel');
                     $table = 'MyModel';
                 }
                 $select_data = ", {$table}::column('{$title}', '{$value}')";
@@ -182,7 +182,7 @@ class Page implements Item
     private function search(string $field, array $data, string $alias = 'i')
     {
         $alias = $alias ?: $this->CURD->table;
-        $type = $this->CURD->field_info[parse_name($field)]['data_type'] ?? null;
+        $type = $this->CURD->fieldInfo[parse_name($field)]['data_type'] ?? null;
 
         switch (true) {
             case is_array($data['join']):
@@ -210,7 +210,7 @@ class Page implements Item
      */
     private function timeRangeSearch(string $field, string $placeholder, string $alias)
     {
-        $replace = [$alias, $field, $this->CURD->field_info[$field]['data_type'], $placeholder];
+        $replace = [$alias, $field, $this->CURD->fieldInfo[$field]['data_type'], $placeholder];
         $this->replace['search_form'][] = sprintf("FormData::time(\"%s.%s_~\", \"\", '%s', '~', '%s'),", ...$replace);
     }
 
@@ -256,7 +256,7 @@ class Page implements Item
     private function attrFieldGet(string $field)
     {
         $field = parse_name($field, 1);
-        $this->useAdd($this->CURD->config('namespace.model') . '\\'  . $this->replace['Table'] . ' as MyModel');
+        $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');
         return "MyModel::get{$field}Sc(false)";
     }
 

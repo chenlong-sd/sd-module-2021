@@ -36,7 +36,7 @@ class CommonModel implements Item
             'attr'      => '',
             'use'       => '',
             'property'  => '',
-            'namespace'    => $this->CURD->config('namespace.common_model'),
+            'namespace'    => $this->CURD->getNamespace($this->CURD->config('namespace.common_model')),
         ];
 
         $this->getSchema();
@@ -60,7 +60,7 @@ class CommonModel implements Item
     private function getSchema()
     {
         $property = [];
-        foreach ($this->CURD->field_info as $field => $data) {
+        foreach ($this->CURD->fieldInfo as $field => $data) {
             $this->replace['schema'] .= "'{$field}' => '{$data['data_type']}'," . $this->CURD->indentation(2);
             $property[] = " * @property \${$field}";
         }

@@ -219,7 +219,7 @@ if (!function_exists('data_filter')) {
      */
     function data_filter(array $data): array
     {
-        $data = array_map('trim', $data);
+        $data = array_map(fn($v) => is_array($v) ? $v : trim($v), $data);
         return array_filter($data, fn($v) => !empty($v) || $v === 0);
     }
 }

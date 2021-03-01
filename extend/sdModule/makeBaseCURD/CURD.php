@@ -38,12 +38,12 @@ class CURD
     /**
      * @var string|null 页面名字
      */
-    public ?string $page_name;
+    public ?string $pageName;
 
     /**
      * @var array|null 创建模块
      */
-    public ?array $make_module;
+    public ?array $makeModule;
     /**
      * @var null|array  字段数据
      */
@@ -52,12 +52,17 @@ class CURD
     /**
      * @var array 表字段信息
      */
-    public array $field_info;
+    public array $fieldInfo;
 
     /**
      * @var string 表注释
      */
-    public string $table_comment;
+    public string $tableComment;
+
+    /**
+     * @var string 创建子目录
+     */
+    public string $childrenDir = '';
 
     /**
      * 开始工作
@@ -106,13 +111,14 @@ class CURD
     {
         $this->data        = request()->post();
         $this->table       = $this->data['table_name'] ?? '';
-        $this->page_name   = $this->data['page_name'] ?? '';
-        $this->make_module = $this->data['make'] ?? [];
+        $this->pageName    = $this->data['page_name'] ?? '';
+        $this->makeModule  = $this->data['make'] ?? [];
+        $this->childrenDir = $this->data['children_dir'] ?? '';
 
-        unset($this->data['table_name'], $this->data['page_name'], $this->data['make']);
+        unset($this->data['table_name'], $this->data['page_name'], $this->data['make'], $this->data['children_dir']);
 
-        $this->field_info    = array_column($this->getTableInfo($this->table), null, 'column_name');
-        $this->table_comment = $this->getTableComment($this->table);
+        $this->fieldInfo    = array_column($this->getTableInfo($this->table), null, 'column_name');
+        $this->tableComment = $this->getTableComment($this->table);
 
         $this->data = array_map(function($v){
             $v['join'] = json_decode($v['join'], true) ?: $v['join'];
@@ -150,7 +156,7 @@ class CURD
             return $item->make();
         }
 
-        foreach ($this->make_module as $v){
+        foreach ($this->makeModule as $v){
             switch (true) {
                 case ($v & self::CONTROLLER) > 0:
                     $this->moduleFileCreate(new Controller($this), $this->config("file_path.{$v}"));
@@ -177,7 +183,8 @@ class CURD
      */
     private function moduleFileCreate(Item $model, string $path)
     {
-        $replace_pairs  = ['{:class}' => parse_name($this->table, 1)];
+        $children_dir   = $this->childrenDir ? strtr($this->childrenDir, ['\\' => '/']) . '/' : '';
+        $replace_pairs  = ['{:class}' => $children_dir . parse_name($this->table, 1)];
         $content        = $this->fileGenerate($model);
         $file_path      = $this->dirMake(strtr($path, $replace_pairs));
 
@@ -233,8 +240,10 @@ class CURD
     {
         $have_item = [];
 
-        $replace_pairs  = ['{:class}' => parse_name($table, 1)];
-        $replace_pairs1 = ['{:table}' => parse_name($table)];
+        $this->childrenDir = request()->param('children_dir', '');
+        $children_dir      = $this->childrenDir ? strtr($this->childrenDir, ['\\' => '/']) . '/' : '';
+        $replace_pairs     = ['{:class}' => $children_dir . parse_name($table, 1)];
+        $replace_pairs1    = ['{:table}' => $children_dir . parse_name($table)];
         foreach ($make_item as $item) {
             if (in_array($item, [1, 4, 8]) &&
                 file_exists( $filename2 = strtr($this->config("file_path.{$item}"), $replace_pairs))) {
@@ -498,6 +507,17 @@ class CURD
     public function indentation(int $number, $before = "\r\n"): string
     {
         return $before . str_pad('', $number * 4, ' ');
+    }
+
+    /**
+     * 获取命名空间
+     * @param string $baseNamespace
+     * @return string
+     */
+    public function getNamespace(string $baseNamespace): string
+    {
+        $childrenNamespace = $this->childrenDir ? "\\{$this->childrenDir}" : "";
+        return $baseNamespace . $childrenNamespace;
     }
 }
 

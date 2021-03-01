@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-01-28 16:33:07
+ * Date: 2021-03-01 11:12:13
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -40,10 +40,7 @@ class Test extends BasePage
             TableAux::column('create_time', '创建时间'),
         ]);
 
-        $table->addEvent('test')->setDangerBtn('test', 'user', 'xs')->setJs('');
-
-
-        $table->setHandleWidth(220);
+        $table->setHandleWidth(150);
         return $table;
     }
 
@@ -93,9 +90,9 @@ class Test extends BasePage
     {
         $form_data = [
             FormData::build(
-                FormData::Text('i.id', "", 'ID'),
                 FormData::Text('i.title%%', "", '标题'),
                 FormData::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
+                FormData::Text('administrators.name%%', "", '管理员'),
                 FormData::custom('', '', DefaultForm::searchSubmit())
             )
         ];

@@ -87,6 +87,13 @@
                 </div>
 
                 <div class="layui-inline">
+                    <label class="layui-form-label">子目录</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="children_dir" placeholder="order | order/pay" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
                     <label class="layui-form-label">页面名称</label>
                     <div class="layui-input-inline">
                         <input type="text" name="page_name" placeholder="新闻" autocomplete="off"
@@ -292,7 +299,7 @@
         form.on('submit(formDemo)', function (data) {
             let load = layer.msg('请稍后...', {icon: 16,time:0});
             $.ajax({
-                data:{table:data.field.table_name,make:make_item(data.field)}
+                data:{table:data.field.table_name,children_dir:data.field.children_dir,make:make_item(data.field)}
                 , success:function (res) {
                     layer.close(load);
                     if (res.code === 200) {

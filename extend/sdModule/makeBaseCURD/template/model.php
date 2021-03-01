@@ -7,7 +7,7 @@
 
 namespace //=={namespace}==//;
 
-use \app\common\model\//=={Table}==// as common//=={Table}==//;
+use //=={commonNamespace}==//\//=={Table}==// as common//=={Table}==//;
 //=={use}==//
 
 /**

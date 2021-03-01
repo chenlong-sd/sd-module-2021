@@ -36,13 +36,13 @@ class Validate implements Item
             'date'  => datetime(),
             'use'   => '',
             'rule'  => [
-                "'{$this->primary_key}|{$this->CURD->table_comment}' => 'require|number',"
+                "'{$this->primary_key}|{$this->CURD->tableComment}' => 'require|number',"
             ],
             'scene' => [
                 'add'  => [],
                 'edit' => [$this->primary_key]
             ],
-            'namespace' => $this->CURD->config('namespace.validate'),
+            'namespace' => $this->CURD->getNamespace($this->CURD->config('namespace.validate')),
         ];
 
         $this->fieldRuleHandle();
@@ -63,7 +63,7 @@ class Validate implements Item
      */
     private function fieldRuleHandle()
     {
-        $tableInfo    = $this->CURD->field_info;
+        $tableInfo    = $this->CURD->fieldInfo;
         $tableComment = array_column($tableInfo, 'column_comment', 'column_name');
         $fieldType    = array_column($tableInfo, 'data_type', 'column_name');
 

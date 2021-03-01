@@ -32,13 +32,14 @@ class Model implements Item
     {
         $this->CURD    = $CURD;
         $this->replace = [
-            'Table'       => parse_name($this->CURD->table, 1),
-            'date'        => datetime(),
-            'schema'      => '',
-            'attr'        => '',
-            'use'         => '',
-            'search_form' => [],
-            'namespace'   => $this->CURD->config('namespace.model'),
+            'Table'           => parse_name($this->CURD->table, 1),
+            'date'            => datetime(),
+            'schema'          => '',
+            'attr'            => '',
+            'use'             => '',
+            'search_form'     => [],
+            'namespace'       => $this->CURD->getNamespace($this->CURD->config('namespace.model')),
+            'commonNamespace' => $this->CURD->getNamespace($this->CURD->config('namespace.common_model')),
         ];
 
         $this->getAttr();

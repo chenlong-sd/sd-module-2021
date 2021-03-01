@@ -35,17 +35,17 @@ class Controller implements Item
     public function __construct(CURD $CURD)
     {
         $this->CURD       = $CURD;
-        $this->field_info = $this->CURD->field_info;
+        $this->field_info = $this->CURD->fieldInfo;
         $this->replace    = [
             'table_name'   => $this->CURD->table,
-            'page_name'    => $this->CURD->page_name ?: $this->CURD->table_comment,
+            'page_name'    => $this->CURD->pageName ?: $this->CURD->tableComment,
             'Table'        => parse_name($this->CURD->table, 1),
             'date'         => date('Y-m-d H:i:s'),
             'search_form'  => [],
             'list_join'    => [],
             'use'          => '',
             'quick_search' => [],
-            'namespace'    => $this->CURD->config('namespace.controller'),
+            'namespace'    => $this->CURD->getNamespace($this->CURD->config('namespace.controller')),
         ];
     }
 

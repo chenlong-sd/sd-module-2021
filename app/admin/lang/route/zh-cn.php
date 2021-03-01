@@ -11,7 +11,7 @@ return [
     'route_type' => '类型',
     'route_route' => '路由地址',
     'route_weigh' => '排序权重',
-    'route_m' => '路由节点管理',
+    'route_m' => '权限节点管理',
     'route_tip' => '温馨提示：非开发人员请勿随意操作本页面及其子页面内容',
     'route' => '请填写权限路由',
     'pid' => '请选择父级菜单',

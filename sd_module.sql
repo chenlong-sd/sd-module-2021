@@ -178,7 +178,7 @@ CREATE TABLE `sd_route`  (
 INSERT INTO `sd_route` VALUES (1, '系统设置', '', 0, 1, 0, 'layui-icon-set', '2020-04-23 13:05:17', '2020-04-23 13:05:17', 0);
 INSERT INTO `sd_route` VALUES (2, '角色管理', 'System.Role/index', 1, 1, 1, '', '2020-06-18 14:47:49', '2020-06-18 14:47:49', 0);
 INSERT INTO `sd_route` VALUES (3, '管理员管理', 'System.Administrators/index', 1, 1, 2, '', '2020-06-18 14:49:17', '2020-06-18 14:49:17', 0);
-INSERT INTO `sd_route` VALUES (4, '路由管理', 'System.Route/index', 1, 1, 3, '', '2020-06-18 14:50:06', '2020-06-18 14:50:06', 0);
+INSERT INTO `sd_route` VALUES (4, '权限节点管理', 'System.Route/index', 1, 1, 3, '', '2020-06-18 14:50:06', '2020-06-18 14:50:06', 0);
 INSERT INTO `sd_route` VALUES (5, '新增管理员', 'System.Administrators/create', 3, 2, 2, 'layui-icon-heart-fill', '2020-06-18 14:49:35', '2020-06-18 14:49:35', 0);
 INSERT INTO `sd_route` VALUES (8, '新增角色', 'System.Role/create', 2, 2, 1, '', '2020-06-18 14:48:10', '2020-06-18 14:48:10', 0);
 INSERT INTO `sd_route` VALUES (9, '修改角色', 'System.Role/update', 2, 2, 0, '', '2020-06-18 14:48:22', '2020-06-18 14:48:22', 0);
