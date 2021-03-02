@@ -97,7 +97,7 @@
 >>           '_~' => '~' // 范围查询
 >>       ];
 >> ```
-
+![列表搜索示例](./md_image/1.png)
 
 示例代码：
 
@@ -205,7 +205,7 @@ class test
 ```
 
 ## 列表页面简单操作
-
+![示例](./md_image/2.png)
 示例代码
 ```php
     use sdModule\layui\TablePage;
