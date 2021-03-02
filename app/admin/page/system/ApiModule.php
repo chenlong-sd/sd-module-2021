@@ -40,9 +40,7 @@ class ApiModule extends BasePage
         ]);
 
         $table->setHandleWidth(250);
-        $table->addEvent('api');
-        $table->setEventHtml('api', Layui::button('接口', 'release')->setEvent('api')->normal('xs'));
-        $table->setEventJs('api', TableAux::openTabs([url('system.Api/index'), 'url_prefix'], '【{item_name}】接口维护'));
+        $table->addEvent('api')->setNormalBtn('接口','release','xs')->setJs(TableAux::openTabs([url('system.Api/index'), 'url_prefix', 'api_module_id'], '【{item_name}】接口维护'));
         return $table;
     }
 

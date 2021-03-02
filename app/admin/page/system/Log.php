@@ -31,12 +31,12 @@ class Log extends BasePage
     {
         $table = TablePage::create([
             TableAux::column(['type' => 'checkbox']),
-            TableAux::column('id', 'ID'),
+//            TableAux::column('id', 'ID'),
             TableAux::column('method', '请求方式'),
-            TableAux::column('route_title', '路由ID'),
+            TableAux::column('route_title', '权限节点名'),
             TableAux::column('administrators_name', '操作管理员'),
             TableAux::column('param', '请求参数'),
-            TableAux::column('route', '路由地址'),
+            TableAux::column('route', '节点地址'),
             TableAux::column('create_time', '创建时间'),
         ]);
 
@@ -59,10 +59,10 @@ class Log extends BasePage
     {
         $form_data = [
             FormData::build(
-                FormData::text('i.id', '', 'ID'),
-                FormData::text('i.role%%', '', '角色名'),
-                FormData::text('ip.role%%', '', '父级角色'),
-                FormData::text('administrators.name%%', '', '创建者'),
+                FormData::text('route.title%%', '', '节点名'),
+                FormData::select('i.method', '', \app\admin\model\system\Log::getMethodSc(false), '请求方式'),
+                FormData::text('i.route%%', '', '节点地址'),
+                FormData::text('administrators.name%%', '', '操作人员'),
                 FormData::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
                 FormData::custom('', '', DefaultForm::searchSubmit())
             )

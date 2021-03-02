@@ -12,7 +12,13 @@ Route::get('captcha', "\\think\\captcha\\CaptchaController@index");
 // 安装
 Route::any('install', 'system.Install/index');/** @see \app\admin\controller\system\Install::index() */
 // 辅助
-Route::any('aux', fn() => CURD::work());/** @see \app\admin\controller\system\System::aux() */
+Route::any('aux', 'system.System/devAux');/** @see \app\admin\controller\system\System::devAux() */
+// 文件创建
+Route::any('file-make', fn() => CURD::work());
+// 查询的数据字段
+Route::any('field', 'system.System/field');
+// 查询数据字段
+Route::any('field-query', 'system.System/tableFieldQuery');/** @see \app\admin\controller\system\System::tableFieldQuery() */
 // 接口
 Route::any('api', "system.ApiModule/index");/** @see \app\admin\controller\system\ApiModule::index() */
 // 本地图片上传

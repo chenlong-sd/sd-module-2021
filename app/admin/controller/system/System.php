@@ -179,6 +179,31 @@ class System extends Admin
     }
 
     /**
+     * 开发辅助
+     * @return array|\think\response\View
+     */
+    public function devAux()
+    {
+        return $this->fetch('');
+    }
+
+    /**
+     * @param string $table
+     * @return \think\response\Json
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\db\exception\PDOException
+     */
+    public function tableFieldQuery(string $table = '')
+    {
+        $data = Db::query("show COLUMNS FROM `{$table}`");
+        $sql  = Db::query("SHOW CREATE TABLE `{$table}`");
+        return ResponseJson::success([
+            'field' => array_column($data, 'Field'),
+            'sql' => strtr(current($sql)['Create Table'], ["\n" => "<br/>&nbsp;&nbsp;&nbsp;&nbsp;"])
+        ]);
+    }
+
+    /**
      * @param $dir
      * @return array
      */

@@ -40,21 +40,21 @@ class Api extends BasePage
             TableAux::column('update_time', '修改时间'),
         ]);
 
-        $table->setHandleWidth(220);
-        $table->addEvent('see');
+        $table->setHandleWidth(280);
         $table->setConfig([
             'where' => ['search' => ['api_module_id' => request()->get('id')]],
             'page' => false,
         ]);
-        $table->removeEvent('delete');
-        $table->setBarEventJs('create', TableAux::openPage(url(sprintf('system.api/create?api_module_id=%s', request()->get('id'))), '创建', ['area' => ['90%', '90%']]));
-        $table->setEventhtml('see', Layui::button('查看', 'read')->setEvent('see')->normal('xs'));
-        $table->setEventjs('see', TableAux::openPage([url('update?see=1')], '查看', ['area' => ['90%', "90%"]]));
-        $table->setEventjs('update', TableAux::openPage([url('update')], '编辑', ['area' => ['90%', "90%"]]));
-
-        $table->addEvent('docking', Layui::button('已对接')->setEvent('docking')->warm('xs'));
-        $table->setEventJs('docking', TableAux::ajax(url('docking'), 'post'));
+        $table->removeBarEvent(['create','delete']);
         $table->setEventWhere('docking', 'd.status_1 == 1');
+        $table->addEvent('see')
+            ->setNormalBtn('查看','read','xs')
+            ->setJs(TableAux::openPage([url('update?see=1')], '查看', ['area' => ['90%', "90%"]]));
+        $table->addEvent('docking')
+            ->setWarmBtn('已对接','','xs')
+            ->setJs(TableAux::ajax(url('docking'), '确认已对接？'));
+        $table->addBarEvent('createii')->setDefaultBtn('新增','add-1','sm')
+            ->setJs(TableAux::openPage(url(sprintf('system.api/create?api_module_id=%s', request()->get('id'))), '创建', ['area' => ['90%', '90%']]));
 
         return $table;
     }
