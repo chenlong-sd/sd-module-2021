@@ -475,7 +475,7 @@ JS;
             , success: function (res) {
                 layer.close(load);
                 if (res.code === 200) {
-                    parent.layer.closeAll();
+                    parent.layer.close(window.closeLayerIndex);
                     try{
                         window.parent.notice.success('{$success}');
                     }catch (e) {

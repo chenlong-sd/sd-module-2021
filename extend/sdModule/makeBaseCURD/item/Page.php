@@ -42,7 +42,10 @@ class Page implements Item
         $this->formData();
         $this->tablePage();
         $this->searchHandle();
-        $this->replace['search_form'][] = "FormData::custom('', '', DefaultForm::searchSubmit())";
+
+        if ($this->replace['search_form']) {
+            $this->replace['search_form'][] = "FormData::custom('', '', DefaultForm::searchSubmit())";
+        }
     }
 
     /**
@@ -64,7 +67,8 @@ class Page implements Item
         $replace = [];
         foreach ($this->replace as $key => $value) {
             if ($key === 'search_form') {
-                $replace["//=={{$key}}==//"] = implode($this->CURD->indentation(4), $value);
+                $replace["//=={{$key}}==//"] = $value ? sprintf('%sFormData::build(%s%s%1$s)%s',
+                    $this->CURD->indentation(3), $this->CURD->indentation(4), implode($this->CURD->indentation(4), $value), $this->CURD->indentation(2)) : '';
                 continue;
             }
             $replace["//=={{$key}}==//"] = is_array($value)

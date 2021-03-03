@@ -5,6 +5,7 @@ namespace sdModule\common\helper;
 
 
 use app\common\SdException;
+use think\facade\Db;
 
 class SCRedis
 {
@@ -82,6 +83,21 @@ class SCRedis
 
         $this->redis->expire($id, 10);
         return self::run($callable, $param, $id);
+    }
+
+    /**
+     * 加锁并执行事务
+     * @param callable $callback
+     * @param array $param
+     * @param null $id
+     * @param int $exp
+     * @param null $tip
+     * @return mixed|string|null
+     * @throws \Throwable
+     */
+    public function lockAndTransaction(callable $callback, array $param = [], $id = null, int $exp = 3, $tip = null)
+    {
+        return $this->lock(fn() => Db::transaction($callback), $param, $id, $exp, $tip);
     }
 
     /**

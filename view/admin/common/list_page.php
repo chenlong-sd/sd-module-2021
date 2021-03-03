@@ -167,6 +167,18 @@
         }
     });
 
+    /**
+     * 排序事件
+     */
+    table.on('sort(sc)', function(obj){
+        table.reload('sc', {
+            initSort: obj
+            ,where: {
+                sort:`${obj.field},${obj.type}`
+            }
+        });
+    });
+
     form.on('submit(sc-form)', function (object) {
         table.reload('sc', {
             where: {
