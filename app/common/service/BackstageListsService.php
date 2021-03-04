@@ -69,6 +69,11 @@ class BackstageListsService
     ];
 
     /**
+     * @var callable
+     */
+    private $each = null;
+
+    /**
      * @param BaseModel|Query|string $model
      * @return $this
      * @throws \app\common\SdException
@@ -240,6 +245,7 @@ class BackstageListsService
      */
     private function returnHandle($data)
     {
+        is_callable($this->each) and $data->each($this->each);
         if (is_callable($this->returnHandle)) {
             return call_user_func($this->returnHandle, $data);
         }
@@ -373,6 +379,16 @@ class BackstageListsService
     public function setQuickSearchField(array $quickSearchField): BackstageListsService
     {
         $this->quickSearchField = $quickSearchField;
+        return $this;
+    }
+
+    /**
+     * @param callable $each
+     * @return BackstageListsService
+     */
+    public function setEach(callable $each): BackstageListsService
+    {
+        $this->each = $each;
         return $this;
     }
 }

@@ -121,7 +121,12 @@ class Table
             $content = $this->data[$field] ?? '';
 
             if (in_array($field, $this->image_field)){
-                $content = "<div class='img-table layui-inline'><img src='{$this->root}{$content}'/></div>";
+                $img_html = '';
+                foreach (explode(',', strtr($content, ['，' => ','])) as $image){
+                    $url = preg_match('/^http/', $image) ? $image : $this->root . $image;
+                    $img_html .= "<div class='img-table layui-inline'><img src='{$url}'/></div>";
+                }
+                $content = $img_html;
             } elseif (isset($this->custom_field[$field])) {
                 $content = strtr($this->custom_field[$field], ['{var}' => $content]);
             }

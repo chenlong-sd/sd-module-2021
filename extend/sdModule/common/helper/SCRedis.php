@@ -97,7 +97,9 @@ class SCRedis
      */
     public function lockAndTransaction(callable $callback, array $param = [], $id = null, int $exp = 3, $tip = null)
     {
-        return $this->lock(fn() => Db::transaction($callback), $param, $id, $exp, $tip);
+        return $this->lock(function () use ($callback, $param){
+            return Db::transaction(fn() => call_user_func($callback, ...$param));
+        }, [],  $id, $exp, $tip);
     }
 
     /**

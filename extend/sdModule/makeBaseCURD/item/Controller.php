@@ -134,13 +134,13 @@ class Controller implements Item
         if (is_array($datum['join']) || empty($datum['join'])) {
             $this->replace['list_field'][$field] = "i.{$field}";
         }else if(strpos($datum['join'], ':') !== false
-              && strpos($datum['join'], '=') !== false){
+            && strpos($datum['join'], '=') !== false){
 
             list($table, $joinData) = explode(':', $datum['join']);
             list($value, $title)    = explode('=', $joinData);
 
             $table = $table ?: $this->CURD->table;
-            $this->joinTable($table, $value, $table === $this->CURD->table);
+            $this->joinTable($table, $field, $value, $table === $this->CURD->table);
 
             $table_pre = $table === $this->CURD->table ? 'parent' : $table;
             $this->replace['list_field'][$field] = "{$table}.{$title} {$table_pre}_{$title},i.{$field}";
@@ -149,15 +149,16 @@ class Controller implements Item
 
     /**
      * @param string $table join 表
-     * @param string $field 关联字段
+     * @param string $field 字段
+     * @param string $join_field 关联字段
      * @param bool $isParent
      */
-    private function joinTable($table, $field, $isParent)
+    private function joinTable(string $table, string $field, string $join_field, bool $isParent)
     {
         $where = '';
         $joinStr = $isParent === true
-            ? sprintf('i.pid = %s.%s %s', $table, $field, $where)
-            : sprintf('i.%s_id = %1$s.%s %s', $table, $field, $where);
+            ? sprintf('i.pid = %s.%s %s', $table, $join_field, $where)
+            : sprintf('i.%s = %s.%s %s', $field, $table, $join_field, $where);
 
         $this->replace['list_join'][$table . '-' .$field] = "'{$table}', '{$joinStr}', 'left'";
     }
