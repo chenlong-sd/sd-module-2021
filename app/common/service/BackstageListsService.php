@@ -213,14 +213,8 @@ class BackstageListsService
     public function getListsData(bool $viewSql = false)
     {
         try {
-            $this->setWhere()->listsSort()->quickSearch()->viewSql($viewSql);
-
-            if ($joinOptions = $this->model->getOptions('join')) {
-                foreach ($joinOptions as &$join) {
-                    $this->dataAuthJoin($join);
-                }
-                $this->model->setOption('join', $joinOptions);
-            }
+            $this->getNewModel();
+            $this->viewSql($viewSql);
 
             if ($this->hasPagination()) {
                 $result = $this->model->paginate(request()->get('limit', 10));
@@ -236,6 +230,38 @@ class BackstageListsService
         }
 
         return $this->returnHandle($result);
+    }
+
+    /**
+     * 获取新的处理后的 model
+     * @param BaseModel|Query|string $model
+     * @return Query
+     * @throws SdException
+     */
+    public function getNewModel($model = null): Query
+    {
+        if ($model !== null) {
+            $this->setModel($model);
+        }
+
+        try {
+            $this->setWhere()->listsSort()->quickSearch();
+
+            if ($joinOptions = $this->model->getOptions('join')) {
+                foreach ($joinOptions as &$join) {
+                    $this->dataAuthJoin($join);
+                }
+                $this->model->setOption('join', $joinOptions);
+            }
+        } catch (\Throwable $exception) {
+            if (!$exception instanceof SdException) {
+                Log::write($exception->getMessage() . ".{$exception->getFile()}({$exception->getLine()})");
+                throw new SdException(Env::get('APP_DEBUG', false) ? $exception->getMessage() : "fail");
+            }
+            throw new SdException($exception->getMessage());
+        }
+
+        return $this->model;
     }
 
     /**

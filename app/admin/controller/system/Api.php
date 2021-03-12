@@ -97,7 +97,7 @@ class Api extends Admin
                     throw new SdException('更新失败！');
                 }
             }
-            \app\admin\model\system\QueryParams::destroy(['api_id' => $id]);
+            \app\admin\model\system\QueryParams::update(['delete_time' => time()],['api_id' => $id]);
 
             $param = array_merge(
                 $this->paramHandle($data['get'] ?? [], $id, self::PARAM_TYPE_GET),
