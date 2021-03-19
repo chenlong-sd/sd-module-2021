@@ -176,19 +176,19 @@ CREATE TABLE `sd_route`  (
 -- Records of sd_route
 -- ----------------------------
 INSERT INTO `sd_route` VALUES (1, '系统设置', '', 0, 1, 0, 'layui-icon-set', '2020-04-23 13:05:17', '2020-04-23 13:05:17', 0);
-INSERT INTO `sd_route` VALUES (2, '角色管理', 'System.Role/index', 1, 1, 1, '', '2020-06-18 14:47:49', '2020-06-18 14:47:49', 0);
-INSERT INTO `sd_route` VALUES (3, '管理员管理', 'System.Administrators/index', 1, 1, 2, '', '2020-06-18 14:49:17', '2020-06-18 14:49:17', 0);
-INSERT INTO `sd_route` VALUES (4, '权限节点管理', 'System.Route/index', 1, 1, 3, '', '2020-06-18 14:50:06', '2020-06-18 14:50:06', 0);
-INSERT INTO `sd_route` VALUES (5, '新增管理员', 'System.Administrators/create', 3, 2, 2, 'layui-icon-heart-fill', '2020-06-18 14:49:35', '2020-06-18 14:49:35', 0);
-INSERT INTO `sd_route` VALUES (8, '新增角色', 'System.Role/create', 2, 2, 1, '', '2020-06-18 14:48:10', '2020-06-18 14:48:10', 0);
-INSERT INTO `sd_route` VALUES (9, '修改角色', 'System.Role/update', 2, 2, 0, '', '2020-06-18 14:48:22', '2020-06-18 14:48:22', 0);
-INSERT INTO `sd_route` VALUES (10, '删除角色', 'System.Role/del', 2, 2, 2, '', '2020-06-18 14:53:47', '2020-06-18 14:53:47', 0);
-INSERT INTO `sd_route` VALUES (11, '权限设置', 'System.Power/power', 2, 2, 3, '', '2020-05-14 13:09:07', '2020-05-14 13:09:07', 0);
-INSERT INTO `sd_route` VALUES (12, '修改管理员', 'System.Administrators/update', 3, 2, 2, '', '2020-06-18 14:49:45', '2020-06-18 14:49:45', 0);
-INSERT INTO `sd_route` VALUES (13, '删除管理员', 'System.Administrators/del', 3, 2, 3, '', '2020-05-14 13:11:05', '2020-05-14 13:11:05', 0);
-INSERT INTO `sd_route` VALUES (14, '角色数据', 'System.Role/index', 2, 2, 1, '', '2020-06-18 14:49:02', '2020-06-18 14:49:02', 0);
-INSERT INTO `sd_route` VALUES (16, '后台操作日志', 'System.Log/index', 1, 1, 4, '', '2020-06-18 14:50:23', '2020-06-18 14:50:23', 0);
-INSERT INTO `sd_route` VALUES (28, '管理员数据', 'System.Administrators/index', 3, 2, 1, '', '2020-06-18 14:49:55', '2020-06-18 14:49:55', 0);
+INSERT INTO `sd_route` VALUES (2, '角色管理', 'system.Role/index', 1, 1, 1, '', '2020-06-18 14:47:49', '2020-06-18 14:47:49', 0);
+INSERT INTO `sd_route` VALUES (3, '管理员管理', 'system.Administrators/index', 1, 1, 2, '', '2020-06-18 14:49:17', '2020-06-18 14:49:17', 0);
+INSERT INTO `sd_route` VALUES (4, '权限节点管理', 'system.Route/index', 1, 1, 3, '', '2020-06-18 14:50:06', '2020-06-18 14:50:06', 0);
+INSERT INTO `sd_route` VALUES (5, '新增管理员', 'system.Administrators/create', 3, 2, 2, 'layui-icon-heart-fill', '2020-06-18 14:49:35', '2020-06-18 14:49:35', 0);
+INSERT INTO `sd_route` VALUES (8, '新增角色', 'system.Role/create', 2, 2, 1, '', '2020-06-18 14:48:10', '2020-06-18 14:48:10', 0);
+INSERT INTO `sd_route` VALUES (9, '修改角色', 'system.Role/update', 2, 2, 0, '', '2020-06-18 14:48:22', '2020-06-18 14:48:22', 0);
+INSERT INTO `sd_route` VALUES (10, '删除角色', 'system.Role/del', 2, 2, 2, '', '2020-06-18 14:53:47', '2020-06-18 14:53:47', 0);
+INSERT INTO `sd_route` VALUES (11, '权限设置', 'system.Power/power', 2, 2, 3, '', '2020-05-14 13:09:07', '2020-05-14 13:09:07', 0);
+INSERT INTO `sd_route` VALUES (12, '修改管理员', 'system.Administrators/update', 3, 2, 2, '', '2020-06-18 14:49:45', '2020-06-18 14:49:45', 0);
+INSERT INTO `sd_route` VALUES (13, '删除管理员', 'system.Administrators/del', 3, 2, 3, '', '2020-05-14 13:11:05', '2020-05-14 13:11:05', 0);
+INSERT INTO `sd_route` VALUES (14, '角色数据', 'system.Role/index', 2, 2, 1, '', '2020-06-18 14:49:02', '2020-06-18 14:49:02', 0);
+INSERT INTO `sd_route` VALUES (16, '后台操作日志', 'system.Log/index', 1, 1, 4, '', '2020-06-18 14:50:23', '2020-06-18 14:50:23', 0);
+INSERT INTO `sd_route` VALUES (28, '管理员数据', 'system.Administrators/index', 3, 2, 1, '', '2020-06-18 14:49:55', '2020-06-18 14:49:55', 0);
 INSERT INTO `sd_route` VALUES (30, '测试列表', 'test/index', 1, 1, 1, 'layui-icon-light', '2020-11-24 09:59:08', '2020-11-24 09:59:08', 0);
 INSERT INTO `sd_route` VALUES (31, '列表列表数据', 'test/index', 30, 2, 0, '', '2020-11-23 19:09:18', '2020-11-23 19:09:18', 0);
 INSERT INTO `sd_route` VALUES (32, '编辑列表', 'test/update', 30, 2, 1, '', '2020-11-23 19:09:18', '2020-11-23 19:09:18', 0);
