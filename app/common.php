@@ -196,7 +196,7 @@ if (!function_exists('get_class_attr')) {
      * @param null|mixed    $default 默认值
      * @return mixed|null
      */
-    function get_class_attr($class, $attr, $default = null)
+    function get_class_attr($class, string $attr, $default = null)
     {
         if (!is_object($class) && class_exists($class)) {
             $class = app($class);
@@ -220,7 +220,7 @@ if (!function_exists('data_filter')) {
     function data_filter(array $data): array
     {
         $data = array_map(fn($v) => is_array($v) ? $v : trim($v), $data);
-        return array_filter($data, fn($v) => !empty($v) || $v === 0);
+        return array_filter($data, fn($v) => !empty($v) || $v === 0 || $v === '0');
     }
 }
 

@@ -11,13 +11,10 @@ namespace app\admin\model\system;
 
 use app\common\BaseModel;
 use app\common\SdException;
-use app\middleware\admin\SinglePoint;
+use app\common\middleware\admin\SinglePoint;
 use sdModule\common\Sc;
-use sdModule\layui\defaultForm\FormData;
 use sdModule\layui\Layui;
-use sdModule\layui\TablePage;
 use think\facade\Env;
-use think\Model;
 
 /**
  * Class Administrators

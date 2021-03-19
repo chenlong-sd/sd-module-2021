@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\middleware;
+namespace app\common\middleware;
 
 use app\admin\controller\system\Administrators;
 use app\common\ResponseJson;

@@ -9,17 +9,12 @@ namespace app\common\controller;
 use app\BaseController;
 use app\common\traits\admin\{AdminMiddleware,
     DataDelete,
-    ListRequest,
     DataWrite,
-    RequestMerge,
-    CallNotExistMethod};
+    RequestMerge};
 use app\common\BaseModel;
 use app\common\BasePage;
 use app\common\SdException;
-use app\common\service\BackstageListsService;
 use app\common\traits\Lang;
-use sdModule\common\Sc;
-use sdModule\layuiSearch\Form;
 use think\facade\Db;
 use think\Model;
 
@@ -85,7 +80,7 @@ class Admin extends BaseController
      * 获取对应的page实例
      * @return BasePage
      */
-    final public function getPage()
+    final public function getPage(): ?BasePage
     {
         if ($this->page_instance instanceof BasePage){
             return $this->page_instance;
@@ -115,7 +110,7 @@ class Admin extends BaseController
      * 获取当前控制器对应表名
      * @return string
      */
-    private function getTableName()
+    private function getTableName(): string
     {
         return parse_name(substr(strrchr($this->model, '\\'), 1));
     }
@@ -125,7 +120,7 @@ class Admin extends BaseController
      * @param string|null $model
      * @return $this
      */
-    public function setModel(string $model = null)
+    public function setModel(?string $model = null): Admin
     {
         if ($model === null) {
             $class       = strtr(static::class, ['controller' => 'model']);
@@ -141,9 +136,9 @@ class Admin extends BaseController
      * 渲染页面
      * @param string $template 模板名称
      * @param array  $vars     模板变量
-     * @return array|\think\response\View
+     * @return \think\response\View
      */
-    public function fetch($template = '', $vars = [])
+    public function fetch(string $template = '', array $vars = []): \think\response\View
     {
         $vars['primary'] = $this->primary;
         return view($template, $vars);

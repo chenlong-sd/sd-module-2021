@@ -10,15 +10,12 @@ namespace app\admin\page\system;
 use app\admin\model\system\Administrators as AdministratorsM;
 use app\admin\model\system\DataAuth;
 use app\admin\model\system\Role;
-use app\common\BaseModel;
 use app\common\BasePage;
 use sdModule\layui\defaultForm\Form as DefaultForm;
 use sdModule\layui\defaultForm\FormData;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layuiSearch\Form;
-use sdModule\layuiSearch\SearchForm;
 use think\facade\Db;
 
 class Administrators extends BasePage
@@ -139,18 +136,6 @@ class Administrators extends BasePage
         ];
 
         return DefaultForm::create($form_data)->setNoSubmit()->complete();
-    }
-
-    /**
-     * 快捷搜索设置
-     * @return array
-     */
-    public function setQuickSearchField(): array
-    {
-        return [
-            'name%%' => lang('administrator.administrator'),
-            'account%%' => lang('administrator.account')
-        ];
     }
 
     /**

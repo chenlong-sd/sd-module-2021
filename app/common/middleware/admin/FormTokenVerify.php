@@ -7,7 +7,7 @@
  */
 
 
-namespace app\middleware\admin;
+namespace app\common\middleware\admin;
 
 
 use think\middleware\FormTokenCheck;

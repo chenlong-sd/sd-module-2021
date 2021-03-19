@@ -5,7 +5,7 @@ return [
     ],
 
     'listen'    => [
-        'AppInit'  => [\app\event\ApiLog::class],
+        'AppInit'  => [],
         'HttpRun'  => [],
         'HttpEnd'  => [],
         'LogLevel' => [],

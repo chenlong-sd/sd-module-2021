@@ -1,11 +1,18 @@
 <?php
 // 微信基本配置
 return [
-    // appid
-    'appId' => env('WE_CHAT.APPID', ''),
+    'base' => [
+        // 可以多个配置
+        'common' => [
+            // appid
+            'appId' => env('WE_CHAT.APPID', ''),
 
-    // secret
-    'appSecret' => env('WE_CHAT.SECRET', ''),
+            // secret
+            'appSecret' => env('WE_CHAT.SECRET', ''),
+        ],
+
+
+    ],
 
     // 通用支付
     'common_pay' => [

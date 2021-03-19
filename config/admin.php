@@ -1,6 +1,6 @@
 <?php
 
-use app\middleware\admin\{LoginMiddleware, SinglePoint, PowerAuth, Log, FormTokenVerify};
+use app\common\middleware\admin\{LoginMiddleware, SinglePoint, PowerAuth, Log, FormTokenVerify};
 
 return [
     // 维护模式后台账号登录的规则

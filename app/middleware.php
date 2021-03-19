@@ -8,9 +8,9 @@ return [
     // Session初始化
      \think\middleware\SessionInit::class,
     // 系统维护
-    \app\middleware\MaintainMiddleware::class,
+    \app\common\middleware\MaintainMiddleware::class,
     // 跨域设置
-    \app\middleware\CrossDomain::class,
+    \app\common\middleware\CrossDomain::class,
 //    安装
-    \app\middleware\Install::class,
+    \app\common\middleware\Install::class,
 ];

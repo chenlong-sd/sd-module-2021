@@ -9,7 +9,6 @@
 namespace app\admin\model\system;
 
 use app\common\BaseModel;
-use think\Model;
 
 
 class DataAuth extends BaseModel

@@ -5,7 +5,6 @@ namespace app\common\traits\admin;
 
 
 use app\common\ResponseJson;
-use think\db\Query;
 use think\facade\Db;
 use think\Request;
 
@@ -106,22 +105,22 @@ trait DataWrite
 
     /**
      * 数据写入之前处理一些数据
-     * @param $data
+     * @param array $data
      */
-    protected function beforeWrite(&$data){}
+    protected function beforeWrite(array &$data){}
 
-    protected function afterWrite($id, $data){}
+    protected function afterWrite($id, array $data){}
 
-    protected function afterAdd($id, $data){}
+    protected function afterAdd($id, array $data){}
 
-    protected function afterUpdate($id, $data){}
+    protected function afterUpdate($id, array $data){}
 
     /**
      * 数据写入之前的处理
      * @param $data
      * @return mixed
      */
-    private function dataBeforeHandle($data)
+    private function dataBeforeHandle(array $data): array
     {
         $this->beforeWrite($data);
 

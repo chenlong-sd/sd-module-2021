@@ -10,7 +10,7 @@ namespace app\api\controller;
 use app\common\controller\Api;
 use app\common\ResponseJson;
 use app\common\traits\api\SelfCollection;
-use app\middleware\Token;
+use app\common\middleware\Token;
 use sdModule\common\Sc;
 use think\facade\Log;
 

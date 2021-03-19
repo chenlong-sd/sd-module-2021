@@ -5,8 +5,8 @@ namespace app\common\controller;
 
 
 use app\BaseController;
-use app\middleware\BeComplicatedBy;
-use app\middleware\Token;
+use app\common\middleware\BeComplicatedBy;
+use app\common\middleware\Token;
 use think\event\LogWrite;
 use think\facade\Event;
 

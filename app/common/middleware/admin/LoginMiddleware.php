@@ -7,7 +7,7 @@
  */
 
 
-namespace app\middleware\admin;
+namespace app\common\middleware\admin;
 
 
 use app\admin\controller\system\Administrators;

@@ -10,7 +10,6 @@ namespace app\admin\model\system;
 
 use app\common\BaseModel;
 use sdModule\layui\Layui;
-use think\Model;
 
 
 /**

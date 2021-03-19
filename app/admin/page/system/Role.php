@@ -14,9 +14,6 @@ use sdModule\layui\defaultForm\FormData;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layuiSearch\Form;
-use sdModule\layuiSearch\generate\TimeRange;
-use sdModule\layuiSearch\SearchForm;
 
 class Role extends BasePage
 {

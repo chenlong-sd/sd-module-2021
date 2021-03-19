@@ -77,7 +77,7 @@ class ResponseJson
         return is_string($mixin) && $mixin ? self::fail($mixin) : self::success($mixin);
     }
 
-    public static function Status404()
+    public static function status404()
     {
         return Response::create(null,'html',404);
     }

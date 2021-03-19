@@ -10,9 +10,6 @@ namespace app\admin\model\system;
 
 use app\common\BaseModel;
 use sdModule\layui\Layui;
-use sdModule\layui\TablePage;
-use sdModule\layui\item\Tag;
-use think\Model;
 
 /**
  * Class Log

@@ -77,7 +77,7 @@ class Api extends Admin
     }
 
 
-    public function save()
+    public function save(): \think\response\Json
     {
         $data = $this->request->post();
         $this->validate($body = data_filter($data['body']), \app\admin\validate\system\Api::class . '.add');

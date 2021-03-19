@@ -7,7 +7,7 @@
  */
 
 
-namespace app\middleware;
+namespace app\common\middleware;
 
 use app\common\ResponseJson;
 use sdModule\common\Sc;

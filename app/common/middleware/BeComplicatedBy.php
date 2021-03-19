@@ -4,7 +4,7 @@
  * User: chenlong <vip_chenlong@163.com>
  */
 
-namespace app\middleware;
+namespace app\common\middleware;
 
 
 use app\Request;

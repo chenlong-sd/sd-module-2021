@@ -9,13 +9,9 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layuiSearch\Form;
 use sdModule\layui\defaultForm\FormData;
-use sdModule\layuiSearch\SearchForm;
-use sdModule\layuiSearch\generate\TimeRange;
 
 
 /**
@@ -110,16 +106,6 @@ class Api extends BasePage
             ),
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();
-    }
-
-    /**
-     * @return array 设置快捷搜索
-     */
-    public function setQuickSearchField():array
-    {
-        return [
-            'api_name%%' => '接口名',
-        ];
     }
 
 }

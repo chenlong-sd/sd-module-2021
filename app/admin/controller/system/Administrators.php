@@ -51,7 +51,7 @@ class Administrators extends Admin
      * @return string
      * @throws \Exception
      */
-    public function passwordUpdate(MyModel $administrators)
+    public function passwordUpdate(MyModel $administrators): string
     {
         if ($this->request->isPost()) {
             $data = $this->verify('password');
@@ -76,20 +76,20 @@ class Administrators extends Admin
     }
 
 
-    protected function beforeWrite(&$data)
+    protected function beforeWrite(array &$data)
     {
         $data = data_only($data, ['account', 'password', 'name', 'role_id', 'status', 'id']);
         !empty($data['password']) and $data['password'] = Sc::password()->encryption($data['password']);
     }
 
-    protected function afterWrite($id, $data)
+    protected function afterWrite($id, array $data)
     {
         if (env('APP.DATA_AUTH')){
             MyModel::dataAuthSet($id, $this->request->post());
         }
 
         $role_id = explode(',', $data['role_id']);
-        $administrators_role = AdministratorsRole::where(['administrators_id' => $id])->select()->toArray();
+        $administrators_role    = AdministratorsRole::where(['administrators_id' => $id])->select()->toArray();
         $administrators_role_id = array_column($administrators_role, 'role_id');
         $delete_role = array_diff($administrators_role_id, $role_id);
         $add_role    = array_diff($role_id, $administrators_role_id);

@@ -4,32 +4,21 @@
 namespace app\testApi\controller;
 
 
-use app\admin\model\Admin;
 use app\BaseController;
-use app\middleware\BeComplicatedBy;
-use app\middleware\Token;
+use app\common\middleware\BeComplicatedBy;
+use app\common\middleware\Token;
 use app\common\ResponseJson;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\SdMailer;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use sdModule\common\helper\BinarySystem;
-use sdModule\common\helper\CcSms;
-use sdModule\common\helper\Ciphertext;
-use sdModule\common\helper\EasyJWT;
-use sdModule\common\helper\FileStorage;
-use sdModule\common\helper\JWT;
-use sdModule\common\helper\SCRedis;
-use sdModule\common\helper\SdRedis;
 use sdModule\common\Sc;
 use sdModule\dataBackup\Backup;
 use sdModule\image\Image;
 use sdModule\layui\formMake\FormMake;
-use sdModule\makeAdminBasics\Basics;
 use think\facade\App;
 use think\facade\Db;
 use think\facade\Log;
-use think\facade\Response;
 
 class Index extends BaseController
 {

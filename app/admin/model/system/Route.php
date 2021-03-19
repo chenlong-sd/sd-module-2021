@@ -15,7 +15,6 @@ use app\common\SdException;
 use sdModule\common\Sc;
 use sdModule\layui\Layui;
 use think\facade\Log;
-use think\Model;
 
 /**
  * Class Route

@@ -10,7 +10,6 @@ namespace app\admin\model\system;
 
 use app\common\BaseModel;
 use app\common\SdException;
-use think\Model;
 
 /**
  * Class Power

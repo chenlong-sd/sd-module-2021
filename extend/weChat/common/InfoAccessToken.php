@@ -21,13 +21,14 @@ class InfoAccessToken
     /**
      * 获取 access_token
      * @param string $code
+     * @param string $config_tag
      * @return bool|mixed|string
      */
-    public static function get($code = '')
+    public static function get(string $code, string $config_tag)
     {
         $access_token = Helper::getRequest(strtr(self::REQUEST_URL, [
-            '{APPID}' => Config::get('appId'),
-            '{SECRET}' => Config::get('appSecret'),
+            '{APPID}' => Config::get("{$config_tag}appId"),
+            '{SECRET}' => Config::get("{$config_tag}appSecret"),
             '{CODE}' => $code
         ]));
 

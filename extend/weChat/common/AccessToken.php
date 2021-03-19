@@ -13,7 +13,7 @@ trait AccessToken
     /**
      * @return bool|mixed
      */
-    public static function getAccessToken()
+    public static function getAccessToken(string $config_tag = 'common')
     {
         //离过期时间大于五分钟，不进行新的 access_token 获取,直接返回
         if ($token = Helper::getValue(Config::get('tokenKey'))) {
@@ -21,8 +21,8 @@ trait AccessToken
         }
 
         $requestUrl = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
-        $requestUrl = sprintf($requestUrl, Config::get('appId'), Config::get('appSecret'));
-
+        $config_tag = "base.{$config_tag}.";
+        $requestUrl = sprintf($requestUrl, Config::get("{$config_tag}appId"), Config::get("{$config_tag}appSecret"));
         $data = Helper::getRequest($requestUrl);  // 发起获取 access_token 请求
 
         if (!empty($data['access_token'])) {

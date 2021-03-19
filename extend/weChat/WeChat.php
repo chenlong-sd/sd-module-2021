@@ -8,7 +8,8 @@ namespace weChat;
 
 
 use sdModule\common\StaticCallGetInstance;
-use weChat\h5\{JsApi, OAuth2};
+use weChat\h5\{JsApi, Login, OAuth2};
+use weChat\appLet\Login as AppLetLogin;
 use weChat\appLet\SmallProgramORC;
 use weChat\pay\WeChatPay;
 
@@ -18,6 +19,8 @@ use weChat\pay\WeChatPay;
  * @method static JsApi            jsApi()
  * @method static SmallProgramORC  SmallProgramORC(string $orc_type = SmallProgramORC::OCR_ID_CARD)
  * @method static WeChatPay        pay(string $trade_type = WeChatPay::JS_API)
+ * @method static Login            h5Login()
+ * @method static AppLetLogin      appLetLogin()
  * @package weChat
  */
 class WeChat extends StaticCallGetInstance
@@ -31,8 +34,11 @@ class WeChat extends StaticCallGetInstance
             'oAuth2'          => OAuth2::class,
             'jsApi'           => JsApi::class,
             'SmallProgramORC' => SmallProgramORC::class,
-            'pay'             => WeChatPay::class
+            'pay'             => WeChatPay::class,
+            'h5Login'         => Login::class,
+            'appLetLogin'     => AppLetLogin::class,
         ];
     }
+
 
 }

@@ -7,21 +7,39 @@
  */
 
 
-namespace weChat\common;
+namespace weChat\h5;
 
+
+use weChat\common\Helper;
+use weChat\common\InfoAccessToken;
 
 class Login
 {
     private const REQUEST_URL = 'https://api.weixin.qq.com/sns/userinfo?access_token={ACCESS_TOKEN}&openid={OPENID}';
 
     /**
+     * 配置标签
+     * @var string
+     */
+    private string $config_tag = '';
+
+    /**
+     * Login constructor.
+     * @param string $config_tag
+     */
+    public function __construct(string $config_tag = 'common')
+    {
+        $this->config_tag = "base.{$config_tag}.";
+    }
+
+    /**
      * 获取用户信息
      * @param string $code
      * @return array|bool|mixed|string
      */
-    public static function getUserInfo(string $code = '')
+    public function getUserInfo(string $code = '')
     {
-        $access_token = InfoAccessToken::get($code);
+        $access_token = InfoAccessToken::get($code, $this->config_tag);
         if (!$access_token) return [];
 
         $user_info = Helper::getRequest(strtr(self::REQUEST_URL, [
