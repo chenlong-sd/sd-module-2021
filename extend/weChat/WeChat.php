@@ -19,8 +19,8 @@ use weChat\pay\WeChatPay;
  * @method static JsApi            jsApi()
  * @method static SmallProgramORC  SmallProgramORC(string $orc_type = SmallProgramORC::OCR_ID_CARD)
  * @method static WeChatPay        pay(string $trade_type = WeChatPay::JS_API)
- * @method static Login            h5Login()
- * @method static AppLetLogin      appLetLogin()
+ * @method static Login            h5Login(string $config_tag = 'common')
+ * @method static AppLetLogin      appLetLogin(string $config_tag = 'common')
  * @package weChat
  */
 class WeChat extends StaticCallGetInstance

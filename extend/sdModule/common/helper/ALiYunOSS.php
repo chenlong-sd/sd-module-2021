@@ -23,7 +23,7 @@ class ALiYunOSS
     /**
      * @var OssClient
      */
-    private OssClient $ossClient;
+    private ?OssClient $ossClient = null;
 
     /**
      * ALiYunOSS constructor.
@@ -94,17 +94,28 @@ class ALiYunOSS
     {
         if ($is_upload) {
             $Suffix = substr($_FILES[$file]['name'], strrpos($_FILES[$file]['name'], '.'));
-            $object = $this->dir . md5_file($_FILES[$file]['tmp_name']) . $Suffix;
+            $object = [trim($this->dir, '/'), date('Ym'), date('d'), md5_file($_FILES[$file]['tmp_name']) . $Suffix];
             $filePath = $_FILES[$file]['tmp_name'];
         }else{
-            $object = $this->dir . md5_file($file);
+            $Suffix = explode('.', $file);
+            $object = [trim($this->dir, '/'), date('Ymd'), date('d'), md5_file($file) . end($Suffix)];
             $filePath = $file;
         }
+        $object = implode('/', $object);
         $result = $this->ossClient->uploadFile($this->bucket, $object, $filePath);
 
         return is_array($result) ? $result['oss-request-url'] : '';
     }
 
-
+    /**
+     * 指定文件夹
+     * @param string $dir
+     * @return $this
+     */
+    public function specifyDir(string $dir): ALiYunOSS
+    {
+        $this->dir = $dir;
+        return $this;
+    }
 }
 

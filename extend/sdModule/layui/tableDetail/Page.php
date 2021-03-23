@@ -47,24 +47,24 @@ class Page
 
     /**
      * @param string $event
-     * @param string $html
-     * @return Page
+     * @return Event
      */
-    public function addEvent(string $event, string $html)
+    public function addEvent(string $event): Event
     {
-        $this->event[$event] = $html;
-        return $this;
+        return new Event($this, $event);
+//        $this->event[$event] = $html;
+//        return $this;
     }
 
     /**
      * @param string $event
-     * @param string $html
-     * @return $this
+     * @return Event
      */
-    public function addAfterEvent(string $event, string $html)
+    public function addAfterEvent(string $event)
     {
-        $this->afterEvent[$event] = $html;
-        return $this;
+        return new Event($this, $event, true);
+//        $this->afterEvent[$event] = $html;
+//        return $this;
     }
 
     /**

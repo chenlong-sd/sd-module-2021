@@ -31,36 +31,6 @@ return <<<JS_VAR
     const PRINT = "{$this->lang('print')}";
     const LOADING = "{$this->lang('loading')}";
     
-    // layui的多语言设置
-    const L_LANG = {
-        confirm: "{$this->lang('confirm')}",
-        clear: "{$this->lang('clear')}",
-        upload_exception:"{$this->lang('layui upload_exception')}",
-        upload_exception_1:"{$this->lang('layui upload_exception_1')}",
-        upload_exception_json:"{$this->lang('layui upload_exception_json')}",
-        file_format_error:"{$this->lang('layui file_format_error')}",
-        video_format_error:"{$this->lang('layui video_format_error')}",
-        audio_format_error:"{$this->lang('layui audio_format_error')}",
-        image_format_error:"{$this->lang('layui image_format_error')}",
-        max_upload:"{$this->lang('layui max_upload')}",
-        file_exceed:"{$this->lang('layui file_exceed')}",
-        file_a:"{$this->lang('layui file_a')}",
-        shrink:"{$this->lang('layui shrink')}",
-        require:"{$this->lang('layui require')}",
-        phone:"{$this->lang('layui phone')}",
-        email:"{$this->lang('layui email')}",
-        link:"{$this->lang('layui link')}",
-        number:"{$this->lang('layui number')}",
-        date:"{$this->lang('layui date')}",
-        id_card:"{$this->lang('layui id_card')}",
-        select:"{$this->lang('layui select')}",
-        unnamed:"{$this->lang('layui unnamed')}",
-        no_data:"{$this->lang('layui no data')}",
-        no_matching_data:"{$this->lang('layui No matching data')}",
-        request_exception:"{$this->lang('layui require exception')}",
-        response_error:"{$this->lang('layui response error')}",
-        upload_failed:"{$this->lang('layui upload error')}",
-    }
     let confirm_tip = {icon:3,title:'{:lang("warning")}',btn:['{:lang("confirm")}', '{:lang("cancel")}']}
     
 </script>
@@ -68,6 +38,9 @@ return <<<JS_VAR
 <script src="{$this->getRoot()}admin_static/js/custom.js"></script>
 
 <script>
+    layui.config({
+        base: '{$this->getRoot()}admin_static/layui/dist/'
+    });
 let local = window.localStorage['layuiAdmin'];
     let alias = 'black';
     if (local != '{}') {
@@ -77,6 +50,9 @@ let local = window.localStorage['layuiAdmin'];
     layer.config({
         extend:alias +'/style.css'
         ,skin:'demo-class'
+    });
+    layui.use('notice',function () {
+        window.layNotice = layui.notice;
     });
 function sc_event(url, data){
     layer.confirm('{$this->lang('Confirm this operation')}', {icon:3}, function (index) {
@@ -91,11 +67,11 @@ function sc_event(url, data){
             , success: function (res) {
                 layer.close(load);
                 if (res.code === 200) {
-                    layer.msg('{$this->lang('success')}', function(){
+                    notice.success('{$this->lang('success')}', function(){
                         location.reload();
                     });
                 } else {
-                    layer.alert(res.msg);
+                    notice.warning(res.msg);
                 }
             },
             error: function (err) {

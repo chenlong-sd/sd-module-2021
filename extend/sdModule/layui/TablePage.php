@@ -81,9 +81,9 @@ class TablePage
     private array $eventWhere = [];
 
     /**
-     * @var bool 不满租条件的事件是否隐藏
+     * @var array 不满租条件的事件是否隐藏
      */
-    private bool $whereNotMeet = false;
+    private array $whereNotMeet = [];
     /**
      * @var array 表格配置
      */
@@ -271,10 +271,12 @@ class TablePage
     {
         if (is_array($event)){
             $this->eventWhere    = array_merge($this->eventWhere, $event);
-            $this->whereNotMeet  = $where === null ? $isHidden : $where;
+            foreach ($event as $e){
+                $this->whereNotMeet[$e] = $where === null ? $isHidden : $where;
+            }
         }else{
-            $this->eventWhere[$event] = $where;
-            $this->whereNotMeet       = $isHidden;
+            $this->eventWhere[$event]   = $where;
+            $this->whereNotMeet[$event] = $isHidden;
         }
     }
 
@@ -295,29 +297,29 @@ class TablePage
             return '';
         }
 
-        $whereTemplate = $this->whereNotMeet
-            ? "{{# if (:where) { }} :html {{# } }}"
-            : "{{# if (:where) { }} :html {{# }else{ }} :disable {{# } }}";
+        return implode(array_map(function ($event){
+            $whereTemplate = empty($this->whereNotMeet[$event])
+                ? "{{# if (:where) { }} :html {{# }else{ }} :disable {{# } }}"
+                : "{{# if (:where) { }} :html {{# } }}";
 
-        return implode(array_map(function ($v) use ($whereTemplate){
-            if (empty($this->toolEventHtml[$v])){
+            if (empty($this->toolEventHtml[$event])){
                 return '';
             }
 
-            $disable = preg_replace('/lay-event="\w+"/', '', $this->toolEventHtml[$v]);
+            $disable = preg_replace('/lay-event="\w+"/', '', $this->toolEventHtml[$event]);
             if (!preg_match('/(btn-danger)|(btn-warm)|(btn-normal)|(btn-primary)/', $disable)){
                 $disable = strtr($disable, ['layui-btn ' => 'layui-btn layui-btn-disabled ']);
             }else{
                 $disable = preg_replace(['/danger/', '/warm/', '/normal/', '/primary/'], 'disabled', $disable);
             }
 
-            return isset($this->eventWhere[$v])
+            return isset($this->eventWhere[$event])
                 ? strtr($whereTemplate, [
-                    ':where'    => $this->eventWhere[$v],
-                    ':html'     => $this->toolEventHtml[$v],
+                    ':where'    => $this->eventWhere[$event],
+                    ':html'     => $this->toolEventHtml[$event],
                     ':disable'  => $disable
                 ])
-                : $this->toolEventHtml[$v];
+                : $this->toolEventHtml[$event];
         }, $this->toolEvent));
     }
 
@@ -331,13 +333,13 @@ class TablePage
             return '';
         }
 
-        $where_template = $this->whereNotMeet
-            ? "{{# if (:where) { }} :html {{# } }}"
-            : "{{# if (:where) { }} :html {{# }else{ }} :disable {{# } }}";
         $li         = '<div class="shadow" %s>%s %s</div>';
         $disable_li = '<div class="shadow layui-disabled" %s>%s %s</div>';
         $html = "";
         foreach ($this->toolEvent as $event){
+            $where_template = empty($this->whereNotMeet[$event])
+                ? "{{# if (:where) { }} :html {{# }else{ }} :disable {{# } }}"
+                : "{{# if (:where) { }} :html {{# } }}";
             if (empty($this->toolEventHtml[$event]) || !$this->toolEventHtml[$event] instanceof Button){
                 continue;
             }

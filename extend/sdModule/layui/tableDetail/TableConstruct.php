@@ -12,6 +12,7 @@ namespace sdModule\layui\tableDetail;
 /**
  * Class TableConstruct
  * @package sdModule\layui\tableDetail
+ * @deprecated
  */
 class TableConstruct
 {

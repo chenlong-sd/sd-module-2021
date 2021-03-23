@@ -52,10 +52,7 @@ class Event
      */
     private function setEvent(string $event)
     {
-        $fn = $this->isBar
-            ? fn() => $this->toolbarEvent[] = $event
-            : fn() => $this->toolEvent[] = $event;
-        $fn->call($this->page);
+        $this->setPageAttr($this->isBar ? 'toolbarEvent' : 'toolEvent', $event);
     }
 
     /**
@@ -64,11 +61,7 @@ class Event
      */
     public function setHtml($html): Event
     {
-        $event = $this->event;
-        $fn = $this->isBar
-            ? fn() => $this->toolbarEventHtml[$event] = $html
-            : fn() => $this->toolEventHtml[$event] = $html;
-        $fn->call($this->page);
+        $this->setPageAttr($this->isBar ? 'toolbarEventHtml' : 'toolEventHtml', $html);
         return $this;
     }
 
@@ -78,13 +71,23 @@ class Event
      */
     public function setJs(string $js): Event
     {
-        $event = $this->event;
-        $fn = $this->isBar
-            ? fn() => $this->toolbarEventJs[$event] = $js
-            : fn() => $this->toolEventJs[$event] = $js;
-        $fn->call($this->page);
+        $this->setPageAttr($this->isBar ? 'toolbarEventJs' : 'toolEventJs', $js);
         return $this;
     }
+
+    /**
+     * 设置展示条件
+     * @param string $where 条件
+     * @param false $is_hidden 是否隐藏按钮
+     * @return Event
+     */
+    public function setWhere(string $where, bool $is_hidden = false): Event
+    {
+        $this->setPageAttr('eventWhere', $where);
+        $this->setPageAttr('whereNotMeet', $is_hidden);
+        return $this;
+    }
+
 
     /**
      * @param $name
@@ -100,4 +103,25 @@ class Event
         $method = strtolower($match[1]);
         return $this->setHtml(Layui::button($arguments[0], $arguments[1] ?? '')->setEvent($this->event)->$method($arguments[2] ?? ''));
     }
+
+    /**
+     * 设置page的属性
+     * @param string|array $attr
+     * @param null $value
+     */
+    private function setPageAttr($attr, $value = null)
+    {
+        $event = $this->event;
+        $fn = function () use ($event, $attr, $value){
+            if (is_array($attr)){
+                foreach ($attr as $at => $v){
+                    $this->$at[$event] = $v;
+                }
+            }else{
+                $this->$attr[$event] = $value;
+            }
+        };
+        $fn->call($this->page);
+    }
+
 }
