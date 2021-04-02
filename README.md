@@ -1,7 +1,18 @@
 # sd-module 外包快速开发
-#####`version 3.1` `php version 7.4~`
+#####`version 3.2` `php 7.4~` `thinkphp6`
 
 ### 更新记录
+> ### 3.2 更新内容
+> 1.优化更新详情页的代码编写
+> 
+> 2.layui更新到2.6
+> 
+> 3.修复邮件发送自带的QQ的BUG
+> 
+> 4.增加Tab页面和弹窗的互相切换
+> 
+> 5.微信相关功能的配置优化，可以支持多个微信账号。增加小程序的登录
+> 
 > ### 3.1 更新内容
 > 
 > 1.取消快捷搜功能
@@ -10,7 +21,7 @@
 > 
 > 3.数据列表查询方式更新,取消采用trait，采取依赖注入的方式，避免所有请求都加载对应内容
 > 
-> 4.启用全部TablePage废弃的方法函数, 列表页的搜索表单采用defaultForm，弃用原来的searchForm冗余模块
+> 4.之前版本TablePage废弃的方法函数这个版本全部弃用, 列表页的搜索表单采用defaultForm，弃用原来的searchForm冗余模块
 > 
 > 5.TablePage页面的js代码传递方式更新，更新函数：TableAux::openPage(), TableAux::openTabs(), TableAux::ajax(),TableAux::batchAjax()
 > 
@@ -560,9 +571,12 @@ use sdModule\layui\Layui;
 ```php
     use PHPMailer\SdMailer;
 
-    SdMailer::getInstance('chenlong', 'vip_chenlong@163.com', 'password')
-        ->setAddress('sd.chenlong@gmail.com', 'chenlong')
-        ->provider($config, 'utf8');
+    $result = SdMailer::getInstance()
+      ->setSenderMail('895781173@qq.com', '******')
+      ->setSenderUser('ChenLong')
+      ->useProvider('qq')
+      ->setToAddress('vip_chenlong@163.com')
+      ->send('测试一下', '<h1> I im Chenlong  </h1>');
 ```
 
 ### 传承短信 
@@ -617,7 +631,7 @@ use sdModule\layui\Layui;
 ```
 
 ### excel 
->此项不适合大文件操作
+>根据允许文件大小调整php内存与执行时间
 ```php
  use sdModule\common\Sc;
   Sc::excel('index.xls', 'write', 'Xls')->getActiveData();

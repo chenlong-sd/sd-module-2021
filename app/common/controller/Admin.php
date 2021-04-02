@@ -39,12 +39,12 @@ class Admin extends BaseController
     /**
      * @var Model|Db
      */
-    private $model_instance;
+    private $modelInstance;
 
     /**
      * @var BasePage|null
      */
-    private ?BasePage $page_instance = null;
+    private ?BasePage $pageInstance = null;
 
     /**
      *  表主键
@@ -66,14 +66,14 @@ class Admin extends BaseController
      */
     final public function getModel()
     {
-        if (!$this->model_instance) {
+        if (!$this->modelInstance) {
             if (class_exists($this->model)) {
-                $this->model_instance = new $this->model;
+                $this->modelInstance = new $this->model;
             } else {
                 throw new SdException('class not exist：' . $this->model);
             }
         }
-        return $this->model_instance;
+        return $this->modelInstance;
     }
 
     /**
@@ -82,11 +82,11 @@ class Admin extends BaseController
      */
     final public function getPage(): ?BasePage
     {
-        if ($this->page_instance instanceof BasePage){
-            return $this->page_instance;
+        if ($this->pageInstance instanceof BasePage){
+            return $this->pageInstance;
         }
         $page_class = strtr(static::class, ['controller' => 'page']);
-        return $this->page_instance = new $page_class();
+        return $this->pageInstance = new $page_class();
     }
 
     /**

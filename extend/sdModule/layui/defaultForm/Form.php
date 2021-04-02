@@ -336,9 +336,9 @@ class Form
     /**
      * 设置js代码
      * @param string $js
-     * @return string
+     * @return Form
      */
-    public function setJs(string $js)
+    public function setJs(string $js): Form
     {
         $this->js['custom-sc'] = $js;
         return $this;

@@ -45,7 +45,7 @@ class RequestListen
         Log::info(sprintf("URL:%s://%s%s", $request->server('REQUEST_SCHEME'), $request->server('SERVER_NAME'), $request->server('REQUEST_URI')));
         Log::info(sprintf("IP:%s   ", $request->server('REMOTE_ADDR')));
         Log::info(sprintf("TOKEN:%s", $request->server('HTTP_TOKEN')));
-        Log::info(sprintf("PARAM:%s", var_export($request->request(), true)));
+        Log::info(sprintf("PARAM:%s", var_export($request->param(), true)));
 
         $request->withMiddleware(['request_listen' => true]);
         $response = $closure($request);

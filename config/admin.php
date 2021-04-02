@@ -59,7 +59,7 @@ return [
     // table list 的表格默认配置，参考layui的表格基础参数配置
 
     'layui_config' => [
-        'skin' => 'nob',
+//        'skin' => 'nob',
 //        'size' => 'lg',
         'even' =>  true
     ],

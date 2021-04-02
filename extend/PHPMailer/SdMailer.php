@@ -11,48 +11,44 @@ namespace PHPMailer;
 
 
 use PHPMailer\PHPMailer\PHPMailer;
+use sdModule\common\Singleton;
 
 /**
  * 邮件常用配置发送
  * Class SdMailer
  * @package PHPMailer
  * @example
- *          SdMailer::getInstance('ChenLong', 'vip_chenlong@163.com', '*******')
- *              ->wy163Provider()
- *              ->setAddress('_____@qq.com', 'nihao ')
- *              ->send('Ke you NASO NONONO BOBOBO NOS', <<<SSS
- *      <div>
- *          <h1>系统维护中！</h1>
- *      </div>
- * SSS
- * );
+ * $result = SdMailer::getInstance()
+ * ->setSenderMail('895781173@qq.com', '********')
+ * ->setSenderUser('ChenLong')
+ * ->useProvider('qq')
+ * ->setToAddress('vip_chenlong@163.com')
+ * ->send('测试一下', '<h1> I im Chenlong  </h1>');
  */
-class SdMailer
+class SdMailer extends Singleton
 {
     private $charset = 'utf8';
 
     /**
-     * @var bool 是否是海外
-     */
-    private $is_overseas = false;
-
-    /**
      * @var string 用户
      */
-    private $user;
+    private $username;
 
     /**
      * @var string 用户邮箱
      */
-    private $mail;
+    private $email;
 
     /**
      * @var string 密码
      */
     private $password;
 
-
-    private $config = [
+    /**
+     * 默认配置
+     * @var array[]
+     */
+    private $provider = [
         '163' => [
             'smtp' => 'smtp.163.com',
             'imap' => 'imap.163.com',
@@ -60,17 +56,13 @@ class SdMailer
             'imap_port' => 993,
         ],
         'qq' => [
-            'smtp' => 'smtp.exmail.qq.com',
-            'imap' => 'imap.exmail.qq.com ',
-            'hwsmtp' => 'hwsmtp.exmail.qq.com',
-            'hwimap' => 'hwimap.exmail.qq.com',
-            'smtp_port' => 465,
+            'smtp' => 'smtp.qq.com',
+            'imap' => 'imap.qq.com',
+            'smtp_port' => 465, // 465 | 587
             'imap_port' => 993,
         ],
 
     ];
-
-    private static $instance;
 
     /**
      * @var PHPMailer
@@ -78,47 +70,38 @@ class SdMailer
     private $mailer;
 
     /**
-     * 获取类实例
-     * @param string $user
-     * @param string $mail
+     * 设置发送邮件的邮箱
+     * @param string $email
      * @param string $password
-     * @return SdMailer
-     */
-    public static function getInstance(string $user, string $mail, string $password)
-    {
-        if (!self::$instance) {
-            self::$instance = new self();
-            self::$instance->mailer = new PHPMailer(true);
-        }
-
-        self::$instance->user = $user;
-        self::$instance->mail = $mail;
-        self::$instance->password = $password;
-
-        return self::$instance;
-    }
-
-
-    /**
-     * 网易163服务
-     * @param array $config
-     * @param null  $charset
-     * @return SdMailer
-     * @throws \Exception
-     */
-    public function wy163Provider(array $config = [], $charset = null)
-    {
-        return $this->provider(array_merge($this->config['163'], $config), $charset);
-    }
-
-    /**
-     * 海外
      * @return $this
      */
-    public function overseas()
+    public function setSenderMail(string $email, string $password): SdMailer
     {
-        $this->is_overseas = true;
+        $this->email = $email;
+        $this->password = $password;
         return $this;
+    }
+
+    /**
+     * 设置发送邮件的用户
+     * @param string $username
+     * @return $this
+     */
+    public function setSenderUser(string $username): SdMailer
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    /**
+     * 使用内置的服务配置
+     * @param string $provider qq | 163
+     * @param string|null $charset
+     * @return $this
+     */
+    public function useProvider(string $provider, ?string $charset = null): SdMailer
+    {
+        return $this->provider($this->provider[$provider]['smtp'], $this->provider[$provider]['smtp_port'], $charset);
     }
 
     /**
@@ -126,30 +109,32 @@ class SdMailer
      * @param string|null $charset
      * @return $this
      */
-    private function charset(string $charset = null)
+    private function charset(string $charset = null): SdMailer
     {
-        $charset and $this->charset = $charset;
+        if ($charset) {
+            $this->mailer->CharSet = $charset;
+        }
         return $this;
     }
 
     /**
-     * @param array $config
-     * @param null  $charset
+     * @param string $smtp
+     * @param int $smtp_port
+     * @param null $charset
      * @return $this
-     * @throws PHPMailer\Exception|\Exception
+     * @throws PHPMailer\Exception
      */
-    public function provider($config = [], $charset = null)
+    public function provider(string $smtp, int $smtp_port, $charset = null)
     {
         $this->charset($charset);
+        $this->mailer->setFrom($this->email, $this->username);
 
-        $this->mailer->CharSet = $this->charset;
-        $this->mailer->Host = $this->getSMTP($config);// 发送方的SMTP服务器地址
-        $this->mailer->SMTPAuth = true;// 是否使用身份验证
-        $this->mailer->Username = $this->mail;// 发送方的163邮箱用户名
-        $this->mailer->Password = $this->password;// 发送方的邮箱密码，注意用163邮箱这里填写的是“客户端授权密码”而不是邮箱的登录密码！
-        $this->mailer->SMTPSecure = "ssl";// 使用ssl协议方式
-        $this->mailer->setFrom($this->mail, $this->user);
-        $this->mailer->Port = $config['smtp_port'];
+        $this->mailer->Host         = $smtp;
+        $this->mailer->SMTPAuth     = true;
+        $this->mailer->Username     = $this->email;
+        $this->mailer->Password     = $this->password;
+        $this->mailer->SMTPSecure   = "ssl";
+        $this->mailer->Port         = $smtp_port;
 
         return $this;
     }
@@ -161,7 +146,7 @@ class SdMailer
      * @return $this
      * @throws PHPMailer\Exception|\Exception
      */
-    public function setAddress($email, $name = '')
+    public function setToAddress($email, $name = ''): SdMailer
     {
         $this->mailer->addAddress($email, $name);
         return $this;
@@ -200,28 +185,19 @@ class SdMailer
         }
     }
 
-    public function getPHPMailer()
+    /**
+     * 获取
+     * @return PHPMailer
+     */
+    public function getPHPMailer(): PHPMailer
     {
         return $this->mailer;
     }
 
-
-    /**
-     * 获取smtp服务器
-     * @param array $config
-     * @return mixed
-     */
-    private function getSMTP(array $config)
+    protected function init()
     {
-        return $this->is_overseas && !empty($config['hwsmtp']) ? $config['hwsmtp'] : $config['smtp'];
-    }
-
-
-    private function providerInstance(array $config)
-    {
-
-
-        return 11;
+        $this->mailer = new PHPMailer(true);
+        $this->mailer->CharSet = $this->charset;
     }
 }
 

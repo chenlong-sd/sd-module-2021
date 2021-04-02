@@ -76,7 +76,7 @@
 
 </div>
 
-<script src="__PUBLIC__/admin_static/layui/layui.all.js"></script>
+<script src="__PUBLIC__/admin_static/layui/layui.js"></script>
 <script type="text/javascript" src="__PUBLIC__/admin_static/js/custom.js"></script>
 
 <script>

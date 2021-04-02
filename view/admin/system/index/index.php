@@ -71,11 +71,11 @@
                     </a>
                 </li>
                 {/if}
-<!--                <li class="layui-nav-item layui-hide-xs" lay-unselect>-->
-<!--                    <a href="javascript:;" lay-event="surprised">-->
-<!--                        <i class="layui-icon layui-icon-face-surprised"></i>-->
-<!--                    </a>-->
-<!--                </li>-->
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="javascript:;" lay-event="surprised">
+                        <i class="layui-icon layui-icon-face-surprised"></i>
+                    </a>
+                </li>
 
 
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>

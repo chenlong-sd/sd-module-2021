@@ -16,6 +16,7 @@ use app\admin\validate\system\Administrators as AdministratorsValidate;
 use app\common\controller\Admin;
 use app\common\middleware\admin\PowerAuth;
 use app\common\ResponseJson;
+use PHPMailer\SdMailer;
 use think\facade\Db;
 
 /**

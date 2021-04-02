@@ -20,6 +20,7 @@ use think\model\concern\SoftDelete;
  * Trait BaseModel
  * @mixin Model
  * @method Query join($join, string $condition = null, string $type = 'INNER', array $bind = [])
+ * @method Query primevalJoin($join, string $condition = null, string $type = 'INNER', array $bind = [])
  * @package app\common
  */
 class BaseModel extends Model

@@ -300,20 +300,24 @@ custom = {
         $('#' + name + '-select').on('click', function () {
             custom.frame(RESOURCE_URL + '?type=checkbox&vars=' + name, '资源选择');
         });
-
+        let load;
         upload.render({
             elem: event_id
             , url: UPLOAD_URL
             , multiple: true
             , before: function (obj) {
+                load = custom.loading('图片上传中...');
                 moreUpload.preview(obj);
             }
             , done: function (res) {
+                layer.close(load);
                 if (res.code === 202) {
                     return layNotice.warning(res.msg);
                 } else {
                     $('input[name="' + name + '"]').val(moreUpload.done(res));
                 }
+            },error(){
+                layer.close(load);
             }
         });
 
@@ -389,16 +393,19 @@ custom = {
      * @param defaults
      */
     upload($, upload, name, defaults) {
+        let load;
         let up = upload.render({
             elem: "#" + name
             , url: UPLOAD_URL
             , before: function (obj) {
+                load = custom.loading('图片上传中...')
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
                     $('#' + name + '_show').attr('src', result); //图片链接（base64）
                 });
             }
             , done: function (res) {
+                layer.close(load)
                 //如果上传失败
                 if (res.code === 202) {
                     return layNotice.warning(res.msg);
@@ -407,6 +414,7 @@ custom = {
                 $('input[name=' + name + ']').val(res.data);
             }
             , error: function () {
+                layer.close(load)
                 //演示失败状态，并实现重传
                 let demoText = $('#' + name + '_tip');
                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
@@ -581,6 +589,11 @@ let ScXHR = (() => {
             if (tip) {
                 layer.confirm(tip, config, function (index) {
                     window.load___ = custom.loading();
+                    let success = typeof param.success === 'function' ? param.success : ()=>{};
+                    param.success = function (res) {
+                        layer.close(window.load___);
+                        success(res);
+                    };
                     layui.jquery.ajax(param);
                     layer.close(index);
                 });

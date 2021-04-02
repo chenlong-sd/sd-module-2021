@@ -31,5 +31,16 @@ class BaseQuery extends Query
         $this->options['join'][] = $joinOptions;
         return $this;
     }
-
+    /**
+     * 原生join 不加 delete_time
+     * @param $join
+     * @param string|null $condition
+     * @param string $type
+     * @param array $bind
+     * @return BaseQuery
+     */
+    public function primevalJoin($join, string $condition = null, string $type = 'INNER', array $bind = [])
+    {
+        return parent::join($join, $condition, $type, $bind);
+    }
 }

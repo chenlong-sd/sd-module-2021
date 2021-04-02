@@ -56,4 +56,9 @@ class LoginMiddleware
         $request->withMiddleware(['route_path' => parse_name($requestPath, 1)]);
         return $request;
     }
+
+    private function verifySecret()
+    {
+        
+    }
 }

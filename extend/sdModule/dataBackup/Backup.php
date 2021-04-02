@@ -142,7 +142,7 @@ class Backup
             }
 
             $sql .= $rowSql;
-            if (substr($row, -3) !== ";\r\n") {
+            if (substr($row, -3) !== ";\r\n" && substr($row, -2) !== ";\n") {
                 continue;
             }
 

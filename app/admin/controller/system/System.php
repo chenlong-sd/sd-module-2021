@@ -9,18 +9,23 @@
 
 namespace app\admin\controller\system;
 
+use app\admin\model\system\BaseConfig as BaseConfigM;
 use app\admin\model\system\Resource;
+use app\admin\validate\system\BaseConfig;
 use app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
 use app\common\service\BackstageListsService;
 use sdModule\dataBackup\Backup;
 use sdModule\layui\defaultForm\Form;
+use sdModule\layui\defaultForm\FormData;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
 use think\facade\Db;
 use think\facade\Env;
+use think\helper\Arr;
+use think\helper\Str;
 use think\Model;
 
 /**
@@ -51,7 +56,15 @@ class System extends Admin
         ]);
     }
 
-
+    /**
+     * 数据备份
+     * @param BackstageListsService $service
+     * @return \think\response\Json|\think\response\View
+     * @throws SdException
+     * @throws \ReflectionException
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\db\exception\PDOException
+     */
     public function databaseBackUp(BackstageListsService $service)
     {
         $database = Env::get('DATABASE.DATABASE');
@@ -187,6 +200,85 @@ class System extends Admin
         return $this->fetch('');
     }
 
+    /**
+     * 基础信息设置
+     * @return \think\response\Json|\think\response\View
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function basicInformationSet()
+    {
+        if ($this->request->isPost()) {
+            $this->validate($this->request->post(), BaseConfig::class . '.add');
+            $data = Arr::only($this->request->post(), ['group_id', 'group_name', 'key_id', 'key_name', 'form_type', 'options',  'id']);
+            $data = array_filter($data);
+            $data['update_time'] = datetime();
+            if (!empty($data['options'])) {
+                $optionArr = [];
+                foreach (array_filter(explode("\n", $data['options'])) as $o){
+                    if (count($oArr = explode('=', $o)) < 2 || !$oArr[0]){
+                        continue;
+                    }
+                    $optionArr[$oArr[0]] = $oArr[1];
+                }
+                $data['options'] = json_encode($optionArr, JSON_UNESCAPED_UNICODE);
+            }
+            if (!empty($data['id']) && $old = BaseConfigM::where(['id' => $data['id']])->find()) {
+                $old->setAttrs($data);
+                $old->save();
+                $id = $data['id'];
+            }else{
+                $data['create_time'] = datetime();
+                $id = BaseConfigM::insertGetId($data);
+            }
+            return ResponseJson::success([
+                'id' => $id
+            ]);
+        }
+
+        $base = BaseConfigM::field(['id', 'group_id', 'group_name', 'key_id', 'key_name', 'form_type', 'options'])->select()->toArray();
+        foreach ($base as &$value) {
+            if ($value['options']) {
+                $options = json_decode($value['options'], true);
+                $op = '';
+                foreach ($options as $k => $v){
+                    $op .= "{$k}={$v}\n";
+                }
+                $value['options'] = $op;
+            }
+        }
+
+        return $this->fetch('base', [
+            'base' => $base
+        ]);
+    }
+
+    public function baseConfig(string $group_id = '')
+    {
+        $form = [];
+        $data = BaseConfigM::where(compact('group_id'))
+            ->field(['id', 'group_id', 'key_id', 'key_name', 'form_type', 'options', 'key_value'])
+            ->select()->each(function ($v) use (&$form){
+                if ($v->options){
+                    $v->options = json_decode($v->options, true);
+                }
+                $form_type = Str::camel($v->form_type);
+                $form[] = FormData::$form_type($v->id, $v->key_name . " [{$v->group_id}.{$v->key_id}]");
+            })->toArray();
+
+        $form = Form::create($form)
+            ->setDefaultData(array_column($data, 'kay_value', 'id'))
+            ->setJs('
+            layui.jquery(".layui-form-label").css({width:"270px"});
+            layui.jquery(".layui-input-block").css({marginLeft:"300px"});
+            
+            ')->setCustomMd(12)->complete();
+
+        return $this->fetch('common/save_page', compact('form'));
+    }
+    
+    
     /**
      * @param string $table
      * @return \think\response\Json

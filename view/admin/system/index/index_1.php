@@ -238,7 +238,7 @@
         © layui.com - 底部固定区域
     </div>
 </div>
-<script src="__PUBLIC__/admin_static/layui/layui.all.js"></script>
+<script src="__PUBLIC__/admin_static/layui/layui.js"></script>
 <script>
     var $ = layui.jquery,init_left = $('.sc-tab-left').css('width')
         ,init_right = $('.sc-tab-right').css('width'),

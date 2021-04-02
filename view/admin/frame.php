@@ -22,7 +22,7 @@
 {block name="body"}{/block}
 
 </body>
-<script type="text/javascript" src="__PUBLIC__/admin_static/layui/layui.all.js"></script>
+<script type="text/javascript" src="__PUBLIC__/admin_static/layui/layui.js"></script>
 
 {:html_entity_decode($searchJs ?? '')}
 
@@ -45,7 +45,6 @@
     layui.use('notice',function () {
         window.layNotice = layui.notice;
     });
-
 </script>
 
 <script type="text/javascript" src="__PUBLIC__/admin_static/js/custom.js"></script>
