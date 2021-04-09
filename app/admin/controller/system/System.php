@@ -254,6 +254,20 @@ class System extends Admin
         ]);
     }
 
+    /**
+     * 10. 给对象加一个属性， 属性值为另一个对象
+     * 11. 取出10题里面的另一个对象的值
+     * 12. 打印出对象的每一个属性 及 属性值
+     * 13. 申明一个函数，函数有一个参数，参数必须为对象， 不是对象打印不是对象
+     * 14. 13题里面函数，如果是对象，则打印出对象的每一个属性 及 属性值 （即实现一个函数的功能为打印对象的每一个值
+     * @param string $group_id
+     * @return \think\response\View
+     * @throws SdException
+     * @throws \ReflectionException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function baseConfig(string $group_id = '')
     {
         $form = [];

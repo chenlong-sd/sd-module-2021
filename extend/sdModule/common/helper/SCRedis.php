@@ -31,6 +31,21 @@ class SCRedis
     private $redis;
 
     /**
+     * @var null 唯一标识，不传的时候默认为调用类名加方法
+     */
+    private string $key = null;
+
+    /**
+     * @var int 最长锁时间
+     */
+    private int $exp = 3;
+
+    /**
+     * @var string 有锁时（即锁尚未放开）的返回值
+     */
+    private string $tip = '操作太快了哟';
+
+    /**
      * SCRedis constructor.
      */
     public function __construct()
@@ -42,89 +57,112 @@ class SCRedis
      * redis 执行加锁代码，执行的代码不要有 exit() | die() 等结束程序的代码
      * @param callable $callback 回调类型的执行的函数，匿名函数 或 数组（参数同 call_user_func()）
      * @param array $param 函数的参数
-     * @param null $id 唯一标识，不传的时候默认为调用类名加方法
-     * @param int $exp 最长锁时间
-     * @param null $tip 有锁时（即锁尚未放开）的返回值
      * @return mixed|string|null
      * @throws \Throwable
      */
-    public function lock(callable $callback, array $param = [], $id = null, int $exp = 3, $tip = null)
+    public function lock(callable $callback, array $param = [])
     {
-        if ($id === null) {
+        if ($this->key === null) {
             $id_info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-            $id = strtr($id_info[1]['class'], ['\\' => '_']) . '@' . $id_info[1]['function'];
+            $this->key = strtr($id_info[1]['class'], ['\\' => '_']) . '@' . $id_info[1]['function'];
         }
 
-        if (!$this->redis->setnx($id, 1)) throw new SdException($tip ?: '操作太快了哟');
+        if (!$this->redis->setnx($this->key, 1)) throw new SdException($this->tip);
 
-        $this->redis->expire($id, $exp);
+        $this->redis->expire($this->key, $this->exp);
 
-        return self::run($callback, $param, $id);
+        return self::run($callback, $param, $this->key);
     }
 
     /**
      * 等待执行 执行的代码不要有 exit() | die() 等结束程序的代码
      * @param callable $callable 回调类型的执行的函数，匿名函数 或 数组（参数同 call_user_func()）
      * @param array $param 函数的参数
-     * @param string|null $id 唯一标识，不传的时候默认为调用类名加方法
      * @return mixed
      * @throws \Throwable
      */
-    public function wait(callable $callable, array $param = [], string $id = null)
+    public function wait(callable $callable, array $param = [])
     {
-        if ($id === null) {
+        if ($this->key === null) {
             $id_info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-            $id = strtr($id_info[1]['class'], ['\\' => '_']) . '@' . $id_info[1]['function'];
+            $this->key = strtr($id_info[1]['class'], ['\\' => '_']) . '@' . $id_info[1]['function'];
         }
 
-        while (!$this->redis->setnx($id, 1)) {
+        while (!$this->redis->setnx($this->key, 1)) {
             usleep(10);
         }
 
-        $this->redis->expire($id, 10);
-        return self::run($callable, $param, $id);
+        $this->redis->expire($this->key, 10);
+        return self::run($callable, $param, $this->key);
     }
 
     /**
      * 加锁并执行事务
      * @param callable $callback
      * @param array $param
-     * @param null $id
-     * @param int $exp
-     * @param null $tip
      * @return mixed|string|null
      * @throws \Throwable
      */
-    public function lockAndTransaction(callable $callback, array $param = [], $id = null, int $exp = 3, $tip = null)
+    public function lockAndTransaction(callable $callback, array $param = [])
     {
         return $this->lock(function () use ($callback, $param){
             return Db::transaction(fn() => call_user_func($callback, ...$param));
-        }, [],  $id, $exp, $tip);
+        }, []);
     }
 
     /**
      * 执行代码
      * @param callable $closure
      * @param array $param
-     * @param string|null $id
+     * @param string|null $key
      * @return mixed
      * @throws \Throwable
      */
-    private function run(callable $closure, array $param, string $id = null)
+    private function run(callable $closure, array $param, string $key = null)
     {
         try {
 
             $result = call_user_func_array($closure, $param);
 
-            $this->redis->del($id);
+            $this->redis->del($key);
 
             return $result;
         } catch (\Throwable $throwable) {
 
-            $this->redis->del($id);
+            $this->redis->del($key);
 
             throw $throwable;
         }
+    }
+
+    /**
+     * @param string $tip
+     * @return SCRedis
+     */
+    public function setTip(string $tip): SCRedis
+    {
+        $this->tip = $tip;
+        return $this;
+    }
+
+    /**
+     * @param int $exp
+     * @return SCRedis
+     */
+    public function setExp(int $exp): SCRedis
+    {
+        $this->exp = $exp;
+        return $this;
+    }
+
+    /**
+     * @param null|string $key
+     * @return SCRedis
+     */
+    public function setKey(?string $key): SCRedis
+    {
+        $this->key = $key;
+        return $this;
     }
 }
 
