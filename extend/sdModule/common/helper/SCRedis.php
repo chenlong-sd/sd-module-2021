@@ -33,7 +33,7 @@ class SCRedis
     /**
      * @var null 唯一标识，不传的时候默认为调用类名加方法
      */
-    private string $key = null;
+    private ?string $key = null;
 
     /**
      * @var int 最长锁时间
@@ -110,6 +110,8 @@ class SCRedis
         }, []);
     }
 
+
+
     /**
      * 执行代码
      * @param callable $closure
@@ -163,6 +165,14 @@ class SCRedis
     {
         $this->key = $key;
         return $this;
+    }
+
+    /**
+     * @return \Redis
+     */
+    public function getRedis(): ?\Redis
+    {
+        return $this->redis;
     }
 }
 

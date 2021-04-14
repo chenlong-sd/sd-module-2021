@@ -10,7 +10,7 @@ namespace app\admin\page\system;
 use app\admin\model\system\DataAuth;
 use app\common\BasePage;
 use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
@@ -69,9 +69,9 @@ class Role extends BasePage
     public function formData(string $scene, array $default_data = []): DefaultForm
     {
         $form_data = [
-            FormData::hidden('id'),
-            FormData::text('role', '角色名'),
-            FormData::textarea('describe', '角色描述'),
+            FormUnit::hidden('id'),
+            FormUnit::text('role', '角色名'),
+            FormUnit::textarea('describe', '角色描述'),
         ];
         if (env('APP.DATA_AUTH', false)){
             $default = DataAuth::where(['delete_time' => 0])
@@ -79,7 +79,7 @@ class Role extends BasePage
                 ->column('auth_id', 'table_names');
 
             foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormData::selects("data_auth_table_{$data['table']}", $data['remark'], Administrators::dataAuth($data['table']))
+                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'], Administrators::dataAuth($data['table']))
                     ->preset(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }
@@ -95,13 +95,13 @@ class Role extends BasePage
     public function searchFormData():DefaultForm
     {
         $form_data = [
-            FormData::build(
-                FormData::text('i.id', '', 'ID'),
-                FormData::text('i.role%%', '', '角色名'),
-                FormData::text('ip.role%%', '', '父级角色'),
-                FormData::text('administrators.name%%', '', '创建者'),
-                FormData::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
-                FormData::custom('', '', DefaultForm::searchSubmit())
+            FormUnit::build(
+                FormUnit::text('i.id', '', 'ID'),
+                FormUnit::text('i.role%%', '', '角色名'),
+                FormUnit::text('ip.role%%', '', '父级角色'),
+                FormUnit::text('administrators.name%%', '', '创建者'),
+                FormUnit::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
+                FormUnit::custom('', '', DefaultForm::searchSubmit())
             )
         ];
 

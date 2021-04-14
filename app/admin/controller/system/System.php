@@ -18,7 +18,7 @@ use app\common\SdException;
 use app\common\service\BackstageListsService;
 use sdModule\dataBackup\Backup;
 use sdModule\layui\defaultForm\Form;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
@@ -278,7 +278,7 @@ class System extends Admin
                     $v->options = json_decode($v->options, true);
                 }
                 $form_type = Str::camel($v->form_type);
-                $form[] = FormData::$form_type($v->id, $v->key_name . " [{$v->group_id}.{$v->key_id}]");
+                $form[] = FormUnit::$form_type($v->id, $v->key_name . " [{$v->group_id}.{$v->key_id}]");
             })->toArray();
 
         $form = Form::create($form)

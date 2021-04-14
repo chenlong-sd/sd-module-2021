@@ -115,7 +115,7 @@
 ```php
 // model
 use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 use sdModule\layui\Layui;
 
 class test 
@@ -123,15 +123,15 @@ class test
     public function searchFormData(): DefaultForm
     {
         $form_data = [
-            FormData::build(
-                FormData::Text('i.id', "", 'ID'),
-                FormData::Text('i.title%%', "", '标题'),
-                FormData::Text('i.intro%%', "", '简介'),
-                FormData::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
-                FormData::Text('administrators.name%%', "", '管理员'),
-                FormData::Text('test.title%%', "", '上级'),
-                FormData::time("i.create_time_~", "", 'datetime', '~', '创建时间'),
-                FormData::custom('', '', DefaultForm::searchSubmit())
+            FormUnit::build(
+                FormUnit::Text('i.id', "", 'ID'),
+                FormUnit::Text('i.title%%', "", '标题'),
+                FormUnit::Text('i.intro%%', "", '简介'),
+                FormUnit::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
+                FormUnit::Text('administrators.name%%', "", '管理员'),
+                FormUnit::Text('test.title%%', "", '上级'),
+                FormUnit::time("i.create_time_~", "", 'datetime', '~', '创建时间'),
+                FormUnit::custom('', '', DefaultForm::searchSubmit())
             )
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();
@@ -304,34 +304,34 @@ class test
 示例代码
 
 ```php
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 
 //初始化表单
 $form = \sdModule\layui\defaultForm\Form::create([
-    FormData::hidden('id'),
-    FormData::text('title', '标题')->preset('asd'), // 设置表单默认值
-    FormData::image('cover', '封面')->inputAttr(['add' => 'disable']), // 设置对应场景该表单 的HTML属性值
-    FormData::images('show_images', '展示图')->removeScene(['add']), // 删除在指定场景的该表单
-    FormData::text('intro', '简介'),
-    FormData::radio('status', '状态', self::getStatusSc(false))->unitConfig(['ss' => 'ss']), // 设置该表单的js配置项，目前只针对selects表单
-    FormData::select('administrators_id', '管理员', Administrators::addSoftDelWhere()->column('name', 'id')),
-    FormData::select('pid', '上级', Test::addSoftDelWhere()->column('title', 'id')),
-    FormData::uEditor('content', '详情'),
-    FormData::switch_('switch', '开关', ['1' => '打开', '2' => '关闭'], '打开的值,eg:2'),
-    FormData::auxTitle('asdsad', 'line'), // 辅助标题
-    FormData::custom('asdsad', 'line', ['html' => '<div></div>']), // 自定义
-    FormData::build(  // 一行包含多个表单
-        FormData::text('title', '标题')->preset('asd'),
-        FormData::text('intro', '简介'),
+    FormUnit::hidden('id'),
+    FormUnit::text('title', '标题')->preset('asd'), // 设置表单默认值
+    FormUnit::image('cover', '封面')->inputAttr(['add' => 'disable']), // 设置对应场景该表单 的HTML属性值
+    FormUnit::images('show_images', '展示图')->removeScene(['add']), // 删除在指定场景的该表单
+    FormUnit::text('intro', '简介'),
+    FormUnit::radio('status', '状态', self::getStatusSc(false))->unitConfig(['ss' => 'ss']), // 设置该表单的js配置项，目前只针对selects表单
+    FormUnit::select('administrators_id', '管理员', Administrators::addSoftDelWhere()->column('name', 'id')),
+    FormUnit::select('pid', '上级', Test::addSoftDelWhere()->column('title', 'id')),
+    FormUnit::uEditor('content', '详情'),
+    FormUnit::switch_('switch', '开关', ['1' => '打开', '2' => '关闭'], '打开的值,eg:2'),
+    FormUnit::auxTitle('asdsad', 'line'), // 辅助标题
+    FormUnit::custom('asdsad', 'line', ['html' => '<div></div>']), // 自定义
+    FormUnit::build(  // 一行包含多个表单
+        FormUnit::text('title', '标题')->preset('asd'),
+        FormUnit::text('intro', '简介'),
     ),
-    "这是label" => FormData::table(  // table 里面的表单， 一个数组就是一行，每个元素可以使字符串 或FormData
+    "这是label" => FormUnit::table(  // table 里面的表单， 一个数组就是一行，每个元素可以使字符串 或FormData
         ["标题", "简介"],
-        [FormData::text('title')->preset('asd'), FormData::text('intro')],
+        [FormUnit::text('title')->preset('asd'), FormUnit::text('intro')],
         // 如果是数组，第一个则是单元格td的内容，第二个则是单元格的属性（可定义id,class,style,colspan,rowspan, ...）
         [['测试属性', 'colspan="3"'], ['测试属性', 'style="color:#fff"']],
     ),
-    "T_*.." => FormData::table(), // 不展示label
-    "N_*.." => FormData::table(), // 不展示label，撑满和标题并齐
+    "T_*.." => FormUnit::table(), // 不展示label
+    "N_*.." => FormUnit::table(), // 不展示label，撑满和标题并齐
     
 ], 'add');
 
@@ -359,40 +359,41 @@ $form->setSkinToPane();
 return $form->complete();
 ```
 * 支持类型
-```php
-use sdModule\layui\defaultForm\FormData;
 
-FormData::text('id', 'ID');
-FormData::image('id', 'ID');
-FormData::images('id', 'ID');
-FormData::radio('id', 'ID', ['1' => 'normal']);
-FormData::checkbox('id', 'ID', ['1' => 'normal']);
-FormData::select('id', 'ID', ['1' => 'normal']);
-FormData::textarea('id', 'ID');
-FormData::password('id', 'ID');
-FormData::hidden('id');
-FormData::time('id', 'ID', 'date', true);
-FormData::uEditor('id', 'ID');
-FormData::upload('id', 'ID');
-FormData::switch_('id', 'ID', [1=>2,2=>3], 2);
-FormData::selects('id', 'ID', [1 => '12'], '请选择');
-FormData::build( // 组合，一行包含多个表单
-    FormData::text('id', 'ID'),
-    FormData::image('id', 'ID')
+```php
+use sdModule\layui\defaultForm\FormUnit;
+
+FormUnit::text('id', 'ID');
+FormUnit::image('id', 'ID');
+FormUnit::images('id', 'ID');
+FormUnit::radio('id', 'ID', ['1' => 'normal']);
+FormUnit::checkbox('id', 'ID', ['1' => 'normal']);
+FormUnit::select('id', 'ID', ['1' => 'normal']);
+FormUnit::textarea('id', 'ID');
+FormUnit::password('id', 'ID');
+FormUnit::hidden('id');
+FormUnit::time('id', 'ID', 'date', true);
+FormUnit::uEditor('id', 'ID');
+FormUnit::upload('id', 'ID');
+FormUnit::switch_('id', 'ID', [1=>2,2=>3], 2);
+FormUnit::selects('id', 'ID', [1 => '12'], '请选择');
+FormUnit::build( // 组合，一行包含多个表单
+    FormUnit::text('id', 'ID'),
+    FormUnit::image('id', 'ID')
 );
 
  // 预设值
-FormData::text('id', 'ID')->preset('298');
+FormUnit::text('id', 'ID')->preset('298');
 // 指定场景不展示该字段
-FormData::text('id', 'ID')->removeScene(['edit']);
+FormUnit::text('id', 'ID')->removeScene(['edit']);
 // 指定场景给该元素加额外的html标签属性
-FormData::text('id', 'ID')->inputAttr([
+FormUnit::text('id', 'ID')->inputAttr([
     'edit' => 'disable'
 ]);
  // js独立配置
-FormData::selects('id', 'ID', [1 => '12'], '请选择')->unitConfig(['search' => true]);
+FormUnit::selects('id', 'ID', [1 => '12'], '请选择')->unitConfig(['search' => true]);
 // 远程搜索
-FormData::selects('id', 'ID', [1 => '12'], '请选择')->unitConfig(['remote' => (string)url('index')]);
+FormUnit::selects('id', 'ID', [1 => '12'], '请选择')->unitConfig(['remote' => (string)url('index')]);
 // 远程搜索返回值
 return ResponseJson::success(['data' => $data, 'page' => 10]);
 ```

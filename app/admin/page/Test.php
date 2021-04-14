@@ -11,7 +11,7 @@ use app\common\BasePage;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 use app\admin\model\Test as MyModel;
 use app\admin\model\system\Administrators;
 
@@ -55,15 +55,15 @@ class Test extends BasePage
     public function formData(string $scene, array $default_data = []): DefaultForm
     {
         $unit = [
-            FormData::hidden('id'),
-            FormData::text('title', '标题'),
-            FormData::image('cover', '封面'),
-            FormData::images('show_images', '展示图'),
-            FormData::text('intro', '简介'),
-            FormData::radio('status', '状态', MyModel::getStatusSc(false)),
-            FormData::select('administrators_id', '管理员', Administrators::column('name', 'id')),
-            FormData::select('pid', '上级', MyModel::column('title', 'id')),
-            FormData::uEditor('content', '详情'),
+            FormUnit::hidden('id'),
+            FormUnit::text('title', '标题'),
+            FormUnit::image('cover', '封面'),
+            FormUnit::images('show_images', '展示图'),
+            FormUnit::text('intro', '简介'),
+            FormUnit::radio('status', '状态', MyModel::getStatusSc(false)),
+            FormUnit::select('administrators_id', '管理员', Administrators::column('name', 'id')),
+            FormUnit::select('pid', '上级', MyModel::column('title', 'id')),
+            FormUnit::uEditor('content', '详情'),
         ];
 
         $form = DefaultForm::create($unit)->setDefaultData($default_data);
@@ -89,11 +89,11 @@ class Test extends BasePage
     public function searchFormData(): DefaultForm
     {
         $form_data = [
-            FormData::build(
-                FormData::Text('i.title%%', "", '标题'),
-                FormData::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
-                FormData::Text('administrators.name%%', "", '管理员'),
-                FormData::custom('', '', DefaultForm::searchSubmit())
+            FormUnit::build(
+                FormUnit::Text('i.title%%', "", '标题'),
+                FormUnit::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
+                FormUnit::Text('administrators.name%%', "", '管理员'),
+                FormUnit::custom('', '', DefaultForm::searchSubmit())
             )
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();

@@ -11,7 +11,7 @@ use app\common\BasePage;
 use sdModule\layui\defaultForm\Form as DefaultForm;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 
 
 /**
@@ -66,12 +66,12 @@ class Api extends BasePage
     public function formData(string $scene, array $default_data = []): DefaultForm
     {
         $unit = [
-            FormData::hidden('id'),
-            FormData::hidden('api_module_id')->preset(request()->get('api_module_id')),
-            FormData::text('api_name', '接口名'),
-            FormData::text('path', '路径'),
-            FormData::text('describe', '描述'),
-            FormData::uEditor('response', '响应示例'),
+            FormUnit::hidden('id'),
+            FormUnit::hidden('api_module_id')->preset(request()->get('api_module_id')),
+            FormUnit::text('api_name', '接口名'),
+            FormUnit::text('path', '路径'),
+            FormUnit::text('describe', '描述'),
+            FormUnit::uEditor('response', '响应示例'),
         ];
         $form = DefaultForm::create($unit)->setDefaultData($default_data);
 
@@ -96,13 +96,13 @@ class Api extends BasePage
     public function searchFormData():DefaultForm
     {
         $form_data = [
-            FormData::build(
-                FormData::text('i.id', '', 'ID'),
-                FormData::text('i.api_name%%', '', ''),
-                FormData::text('i.path%%', '', '接口名'),
-                FormData::text('i.describe%%', '', '路径'),
-                FormData::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
-                FormData::custom('', '', DefaultForm::searchSubmit())
+            FormUnit::build(
+                FormUnit::text('i.id', '', 'ID'),
+                FormUnit::text('i.api_name%%', '', ''),
+                FormUnit::text('i.path%%', '', '接口名'),
+                FormUnit::text('i.describe%%', '', '路径'),
+                FormUnit::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
+                FormUnit::custom('', '', DefaultForm::searchSubmit())
             ),
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();

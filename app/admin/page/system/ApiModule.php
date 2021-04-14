@@ -11,7 +11,7 @@ use app\common\BasePage;
 use sdModule\layui\defaultForm\Form as DefaultForm;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 
 
 /**
@@ -51,11 +51,11 @@ class ApiModule extends BasePage
     public function formData(string $scene, array $default_data = []): DefaultForm
     {
         $unit = [
-            FormData::hidden('id'),
-            FormData::text('item_name', '模块名'),
-            FormData::tag('url_prefix', '路径前缀'),
-            FormData::text('token', 'Token参数', 'key=value&key1=value1'),
-            FormData::text('describe', '描述'),
+            FormUnit::hidden('id'),
+            FormUnit::text('item_name', '模块名'),
+            FormUnit::tag('url_prefix', '路径前缀'),
+            FormUnit::text('token', 'Token参数', 'key=value&key1=value1'),
+            FormUnit::text('describe', '描述'),
         ];
 
         $form = DefaultForm::create($unit);
@@ -82,10 +82,10 @@ class ApiModule extends BasePage
     public function searchFormData():DefaultForm
     {
         $form_data = [
-            FormData::build(
-                FormData::text('i.item_name%%', '', '模块名'),
-                FormData::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
-                FormData::custom('', '', DefaultForm::searchSubmit())
+            FormUnit::build(
+                FormUnit::text('i.item_name%%', '', '模块名'),
+                FormUnit::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
+                FormUnit::custom('', '', DefaultForm::searchSubmit())
             ),
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();

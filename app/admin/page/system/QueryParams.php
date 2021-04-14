@@ -12,7 +12,7 @@ use sdModule\layui\defaultForm\Form as DefaultForm;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layuiSearch\Form;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 use app\admin\model\system\QueryParams as MyModel;
 use sdModule\layuiSearch\SearchForm;
 use sdModule\layuiSearch\generate\TimeRange;
@@ -57,12 +57,12 @@ class QueryParams extends BasePage
     public function formData(string $scene, array $default_data = []): DefaultForm
     {
         $unit = [
-            FormData::hidden('id'),
-            FormData::radio('method', '请求参数类型', MyModel::getMethodSc(false)),
-            FormData::radio('param_type', '参数类型', MyModel::getParamTypeSc(false)),
-            FormData::text('name', '参数名'),
-            FormData::text('test_value', '测试值'),
-            FormData::text('describe', '描述'),
+            FormUnit::hidden('id'),
+            FormUnit::radio('method', '请求参数类型', MyModel::getMethodSc(false)),
+            FormUnit::radio('param_type', '参数类型', MyModel::getParamTypeSc(false)),
+            FormUnit::text('name', '参数名'),
+            FormUnit::text('test_value', '测试值'),
+            FormUnit::text('describe', '描述'),
         ];
 
         $form = DefaultForm::create($unit);

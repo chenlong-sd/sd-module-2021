@@ -9,7 +9,7 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layuiSearch\Form;
@@ -58,13 +58,13 @@ class Log extends BasePage
     public function searchFormData():DefaultForm
     {
         $form_data = [
-            FormData::build(
-                FormData::text('route.title%%', '', '节点名'),
-                FormData::select('i.method', '', \app\admin\model\system\Log::getMethodSc(false), '请求方式'),
-                FormData::text('i.route%%', '', '节点地址'),
-                FormData::text('administrators.name%%', '', '操作人员'),
-                FormData::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
-                FormData::custom('', '', DefaultForm::searchSubmit())
+            FormUnit::build(
+                FormUnit::text('route.title%%', '', '节点名'),
+                FormUnit::select('i.method', '', \app\admin\model\system\Log::getMethodSc(false), '请求方式'),
+                FormUnit::text('i.route%%', '', '节点地址'),
+                FormUnit::text('administrators.name%%', '', '操作人员'),
+                FormUnit::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
+                FormUnit::custom('', '', DefaultForm::searchSubmit())
             )
         ];
 

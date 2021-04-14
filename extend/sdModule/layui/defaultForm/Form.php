@@ -424,7 +424,7 @@ JS;
         /** @var UnitData $unit */
 
         $unit = $this->form_data[$name];
-        if (in_array($unit->get('type'), [FormData::HIDDEN, FormData::TEXT_SHORT, FormData::AUX_TITLE])){
+        if (in_array($unit->get('type'), [FormUnit::HIDDEN, FormUnit::TEXT_SHORT, FormUnit::AUX_TITLE])){
             return $item;
         }
 
@@ -432,7 +432,7 @@ JS;
         $input_class = $unit->get('label') && !isset($this->short_from_and_tip[$name]) ? 'layui-input-block' : 'layui-input-inline';
         $label       = $unit->get('label') ? sprintf(self::LABEL_TEMPLATE, $unit->get('label')) : "";
         $tip         = isset($this->short_from_and_tip[$name]) ? sprintf(self::TIP_TEMPLATE, $this->short_from_and_tip[$name]) : "";
-        $pane        = $this->skin && in_array($unit->get('type'), [FormData::SWITCH, FormData::CHECKBOX,  FormData::RADIO])  ? 'pane' : '';
+        $pane        = $this->skin && in_array($unit->get('type'), [FormUnit::SWITCH, FormUnit::CHECKBOX,  FormUnit::RADIO])  ? 'pane' : '';
 
         return sprintf(self::FORM_TEMPLATE, $item_class, $pane ,$label, $input_class, $item, $tip);
     }

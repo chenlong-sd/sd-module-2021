@@ -7,7 +7,7 @@
 namespace sdModule\makeBaseCURD\item;
 
 
-use sdModule\layui\defaultForm\FormData;
+use sdModule\layui\defaultForm\FormUnit;
 use sdModule\makeBaseCURD\CURD;
 
 class Page implements Item
@@ -95,7 +95,7 @@ class Page implements Item
     private function formData()
     {
         $primary_key = $this->CURD->getTablePrimary($this->CURD->table);
-        $this->useAdd(FormData::class);
+        $this->useAdd(FormUnit::class);
         foreach ($this->CURD->data as $field => $item) {
             $type = $item['type'] === 'editor' ? "uEditor" : $item['type'];
             if ($field === $primary_key){

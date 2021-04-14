@@ -210,5 +210,14 @@ HTML;
             ['code' => '123'], ['code' => '456']
         ]));
     }
+
+    public function redisSubscribe()
+    {
+        ob_clean();
+        echo 1111111;
+        Sc::redis()->getRedis()->subscribe(['test'], function ($redis, $channel, $message) {
+            dump($redis, $channel, $message);
+        });
+    }
 }
 

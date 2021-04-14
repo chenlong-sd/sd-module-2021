@@ -7,7 +7,7 @@
 namespace sdModule\layui\defaultForm;
 
 
-class FormData
+class FormUnit
 {
 
     const SELECT    = 'select';
