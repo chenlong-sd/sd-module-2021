@@ -220,14 +220,14 @@ class Form
      */
     private function codeGenerate(UnitData $unit_item, $build_index = null)
     {
-        if (in_array($this->scene, $unit_item->get('remove_scene'))) {
+        if (in_array($this->scene, $unit_item->get('removeScene'))) {
             return;
         }
 
         $unit = $this->getUnitInstance($unit_item);
         $name = $unit_item->get('name');
 
-        $unit->setData($unit_item->get('select_data'))
+        $unit->setData($unit_item->get('selectData'))
             ->setPreset($unit_item->get('preset'))
             ->setConfig($unit_item->get('config'));
 
@@ -244,8 +244,8 @@ class Form
             $this->load_js['xm-selects'] = sprintf(self::SCRIPT_TEMPLATE, $this->assets("/admin_static/layui/dist/xm-select.js"));
         }
 
-        $attr = $unit_item->get('input_attr')[$this->scene] ?? '';
-        $common_attr = $unit_item->get('input_attr')['-'] ?? '' . ($unit_item->get('input_attr')['*'] ?? '');
+        $attr = $unit_item->get('inputAttr')[$this->scene] ?? '';
+        $common_attr = $unit_item->get('inputAttr')['-'] ?? '' . ($unit_item->get('inputAttr')['*'] ?? '');
         $attr = implode(' ', [$attr, $common_attr]);
 
         if ($build_index !== null){
@@ -424,7 +424,7 @@ JS;
         /** @var UnitData $unit */
 
         $unit = $this->form_data[$name];
-        if (in_array($unit->get('type'), [FormUnit::HIDDEN, FormUnit::TEXT_SHORT, FormUnit::AUX_TITLE])){
+        if (in_array($unit->get('type'), [UnitData::HIDDEN, UnitData::TEXT_SHORT, UnitData::AUX_TITLE])){
             return $item;
         }
 
@@ -432,7 +432,7 @@ JS;
         $input_class = $unit->get('label') && !isset($this->short_from_and_tip[$name]) ? 'layui-input-block' : 'layui-input-inline';
         $label       = $unit->get('label') ? sprintf(self::LABEL_TEMPLATE, $unit->get('label')) : "";
         $tip         = isset($this->short_from_and_tip[$name]) ? sprintf(self::TIP_TEMPLATE, $this->short_from_and_tip[$name]) : "";
-        $pane        = $this->skin && in_array($unit->get('type'), [FormUnit::SWITCH, FormUnit::CHECKBOX,  FormUnit::RADIO])  ? 'pane' : '';
+        $pane        = $this->skin && in_array($unit->get('type'), [UnitData::SWITCH, UnitData::CHECKBOX,  UnitData::RADIO])  ? 'pane' : '';
 
         return sprintf(self::FORM_TEMPLATE, $item_class, $pane ,$label, $input_class, $item, $tip);
     }

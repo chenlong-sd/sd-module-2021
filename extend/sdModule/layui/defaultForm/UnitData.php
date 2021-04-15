@@ -6,54 +6,90 @@
 
 namespace sdModule\layui\defaultForm;
 
-
+/**
+ * Class UnitData
+ * @package sdModule\layui\defaultForm
+ */
 class UnitData
 {
+    const SELECT    = 'select';
+    const TEXT      = 'text';
+    const HIDDEN    = 'hidden';
+    const PASSWORD  = 'password';
+    const RADIO     = 'radio';
+    const CHECKBOX  = 'checkbox';
+    const IMAGE     = 'image';
+    const UPLOAD    = 'upload';
+    const IMAGES    = 'images';
+    const TEXTAREA  = 'textarea';
+    const TIME      = 'time';
+    const U_EDITOR  = 'u_editor';
+    const SELECTS   = 'selects';
+    const TEXT_SHORT= 'textShort';
+    const TAG       = 'tag';
+    const SWITCH    = 'switch_sc';
+    const AUX_TITLE = 'aux_title';
+
+    /**
+     * @var string
+     */
     private string $name;
-    private string $label;
-    private string $type;
-    private string $placeholder;
-    private array  $select_data;
-    private array  $remove_scene;
-    private array  $config;
-    private array  $input_attr;
+    /**
+     * @var string
+     */
+    private string $label = '';
+    /**
+     * @var string
+     */
+    private string $type = '';
+    /**
+     * @var string
+     */
+    private string $placeholder = '';
+    /**
+     * @var array
+     */
+    private array  $selectData = [];
+    /**
+     * @var array
+     */
+    private array  $removeScene = [];
+    /**
+     * @var array
+     */
+    private array  $config = [];
+    /**
+     * @var array
+     */
+    private array  $inputAttr = [];
+
     /**
      * @var null|array|int
      */
-    private $preset = null;
+    private $defaultValue = null;
 
     /**
      * 生成form单元数据
      * @param string $name
      * @param string $label
-     * @param string $type
-     * @param string $placeholder
-     * @param array $select_data
      * @return UnitData
      */
-    public static function _self(string $name, string $label, string $type, string $placeholder, array $select_data)
+    public static function create(string $name, string $label = ''): UnitData
     {
-        $instance               = new self();
-        $instance->name         = $name;
-        $instance->label        = $label;
-        $instance->type         = $type;
-        $instance->placeholder  = $placeholder;
-        $instance->select_data  = $select_data;
-        $instance->preset       = null;
-        $instance->remove_scene = [];
-        $instance->config       = [];
-        $instance->input_attr   = [];
+        $instance        = new self();
+        $instance->name  = $name;
+        $instance->label = $label;
         return $instance;
     }
 
     /**
      * 设置默认值
-     * @param string|int|array $preset
+     * @param string|int|array $default
      * @return UnitData
      */
-    public function preset($preset)
+    public function defaultValue($default): UnitData
     {
-        $this->preset = $preset;
+        $this->defaultValue = $default;
         return $this;
     }
 
@@ -63,7 +99,7 @@ class UnitData
      * @param array $config 配置值
      * @return $this
      */
-    public function unitConfig(array $config)
+    public function unitConfig(array $config): UnitData
     {
         $this->config = $config;
         return $this;
@@ -74,9 +110,9 @@ class UnitData
      * @param array $scene
      * @return UnitData
      */
-    public function removeScene(array $scene)
+    public function removeScene(array $scene): UnitData
     {
-        $this->remove_scene = $scene;
+        $this->removeScene = $scene;
         return $this;
     }
 
@@ -86,9 +122,9 @@ class UnitData
      * @example ['add' => 'disable']
      * @return UnitData
      */
-    public function inputAttr(array $attr)
+    public function inputAttr(array $attr): UnitData
     {
-        $this->input_attr = $attr;
+        $this->inputAttr = $attr;
         return $this;
     }
 
@@ -100,5 +136,58 @@ class UnitData
     public function get(string $attr)
     {
         return $this->$attr ?? null;
+    }
+
+    /**
+     * @param array $selectData
+     * @return UnitData
+     */
+    public function selectData(array $selectData): UnitData
+    {
+        $this->selectData = $selectData;
+        return $this;
+    }
+
+    /**
+     * @param string $placeholder
+     * @return UnitData
+     */
+    public function placeholder(string $placeholder): UnitData
+    {
+        $this->placeholder = $placeholder;
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     * @return UnitData
+     */
+    public function setUnitType(string $type): UnitData
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * 设置时间格式
+     * @param string $type
+     * @param string|bool $range
+     * @return UnitData
+     */
+    public function setTime(string $type = 'datetime', $range = false): UnitData
+    {
+        $this->selectData = compact('type', 'range');
+        return $this;
+    }
+
+    /**
+     * 设置上传类型
+     * @param string $type
+     * @return UnitData
+     */
+    public function uploadType(string $type = 'file'): UnitData
+    {
+        $this->selectData = ['type' => $type];
+        return $this;
     }
 }

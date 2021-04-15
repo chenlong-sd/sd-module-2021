@@ -54,7 +54,7 @@ class ApiModule extends BasePage
             FormUnit::hidden('id'),
             FormUnit::text('item_name', '模块名'),
             FormUnit::tag('url_prefix', '路径前缀'),
-            FormUnit::text('token', 'Token参数', 'key=value&key1=value1'),
+            FormUnit::text('token', 'Token参数')->placeholder('key=value&key1=value1'),
             FormUnit::text('describe', '描述'),
         ];
 
@@ -83,8 +83,8 @@ class ApiModule extends BasePage
     {
         $form_data = [
             FormUnit::build(
-                FormUnit::text('i.item_name%%', '', '模块名'),
-                FormUnit::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
+                FormUnit::text('i.item_name%%')->placeholder('模块名'),
+                FormUnit::time('i.update_time_~')->placeholder('修改时间'),
                 FormUnit::custom('', '', DefaultForm::searchSubmit())
             ),
         ];

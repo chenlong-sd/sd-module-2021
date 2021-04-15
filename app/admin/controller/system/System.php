@@ -255,11 +255,6 @@ class System extends Admin
     }
 
     /**
-     * 10. 给对象加一个属性， 属性值为另一个对象
-     * 11. 取出10题里面的另一个对象的值
-     * 12. 打印出对象的每一个属性 及 属性值
-     * 13. 申明一个函数，函数有一个参数，参数必须为对象， 不是对象打印不是对象
-     * 14. 13题里面函数，如果是对象，则打印出对象的每一个属性 及 属性值 （即实现一个函数的功能为打印对象的每一个值
      * @param string $group_id
      * @return \think\response\View
      * @throws SdException
@@ -270,15 +265,25 @@ class System extends Admin
      */
     public function baseConfig(string $group_id = '')
     {
+        if ($this->request->isPost()) {
+            foreach ($this->request->post() as $id => $value){
+                if (substr($id, 0, 2) !== 'id') continue;
+
+
+
+            }
+        }
+
         $form = [];
         $data = BaseConfigM::where(compact('group_id'))
             ->field(['id', 'group_id', 'key_id', 'key_name', 'form_type', 'options', 'key_value'])
             ->select()->each(function ($v) use (&$form){
-                if ($v->options){
-                    $v->options = json_decode($v->options, true);
-                }
                 $form_type = Str::camel($v->form_type);
-                $form[] = FormUnit::$form_type($v->id, $v->key_name . " [{$v->group_id}.{$v->key_id}]");
+                $form_unit = FormUnit::$form_type("id{$v->id}", $v->key_name . " [{$v->group_id}.{$v->key_id}]");
+                if ($v->options){
+                    $form_unit->selectData(json_decode($v->options, true));
+                }
+                $form[] = $form_unit;
             })->toArray();
 
         $form = Form::create($form)
@@ -286,8 +291,8 @@ class System extends Admin
             ->setJs('
             layui.jquery(".layui-form-label").css({width:"270px"});
             layui.jquery(".layui-input-block").css({marginLeft:"300px"});
-            
-            ')->setCustomMd(12)->complete();
+            layui.jquery(".layui-container").css({margin:"0"});
+            ')->setCustomMd()->complete();
 
         return $this->fetch('common/save_page', compact('form'));
     }

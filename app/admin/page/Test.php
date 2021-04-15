@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-03-01 11:12:13
+ * Date: 2021-04-15 19:13:51
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -37,7 +37,7 @@ class Test extends BasePage
             TableAux::column('status', '状态'),
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
-            TableAux::column('create_time', '创建时间'),
+            TableAux::column('update_time', '修改时间'),
         ]);
 
         $table->setHandleWidth(150);
@@ -60,9 +60,9 @@ class Test extends BasePage
             FormUnit::image('cover', '封面'),
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
-            FormUnit::radio('status', '状态', MyModel::getStatusSc(false)),
-            FormUnit::select('administrators_id', '管理员', Administrators::column('name', 'id')),
-            FormUnit::select('pid', '上级', MyModel::column('title', 'id')),
+            FormUnit::radio('status', '状态')->selectData(MyModel::getStatusSc(false)),
+            FormUnit::checkbox('administrators_id', '管理员')->selectData(Administrators::column('name', 'id')),
+            FormUnit::select('pid', '上级')->selectData(MyModel::column('title', 'id')),
             FormUnit::uEditor('content', '详情'),
         ];
 
@@ -88,14 +88,7 @@ class Test extends BasePage
      */
     public function searchFormData(): DefaultForm
     {
-        $form_data = [
-            FormUnit::build(
-                FormUnit::Text('i.title%%', "", '标题'),
-                FormUnit::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
-                FormUnit::Text('administrators.name%%', "", '管理员'),
-                FormUnit::custom('', '', DefaultForm::searchSubmit())
-            )
-        ];
+        $form_data = [];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 

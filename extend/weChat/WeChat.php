@@ -11,6 +11,7 @@ use sdModule\common\StaticCallGetInstance;
 use weChat\h5\{JsApi, Login, OAuth2};
 use weChat\appLet\Login as AppLetLogin;
 use weChat\appLet\SmallProgramORC;
+use weChat\appLet\SubscribeMessage;
 use weChat\pay\WeChatPay;
 
 /**
@@ -21,6 +22,7 @@ use weChat\pay\WeChatPay;
  * @method static WeChatPay        pay(string $trade_type = WeChatPay::JS_API)
  * @method static Login            h5Login(string $config_tag = 'common')
  * @method static AppLetLogin      appLetLogin(string $config_tag = 'common')
+ * @method static SubscribeMessage subscribeMessage(string $config_tag = 'common')
  * @package weChat
  */
 class WeChat extends StaticCallGetInstance

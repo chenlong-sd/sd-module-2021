@@ -7,203 +7,43 @@
 namespace sdModule\layui\defaultForm;
 
 
+use think\helper\Str;
+
+/**
+ * Class FormUnit
+ * @method static UnitData select(string $name, string $label = '')
+ * @method static UnitData text(string $name, string $label = '')
+ * @method static UnitData hidden(string $name, string $label = '')
+ * @method static UnitData password(string $name, string $label = '')
+ * @method static UnitData radio(string $name, string $label = '')
+ * @method static UnitData checkbox(string $name, string $label = '')
+ * @method static UnitData image(string $name, string $label = '')
+ * @method static UnitData upload(string $name, string $label = '')
+ * @method static UnitData images(string $name, string $label = '')
+ * @method static UnitData textarea(string $name, string $label = '')
+ * @method static UnitData time(string $name, string $label = '')
+ * @method static UnitData uEditor(string $name, string $label = '')
+ * @method static UnitData selects(string $name, string $label = '')
+ * @method static UnitData auxTitle(string $name, string $label = 'grey')
+ * @method static UnitData tag(string $name, string $label = '')
+ * @package sdModule\layui\defaultForm
+ */
 class FormUnit
 {
-
-    const SELECT    = 'select';
-    const TEXT      = 'text';
-    const HIDDEN    = 'hidden';
-    const PASSWORD  = 'password';
-    const RADIO     = 'radio';
-    const CHECKBOX  = 'checkbox';
-    const IMAGE     = 'image';
-    const UPLOAD    = 'upload';
-    const IMAGES    = 'images';
-    const TEXTAREA  = 'textarea';
-    const TIME      = 'time';
-    const U_EDITOR  = 'u_editor';
-    const SELECTS   = 'selects';
-    const TEXT_SHORT= 'textShort';
-    const TAG       = 'tag';
-    const SWITCH    = 'switch_sc';
-    const AUX_TITLE = 'aux_title';
-
     /**
-     * 返回生成HTML表单的数据
-     * @param string $name
-     * @param string $label
-     * @param string $type
-     * @param array $select_data
-     * @param string $placeholder
+     * @param $method_name
+     * @param $param
      * @return UnitData
      */
-    public static function generate(string $name, string $label, string $type = self::TEXT, array $select_data = [], string $placeholder = '')
+    public static function __callStatic($method_name, $param): UnitData
     {
-        return UnitData::_self($name, $label, $type, $placeholder, $select_data);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param string $placeholder
-     * @return UnitData
-     */
-    public static function text(string $name, string $label = '', string $placeholder = '')
-    {
-        return self::generate($name, $label, self::TEXT, [], $placeholder);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param string $placeholder
-     * @param string $tip
-     * @return UnitData
-     */
-    public static function textShort(string $name, string $label = '', string $placeholder = '', string $tip = '')
-    {
-        return self::generate($name, $label, self::TEXT_SHORT, ['tip' => $tip], $placeholder);
-    }
-
-    /**
-     * @param string $name
-     * @return UnitData
-     */
-    public static function hidden(string $name)
-    {
-        return self::generate($name, '', self::HIDDEN);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param array $select_data
-     * @param string $placeholder
-     * @return UnitData
-     */
-    public static function select(string $name, string $label = '', array $select_data = [],  string $placeholder = '')
-    {
-        return self::generate($name, $label, self::SELECT, $select_data, $placeholder);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param array $select_data
-     * @param string $placeholder
-     * @return UnitData
-     */
-    public static function selects(string $name, string $label = '', array $select_data = [],  string $placeholder = '')
-    {
-        return self::generate($name, $label, self::SELECTS, $select_data, $placeholder);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param string $type date|datetime|year|month|time
-     * @param bool|string $range
-     * @param string $placeholder
-     * @return UnitData
-     */
-    public static function time(string $name, string $label = '', string $type = 'datetime', $range = false, string $placeholder = '')
-    {
-        return self::generate($name, $label, self::TIME, compact('type', 'range'), $placeholder);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param array $select_data
-     * @return UnitData
-     */
-    public static function radio(string $name, string $label = '', array $select_data = [])
-    {
-        return self::generate($name, $label, self::RADIO, $select_data);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param array $select_data
-     * @return UnitData
-     */
-    public static function checkbox(string $name, string $label = '', array $select_data = [])
-    {
-        return self::generate($name, $label, self::CHECKBOX, $select_data);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param string $placeholder
-     * @return UnitData
-     */
-    public static function textarea(string $name, string $label = '', string $placeholder = '')
-    {
-        return self::generate($name, $label, self::TEXTAREA, [], $placeholder);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param string $placeholder
-     * @return UnitData
-     */
-    public static function password(string $name, string $label = '', string $placeholder = '')
-    {
-        return self::generate($name, $label, self::PASSWORD, [], $placeholder);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @return UnitData
-     */
-    public static function image(string $name, string $label = '')
-    {
-        return self::generate($name, $label, self::IMAGE);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @return UnitData
-     */
-    public static function images(string $name, string $label = '')
-    {
-        return self::generate($name, $label, self::IMAGES);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @param string $type
-     * @return UnitData
-     */
-    public static function upload(string $name, string $label = '', string $type = 'file')
-    {
-        return self::generate($name, $label, self::UPLOAD, ['type' => $type]);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @return UnitData
-     */
-    public static function uEditor(string $name, string $label = '')
-    {
-        return self::generate($name, $label, self::U_EDITOR);
-    }
-
-    /**
-     * @param string $name
-     * @param string $label
-     * @return UnitData
-     */
-    public static function tag(string $name, string $label = '')
-    {
-        return self::generate($name, $label, self::TAG);
+        $unit = UnitData::create(...$param)->setUnitType(Str::snake($method_name));
+        if ($method_name == 'time') {
+            $unit->setTime();
+        } elseif ($method_name == 'upload') {
+            $unit->uploadType();
+        }
+        return $unit;
     }
 
     /**
@@ -213,7 +53,7 @@ class FormUnit
      * @param $open_value
      * @return UnitData
      */
-    public static function switch_(string $name, string $label = '', array $value = [], $open_value = null)
+    public static function switchSc(string $name, string $label = '', array $value = [], $open_value = null)
     {
 
         $v = array_pad(array_keys($value), 2, 0);
@@ -225,44 +65,41 @@ class FormUnit
             $title[] = $value[$v_] ?? '';
         }
 
-        return self::generate($name, $label, self::SWITCH, [
-            'title' => implode('|', $title),
-            'value' => $v
-        ]);
+        return UnitData::create($name, $label)->setUnitType('switch')->selectData([
+                'title' => implode('|', $title),
+                'value' => $v
+            ]);
     }
 
     /**
+     * 行内表单
      * @param array $unit
      * @return \Closure
      */
-    public static function build(...$unit)
+    public static function build(...$unit): \Closure
     {
         return fn() => $unit;
     }
 
     /**
+     * 表格形式的表单
      * @param mixed ...$unit
      * @return array
      */
-    public static function table(...$unit)
+    public static function table(...$unit): array
     {
         return $unit;
     }
 
     /**
-     * 辅助标题
-     * @param $title
-     * @param bool|string $is_custom bool | grey | white | line | h3
+     * 自定义html
+     * @param $name
+     * @param string $label
+     * @param string $html
      * @return UnitData
      */
-    public static function auxTitle($title, $is_custom = "grey")
+    public static function custom($name, $label = '', $html = ''): UnitData
     {
-        $is_custom = $is_custom === true ? '__' : $is_custom;
-        return UnitData::_self($title, $is_custom, self::AUX_TITLE, '', []);
-    }
-
-    public static function custom($name, $label = '', $html = '')
-    {
-        return self::generate($name, $label, 'custom', ['html' => $html]);
+        return UnitData::create($name, $label)->setUnitType('custom')->selectData(compact('html'));
     }
 }

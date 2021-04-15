@@ -59,11 +59,11 @@ class Log extends BasePage
     {
         $form_data = [
             FormUnit::build(
-                FormUnit::text('route.title%%', '', '节点名'),
-                FormUnit::select('i.method', '', \app\admin\model\system\Log::getMethodSc(false), '请求方式'),
-                FormUnit::text('i.route%%', '', '节点地址'),
-                FormUnit::text('administrators.name%%', '', '操作人员'),
-                FormUnit::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
+                FormUnit::text('route.title%%')->placeholder('节点名'),
+                FormUnit::select('i.method')->placeholder("请求方式")->selectData( \app\admin\model\system\Log::getMethodSc(false)),
+                FormUnit::text('i.route%%')->placeholder('节点地址'),
+                FormUnit::text('administrators.name%%')->placeholder('操作人员'),
+                FormUnit::time('i.create_time_~')->placeholder('创建时间'),
                 FormUnit::custom('', '', DefaultForm::searchSubmit())
             )
         ];

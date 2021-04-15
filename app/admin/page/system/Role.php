@@ -35,7 +35,7 @@ class Role extends BasePage
     public function getTablePageData(): TablePage
     {
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox'], ),
+            TableAux::column(['type' => 'checkbox']),
             TableAux::column('id', 'ID'),
             TableAux::column('role', '角色名'),
             TableAux::column('parent_role', '父级角色'),
@@ -79,8 +79,8 @@ class Role extends BasePage
                 ->column('auth_id', 'table_names');
 
             foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'], Administrators::dataAuth($data['table']))
-                    ->preset(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
+                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->selectData(Administrators::dataAuth($data['table']))
+                    ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }
         $form = DefaultForm::create($form_data)->setDefaultData($default_data);
@@ -96,11 +96,11 @@ class Role extends BasePage
     {
         $form_data = [
             FormUnit::build(
-                FormUnit::text('i.id', '', 'ID'),
-                FormUnit::text('i.role%%', '', '角色名'),
-                FormUnit::text('ip.role%%', '', '父级角色'),
-                FormUnit::text('administrators.name%%', '', '创建者'),
-                FormUnit::time('i.create_time_~', '', 'datetime', '~', '创建时间'),
+                FormUnit::text('i.id')->placeholder('ID'),
+                FormUnit::text('i.role%%')->placeholder('角色名'),
+                FormUnit::text('ip.role%%')->placeholder('父级角色'),
+                FormUnit::text('administrators.name%%')->placeholder('创建者'),
+                FormUnit::time('i.create_time_~')->placeholder('创建时间'),
                 FormUnit::custom('', '', DefaultForm::searchSubmit())
             )
         ];

@@ -45,7 +45,11 @@ $page_base  = array_column($base, null, 'id');
                                 <select lay-filter="have" lay-search>
                                     <option value=""></option>
                                     <?php foreach ($base as $value){ ?>
-                                        <option value="<?= $value['id'] ?>"><?= $value['group_name'] ?> -> <?= $value['key_name'] ?></option>
+                                    <optgroup label="<?= $value['group_name'] ?>">
+                                        <?php foreach ($base as $v){ if ($v['group_id'] == $value['group_id']){  ?>
+                                        <option value="<?= $value['id'] ?>"><?= $v['key_name'] ?></option>
+                                        <?php }}?>
+                                    </optgroup>
                                     <?php }?>
                                 </select>
                             </div>
@@ -105,7 +109,7 @@ $page_base  = array_column($base, null, 'id');
                     <input type="hidden" name="id">
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit="" lay-filter="config">立即添加</button>
+                            <button class="layui-btn" lay-submit="" lay-filter="config">立即提交</button>
                         </div>
                     </div>
                 </form>

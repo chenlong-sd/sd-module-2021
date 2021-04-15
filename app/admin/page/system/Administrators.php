@@ -69,19 +69,19 @@ class Administrators extends BasePage
         $form_data = [
             FormUnit::hidden('id'),
             FormUnit::text('name', lang('administrator.name')),
-            FormUnit::textShort('account', lang('administrator.account'), '', lang('administrator.login account')),
-            FormUnit::password('password', lang('administrator.password'), lang('administrator.password require')),
-            FormUnit::password('password_confirm', lang('administrator.password confirm'), lang('administrator.password require')),
-            FormUnit::selects('role_id', lang('administrator.role'), Role::where(['administrators_id' => AdministratorsM::getSession('id')])->column('role', 'id')),
-            FormUnit::radio('status', lang('administrator.status'), AdministratorsM::getStatusSc())->preset(AdministratorsM::STATUS_NORMAL),
+            FormUnit::text('account', lang('administrator.account')),
+            FormUnit::password('password', lang('administrator.password')),
+            FormUnit::password('password_confirm', lang('administrator.password confirm')),
+            FormUnit::selects('role_id', lang('administrator.role'))->selectData(Role::where(['administrators_id' => AdministratorsM::getSession('id')])->column('role', 'id')),
+            FormUnit::radio('status', lang('administrator.status'))->selectData(AdministratorsM::getStatusSc())->defaultValue(AdministratorsM::STATUS_NORMAL),
         ];
         if (env('APP.DATA_AUTH', false)){
             $default = DataAuth::where(['delete_time' => 0])->where(['administrators_id' => request()->get('id')])
                 ->column('auth_id', 'table_names');
 
             foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'], self::dataAuth($data['table']))
-                    ->preset(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
+                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->selectData(self::dataAuth($data['table']))
+                    ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }
 
@@ -123,13 +123,13 @@ class Administrators extends BasePage
     {
         $form_data = [
             FormUnit::build(
-                FormUnit::text('account%%', '', lang('administrator.account')),
-                FormUnit::text('name%%', '', lang('administrator.administrator')),
-                FormUnit::text('r.role%%', '', lang('administrator.role')),
-                FormUnit::select('i.status%%', '', [
+                FormUnit::text('account%%')->placeholder(lang('administrator.account')),
+                FormUnit::text('name%%')->placeholder(lang('administrator.administrator')),
+                FormUnit::text('r.role%%')->placeholder(lang('administrator.role')),
+                FormUnit::select('i.status%%')->selectData([
                     AdministratorsM::STATUS_NORMAL => lang('normal'),
                     AdministratorsM::STATUS_FROZEN => lang('disable'),
-                ], lang('administrator.status')),
+                ])->placeholder(lang('administrator.status')),
                 FormUnit::custom('', '', DefaultForm::searchSubmit())
             ),
 
@@ -146,6 +146,7 @@ class Administrators extends BasePage
         return [
             'password' => lang('administrator.6-16 digit password'),
             'password_confirm' => lang('administrator.6-16 digit password'),
+            'account' => lang('administrator.login account'),
         ];
     }
 }

@@ -33,6 +33,20 @@ class Login
     }
 
     /**
+     * 获取openid
+     * @param string $code
+     * @return array|mixed|string
+     */
+    public function getUserOpenid(string $code)
+    {
+        $sessionKeyData = $this->getSessionKey($code);
+        if (!$sessionKeyData) {
+            return [];
+        }
+        return $sessionKeyData['openid'];
+    }
+
+    /**
      * 获取用户信息
      * @param string $code 小程序登录获取的code
      * @param string $rawData 小程序getUserInfo获取的数据
@@ -61,7 +75,8 @@ class Login
             Helper::log("小程序登录错误信息：解密出错！");
             return [];
         }
-        return json_decode($decryptData, JSON_UNESCAPED_UNICODE);
+        $data = json_decode($decryptData, JSON_UNESCAPED_UNICODE);
+        return array_merge($data, $sessionKeyData);
     }
 
     /**

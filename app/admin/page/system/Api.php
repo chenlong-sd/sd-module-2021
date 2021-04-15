@@ -67,7 +67,7 @@ class Api extends BasePage
     {
         $unit = [
             FormUnit::hidden('id'),
-            FormUnit::hidden('api_module_id')->preset(request()->get('api_module_id')),
+            FormUnit::hidden('api_module_id')->defaultValue(request()->get('api_module_id')),
             FormUnit::text('api_name', '接口名'),
             FormUnit::text('path', '路径'),
             FormUnit::text('describe', '描述'),
@@ -97,11 +97,9 @@ class Api extends BasePage
     {
         $form_data = [
             FormUnit::build(
-                FormUnit::text('i.id', '', 'ID'),
-                FormUnit::text('i.api_name%%', '', ''),
-                FormUnit::text('i.path%%', '', '接口名'),
-                FormUnit::text('i.describe%%', '', '路径'),
-                FormUnit::time('i.update_time_~', '', 'datetime', '~', '修改时间'),
+                FormUnit::text('i.path%%')->placeholder('接口名'),
+                FormUnit::text('i.describe%%')->placeholder("路径"),
+                FormUnit::time('i.update_time_~')->placeholder('修改时间'),
                 FormUnit::custom('', '', DefaultForm::searchSubmit())
             ),
         ];

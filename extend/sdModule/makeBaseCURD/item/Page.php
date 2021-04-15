@@ -44,7 +44,7 @@ class Page implements Item
         $this->searchHandle();
 
         if ($this->replace['search_form']) {
-            $this->replace['search_form'][] = "FormData::custom('', '', DefaultForm::searchSubmit())";
+            $this->replace['search_form'][] = "FormUnit::custom('', '', DefaultForm::searchSubmit())";
         }
     }
 
@@ -67,7 +67,7 @@ class Page implements Item
         $replace = [];
         foreach ($this->replace as $key => $value) {
             if ($key === 'search_form') {
-                $replace["//=={{$key}}==//"] = $value ? sprintf('%sFormData::build(%s%s%1$s)%s',
+                $replace["//=={{$key}}==//"] = $value ? sprintf('%sFormUnit::build(%s%s%1$s)%s',
                     $this->CURD->indentation(3), $this->CURD->indentation(4), implode($this->CURD->indentation(4), $value), $this->CURD->indentation(2)) : '';
                 continue;
             }
@@ -99,7 +99,7 @@ class Page implements Item
         foreach ($this->CURD->data as $field => $item) {
             $type = $item['type'] === 'editor' ? "uEditor" : $item['type'];
             if ($field === $primary_key){
-                $this->replace['form_data'][] = "FormData::hidden('{$field}'),";
+                $this->replace['form_data'][] = "FormUnit::hidden('{$field}'),";
                 continue;
             }
 
@@ -111,9 +111,9 @@ class Page implements Item
             if ($item['join'] && is_array($item['join'])){
                 $field       = parse_name($field, 1);
                 $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');
-                $select_data = ", MyModel::get{$field}Sc(false)";
+                $select_data = "->selectData(MyModel::get{$field}Sc(false))";
             }elseif (in_array($type, ['date', 'time', 'month', 'range'])){
-                $select_data = $type === 'range' ? ", 'date', true" : ", '{$type}'";
+                $select_data = $type === 'range' ? "->setTime('date', '~')" : "->setTime({$type})";
                 $type        = 'time';
             }else if (strpos($item['join'], ':') !== false
                 && strpos($item['join'], '=') !== false){
@@ -129,10 +129,10 @@ class Page implements Item
                     $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\' .  $this->replace['Table'] . ' as MyModel');
                     $table = 'MyModel';
                 }
-                $select_data = ", {$table}::column('{$title}', '{$value}')";
+                $select_data = "->selectData({$table}::column('{$title}', '{$value}'))";
             }
             $field = parse_name($field);
-            $this->replace['form_data'][] = "FormData::{$type}('{$field}', '{$item['label']}'$select_data),";
+            $this->replace['form_data'][] = "FormUnit::{$type}('{$field}', '{$item['label']}'){$select_data},";
         }
     }
 
@@ -215,7 +215,7 @@ class Page implements Item
     private function timeRangeSearch(string $field, string $placeholder, string $alias)
     {
         $replace = [$alias, $field, $this->CURD->fieldInfo[$field]['data_type'], $placeholder];
-        $this->replace['search_form'][] = sprintf("FormData::time(\"%s.%s_~\", \"\", '%s', '~', '%s'),", ...$replace);
+        $this->replace['search_form'][] = sprintf("FormUnit::time('%s.%s_~',)->setTime('%s', '~')->placeholder('%s'),", ...$replace);
     }
 
     /**
@@ -227,7 +227,7 @@ class Page implements Item
     private function selectSearch(string $field, string $placeholder, $data, string $alias)
     {
         $replace = [$alias, $field, $data, $placeholder];
-        $this->replace['search_form'][] = sprintf("FormData::Select('%s.%s', \"\", %s, '%s'),", ...$replace);
+        $this->replace['search_form'][] = sprintf("FormUnit::Select('%s.%s')->placeholder('%s')->selectData('%s'),", ...$replace);
     }
 
     /**
@@ -238,7 +238,7 @@ class Page implements Item
     private function Text(string $field, string $placeholder, string $alias)
     {
         $replace = [$alias, $field, $placeholder];
-        $this->replace['search_form'][] .= sprintf("FormData::Text('%s.%s', \"\", '%s'),", ...$replace);
+        $this->replace['search_form'][] .= sprintf("FormUnit::Text('%s.%s'->placeholder('%s'),", ...$replace);
     }
 
     /**

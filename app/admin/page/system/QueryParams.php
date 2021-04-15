@@ -56,14 +56,7 @@ class QueryParams extends BasePage
      */
     public function formData(string $scene, array $default_data = []): DefaultForm
     {
-        $unit = [
-            FormUnit::hidden('id'),
-            FormUnit::radio('method', '请求参数类型', MyModel::getMethodSc(false)),
-            FormUnit::radio('param_type', '参数类型', MyModel::getParamTypeSc(false)),
-            FormUnit::text('name', '参数名'),
-            FormUnit::text('test_value', '测试值'),
-            FormUnit::text('describe', '描述'),
-        ];
+        $unit = [];
 
         $form = DefaultForm::create($unit);
 

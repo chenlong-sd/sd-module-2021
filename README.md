@@ -309,7 +309,7 @@ use sdModule\layui\defaultForm\FormUnit;
 //初始化表单
 $form = \sdModule\layui\defaultForm\Form::create([
     FormUnit::hidden('id'),
-    FormUnit::text('title', '标题')->preset('asd'), // 设置表单默认值
+    FormUnit::text('title', '标题')->defaultValue('asd'), // 设置表单默认值
     FormUnit::image('cover', '封面')->inputAttr(['add' => 'disable']), // 设置对应场景该表单 的HTML属性值
     FormUnit::images('show_images', '展示图')->removeScene(['add']), // 删除在指定场景的该表单
     FormUnit::text('intro', '简介'),
@@ -321,12 +321,12 @@ $form = \sdModule\layui\defaultForm\Form::create([
     FormUnit::auxTitle('asdsad', 'line'), // 辅助标题
     FormUnit::custom('asdsad', 'line', ['html' => '<div></div>']), // 自定义
     FormUnit::build(  // 一行包含多个表单
-        FormUnit::text('title', '标题')->preset('asd'),
+        FormUnit::text('title', '标题')->defaultValue('asd'),
         FormUnit::text('intro', '简介'),
     ),
     "这是label" => FormUnit::table(  // table 里面的表单， 一个数组就是一行，每个元素可以使字符串 或FormData
         ["标题", "简介"],
-        [FormUnit::text('title')->preset('asd'), FormUnit::text('intro')],
+        [FormUnit::text('title')->defaultValue('asd'), FormUnit::text('intro')],
         // 如果是数组，第一个则是单元格td的内容，第二个则是单元格的属性（可定义id,class,style,colspan,rowspan, ...）
         [['测试属性', 'colspan="3"'], ['测试属性', 'style="color:#fff"']],
     ),
@@ -383,7 +383,7 @@ FormUnit::build( // 组合，一行包含多个表单
 );
 
  // 预设值
-FormUnit::text('id', 'ID')->preset('298');
+FormUnit::text('id', 'ID')->defaultValue('298');
 // 指定场景不展示该字段
 FormUnit::text('id', 'ID')->removeScene(['edit']);
 // 指定场景给该元素加额外的html标签属性
