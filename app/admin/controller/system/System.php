@@ -236,7 +236,7 @@ class System extends Admin
                 'id' => $id
             ]);
         }
-//        halt(\app\common\service\BaseConfig::getAll());
+
         $base = BaseConfigM::field(['id', 'group_id', 'group_name', 'key_id', 'key_name', 'form_type', 'options'])->select()->toArray();
         foreach ($base as &$value) {
             if ($value['options']) {
