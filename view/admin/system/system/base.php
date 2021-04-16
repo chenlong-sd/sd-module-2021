@@ -21,14 +21,18 @@ $page_base  = array_column($base, null, 'id');
 <div style="background-color: #fff;overflow: hidden">
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
         <ul class="layui-tab-title">
-            <li class="layui-this"><b>创建设置</b></li>
+            <li class="layui-this"><b>更新设置</b></li>
             <?php foreach ($page_group as $gI => $pgI){  ?>
                 <li><?= $pgI ?></li>
             <?php } ?>
         </ul>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
-                <form action="" id="base-config" lay-filter="base-config" class="layui-form" style="width: 800px">
+                <blockquote class="layui-elem-quote">
+                    取值方式：<span class="layui-badge-rim">base_config($key, $default)</span> 或
+                    <span class="layui-badge-rim">\app\common\service\BaseConfig::get($key, $default)</span>
+                </blockquote>
+                <form action="" lay-filter="base-config" class="layui-form" style="width: 800px">
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">选择分组</label>
@@ -42,19 +46,11 @@ $page_base  = array_column($base, null, 'id');
                         <div class="layui-inline">
                             <label class="layui-form-label">修改配置</label>
                             <div class="layui-input-block">
-                                <select lay-filter="have" lay-search>
-                                    <option value=""></option>
-                                    <?php foreach ($base as $value){ ?>
-                                    <optgroup label="<?= $value['group_name'] ?>">
-                                        <?php foreach ($base as $v){ if ($v['group_id'] == $value['group_id']){  ?>
-                                        <option value="<?= $value['id'] ?>"><?= $v['key_name'] ?></option>
-                                        <?php }}?>
-                                    </optgroup>
-                                    <?php }?>
-                                </select>
+                                <select lay-filter="have" lay-search></select>
                             </div>
                         </div>
                     </div>
+                    <hr class="layui-border-red">
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">分组配置</label>
@@ -82,21 +78,26 @@ $page_base  = array_column($base, null, 'id');
                                 <input type="text" maxlength="32" name="key_name" placeholder="eg:公司名称" autocomplete="off" class="layui-input">
                             </div>
                         </div>
+                        <div class="layui-inline">
+                            <button id="sc-delete" style="display: none" class="layui-btn layui-btn-danger">删除配置</button>
+                        </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">表单类型</label>
                         <div class="layui-input-block">
                             <select name="form_type">
+                                <option value=""></option>
                                 <option value="text">文本</option>
                                 <option value="image">单图</option>
                                 <option value="images">多图</option>
                                 <option value="select">下拉</option>
+                                <option value="radio">单选</option>
+                                <option value="switchSc">开关</option>
                                 <option value="textarea">文本域</option>
                                 <option value="u_editor">富文本</option>
                                 <option value="checkbox">多选</option>
                                 <option value="date">日期</option>
                                 <option value="time">时间</option>
-                                <option value="time_range">时间范围</option>
                             </select>
                         </div>
                     </div>
@@ -106,10 +107,11 @@ $page_base  = array_column($base, null, 'id');
                             <textarea name="options" style="min-height: 200px" placeholder="key=value,多个值请换行" class="layui-textarea"></textarea>
                         </div>
                     </div>
-                    <input type="hidden" name="id">
+                    <input type="hidden" name="id" value="">
                     <div class="layui-form-item">
                         <div class="layui-input-block">
                             <button class="layui-btn" lay-submit="" lay-filter="config">立即提交</button>
+                            <button  id="base-config" class="layui-btn layui-btn-primary" type="reset">清空</button>
                         </div>
                     </div>
                 </form>
@@ -135,21 +137,21 @@ $page_base  = array_column($base, null, 'id');
         var form = layui.form,$ = layui.jquery;
 
         $('iframe').css("height", window.innerHeight - 115 + 'px');
-        console.log(window.innerHeight);
+
         var group_data = <?= json_encode($page_group, 256) ?>;
         var base_data  = <?= json_encode($page_base, 256) ?>;
         groupRender(group_data, 'select[lay-filter=group]');
+        haveRender(base_data, 'select[lay-filter=have]');
         form.render();
 
         //监听提交
         form.on('submit(config)', function(data){
-            ScXHR.confirm('确认新增此参数吗？').ajax({
+            ScXHR.ajax({
                 type:'post',
                 data: data.field,
                 success:function (res){
                     if (res.code === 200) {
                         notice.success('成功');
-                        document.getElementById('base-config').reset();
                         if (!data.field.id) {
                             data.field.id = res.data.id;
                         }else{
@@ -158,8 +160,11 @@ $page_base  = array_column($base, null, 'id');
                         group_data[data.field.group_id] = data.field.group_name;
                         base_data[data.field.id] = data.field;
                         groupRender(group_data, 'select[lay-filter=group]');
-                        haveRender(base_data, 'select[lay-filter=have]', 'key_name');
+                        haveRender(base_data, 'select[lay-filter=have]');
                         form.render();
+                        $('#base-config').click();
+                        $('input[name=id]').val('');
+                        $('#sc-delete').hide();
                     } else {
                         notice.warning(res.msg);
                     }
@@ -177,6 +182,7 @@ $page_base  = array_column($base, null, 'id');
 
         form.on('select(have)', function(data){
             form.val('base-config', base_data[data.value]);
+            $('#sc-delete').show();
             return false;
         });
 
@@ -189,14 +195,52 @@ $page_base  = array_column($base, null, 'id');
         }
 
         function haveRender(obj, selector) {
-            let html = '<option value=""></option>';
+            var group = {};
             for (let objKey in obj) {
-                html += `<option value="${objKey}">${obj[objKey].group_name} -> ${obj[objKey].key_name}</option>`;
+                let group_id = obj[objKey].group_id;
+                if (!group.hasOwnProperty(group_id)){
+                    group[group_id] = obj[objKey].group_name
+                }
+            }
+
+            let html = '<option value=""></option>';
+            for (let k in group) {
+                html += `<optgroup label='${group[k]}'>`
+                for (let objKey1 in obj) {
+                    if (k  === obj[objKey1].group_id){
+                        html += `<option value="${objKey1}">${obj[objKey1].key_name}</option>`;
+                    }
+                }
+                html += "</optgroup>";
             }
             $(selector).html(html);
         }
 
-
+        $('#sc-delete').on('click', function (){
+            let id = $('input[name=id]').val();
+            ScXHR.confirm('确认删除吗？').ajax({
+                url:'<?= url("deleteConfig") ?>',
+                type:'post',
+                data:{
+                    id:id
+                },
+                success: function (res) {
+                    if (res.code === 200) {
+                        notice.success('成功！');
+                        delete base_data[id];
+                        groupRender(group_data, 'select[lay-filter=group]');
+                        haveRender(base_data, 'select[lay-filter=have]');
+                        form.render();
+                        $('#base-config').click();
+                        $('input[name=id]').val('');
+                        $('#sc-delete').hide();
+                    }else{
+                        notice.warning('失败！')
+                    }
+                }
+            })
+            return false;
+        });
 </script>
 
 

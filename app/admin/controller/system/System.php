@@ -236,7 +236,7 @@ class System extends Admin
                 'id' => $id
             ]);
         }
-
+//        halt(\app\common\service\BaseConfig::getAll());
         $base = BaseConfigM::field(['id', 'group_id', 'group_name', 'key_id', 'key_name', 'form_type', 'options'])->select()->toArray();
         foreach ($base as &$value) {
             if ($value['options']) {
@@ -255,8 +255,9 @@ class System extends Admin
     }
 
     /**
+     * 基础信息配置
      * @param string $group_id
-     * @return \think\response\View
+     * @return \think\response\Json|\think\response\View
      * @throws SdException
      * @throws \ReflectionException
      * @throws \think\db\exception\DataNotFoundException
@@ -266,37 +267,62 @@ class System extends Admin
     public function baseConfig(string $group_id = '')
     {
         if ($this->request->isPost()) {
-            foreach ($this->request->post() as $id => $value){
-                if (substr($id, 0, 2) !== 'id') continue;
+            Db::startTrans();
+            try {
+                foreach ($this->request->post() as $id => $value){
+                    if (substr($id, 0, 2) !== 'id') continue;
+                    $new_id = substr($id, 2);
+                    BaseConfigM::where(['id' => $new_id])->update([
+                        'key_value' => is_array($value) ? implode(',', $value) : $value,
+                        'update_time' => datetime()
+                    ]);
+                }
 
-
-
+                Db::commit();
+            } catch (\Throwable $exception) {
+                Db::rollback();
+                throw new SdException($exception->getMessage());
             }
+            return ResponseJson::success();
         }
 
+        // 页面数据
         $form = [];
         $data = BaseConfigM::where(compact('group_id'))
             ->field(['id', 'group_id', 'key_id', 'key_name', 'form_type', 'options', 'key_value'])
             ->select()->each(function ($v) use (&$form){
                 $form_type = Str::camel($v->form_type);
-                $form_unit = FormUnit::$form_type("id{$v->id}", $v->key_name . " [{$v->group_id}.{$v->key_id}]");
+                $form_unit = FormUnit::$form_type("id{$v->id}", Layui::tag()->rim("{$v->group_id}.{$v->key_id}") . " " . $v->key_name);
                 if ($v->options){
                     $form_unit->selectData(json_decode($v->options, true));
                 }
+                $v->id = 'id' . $v->id;
                 $form[] = $form_unit;
             })->toArray();
 
         $form = Form::create($form)
-            ->setDefaultData(array_column($data, 'kay_value', 'id'))
+            ->setDefaultData(array_column($data, 'key_value', 'id'))
             ->setJs('
             layui.jquery(".layui-form-label").css({width:"270px"});
             layui.jquery(".layui-input-block").css({marginLeft:"300px"});
             layui.jquery(".layui-container").css({margin:"0"});
-            ')->setCustomMd()->complete();
+            ')->complete();
 
         return $this->fetch('common/save_page', compact('form'));
     }
-    
+
+    /**
+     * 删除设置
+     * @param int $id
+     * @return \think\response\Json
+     */
+    public function deleteConfig(int $id = 0)
+    {
+        BaseConfigM::where('id', $id)->update([
+            'delete_time' => time(),
+        ]);
+        return ResponseJson::success();
+    }
     
     /**
      * @param string $table

@@ -586,14 +586,14 @@ let ScXHR = (() => {
          * @param param
          */
         ajax(param) {
+            window.load___ = custom.loading();
+            let success = typeof param.success === 'function' ? param.success : ()=>{};
+            param.success = function (res) {
+                layer.close(window.load___);
+                success(res);
+            };
             if (tip) {
                 layer.confirm(tip, config, function (index) {
-                    window.load___ = custom.loading();
-                    let success = typeof param.success === 'function' ? param.success : ()=>{};
-                    param.success = function (res) {
-                        layer.close(window.load___);
-                        success(res);
-                    };
                     layui.jquery.ajax(param);
                     layer.close(index);
                 });
@@ -615,7 +615,7 @@ let ScXHR = (() => {
  *    });
  * @returns {{request: (function(*, *): {response: response}), response: response}}
  */
-function scXhr(url, method) {
+/*function scXhr(url, method) {
     function send(param) {
         // TODO 发起请求, 以下为ajax示例
         $.ajax(param);
@@ -640,11 +640,11 @@ function scXhr(url, method) {
         }
     }
 
-    /**
+    /!**
      * 获取token
      * @param {boolean} is_refresh 是否是获取refresh_token
      * @returns {string}
-     */
+     *!/
     function getToken(is_refresh) {
         // 以下为浏览器的缓存获取
         // return localStorage.getItem(is_refresh ? 'refresh_token' : 'token');
@@ -665,12 +665,12 @@ function scXhr(url, method) {
 
     // ===========初始化请求参数 end============
 
-    /**
+    /!**
      * 发起请求，并传入响应后的处理函数
      * @param success   成功后的回调函数
      * @param error     失败后的回调函数
      * @param complete  完成请求后的回调函数
-     */
+     *!/
     function response(success, error, complete) {
         requestConfig.error = typeof error === 'function' ? error : () => false;
         requestConfig.complete = typeof complete === 'function' ? complete : () => false;
@@ -698,12 +698,12 @@ function scXhr(url, method) {
         execute(requestConfig);
     }
 
-    /**
+    /!**
      * 设置请求参数及请求头
      * @param data
      * @param header
      * @returns {{response: response}}
-     */
+     *!/
     function request(data, header) {
         requestConfig.data = data;
         header && typeof header === 'object' && merge(header_, header);
@@ -711,20 +711,20 @@ function scXhr(url, method) {
         return {response};
     }
 
-    /**
+    /!**
      * 执行请求
      * @param {object} param 请求参数
-     */
+     *!/
     function execute(param) {
         setHeader();
         send(param);
     }
 
-    /**
+    /!**
      * 合并obj2到obj1
      * @param {object} obj1
      * @param {object} obj2
-     */
+     *!/
     function merge(obj1, obj2) {
         for (const k in obj2) {
             obj1[k] = obj2[k];
@@ -735,6 +735,6 @@ function scXhr(url, method) {
         response,
         request
     }
-}
+}*/
 
 

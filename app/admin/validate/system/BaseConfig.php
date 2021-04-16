@@ -21,7 +21,7 @@ class BaseConfig extends BaseValidate
         'id|基本配置表' => 'require|number',
         'group_id|分组标识' => 'require',
         'group_name|分组名称' => 'require',
-        'key_id|配置标识' => 'require',
+        'key_id|配置标识' => 'require|unique:base_config,group_id^key_id',
         'key_name|配置名称' => 'require',
         'form_type|表单类型' => 'require',
         'key_value|值' => 'require',

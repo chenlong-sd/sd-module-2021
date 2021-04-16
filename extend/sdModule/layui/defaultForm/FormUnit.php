@@ -24,8 +24,10 @@ use think\helper\Str;
  * @method static UnitData time(string $name, string $label = '')
  * @method static UnitData uEditor(string $name, string $label = '')
  * @method static UnitData selects(string $name, string $label = '')
- * @method static UnitData auxTitle(string $name, string $label = 'grey')
+ * @method static UnitData auxTitle(string $title, string $type = 'grey')
  * @method static UnitData tag(string $name, string $label = '')
+ * @method static UnitData switchSc(string $name, string $label = '')
+ * @method static UnitData custom(string $name, string $label = '')
  * @package sdModule\layui\defaultForm
  */
 class FormUnit
@@ -47,31 +49,6 @@ class FormUnit
     }
 
     /**
-     * @param string $name
-     * @param string $label
-     * @param array $value on|off  eg:   1|2
-     * @param $open_value
-     * @return UnitData
-     */
-    public static function switchSc(string $name, string $label = '', array $value = [], $open_value = null)
-    {
-
-        $v = array_pad(array_keys($value), 2, 0);
-        if($open_value !== null && $v[0] != $open_value) {
-            $v = array_reverse($v);
-        }
-        $title = [];
-        foreach ($v as $v_){
-            $title[] = $value[$v_] ?? '';
-        }
-
-        return UnitData::create($name, $label)->setUnitType('switch')->selectData([
-                'title' => implode('|', $title),
-                'value' => $v
-            ]);
-    }
-
-    /**
      * 行内表单
      * @param array $unit
      * @return \Closure
@@ -89,17 +66,5 @@ class FormUnit
     public static function table(...$unit): array
     {
         return $unit;
-    }
-
-    /**
-     * 自定义html
-     * @param $name
-     * @param string $label
-     * @param string $html
-     * @return UnitData
-     */
-    public static function custom($name, $label = '', $html = ''): UnitData
-    {
-        return UnitData::create($name, $label)->setUnitType('custom')->selectData(compact('html'));
     }
 }

@@ -187,7 +187,18 @@ class UnitData
      */
     public function uploadType(string $type = 'file'): UnitData
     {
-        $this->selectData = ['type' => $type];
+        $this->selectData = compact('type');
+        return $this;
+    }
+
+    /**
+     * 自定义HTML
+     * @param string $html
+     * @return $this
+     */
+    public function customHtml(string $html): UnitData
+    {
+        $this->selectData = compact('html');
         return $this;
     }
 }

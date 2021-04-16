@@ -20,15 +20,17 @@ class SwitchSc extends UnitBase
      */
     public function getHtml(string $attr)
     {
+        $option_value = array_keys($this->select_data);
         if ($this->default) {
-            $checked = $this->default == $this->select_data['value'][0] ? 'checked' : '';
+            $checked = $this->default == current($option_value) ? 'checked' : '';
         }else{
-            $checked = $this->preset == $this->select_data['value'][0] ? 'checked' : '';
+            $checked = $this->preset == current($option_value) ? 'checked' : '';
         }
 
         $value = $this->default ?: ($this->preset ?: '');
+        $title = implode('|', $this->select_data);
 
-        $html  = "<input type=\"checkbox\" lay-filter='{$this->name}' lay-text='{$this->select_data['title']}'  {$attr} lay-skin=\"switch\" {$checked} >";
+        $html  = "<input type=\"checkbox\" lay-filter='{$this->name}' lay-text='{$title}'  {$attr} lay-skin=\"switch\" {$checked} >";
         $html .= "<input type='hidden' name=\"{$this->name}\" value='{$value}'/>";
         return $html;
     }
@@ -38,9 +40,12 @@ class SwitchSc extends UnitBase
      */
     public function getJs()
     {
+        $option_value = array_keys($this->select_data);
+        $open_value   = current($option_value);
+        $close_value  = next($option_value);
         return <<<JS
     form.on('switch({$this->name})', function(data){
-        let value = data.elem.checked ? "{$this->select_data['value'][0]}" : "{$this->select_data['value'][1]}";
+        let value = data.elem.checked ? "{$open_value}" : "{$close_value}";
         layui.jquery("input[name={$this->name}]").val(value);
     });  
 JS;

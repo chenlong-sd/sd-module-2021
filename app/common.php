@@ -224,3 +224,17 @@ if (!function_exists('data_filter')) {
     }
 }
 
+
+if (function_exists('base_config')) {
+    /**
+     * 获取基础配置
+     * @param string $key 配置组和标识 group_id.key_id
+     * @param null|mixed $default 默认值
+     * @return mixed|null
+     */
+    function base_config(string $key, $default = null)
+    {
+        return \app\common\service\BaseConfig::get($key, $default);
+    }
+}
+
