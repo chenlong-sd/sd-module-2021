@@ -35,7 +35,7 @@ class Role extends BasePage
     public function getTablePageData(): TablePage
     {
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox']),
+            TableAux::column()->checkbox(),
             TableAux::column('id', 'ID'),
             TableAux::column('role', '角色名'),
             TableAux::column('parent_role', '父级角色'),
@@ -44,7 +44,7 @@ class Role extends BasePage
             TableAux::column('create_time', '创建时间'),
         ]);
 
-        $table->setHandleWidth(250);
+        $table->setHandleWidth(170);
 
         $table->addBarEvent('directly_under')->setHtml(Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'))
             ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
@@ -100,8 +100,8 @@ class Role extends BasePage
                 FormUnit::text('i.role%%')->placeholder('角色名'),
                 FormUnit::text('ip.role%%')->placeholder('父级角色'),
                 FormUnit::text('administrators.name%%')->placeholder('创建者'),
-                FormUnit::time('i.create_time_~')->placeholder('创建时间'),
-                FormUnit::custom('', '', DefaultForm::searchSubmit())
+                FormUnit::time('i.create_time_~')->setTime('datetime', '~')->placeholder('创建时间'),
+                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             )
         ];
 

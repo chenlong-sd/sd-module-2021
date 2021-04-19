@@ -32,4 +32,8 @@ class ApiModule extends BaseModel
     ];
 
 
+    public function api()
+    {
+        return $this->hasMany(Api::class)->where('status', 1)->field('id,api_module_id');
+    }
 }

@@ -28,15 +28,16 @@ class ApiModule extends BasePage
     public function getTablePageData(): TablePage
     {
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox']),
-//            TableAux::column('id', ''),
-            TableAux::column('item_name', '模块名'),
+            TableAux::column()->checkbox(),
+            TableAux::column('item_name', '模块名')
+                ->setTemplate("return obj.api.length ? '<span style=\"color:red;font-weight: bold\">[ 待对接 ]</span> ' + obj.item_name : '<span style=\"color:black\">'+ obj.item_name +'</span>'"),
             TableAux::column('url_prefix', '路径前缀'),
             TableAux::column('update_time', '修改时间'),
         ]);
 
-        $table->setHandleWidth(250);
-        $table->addEvent('api')->setNormalBtn('接口','release','xs')->setJs(TableAux::openTabs([url('system.Api/index'), 'url_prefix', 'api_module_id'], '【{item_name}】接口维护'));
+        $table->setHandleWidth(150);
+        $table->addEvent('api')->setNormalBtn('接口','release','xs')
+            ->setJs(TableAux::openTabs([url('system.Api/index'), 'url_prefix', 'api_module_id'], '【{item_name}】接口维护'));
         return $table;
     }
 
@@ -84,8 +85,8 @@ class ApiModule extends BasePage
         $form_data = [
             FormUnit::build(
                 FormUnit::text('i.item_name%%')->placeholder('模块名'),
-                FormUnit::time('i.update_time_~')->placeholder('修改时间'),
-                FormUnit::custom('', '', DefaultForm::searchSubmit())
+                FormUnit::time('i.update_time_~')->setTime('datetime', '~')->placeholder('修改时间'),
+                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             ),
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();

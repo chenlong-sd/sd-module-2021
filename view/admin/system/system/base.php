@@ -21,12 +21,15 @@ $page_base  = array_column($base, null, 'id');
 <div style="background-color: #fff;overflow: hidden">
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
         <ul class="layui-tab-title">
+            <?php if (env('APP_DEBUG')){ ?>
             <li class="layui-this"><b>更新设置</b></li>
+            <?php } ?>
             <?php foreach ($page_group as $gI => $pgI){  ?>
                 <li><?= $pgI ?></li>
             <?php } ?>
         </ul>
         <div class="layui-tab-content">
+            <?php if (env('APP_DEBUG')){ ?>
             <div class="layui-tab-item layui-show">
                 <blockquote class="layui-elem-quote">
                     取值方式：<span class="layui-badge-rim">base_config($key, $default)</span> 或
@@ -116,6 +119,7 @@ $page_base  = array_column($base, null, 'id');
                     </div>
                 </form>
             </div>
+            <?php } ?>
             <?php foreach ($page_group as $gI => $pgI){  ?>
                 <div class="layui-tab-item">
                     <iframe style="min-height: 500px;width: 100%" src="<?= url('system.System/baseConfig?group_id=' . $gI) ?>" frameborder="0"></iframe>
@@ -135,7 +139,7 @@ $page_base  = array_column($base, null, 'id');
 <script>
 
         var form = layui.form,$ = layui.jquery;
-
+        $('.layui-tab-title').find('li:first-child').click();
         $('iframe').css("height", window.innerHeight - 115 + 'px');
 
         var group_data = <?= json_encode($page_group, 256) ?>;

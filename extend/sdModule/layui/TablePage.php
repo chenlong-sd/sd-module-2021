@@ -24,7 +24,7 @@ class TablePage
     /**
      * @var int
      */
-    private int $handleWidth = 150;
+    private int $handleWidth = 80;
     /**
      * @var string 操作胡id
      */
@@ -48,7 +48,7 @@ class TablePage
     /**
      * @var array|string[] 事件
      */
-    private array $toolEvent = ['update', 'delete'];
+    private array $toolEvent = ['update'];
 
     /**
      * @var array|string[] html
@@ -116,8 +116,8 @@ class TablePage
         $table = new self();
         $table->defaultEventHtml();
         $table->defaultEventJs();
-        $table->config     = array_filter(config('admin.layui_config'));
-        $table->fieldData = array_map(fn($v) => array_filter($v), $fieldData);
+        $table->config    = array_filter(config('admin.layui_config'));
+        $table->fieldData = array_map(fn($v) => array_filter($v->toArray()), $fieldData);
         $table->functionHandle();
         return $table;
     }
@@ -471,12 +471,11 @@ JS;
     {
         $this->toolbarEventHtml = [
             'create' => Layui::button($this->lang('add'), 'add-1')->setEvent('create')->defaults('sm'),
-            'delete' => Layui::button($this->lang('batch deletion'), 'delete')->setEvent('delete')->danger('sm')
+            'delete' => Layui::button($this->lang('delete'), 'delete')->setEvent('delete')->danger('sm')
         ];
 
         $this->toolEventHtml = [
             'update' => Layui::button($this->lang('edit'), 'edit')->setEvent('update')->defaults('xs'),
-            'delete' => Layui::button($this->lang('delete'), 'delete')->setEvent('delete')->danger('xs')
         ];
     }
 
@@ -493,7 +492,6 @@ JS;
             $this->removeEvent('update');
         }
         if (!access_control($this->url('del'))){
-            $this->removeEvent('delete');
             $this->removeBarEvent('delete');
         }
 
@@ -504,7 +502,6 @@ JS;
 
         $this->toolEventJs = [
             'update' => TableAux::openPage([$updateUrl], $this->lang('edit')),
-            'delete' => "del(obj.data[primary]);"
         ];
     }
 

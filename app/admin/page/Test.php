@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-04-15 19:13:51
+ * Date: 2021-04-19 09:35:44
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -29,10 +29,10 @@ class Test extends BasePage
     public function getTablePageData(): TablePage
     {
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox']),
+            TableAux::column()->checkbox(),
             TableAux::column('id', 'ID'),
             TableAux::column('title', '标题'),
-            TableAux::column('cover', '封面', '@image'),
+            TableAux::column('cover', '封面')->setImageTemplate(),
             TableAux::column('intro', '简介'),
             TableAux::column('status', '状态'),
             TableAux::column('administrators_name', '管理员'),
@@ -40,7 +40,7 @@ class Test extends BasePage
             TableAux::column('update_time', '修改时间'),
         ]);
 
-        $table->setHandleWidth(150);
+        $table->setHandleWidth(80);
         return $table;
     }
 
@@ -61,7 +61,7 @@ class Test extends BasePage
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
             FormUnit::radio('status', '状态')->selectData(MyModel::getStatusSc(false)),
-            FormUnit::checkbox('administrators_id', '管理员')->selectData(Administrators::column('name', 'id')),
+            FormUnit::select('administrators_id', '管理员')->selectData(Administrators::column('name', 'id')),
             FormUnit::select('pid', '上级')->selectData(MyModel::column('title', 'id')),
             FormUnit::uEditor('content', '详情'),
         ];
@@ -88,7 +88,13 @@ class Test extends BasePage
      */
     public function searchFormData(): DefaultForm
     {
-        $form_data = [];
+        $form_data = [
+            FormUnit::build(
+                FormUnit::Text('i.title%%')->placeholder('标题'),
+                FormUnit::Text('administrators.name%%')->placeholder('管理员'),
+                FormUnit::custom()->customHtml(DefaultForm::searchSubmit()),
+            )
+        ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();
     }
 

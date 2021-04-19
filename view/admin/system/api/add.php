@@ -316,7 +316,9 @@
         });
     }
 
-    path_no_handle();
+    $(function (){
+        path_no_handle();
+    });
 
     //监听提交
     form.on('submit(formDemo)', function (data) {

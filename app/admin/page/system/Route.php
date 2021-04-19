@@ -18,6 +18,7 @@ class Route extends BasePage
     /**
      * 获取创建列表table的数据
      * @return TablePage
+     * @throws \app\common\SdException
      */
     public function getTablePageData(): TablePage
     {

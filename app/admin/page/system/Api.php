@@ -27,16 +27,15 @@ class Api extends BasePage
     public function getTablePageData(): TablePage
     {
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox']),
-//            TablePage::column('id', ''),
-            TableAux::column('api_name', '接口名'),
-            TableAux::column('method', '请求方式'),
+            TableAux::column()->checkbox(),
+            TableAux::column('method', '接口名')->mergeField('api_name', ' '),
+            TableAux::column('method', '接口名'),
             TableAux::column('path', '路径'),
             TableAux::column('status', '对接状态'),
             TableAux::column('update_time', '修改时间'),
         ]);
 
-        $table->setHandleWidth(280);
+        $table->setHandleWidth(210);
         $table->setConfig([
             'where' => ['search' => ['api_module_id' => request()->get('id')]],
             'page' => false,
@@ -100,7 +99,7 @@ class Api extends BasePage
                 FormUnit::text('i.path%%')->placeholder('接口名'),
                 FormUnit::text('i.describe%%')->placeholder("路径"),
                 FormUnit::time('i.update_time_~')->placeholder('修改时间'),
-                FormUnit::custom('', '', DefaultForm::searchSubmit())
+                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             ),
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();

@@ -74,7 +74,7 @@ class UnitData
      * @param string $label
      * @return UnitData
      */
-    public static function create(string $name, string $label = ''): UnitData
+    public static function create(string $name = '', string $label = ''): UnitData
     {
         $instance        = new self();
         $instance->name  = $name;

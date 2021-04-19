@@ -30,8 +30,7 @@ class Log extends BasePage
     public function getTablePageData(): TablePage
     {
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox']),
-//            TableAux::column('id', 'ID'),
+            TableAux::column()->checkbox(),
             TableAux::column('method', '请求方式'),
             TableAux::column('route_title', '权限节点名'),
             TableAux::column('administrators_name', '操作管理员'),
@@ -64,7 +63,7 @@ class Log extends BasePage
                 FormUnit::text('i.route%%')->placeholder('节点地址'),
                 FormUnit::text('administrators.name%%')->placeholder('操作人员'),
                 FormUnit::time('i.create_time_~')->placeholder('创建时间'),
-                FormUnit::custom('', '', DefaultForm::searchSubmit())
+                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             )
         ];
 

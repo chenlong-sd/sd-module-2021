@@ -12,21 +12,13 @@ class TableAux
 
     /**
      * 表格列数据
-     * @param string|array $field 字段,或数组（直接返回数组信息
+     * @param string $field 字段
      * @param string $title 字段label
-     * @param string|\Closure $templet 模板id或匿名函数返回js代码
-     * @param array $params 有以下参数， 详情参考 <https://www.layui.com/doc/modules/table.html#cols>
-     * width，minWidth，type，LAY_CHECKED，fixed，hide，totalRow，totalRowText，sort，unresize，edit，style，event
-     * align，colspan，rowspan，templet，toolbar
-     * @return array
+     * @return TableColumn
      */
-    public static function column($field, $title = '', $templet = '', array $params = [])
+    public static function column(string $field = '', string $title = ''): TableColumn
     {
-        if (is_array($field)) {
-            return $field;
-        }
-
-        return array_merge(compact('field', 'title', 'templet'), $params);
+        return new TableColumn($field, $title);
     }
 
 

@@ -27,7 +27,7 @@ use think\helper\Str;
  * @method static UnitData auxTitle(string $title, string $type = 'grey')
  * @method static UnitData tag(string $name, string $label = '')
  * @method static UnitData switchSc(string $name, string $label = '')
- * @method static UnitData custom(string $name, string $label = '')
+ * @method static UnitData custom()
  * @package sdModule\layui\defaultForm
  */
 class FormUnit
@@ -39,7 +39,7 @@ class FormUnit
      */
     public static function __callStatic($method_name, $param): UnitData
     {
-        $unit = UnitData::create(...$param)->setUnitType(Str::snake($method_name));
+        $unit  = UnitData::create(...$param)->setUnitType(Str::snake($method_name));
         if ($method_name == 'time') {
             $unit->setTime();
         } elseif ($method_name == 'upload') {

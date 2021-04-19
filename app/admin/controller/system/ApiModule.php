@@ -26,7 +26,8 @@ class ApiModule extends Admin
      */
     public function listData(BackstageListsService $service)
     {
-        $model = \app\admin\model\system\ApiModule::field('i.id,i.item_name,url_prefix,i.update_time');
+        $model = \app\admin\model\system\ApiModule::field('i.id,i.item_name,url_prefix,i.update_time')
+            ->with('api');
         return $service->setModel($model)->getListsData();
     }
 

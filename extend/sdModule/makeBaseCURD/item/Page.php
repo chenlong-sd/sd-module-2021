@@ -44,7 +44,7 @@ class Page implements Item
         $this->searchHandle();
 
         if ($this->replace['search_form']) {
-            $this->replace['search_form'][] = "FormUnit::custom('', '', DefaultForm::searchSubmit())";
+            $this->replace['search_form'][] = "FormUnit::custom()->customHtml(DefaultForm::searchSubmit()),";
         }
     }
 
@@ -238,7 +238,7 @@ class Page implements Item
     private function Text(string $field, string $placeholder, string $alias)
     {
         $replace = [$alias, $field, $placeholder];
-        $this->replace['search_form'][] .= sprintf("FormUnit::Text('%s.%s'->placeholder('%s'),", ...$replace);
+        $this->replace['search_form'][] .= sprintf("FormUnit::Text('%s.%s')->placeholder('%s'),", ...$replace);
     }
 
     /**

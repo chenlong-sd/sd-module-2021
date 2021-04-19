@@ -31,7 +31,7 @@ class QueryParams extends BasePage
     public function getTablePageData(): TablePage
     {
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox']),
+            TableAux::column()->checkbox(),
             TableAux::column('id', ''),
             TableAux::column('method', '请求参数类型'),
             TableAux::column('param_type', '参数类型'),

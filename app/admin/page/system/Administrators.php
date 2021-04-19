@@ -35,7 +35,7 @@ class Administrators extends BasePage
     public function getTablePageData(): TablePage
     {
         $field_data = [
-            TableAux::column(['type' => 'checkbox']),
+            TableAux::column()->checkbox(),
             TableAux::column('id', '唯一ID'),
             TableAux::column('name', '用户名'),
             TableAux::column('account', '账号'),
@@ -130,7 +130,7 @@ class Administrators extends BasePage
                     AdministratorsM::STATUS_NORMAL => lang('normal'),
                     AdministratorsM::STATUS_FROZEN => lang('disable'),
                 ])->placeholder(lang('administrator.status')),
-                FormUnit::custom('', '', DefaultForm::searchSubmit())
+                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             ),
 
         ];

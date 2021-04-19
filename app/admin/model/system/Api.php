@@ -64,8 +64,8 @@ class Api extends BaseModel
     {
         return $tag === true
             ? [
-                '1' => Layui::tag()->gray('未对接'),
-                '2' => Layui::tag()->red('已对接'),
+                '1' => Layui::tag()->red('未对接'),
+                '2' => Layui::tag()->green('已对接'),
             ]
             : [
                 '1' => '未对接',
