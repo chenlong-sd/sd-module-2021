@@ -62,9 +62,7 @@ class Power extends Admin
 
         if (admin_session('id') === config('admin.super', 1)) goto set;
 
-        $role_have_route = $power::where('role_id', $role_id)->column('route_id');
-
-        if ($data && array_diff(array_column($data, 'id'), $role_have_route)) {
+        if ($data && array_diff(array_column($data, 'id'), admin_session('route'))) {
             return ResponseJson::fail('权限错误！');
         }
 

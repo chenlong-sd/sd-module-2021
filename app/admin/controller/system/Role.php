@@ -36,7 +36,7 @@ class Role extends \app\common\controller\Admin
     protected function beforeWrite(&$data)
     {
         $data['administrators_id'] = admin_session('id');
-        $data['pid'] = admin_session('role_id');
+        $data['pid'] = admin_session('role_id', 0);
     }
 
 
