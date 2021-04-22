@@ -13,7 +13,7 @@ class Test implements ScTaskInterface
 {
     public function handle()
     {
-        var_dump("I im Test");
+        timer_log("I im Test");
     }
 
 }
