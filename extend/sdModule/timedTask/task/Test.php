@@ -13,7 +13,12 @@ class Test implements ScTaskInterface
 {
     public function handle()
     {
-        timer_log("I im Test");
+        $str = strip_tags(file_get_contents('https://filfox.info/zh/address/f0690459'));
+        if (preg_match('/(lastSeenTimestamp:([0-9]|e)+,balance:")([0-9]+)"/', $str, $match)){
+            timer_log($match[0], 'test.log');
+            timer_log("123123123", 'test.log');
+        }
+        timer_log("test asdasdas", 'test.log');
     }
 
 }

@@ -20,6 +20,6 @@ class Test2 implements ScTaskInterface
             preg_match('/[0-9]+\.[0-9]+/', strtr($match[0], [',' => '', '，' => '']), $balance2);
             $balance = current($balance2);
         }
-        timer_log($balance);
+        timer_log($balance, 'test.log');
     }
 }

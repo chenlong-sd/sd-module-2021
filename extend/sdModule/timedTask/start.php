@@ -4,6 +4,7 @@ function task()
 {
     // 自动加载文件引入
     include __DIR__ . '/../../../vendor/autoload.php';
+    timer_log('asdsd');
     $date = new DateTime();
     \Swoole\Coroutine\System::sleep(60 - $date->format('s'));
     $taskArr = loadTask();
@@ -61,7 +62,7 @@ $process->name('sc-timed-task');
 /**
  * 开启守护模式
  */
-\Swoole\Process::daemon();
+//\Swoole\Process::daemon();
 
 /**
  * 开启进程
@@ -86,13 +87,17 @@ if (preg_match('/^[4-9]\.[5-9]\.[0-9]/', SWOOLE_VERSION)) {
 
 /**
  * 日志记录
- * @param $data
+ * @param string $data
+ * @param string $filename
  */
-function timer_log(string $data)
+function timer_log(string $data, string $filename = 'stop.log')
 {
     $data = "[" . date('Y-m-d H:i:s') . "] " . $data . "\r\n";
 
-    file_put_contents(__DIR__ . '/stop.log',  $data, FILE_APPEND);
+    if (!is_dir(__DIR__ . '/log')) {
+        mkdir(__DIR__ . '/log', 0755);
+    }
+    file_put_contents(__DIR__ . '/log/' . $filename,  $data, FILE_APPEND);
 }
 
 
