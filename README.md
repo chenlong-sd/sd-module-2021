@@ -1,4 +1,4 @@
-# sd-module 外包快速开发
+# sd-module 
 #####`version 3.2` `php 7.4~` `thinkphp6`
 
 ### 更新记录
@@ -114,8 +114,8 @@
 
 ```php
 // model
-use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\defaultForm\FormUnit;
+use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\form\FormUnit;
 use sdModule\layui\Layui;
 
 class test 
@@ -304,10 +304,10 @@ class test
 示例代码
 
 ```php
-use sdModule\layui\defaultForm\FormUnit;
+use sdModule\layui\form\FormUnit;
 
 //初始化表单
-$form = \sdModule\layui\defaultForm\Form::create([
+$form = \sdModule\layui\form\Form::create([
     FormUnit::hidden('id'),
     FormUnit::text('title', '标题')->defaultValue('asd'), // 设置表单默认值
     FormUnit::image('cover', '封面')->inputAttr(['add' => 'disable']), // 设置对应场景该表单 的HTML属性值
@@ -361,7 +361,7 @@ return $form->complete();
 * 支持类型
 
 ```php
-use sdModule\layui\defaultForm\FormUnit;
+use sdModule\layui\form\FormUnit;
 
 FormUnit::text('id', 'ID');
 FormUnit::image('id', 'ID');

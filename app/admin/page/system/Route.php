@@ -8,7 +8,7 @@ namespace app\admin\page\system;
 
 
 use app\common\BasePage;
-use sdModule\layui\defaultForm\Form as DefaultForm;
+use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\TablePage;
 
 class Route extends BasePage

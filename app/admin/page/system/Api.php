@@ -8,10 +8,10 @@
 namespace app\admin\page\system;
 
 use app\common\BasePage;
-use sdModule\layui\defaultForm\Form as DefaultForm;
+use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layui\defaultForm\FormUnit;
+use sdModule\layui\form\FormUnit;
 
 
 /**

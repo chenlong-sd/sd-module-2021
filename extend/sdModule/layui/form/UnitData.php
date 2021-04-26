@@ -4,7 +4,7 @@
  * User: chenlong <vip_chenlong@163.com>
  */
 
-namespace sdModule\layui\defaultForm;
+namespace sdModule\layui\form;
 
 /**
  * Class UnitData

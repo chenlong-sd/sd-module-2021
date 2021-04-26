@@ -78,6 +78,19 @@
                         <li class="layui-timeline-item">
                             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                             <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">Version 3.2 </h3>
+                                <ul>
+                                    <li> 优化更新详情页的代码编写 </li>
+                                    <li> layui更新到2.6 </li>
+                                    <li> 修复邮件发送自带的QQ的BUG </li>
+                                    <li> 增加Tab页面和弹窗的互相切换 </li>
+                                    <li> 微信相关功能的配置优化，可以支持多个微信账号。增加小程序的登录 </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
                                 <h3 class="layui-timeline-title">Version 3.1 </h3>
                                 <ul>
                                     <li> 取消快捷搜功能。 </li>

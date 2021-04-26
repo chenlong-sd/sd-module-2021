@@ -4,7 +4,7 @@
  * User: chenlong <vip_chenlong@163.com>
  */
 
-namespace sdModule\layui\defaultForm\formUnit;
+namespace sdModule\layui\form\formUnit;
 
 /**
  * 下拉多选

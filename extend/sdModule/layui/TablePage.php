@@ -93,6 +93,10 @@ class TablePage
      * @var int 设置表格操作样式
      */
     private int $handleStyle = self::HANDLE_STYLE_ALL;
+    /**
+     * @var array
+     */
+    private array $handleAttr = [];
 
     /**
      * 设置操作栏宽度
@@ -151,11 +155,11 @@ class TablePage
     public function getField(): string
     {
         if ($this->handle && $this->toolEvent && ($this->handleStyle & self::HANDLE_STYLE_NORMAL)) {
-            $this->fieldData[] = [
+            $this->fieldData[] = array_merge([
                 "width"   => $this->handleWidth,
                 "title"   => lang("operating"),
-                "templet" => $this->handle
-            ];
+                "templet" => $this->handle,
+            ], $this->handleAttr);
         }
 
         $data = json_encode($this->fieldData, JSON_UNESCAPED_UNICODE);
@@ -512,6 +516,16 @@ JS;
     public function setConfig(array $config): TablePage
     {
         $this->config = array_merge($config, $this->config);
+        return $this;
+    }
+
+    /**
+     * @param array $handleAttr
+     * @return TablePage
+     */
+    public function setHandleAttr(array $handleAttr): TablePage
+    {
+        $this->handleAttr = $handleAttr;
         return $this;
     }
 }

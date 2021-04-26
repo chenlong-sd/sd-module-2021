@@ -9,7 +9,7 @@ namespace //=={namespace}==//;
 use app\common\BasePage;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layui\defaultForm\Form as DefaultForm;
+use sdModule\layui\form\Form;
 //=={use}==//
 
 
@@ -29,7 +29,10 @@ class //=={Table}==// extends BasePage
             //=={table_page}==//
         ]);
 
-        $table->setHandleWidth(150);
+        $table->setHandleAttr([
+            'align' => 'center',
+            'width' => 150
+        ]);
         return $table;
     }
 
@@ -37,17 +40,17 @@ class //=={Table}==// extends BasePage
     * 生成表单的数据
     * @param string $scene
     * @param array $default_data
-    * @return DefaultForm
+    * @return Form
     * @throws \ReflectionException
     * @throws \app\common\SdException
     */
-    public function formData(string $scene, array $default_data = []): DefaultForm
+    public function formData(string $scene, array $default_data = []): Form
     {
         $unit = [
             //=={form_data}==//
         ];
 
-        $form = DefaultForm::create($unit)->setDefaultData($default_data);
+        $form = Form::create($unit)->setDefaultData($default_data);
 
         return $form->complete();
     }
@@ -63,14 +66,14 @@ class //=={Table}==// extends BasePage
 
     /**
      * 创建搜索表单的数据
-     * @return DefaultForm
+     * @return Form
      * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function searchFormData(): DefaultForm
+    public function searchFormData(): Form
     {
         $form_data = [//=={search_form}==//];
-        return DefaultForm::create($form_data)->setNoSubmit()->complete();
+        return Form::create($form_data)->setNoSubmit()->complete();
     }
 
 }

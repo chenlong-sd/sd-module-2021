@@ -4,13 +4,13 @@
  * User: chenlong <vip_chenlong@163.com>
  */
 
-namespace sdModule\layui\defaultForm;
+namespace sdModule\layui\form;
 
 use app\common\SdException;
-use sdModule\layui\defaultForm\formUnit\AuxTitle;
-use sdModule\layui\defaultForm\formUnit\Selects;
-use sdModule\layui\defaultForm\formUnit\UEditor;
-use sdModule\layui\defaultForm\formUnit\UnitBase;
+use sdModule\layui\form\formUnit\AuxTitle;
+use sdModule\layui\form\formUnit\Selects;
+use sdModule\layui\form\formUnit\UEditor;
+use sdModule\layui\form\formUnit\UnitBase;
 
 /**
  * Class Form
@@ -18,7 +18,7 @@ use sdModule\layui\defaultForm\formUnit\UnitBase;
  */
 class Form
 {
-    private const UNIT_CLASS = "\\sdModule\\layui\\defaultForm\\formUnit\\%s";
+    private const UNIT_CLASS = "\\sdModule\\layui\\form\\formUnit\\%s";
 
     private const FORM_TEMPLATE   = '<div class="%s" %s>%s<div class="%s" >%s</div>%s</div>';
     private const ITEM_TEMPLATE   = '<div class="layui-form-item">%s</div>';
@@ -227,8 +227,8 @@ class Form
         $unit = $this->getUnitInstance($unit_item);
         $name = $unit_item->get('name');
 
-        $unit->setData($unit_item->get('selectData'))
-            ->setPreset($unit_item->get('preset'))
+        $unit->setData($unit_item->get('options'))
+            ->setPreset($unit_item->get('defaultValue'))
             ->setConfig($unit_item->get('config'));
 
         if (property_exists($unit, 'default') && isset($this->default_data[$name])) {

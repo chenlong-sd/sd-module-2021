@@ -65,7 +65,7 @@
 <div class="layui-card">
     <div class="layui-card-header"><?=$page_name ?? lang("List")?></div>
     <div class="layui-card-body">
-        <?php /** @var  \sdModule\layui\defaultForm\Form $search */?>
+        <?php /** @var  \sdModule\layui\form\Form $search */?>
         <form class="layui-form" action="" lay-filter="sd">
             <?=$search->getHtml(); /** 加载的表单html */ ?>
         </form>

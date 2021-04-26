@@ -7,7 +7,7 @@
 namespace app\common;
 
 use app\common\traits\Lang;
-use sdModule\layui\defaultForm\Form as DefaultForm;
+use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\TablePage;
 
 /**

@@ -10,8 +10,8 @@ namespace app\admin\page;
 use app\common\BasePage;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\defaultForm\FormUnit;
+use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\form\FormUnit;
 use app\admin\model\Test as MyModel;
 use app\admin\model\system\Administrators;
 
@@ -32,7 +32,7 @@ class Test extends BasePage
             TableAux::column()->checkbox(),
             TableAux::column('id', 'ID'),
             TableAux::column('title', '标题'),
-            TableAux::column('cover', '封面')->setImageTemplate(),
+            TableAux::column('cover', '封面')->image(),
             TableAux::column('intro', '简介'),
             TableAux::column('status', '状态'),
             TableAux::column('administrators_name', '管理员'),

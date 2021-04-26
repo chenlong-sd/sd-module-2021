@@ -1,13 +1,13 @@
 <?php
 /**
- * Date: 2020/9/26 10:34
+ * Date: 2020/9/26 16:39
  * User: chenlong <vip_chenlong@163.com>
  */
 
-namespace sdModule\layui\defaultForm\formUnit;
+namespace sdModule\layui\form\formUnit;
 
 
-class Password extends UnitBase
+class Textarea extends UnitBase
 {
 
     /**
@@ -18,7 +18,7 @@ class Password extends UnitBase
     {
         $placeholder = $this->placeholder ?: $this->lang('please enter');
         return <<<HTML
-            <input type="password" name="{$this->name}" {$attr}  placeholder="{$placeholder}" value='{$this->preset}' autocomplete="off" class="layui-input">
+                <textarea name="{$this->name}" {$attr} placeholder="{$placeholder}" class="layui-textarea">{$this->preset}</textarea>
 HTML;
 
     }

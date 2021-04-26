@@ -50,7 +50,7 @@ class TableColumn implements \ArrayAccess
      * 设置图片模板
      * @return $this
      */
-    public function setImageTemplate(): TableColumn
+    public function image(): TableColumn
     {
         $this->column['templet'] = '@image';
         return $this;

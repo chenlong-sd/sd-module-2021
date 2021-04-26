@@ -9,8 +9,8 @@ namespace app\admin\page\system;
 
 use app\admin\model\system\DataAuth;
 use app\common\BasePage;
-use sdModule\layui\defaultForm\Form as DefaultForm;
-use sdModule\layui\defaultForm\FormUnit;
+use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\form\FormUnit;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;

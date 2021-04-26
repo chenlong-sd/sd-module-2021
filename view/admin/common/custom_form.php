@@ -1,5 +1,5 @@
 {extend name="frame"}
-<?php /** @var \sdModule\layui\defaultForm\Form $form */ ?>
+<?php /** @var \sdModule\layui\form\Form $form */ ?>
 {block name="title"}{$page_name ?: ''}{/block}
 {block name="meta"}{:token_meta()}{/block}
 {block name="body"}

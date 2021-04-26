@@ -252,7 +252,7 @@ function performTask(array $crontab, \sdModule\timedTask\ScTaskInterface $task)
          * @param int $max
          */
         $tickFun = function (\sdModule\timedTask\ScTaskInterface $task, int &$timer, int $tick, int $max) {
-            $task->handle();
+            \Swoole\Coroutine::create(fn() => $task->handle());
             \Swoole\Timer::tick($tick * 1000, function ($timer_id) use ($task, &$timer, $tick, $max){
                 $timer += $tick;
                 if ($timer > $max){
