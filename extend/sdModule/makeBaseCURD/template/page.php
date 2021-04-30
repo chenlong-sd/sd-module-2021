@@ -50,7 +50,7 @@ class //=={Table}==// extends BasePage
             //=={form_data}==//
         ];
 
-        $form = Form::create($unit)->setDefaultData($default_data);
+        $form = Form::create($unit, $scene)->setDefaultData($default_data);
 
         return $form->complete();
     }

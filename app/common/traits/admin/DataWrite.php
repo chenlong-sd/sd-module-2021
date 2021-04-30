@@ -34,7 +34,7 @@ trait DataWrite
 
         if (method_exists($this, 'custom' . ucfirst($type))) {
             $method = 'custom' . ucfirst($type);
-            $result = call_user_func([$this, $method], $data);
+            return call_user_func([$this, $method], $data);
         } else {
             if (method_exists($this->getModel(), $method = $type . 'Handle')) {
                 $result = call_user_func([$this->getModel(), $method], $data);
@@ -109,11 +109,26 @@ trait DataWrite
      */
     protected function beforeWrite(array &$data){}
 
-    protected function afterWrite($id, array $data){}
+    /**
+     * 写入之后
+     * @param $id
+     * @param array $data
+     */
+    protected function afterWrite(int $id, array $data){}
 
-    protected function afterAdd($id, array $data){}
+    /**
+     * 新增之后
+     * @param int $id
+     * @param array $data
+     */
+    protected function afterAdd(int $id, array $data){}
 
-    protected function afterUpdate($id, array $data){}
+    /**
+     * 更新之后
+     * @param int $id
+     * @param array $data
+     */
+    protected function afterUpdate(int $id, array $data){}
 
     /**
      * 数据写入之前的处理

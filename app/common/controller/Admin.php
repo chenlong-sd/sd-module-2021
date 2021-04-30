@@ -17,13 +17,15 @@ use app\common\SdException;
 use app\common\traits\Lang;
 use think\facade\Db;
 use think\Model;
+use think\response\Json;
+use think\response\View;
 
 /**
  * Class Admin
  * @method string|bool customAdd($data)     自定义添加
  * @method string|bool customEdit($data)    自定义修改
- * @method bool        delete($id)          自定义删除
- * @method array       edit()               数据更新页面
+ * @method void        delete($id)          自定义删除
+ * @method View        edit()               数据更新页面
  * @package app\common\controller
  * @author  chenlong <vip_chenlong@163.com>
  * @version 1.0

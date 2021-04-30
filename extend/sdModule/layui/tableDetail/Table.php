@@ -118,7 +118,7 @@ class Table
                 'field_attr'    => $field_attr
             ] = $this->mergeHandle($field);
 
-            $content = $this->data[$field] ?? '';
+            $content = $this->data[$field] ?? '——';
 
             if (in_array($field, $this->image_field)){
                 $img_html = '';

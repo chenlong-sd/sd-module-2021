@@ -80,13 +80,12 @@ class Route extends \app\common\controller\Admin
 
     /**
      * @param $id
-     * @return bool|string
+     * @return void
      * @throws \Throwable
      */
     public function delete($id)
     {
         (new \app\admin\model\system\Route())->deleteRoute($id);
-        return true;
     }
    
 }

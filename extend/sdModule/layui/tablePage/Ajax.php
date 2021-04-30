@@ -31,6 +31,12 @@ class Ajax
 
     private ?string $batch = null;
 
+    /**
+     * 提示输入层
+     * @var array
+     */
+    private array $prompt = [];
+
 
     public function __construct(string $url)
     {
@@ -96,6 +102,26 @@ class Ajax
         return $this;
     }
 
+
+    /**
+     * 输入层弹窗
+     * @param string $message
+     * @param array $config {@link https://www.layui.com/doc/modules/layer.html#layer.prompt}
+     * @return $this
+     */
+    public function prompt(string $message = '', array $config = []): Ajax
+    {
+        $this->prompt = [
+            'title'    => $message,
+            'area'     => ['400px', '200px'],
+            'formType' => 2,
+        ];
+
+        $this->prompt = array_merge($this->prompt, $config);
+
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -104,7 +130,9 @@ class Ajax
         if ($this->confirm) {
             $config = json_encode($this->confirm['config'] ?? []);
             $code = <<<JS
-        ScXHR.confirm('{$this->confirm['tip']}',{$config}).ajax({url:"{$this->url}",type:"{$this->method}",data:{$this->data},success(res){
+        let sc_data = {$this->data};
+        if (typeof value !== 'undefined')sc_data.prompt_value = value;
+        ScXHR.confirm('{$this->confirm['tip']}',{$config}).ajax({url:"{$this->url}",type:"{$this->method}",data:sc_data,success(res){
                 layer.close(window.load___);
                 if (res.code === 200) {
                     layNotice.success('成功');
@@ -115,12 +143,15 @@ class Ajax
             }
         });
 JS;
+            $code = sprintf($this->promptCodeCheck(), $code);
             return $this->batch ? sprintf(' function batch_js(id){%s} %s', $code, $this->batchData()) : $code;
         }
 
         $code = <<<JS
+        let sc_data = {$this->data};
+        if (typeof value !== 'undefined')sc_data.prompt_value = value;
         let load = custom.loading();
-        layui.jquery.ajax({url:"{$this->url}",type:"{$this->method}",data:{$this->data},success(res){
+        layui.jquery.ajax({url:"{$this->url}",type:"{$this->method}",data:sc_data,success(res){
                 layer.close(load);
                 if (res.code === 200) {
                     layNotice.success('成功');
@@ -131,11 +162,12 @@ JS;
             }
         });
 JS;
+        $code = sprintf($this->promptCodeCheck(), $code);
         return $this->batch ? sprintf(' function batch_js(id){%s} %s', $code, $this->batchData()) : $code;
     }
 
 
-    private function batchData()
+    private function batchData(): string
     {
         $please = lang('please select data');
         return  <<<JS
@@ -151,6 +183,25 @@ JS;
             }else{
                 notice.warning('{$please}');
             }
+JS;
+
+    }
+
+    private function promptCodeCheck()
+    {
+        if (empty($this->prompt)) {
+            return "%s";
+        }
+        $config = json_encode($this->prompt, JSON_UNESCAPED_UNICODE);
+        return <<<JS
+    layer.prompt({$config}, function(value, index, elem){
+        if(!value){
+            layer.alert('输入值不能为空');
+            return false;
+        }
+        %s
+        layer.close(index);
+    });
 JS;
 
     }

@@ -44,7 +44,7 @@ class Page implements Item
         $this->searchHandle();
 
         if ($this->replace['search_form']) {
-            $this->replace['search_form'][] = "FormUnit::custom()->customHtml(DefaultForm::searchSubmit()),";
+            $this->replace['search_form'][] = "FormUnit::custom()->customHtml(Form::searchSubmit()),";
         }
     }
 

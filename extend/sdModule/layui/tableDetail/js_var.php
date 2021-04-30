@@ -34,7 +34,7 @@ return <<<JS_VAR
     let confirm_tip = {icon:3,title:'{:lang("warning")}',btn:['{:lang("confirm")}', '{:lang("cancel")}']}
     
 </script>
-<script src="{$this->getRoot()}admin_static/layui/layui.all.js"></script>
+<script src="{$this->getRoot()}admin_static/layui/layui.js"></script>
 <script src="{$this->getRoot()}admin_static/js/custom.js"></script>
 
 <script>
