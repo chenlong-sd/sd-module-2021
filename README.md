@@ -124,14 +124,14 @@ class test
     {
         $form_data = [
             FormUnit::build(
-                FormUnit::Text('i.id', "", 'ID'),
-                FormUnit::Text('i.title%%', "", '标题'),
-                FormUnit::Text('i.intro%%', "", '简介'),
-                FormUnit::Select('i.status', "", MyModel::getStatusSc(false), '状态'),
-                FormUnit::Text('administrators.name%%', "", '管理员'),
-                FormUnit::Text('test.title%%', "", '上级'),
-                FormUnit::time("i.create_time_~", "", 'datetime', '~', '创建时间'),
-                FormUnit::custom('', '', DefaultForm::searchSubmit())
+                FormUnit::Text('i.id')->placeholder('ID')),
+                FormUnit::Text('i.title%%')->placeholder('标题'),
+                FormUnit::Text('i.intro%%')->placeholder('简介'),
+                FormUnit::Select('i.status')->placeholder('状态')->options(MyModel::getStatusSc(false)),
+                FormUnit::Text('administrators.name%%')->placeholder('管理员'),
+                FormUnit::Text('test.title%%')->placeholder('上级'),
+                FormUnit::time("i.create_time_~")->setTime('datetime', '~')->placeholder('创建时间'),
+                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             )
         ];
         return DefaultForm::create($form_data)->setNoSubmit()->complete();
@@ -224,26 +224,28 @@ class test
     use sdModule\layui\Layui;
 
         $table = TablePage::create([
-            TableAux::column(['type' => 'checkbox']), // 直接传定义列属性的数组，参考layui table
+            TableAux::column()->checkbox(), // 直接传定义列属性的数组，参考layui table
             TableAux::column('id', 'ID'),
             TableAux::column('title', '标题'),
-            TableAux::column('cover', '封面', '@image'),  // 图片
-            TableAux::column('intro', '简介', function(){ // 自定义展示方式
-                return "if (d.intro == 1) {return 1}else{return 2}"; // 写js代码
-            }),
-            TableAux::column('status', '状态', '#line_id'), // 指定ID的模板
-            TableAux::column('administrators_name', '管理员', '', ['edit' =>true]), // 设置更多的列属性
-            TableAux::column('parent_title', '上级'),
+            TableAux::column('cover', '封面')->image(),  // 图片
+            TableAux::column('intro', '简介')->setTemplate("if (d.intro == 1) {return 1}else{return 2}"),
+            TableAux::column('administrators_name', '管理员')->param(['edit' => true]), // 设置更多的列属性
+            TableAux::column('parent_title', '上级')->mergeField('create_time', '-'), // 多个字段一起显示
             TableAux::column('create_time', '创建时间'),
         ]);
 
-        $table->setHandleWidth(300); // 设置行操作栏宽度
-        $table->setEventWhere('create', 'd.status == 1', true); // 设置行事件的显示与隐藏
+        // 设置表格操作栏属性
+        $table->setHandleAttr([
+           'align' => 'center',
+           'width' => 150
+         ]);
+
         // 添加事件并设置对应的HTML和JS
         $table->addBarEvent('event')->setDefaultBtn('asd', 'add-1', 'xs')->setJs(TableAux::openPage(url('tetest'), 'veve'));
         // 添加事件并设置对应的自定义HTML和JS
         $table->addBarEvent('event')->setHtml('<btn  lay-event="event">点我<btn>')->setJs(TableAux::openPage(url('tetest'), 'veve'));
-        
+        // 设置事件的展示条件 
+        $table->addEvent('event')->setWhere('d.status == 1', true);
         $table->setConfig(['skin' => 'row']); // 设置layui渲染table的属性值
         
         // 设置layui渲染table的属性值，有页面参数条件时
@@ -313,13 +315,13 @@ $form = \sdModule\layui\form\Form::create([
     FormUnit::image('cover', '封面')->inputAttr(['add' => 'disable']), // 设置对应场景该表单 的HTML属性值
     FormUnit::images('show_images', '展示图')->removeScene(['add']), // 删除在指定场景的该表单
     FormUnit::text('intro', '简介'),
-    FormUnit::radio('status', '状态', self::getStatusSc(false))->unitConfig(['ss' => 'ss']), // 设置该表单的js配置项，目前只针对selects表单
-    FormUnit::select('administrators_id', '管理员', Administrators::addSoftDelWhere()->column('name', 'id')),
-    FormUnit::select('pid', '上级', Test::addSoftDelWhere()->column('title', 'id')),
+    FormUnit::radio('status', '状态')->options(self::getStatusSc(false))->unitConfig(['ss' => 'ss']), // 设置该表单的js配置项，目前只针对selects表单
+    FormUnit::select('administrators_id', '管理员')->options(Administrators::addSoftDelWhere()->column('name', 'id')),
+    FormUnit::select('pid', '上级')->options(Test::addSoftDelWhere()->column('title', 'id')),
     FormUnit::uEditor('content', '详情'),
-    FormUnit::switch_('switch', '开关', ['1' => '打开', '2' => '关闭'], '打开的值,eg:2'),
+    FormUnit::switchSc('switch', '开关')->options(['1' => '打开', '2' => '关闭']),
     FormUnit::auxTitle('asdsad', 'line'), // 辅助标题
-    FormUnit::custom('asdsad', 'line', ['html' => '<div></div>']), // 自定义
+    FormUnit::custom()->customHtml('<div></div>'), // 自定义
     FormUnit::build(  // 一行包含多个表单
         FormUnit::text('title', '标题')->defaultValue('asd'),
         FormUnit::text('intro', '简介'),
@@ -481,9 +483,9 @@ use sdModule\layui\Layui;
     $page->addTable($table)->addTable($table2);
 
     // 添加头部按钮操作
-    $page->addEvent('test1', Layui::button('测试1')->setEvent('test1')->primary());
+    $page->addEvent('test1')->setHtml(Layui::button('测试1')->setEvent('test1')->primary());
     // 添加尾部按钮操作    
-    $page->addAfterEvent('test2', Layui::button('测试2')->setEvent('test1')->danger());
+    $page->addAfterEvent('test2')->setHtml(Layui::button('测试2')->setEvent('test1')->danger());
     // 设置按钮的异步请求
     $page->setEventAjaxRequest('test1', url('index'), ['id' => 1]);
 
