@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-04-19 09:35:44
+ * Date: 2021-05-06 15:48:38
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -10,7 +10,7 @@ namespace app\admin\page;
 use app\common\BasePage;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\form\Form;
 use sdModule\layui\form\FormUnit;
 use app\admin\model\Test as MyModel;
 use app\admin\model\system\Administrators;
@@ -37,10 +37,15 @@ class Test extends BasePage
             TableAux::column('status', '状态'),
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
+            TableAux::column('create_time', '创建时间'),
             TableAux::column('update_time', '修改时间'),
+            TableAux::column('delete_time', '删除时间'),
         ]);
 
-        $table->setHandleWidth(80);
+        $table->setHandleAttr([
+            'align' => 'center',
+            'width' => 150
+        ]);
         return $table;
     }
 
@@ -48,11 +53,11 @@ class Test extends BasePage
     * 生成表单的数据
     * @param string $scene
     * @param array $default_data
-    * @return DefaultForm
+    * @return Form
     * @throws \ReflectionException
     * @throws \app\common\SdException
     */
-    public function formData(string $scene, array $default_data = []): DefaultForm
+    public function formData(string $scene, array $default_data = []): Form
     {
         $unit = [
             FormUnit::hidden('id'),
@@ -60,13 +65,13 @@ class Test extends BasePage
             FormUnit::image('cover', '封面'),
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
-            FormUnit::radio('status', '状态')->selectData(MyModel::getStatusSc(false)),
-            FormUnit::select('administrators_id', '管理员')->selectData(Administrators::column('name', 'id')),
-            FormUnit::select('pid', '上级')->selectData(MyModel::column('title', 'id')),
+            FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false)),
+            FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
+            FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
             FormUnit::uEditor('content', '详情'),
         ];
 
-        $form = DefaultForm::create($unit)->setDefaultData($default_data);
+        $form = Form::create($unit, $scene)->setDefaultData($default_data);
 
         return $form->complete();
     }
@@ -82,20 +87,14 @@ class Test extends BasePage
 
     /**
      * 创建搜索表单的数据
-     * @return DefaultForm
+     * @return Form
      * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function searchFormData(): DefaultForm
+    public function searchFormData(): Form
     {
-        $form_data = [
-            FormUnit::build(
-                FormUnit::Text('i.title%%')->placeholder('标题'),
-                FormUnit::Text('administrators.name%%')->placeholder('管理员'),
-                FormUnit::custom()->customHtml(DefaultForm::searchSubmit()),
-            )
-        ];
-        return DefaultForm::create($form_data)->setNoSubmit()->complete();
+        $form_data = [];
+        return Form::create($form_data)->setNoSubmit()->complete();
     }
 
 }

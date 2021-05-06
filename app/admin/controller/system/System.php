@@ -80,9 +80,7 @@ class System extends Admin
         $table = TablePage::create([
             TableAux::column("name", '表名'),
             TableAux::column("comment", '表注释'),
-            TableAux::column("length", '数据长度', function () {
-                return "return (obj.length / 1024) + ' KB'";
-            }),
+            TableAux::column("length", '数据长度')->setTemplate("return (obj.length / 1024) + ' KB'"),
         ]);
         $table->removeEvent(['update', 'delete']);
         $table->removeBarEvent(['create', 'delete']);
@@ -142,9 +140,7 @@ class System extends Admin
         $tables = TablePage::create([
             TableAux::column('filename', '文件'),
             TableAux::column('time', '备份时间'),
-            TableAux::column('size', '文件大小',  function (){
-                return "return (obj.size / 1024) + ' KB'";
-            })
+            TableAux::column('size', '文件大小')->setTemplate("return (obj.size / 1024) + ' KB'")
         ]);
 
         $tables->removeEvent(['update', 'delete']);
@@ -255,7 +251,7 @@ class System extends Admin
     }
 
     /**
-     * 基础信息配置
+     * 基础信息配置（组页面
      * @param string $group_id
      * @return \think\response\Json|\think\response\View
      * @throws SdException
@@ -292,11 +288,11 @@ class System extends Admin
             ->field(['id', 'group_id', 'key_id', 'key_name', 'form_type', 'options', 'key_value'])
             ->select()->each(function ($v) use (&$form){
                 $form_type = Str::camel($v->form_type);
-                $form_unit = FormUnit::$form_type("id{$v->id}", Layui::tag()->rim("{$v->group_id}.{$v->key_id}") . " " . $v->key_name);
+                $v->id     = 'id' . $v->id;
+                $form_unit = FormUnit::$form_type($v->id, Layui::tag()->rim("{$v->group_id}.{$v->key_id}") . " " . $v->key_name);
                 if ($v->options){
-                    $form_unit->selectData(json_decode($v->options, true));
+                    $form_unit->options(json_decode($v->options, true));
                 }
-                $v->id = 'id' . $v->id;
                 $form[] = $form_unit;
             })->toArray();
 

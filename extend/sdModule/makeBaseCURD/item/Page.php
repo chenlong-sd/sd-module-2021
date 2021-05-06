@@ -111,7 +111,7 @@ class Page implements Item
             if ($item['join'] && is_array($item['join'])){
                 $field       = parse_name($field, 1);
                 $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');
-                $select_data = "->selectData(MyModel::get{$field}Sc(false))";
+                $select_data = "->options(MyModel::get{$field}Sc(false))";
             }elseif (in_array($type, ['date', 'time', 'month', 'range'])){
                 $select_data = $type === 'range' ? "->setTime('date', '~')" : "->setTime({$type})";
                 $type        = 'time';
@@ -129,7 +129,7 @@ class Page implements Item
                     $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\' .  $this->replace['Table'] . ' as MyModel');
                     $table = 'MyModel';
                 }
-                $select_data = "->selectData({$table}::column('{$title}', '{$value}'))";
+                $select_data = "->options({$table}::column('{$title}', '{$value}'))";
             }
             $field = parse_name($field);
             $this->replace['form_data'][] = "FormUnit::{$type}('{$field}', '{$item['label']}'){$select_data},";
@@ -227,7 +227,7 @@ class Page implements Item
     private function selectSearch(string $field, string $placeholder, $data, string $alias)
     {
         $replace = [$alias, $field, $data, $placeholder];
-        $this->replace['search_form'][] = sprintf("FormUnit::Select('%s.%s')->placeholder('%s')->selectData('%s'),", ...$replace);
+        $this->replace['search_form'][] = sprintf("FormUnit::Select('%s.%s')->placeholder('%s')->options('%s'),", ...$replace);
     }
 
     /**

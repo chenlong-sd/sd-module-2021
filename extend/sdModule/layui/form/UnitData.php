@@ -49,7 +49,7 @@ class UnitData
     /**
      * @var array
      */
-    private array  $selectData = [];
+    private array  $options = [];
     /**
      * @var array
      */
@@ -84,7 +84,7 @@ class UnitData
 
     /**
      * 设置默认值
-     * @param string|int|array $default
+     * @param string|int $default
      * @return UnitData
      */
     public function defaultValue($default): UnitData
@@ -139,12 +139,12 @@ class UnitData
     }
 
     /**
-     * @param array $selectData
+     * @param array $options
      * @return UnitData
      */
-    public function selectData(array $selectData): UnitData
+    public function options(array $options): UnitData
     {
-        $this->selectData = $selectData;
+        $this->options = $options;
         return $this;
     }
 
@@ -176,7 +176,7 @@ class UnitData
      */
     public function setTime(string $type = 'datetime', $range = false): UnitData
     {
-        $this->selectData = compact('type', 'range');
+        $this->options = compact('type', 'range');
         return $this;
     }
 
@@ -187,7 +187,7 @@ class UnitData
      */
     public function uploadType(string $type = 'file'): UnitData
     {
-        $this->selectData = compact('type');
+        $this->options = compact('type');
         return $this;
     }
 
@@ -198,7 +198,7 @@ class UnitData
      */
     public function customHtml(string $html): UnitData
     {
-        $this->selectData = compact('html');
+        $this->options = compact('html');
         return $this;
     }
 }

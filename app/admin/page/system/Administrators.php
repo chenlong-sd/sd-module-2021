@@ -72,15 +72,15 @@ class Administrators extends BasePage
             FormUnit::text('account', lang('administrator.account')),
             FormUnit::password('password', lang('administrator.password')),
             FormUnit::password('password_confirm', lang('administrator.password confirm')),
-            FormUnit::selects('role_id', lang('administrator.role'))->selectData(Role::where(['administrators_id' => AdministratorsM::getSession('id')])->column('role', 'id')),
-            FormUnit::radio('status', lang('administrator.status'))->selectData(AdministratorsM::getStatusSc())->defaultValue(AdministratorsM::STATUS_NORMAL),
+            FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => AdministratorsM::getSession('id')])->column('role', 'id')),
+            FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsM::getStatusSc())->defaultValue(AdministratorsM::STATUS_NORMAL),
         ];
         if (env('APP.DATA_AUTH', false)){
             $default = DataAuth::where(['delete_time' => 0])->where(['administrators_id' => request()->get('id')])
                 ->column('auth_id', 'table_names');
 
             foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->selectData(self::dataAuth($data['table']))
+                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->options(self::dataAuth($data['table']))
                     ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }
@@ -126,7 +126,7 @@ class Administrators extends BasePage
                 FormUnit::text('account%%')->placeholder(lang('administrator.account')),
                 FormUnit::text('name%%')->placeholder(lang('administrator.administrator')),
                 FormUnit::text('r.role%%')->placeholder(lang('administrator.role')),
-                FormUnit::select('i.status%%')->selectData([
+                FormUnit::select('i.status%%')->options([
                     AdministratorsM::STATUS_NORMAL => lang('normal'),
                     AdministratorsM::STATUS_FROZEN => lang('disable'),
                 ])->placeholder(lang('administrator.status')),

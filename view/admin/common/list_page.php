@@ -180,14 +180,18 @@
     });
 
     form.on('submit(sc-form)', function (object) {
-        table.reload('sc', {
+        let reload = {
             where: {
-                search: object.field
-            },
-            page: {
+                search: Object.assign({}, table_render_data.where.search ? table_render_data.where.search : {}, object.field)
+            }
+        };
+        if (table_render_data.page === true) {
+            reload.page = {
                 curr: 1
             }
-        });
+        }
+
+        table.reload('sc', reload);
         return false;
     });
 
