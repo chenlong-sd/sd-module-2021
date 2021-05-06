@@ -132,20 +132,26 @@ CREATE TABLE `sd_base_config`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for sd_category
+-- Table structure for egg_dictionary
 -- ----------------------------
-DROP TABLE IF EXISTS `sd_category`;
-CREATE TABLE `sd_category`  (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
-    `sign` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类标识',
-    `pid` int(11) NOT NULL DEFAULT 0 COMMENT '标识ID',
-    `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分类名称',
-    `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：1=正常，2=停用',
-    `create_time` datetime(0) NOT NULL COMMENT '创建时间',
-    `update_time` datetime(0) NOT NULL COMMENT '修改时间',
-    `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
-    PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '分类表' ROW_FORMAT = Dynamic;
+DROP TABLE IF EXISTS `egg_dictionary`;
+CREATE TABLE `egg_dictionary`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `sign` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标识',
+  `pid` int(11) NOT NULL DEFAULT 0 COMMENT '标识ID',
+  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标识名称',
+  `dictionary_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '字典值',
+  `dictionary_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '字典名字',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：1=正常，2=停用',
+  `create_time` datetime(0) NOT NULL COMMENT '创建时间',
+  `update_time` datetime(0) NOT NULL COMMENT '修改时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of egg_dictionary
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for sd_data_auth
@@ -319,6 +325,11 @@ INSERT INTO `sd_route` VALUES (32, '编辑列表', 'test/update', 30, 2, 1, '', 
 INSERT INTO `sd_route` VALUES (33, '删除列表', 'test/del', 30, 2, 2, '', '2020-11-23 19:09:18', '2020-11-23 19:09:18', 0);
 INSERT INTO `sd_route` VALUES (34, '新增', 'test/create', 30, 2, 1, 'layui-icon-heart-fill', '2020-11-23 19:11:20', '2020-11-23 19:11:20', 0);
 INSERT INTO `sd_route` VALUES (35, '基础信息设置', 'system.System/basicInformationSet', 1, 1, 6, '', '2021-03-30 19:47:46', '2021-03-30 19:50:04', 0);
+INSERT INTO `egg_route` VALUES (36, '字典管理', 'system.dictionary/index', 1, 1, 7, '', '2021-05-06 21:56:38', '2021-05-06 21:56:38', 0);
+INSERT INTO `egg_route` VALUES (37, '字典管理列表数据', 'system.dictionary/index', 36, 2, 0, '', '2021-05-06 21:56:38', '2021-05-06 21:56:38', 0);
+INSERT INTO `egg_route` VALUES (38, '新增字典管理', 'system.dictionary/create', 36, 2, 1, '', '2021-05-06 21:56:38', '2021-05-06 21:56:38', 0);
+INSERT INTO `egg_route` VALUES (39, '编辑字典管理', 'system.dictionary/update', 36, 2, 2, '', '2021-05-06 21:56:38', '2021-05-06 21:56:38', 0);
+INSERT INTO `egg_route` VALUES (40, '删除字典管理', 'system.dictionary/del', 36, 2, 3, '', '2021-05-06 21:56:38', '2021-05-06 21:56:38', 0);
 
 -- ----------------------------
 -- Table structure for sd_test

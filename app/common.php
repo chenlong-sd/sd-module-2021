@@ -234,7 +234,7 @@ if (function_exists('base_config')) {
      */
     function base_config(string $key, $default = null)
     {
-        return \app\common\service\BaseConfig::get($key, $default);
+        return \app\common\service\BaseConfigService::get($key, $default);
     }
 }
 

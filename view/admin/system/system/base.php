@@ -34,7 +34,7 @@ $page_base  = array_column($base, null, 'id');
                 <div class="layui-tab-item layui-show">
                     <blockquote class="layui-elem-quote">
                         取值方式：<span class="layui-badge-rim">base_config($key, $default)</span> 或
-                        <span class="layui-badge-rim">\app\common\service\BaseConfig::get($key, $default)</span>
+                        <span class="layui-badge-rim">\app\common\service\BaseConfigService::get($key, $default)</span>
                     </blockquote>
                     <form action="" lay-filter="base-config" class="layui-form" style="width: 800px">
                         <div class="layui-form-item">
