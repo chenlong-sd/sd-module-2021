@@ -18,6 +18,11 @@ class TableColumn implements \ArrayAccess
     private array $column = [];
 
     /**
+     * @var string
+     */
+    public string $js = '';
+
+    /**
      * TableColumn constructor.
      * @param string $field
      * @param string $title
@@ -83,6 +88,35 @@ class TableColumn implements \ArrayAccess
             $this->column[$param] = $value;
         }
 
+        return $this;
+    }
+
+    /**
+     * 设置列为开关
+     * @param string $open_value
+     * @param Ajax $js_code
+     * @param string $title
+     * @return $this
+     */
+    public function switch(string $open_value, Ajax $js_code, string $title = 'ON|OFF'): TableColumn
+    {
+        $this->column['templet'] = function () use ($open_value, $title){
+            return <<<JS
+        let checked = "{$open_value}" == obj.{$this->column['field']} ? "checked" : "";
+return `<input type="checkbox" name="{$this->column['field']}" value="\${obj.id}" lay-skin="switch" lay-text="{$title}" lay-filter="sc{$this->column['field']}" \${checked}>`;
+JS;
+        };
+        $js_code->successCallback(<<<CAL
+         switch_obj.elem.checked = !switch_obj.elem.checked;
+         form.render('checkbox');
+CAL);
+        $this->js = <<<JS
+    form.on('switch(sc{$this->column['field']})', function(switch_obj){
+        {$js_code}
+        switch_obj.elem.checked = !switch_obj.elem.checked;
+        form.render('checkbox');
+    });
+JS;
         return $this;
     }
 

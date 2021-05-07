@@ -38,12 +38,12 @@ class Event
      * @param string $event
      * @param bool $isBar
      */
-    public function __construct(TablePage $page, string $event, bool $isBar = false)
+    public function __construct(TablePage $page, string $event = '', bool $isBar = false)
     {
         $this->page  = $page;
         $this->isBar = $isBar;
-        $this->event = $event;
-        $this->setEvent($event);
+        $this->event = $event ?: "event_" . mt_rand(1, 100);
+        $this->setEvent($this->event);
     }
 
     /**

@@ -30,6 +30,10 @@ class Ajax
     private string $data = '';
 
     private ?string $batch = null;
+    /**
+     * @var string
+     */
+    private string $successCallback = "";
 
     /**
      * 提示输入层
@@ -137,6 +141,7 @@ class Ajax
                 if (res.code === 200) {
                     layNotice.success('成功');
                     table.reload('sc');
+                    {$this->successCallback}
                 } else {
                     layNotice.warning(res.msg);
                 } 
@@ -156,6 +161,7 @@ JS;
                 if (res.code === 200) {
                     layNotice.success('成功');
                     table.reload('sc');
+                     {$this->successCallback}
                 } else {
                     layNotice.warning(res.msg);
                 } 
@@ -204,6 +210,16 @@ JS;
     });
 JS;
 
+    }
+
+    /**
+     * @param string $successCallback
+     * @return Ajax
+     */
+    public function successCallback(string $successCallback): Ajax
+    {
+        $this->successCallback = $successCallback;
+        return $this;
     }
 }
 

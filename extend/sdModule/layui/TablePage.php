@@ -99,6 +99,11 @@ class TablePage
     private array $handleAttr = [];
 
     /**
+     * @var string 自定义js
+     */
+    private string $customJs = '';
+
+    /**
      * 设置操作栏宽度
      * @param int $width
      * @return $this
@@ -121,6 +126,7 @@ class TablePage
         $table->defaultEventHtml();
         $table->defaultEventJs();
         $table->config    = array_filter(config('admin.layui_config'));
+        array_map(fn($v) => $table->customJs .= $v->js, $fieldData);
         $table->fieldData = array_map(fn($v) => array_filter($v->toArray()), $fieldData);
         $table->functionHandle();
         return $table;
@@ -214,7 +220,7 @@ class TablePage
      * @param string $event
      * @return Event
      */
-    public function addEvent(string $event): Event
+    public function addEvent(string $event = ''): Event
     {
         return new Event($this, $event);
     }
@@ -224,7 +230,7 @@ class TablePage
      * @param string $event
      * @return Event
      */
-    public function addBarEvent(string $event):Event
+    public function addBarEvent(string $event = ''):Event
     {
         return new Event($this, $event, true);
     }
@@ -436,6 +442,15 @@ JS;
     }
 
     /**
+     * 获取自定义的js
+     * @return string
+     */
+    public function getCustomJs(): string
+    {
+        return $this->customJs;
+    }
+
+    /**
      * js事件处理
      * @param bool $isBar
      * @return string
@@ -526,6 +541,16 @@ JS;
     public function setHandleAttr(array $handleAttr): TablePage
     {
         $this->handleAttr = $handleAttr;
+        return $this;
+    }
+
+    /**
+     * @param string $customJs
+     * @return TablePage
+     */
+    public function setCustomJs(string $customJs): TablePage
+    {
+        $this->customJs .= $customJs;
         return $this;
     }
 }

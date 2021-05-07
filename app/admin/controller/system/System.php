@@ -143,6 +143,11 @@ class System extends Admin
             TableAux::column('size', '文件大小')->setTemplate("return (obj.size / 1024) + ' KB'")
         ]);
 
+        $tables->setHandleAttr([
+            'align' => 'center',
+            'width' => 200
+        ]);
+
         $tables->removeEvent(['update', 'delete']);
         $tables->removeBarEvent(['create', 'delete']);
 
