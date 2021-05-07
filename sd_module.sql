@@ -135,7 +135,7 @@ CREATE TABLE `sd_base_config`  (
 -- Table structure for egg_dictionary
 -- ----------------------------
 DROP TABLE IF EXISTS `sd_dictionary`;
-CREATE TABLE `egg_dictionary`  (
+CREATE TABLE `sd_dictionary`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `sign` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标识',
   `pid` int(11) NOT NULL DEFAULT 0 COMMENT '标识ID',
