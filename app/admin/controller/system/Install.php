@@ -101,7 +101,7 @@ class Install
             $middleware_config_path    = App::getRootPath() . 'app/middleware.php';
             $middleware_config_content = file_get_contents($middleware_config_path);
             $install_middleware_close  = [
-                '\\app\\middleware\\Install::class' => '// \\app\\middleware\\Install::class'
+                '\\app\\common\\middleware\\Install::class' => '// \\app\\common\\middleware\\Install::class'
             ];
 
             $result = file_put_contents($middleware_config_path, strtr($middleware_config_content, $install_middleware_close));
