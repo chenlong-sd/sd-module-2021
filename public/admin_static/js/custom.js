@@ -518,6 +518,43 @@ custom = {
                 $('input[name=' + name + ']').val(FileData);
             }
         };
+    },
+    /**
+     * 视频上传
+     */
+    videoUpload(name){
+        let load;
+        upload.render({
+            elem: "#" + name
+            , url: UPLOAD_FILE_URL
+            , field: 'video'
+            , multiple: true
+            , accept: 'video'
+            , before: function (obj) {
+                load = custom.loading('视频上传中, 请稍候...');
+            }
+            , done: function (res) {
+                layer.close(load)
+                //如果上传失败
+                if (res.code === 202) {
+                    return notice.warning(res.msg);
+                }
+                //上传成功
+                $('input[name=' + name + ']').val(res.data);
+                $('#' + name + '_show').attr('src', /^http.*$/.test(res.data) ? res.data : ROOT + '/' + res.data);
+            },
+            error() {
+                layer.close(load)
+            }
+        });
+
+        return  {
+            name: name,
+            defaults: (defaults) => {
+                $('#' + name + '_show').attr('src', /^http.*$/.test(defaults) ? defaults : ROOT + '/' + defaults);
+                $('input[name=' + name + ']').val(defaults);
+            }
+        };
     }
 };
 

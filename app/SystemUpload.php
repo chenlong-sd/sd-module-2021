@@ -152,7 +152,7 @@ class SystemUpload
             if (!$hasFile->isEmpty() && $this->fileCheck($hasFile->path)) {
                 $this->thumbnail($hasFile->path);
 
-                $data = $this->verify_type === 'image'
+                $data = $this->verify_type === 'image' || $this->verify_type === 'video'
                     ? strtr($hasFile->path, ['\\' => '/'])
                     : Arr::only($hasFile->toArray(), ['id', 'tag']);
 
@@ -160,7 +160,7 @@ class SystemUpload
             }
 
             // 上传到本地服务器
-            $save_name = \think\facade\Filesystem::disk(in_array($this->verify_type, ['image']) ? 'public' : 'file')
+            $save_name = \think\facade\Filesystem::disk(in_array($this->verify_type, ['image', 'video']) ? 'public' : 'file')
                 ->putFile( env('UPLOAD_DIR', self::UPLOAD_DIR), $file);
 
             $this->thumbnail($save_name);
@@ -178,7 +178,7 @@ class SystemUpload
                 $id = $hasFile->id;
             }
 
-            $data = $this->verify_type === 'image'
+            $data = $this->verify_type === 'image' || $this->verify_type === 'video'
                 ? strtr($save_name, ['\\' => '/'])
                 : ['id' => $id, 'tag' => $data['tag']];
 
