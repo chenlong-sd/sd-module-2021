@@ -183,7 +183,7 @@ CREATE TABLE `sd_log`  (
    `route_id` int(11) NOT NULL DEFAULT 0 COMMENT '路由ID',
    `administrators_id` int(11) NOT NULL DEFAULT 0 COMMENT '操作管理员',
    `param` json NOT NULL COMMENT '请求参数',
-   `route` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '路由地址',
+   `route` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '路由地址',
    `create_time` datetime(0) NOT NULL COMMENT '创建时间',
    `update_time` datetime(0) NOT NULL COMMENT '修改时间',
    `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',

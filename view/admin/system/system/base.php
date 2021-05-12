@@ -93,6 +93,7 @@ $page_base  = array_column($base, null, 'id');
                                     <option value=""></option>
                                     <option value="text">文本</option>
                                     <option value="image">单图</option>
+                                    <option value="video">视频</option>
                                     <option value="images">多图</option>
                                     <option value="select">下拉</option>
                                     <option value="radio">单选</option>

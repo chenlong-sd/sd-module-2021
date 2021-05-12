@@ -113,7 +113,7 @@ class Page implements Item
                 $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');
                 $select_data = "->options(MyModel::get{$field}Sc(false))";
             }elseif (in_array($type, ['date', 'time', 'month', 'range'])){
-                $select_data = $type === 'range' ? "->setTime('date', '~')" : "->setTime({$type})";
+                $select_data = $type === 'range' ? "->setTime('date', '~')" : "->setTime('{$type}')";
                 $type        = 'time';
             }else if (strpos($item['join'], ':') !== false
                 && strpos($item['join'], '=') !== false){
