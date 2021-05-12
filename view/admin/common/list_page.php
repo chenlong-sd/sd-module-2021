@@ -180,9 +180,14 @@
     });
 
     form.on('submit(sc-form)', function (object) {
+        let is_have_where = false;
+        if (table_render_data.hasOwnProperty('where') && table_render_data.where.hasOwnProperty('search')) {
+            is_have_where = true;
+        }
+
         let reload = {
             where: {
-                search: Object.assign({}, table_render_data.where.search ? table_render_data.where.search : {}, object.field)
+                search: Object.assign({}, is_have_where ? table_render_data.where.search : {}, object.field)
             }
         };
         if (table_render_data.page === true) {

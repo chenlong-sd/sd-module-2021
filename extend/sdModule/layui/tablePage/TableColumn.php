@@ -72,13 +72,13 @@ class TableColumn implements \ArrayAccess
     /**
      * 设置其他配置参数
      * @param string|array $param
-     * @param string|null $value
+     * @param mixed $value
      * @return $this
      * 有以下参数， 详情参考 <https://www.layui.com/doc/modules/table.html#cols>
      * width，minWidth，type，LAY_CHECKED，fixed，hide，totalRow，totalRowText，sort，unresize，edit，style，event
      * align，colspan，rowspan，templet，toolbar
      */
-    public function param($param, ?string $value = null): TableColumn
+    public function param($param, $value = null): TableColumn
     {
         if (is_array($param)) {
             foreach ($param as $key => $value){

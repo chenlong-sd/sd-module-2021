@@ -39,6 +39,11 @@ class BackstageListsService
     private $returnHandle;
 
     /**
+     * @var array 统计行数据
+     */
+    private array $totalRow = [];
+
+    /**
      * @var array 快捷搜索的字段，最多支持两个，匹配方式参考：$this->exprArr
      * @example [
      *  'api_name%%' => '接口名',
@@ -215,6 +220,15 @@ class BackstageListsService
         try {
             $this->getNewModel();
             $this->viewSql($viewSql);
+            if ($this->totalRow) {
+                $totalField = '';
+                foreach ($this->totalRow as $field){
+                    $alias = strpos($field, '.') === false ? $field : preg_replace('/^.+\./', '', $field);
+                    $totalField = "sum({$field}) $alias";
+                }
+
+                $totalRow = (clone $this->model)->allowEmpty()->cache(30)->setOption('field', [])->field($totalField)->find()->toArray();
+            }
 
             if ($this->hasPagination()) {
                 $result = $this->model->paginate(request()->get('limit', 10));
@@ -229,7 +243,7 @@ class BackstageListsService
             throw new SdException($exception->getMessage());
         }
 
-        return $this->returnHandle($result);
+        return $this->returnHandle($result, $totalRow ?? []);
     }
 
     /**
@@ -267,20 +281,26 @@ class BackstageListsService
     /**
      * 返回数据处理
      * @param $data
+     * @param array $totalRow
      * @return false|mixed|\think\response\Json
      */
-    private function returnHandle($data)
+    private function returnHandle($data, array $totalRow = [])
     {
         is_callable($this->each) and $data->each($this->each);
         if (is_callable($this->returnHandle)) {
-            return call_user_func($this->returnHandle, $data);
+            return call_user_func($this->returnHandle, compact('data', 'totalRow'));
         }
         $code  = 0;
         $msg   = lang('success');
         $count = $data instanceof Paginator ? $data->total() : count($data);
         $data  = $data instanceof Paginator ? $data->all() : $data;
 
-        return json(compact('code', 'msg', 'count', 'data'));
+        $result = compact('code', 'msg', 'count', 'data');
+        if ($totalRow) {
+            $result['totalRow'] = $totalRow;
+        }
+
+        return json($result);
     }
 
     /**
@@ -364,6 +384,17 @@ class BackstageListsService
     private function quickSearchValueMatch($expr, $value): string
     {
         return $expr === '=' ? $value : "%{$value}%";
+    }
+
+    /**
+     * 设置统计行
+     * @param array $fieldLists
+     * @return $this
+     */
+    public function setTotalRow(array $fieldLists): BackstageListsService
+    {
+        $this->totalRow = $fieldLists;
+        return $this;
     }
 
     /**

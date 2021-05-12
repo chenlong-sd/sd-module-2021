@@ -57,7 +57,7 @@ $page_base  = array_column($base, null, 'id');
                         <hr class="layui-border-red">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">分组配置</label>
+                                <label class="layui-form-label">分组标识</label>
                                 <div class="layui-input-inline">
                                     <input type="text" maxlength="32" name="group_id" placeholder="标识，eg：system_param" autocomplete="off" class="layui-input">
                                 </div>
