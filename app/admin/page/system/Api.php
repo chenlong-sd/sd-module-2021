@@ -50,6 +50,8 @@ class Api extends BasePage
         $table->addBarEvent('createii')->setDefaultBtn('新增','add-1','sm')
             ->setJs(TableAux::openPage(url(sprintf('system.api/create?api_module_id=%s', request()->get('id'))), '创建', ['area' => ['90%', '90%']]));
 
+        $table->setCustomJs("setInterval(()=>table.reload('sc'), 60000)");
+
         return $table;
     }
 
