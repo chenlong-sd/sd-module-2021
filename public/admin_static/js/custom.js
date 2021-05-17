@@ -602,7 +602,7 @@ var notice = {
  */
 let ScXHR = (() => {
 
-    let tip, config = confirm_tip;
+    let tip, config = confirm_tip, load;
 
     return {
         /**
@@ -623,18 +623,19 @@ let ScXHR = (() => {
          * @param param
          */
         ajax(param) {
-            window.load___ = custom.loading();
             let success = typeof param.success === 'function' ? param.success : ()=>{};
             param.success = function (res) {
-                layer.close(window.load___);
+                layer.close(load);
                 success(res);
             };
             if (tip) {
                 layer.confirm(tip, config, function (index) {
+                    load = custom.loading();
                     layui.jquery.ajax(param);
                     layer.close(index);
                 });
             } else {
+                load = custom.loading();
                 layui.jquery.ajax(param);
             }
         }
