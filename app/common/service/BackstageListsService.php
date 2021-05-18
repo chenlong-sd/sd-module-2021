@@ -221,13 +221,13 @@ class BackstageListsService
             $this->getNewModel();
             $this->viewSql($viewSql);
             if ($this->totalRow) {
-                $totalField = '';
+                $totalField = [];
                 foreach ($this->totalRow as $field){
                     $alias = strpos($field, '.') === false ? $field : preg_replace('/^.+\./', '', $field);
-                    $totalField = "sum({$field}) $alias";
+                    $totalField[] = "sum({$field}) $alias";
                 }
 
-                $totalRow = (clone $this->model)->allowEmpty()->cache(30)->setOption('field', [])->field($totalField)->find()->toArray();
+                $totalRow = (clone $this->model)->allowEmpty()->cache(30)->setOption('field', [])->field(implode(',', $totalField))->find()->toArray();
             }
 
             if ($this->hasPagination()) {
