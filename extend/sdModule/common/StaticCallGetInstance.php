@@ -85,12 +85,11 @@ abstract class StaticCallGetInstance extends Singleton
      * 获取参数名字
      * @param string $method 方法名字
      * @return string
-     * @throws \ReflectionException
      */
-    private function getClassname(string $method)
+    private function getClassname(string $method): string
     {
         $s = new \ReflectionClass($this);
-        $line_doc = explode("\r\n", $s->getDocComment());
+        $line_doc = explode(strpos($s->getDocComment(), "\r\n") ? "\r\n" : "\n", $s->getDocComment());
         foreach ($line_doc as $doc) {
             if (preg_match('/\* (@method\s)(static(\s)+)?(\w+(\s)+)[A-Za-z]\w*\(.*\)$/', $doc)){
                 preg_match_all('/[A-Za-z]\w*\(/', $doc, $match);

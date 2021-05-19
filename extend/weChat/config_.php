@@ -19,6 +19,8 @@ return [
         'appid' => env('WE_CHAT_PAY.W_P_APPID', ''),
         'mch_id' => env('WE_CHAT_PAY.W_P_MCH_ID', ''),
         'key' => env('WE_CHAT_PAY.W_P_KEY', ''),
+        'v3_key' => env('WE_CHAT_PAY.API_V3_KEY', ''),
+        'serial_no' => env('WE_CHAT_PAY.SERIAL_NO', ''),
     ],
     // 证书
     'cert' => [

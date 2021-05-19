@@ -9,6 +9,7 @@ namespace sdModule\common;
 use sdModule\common\helper\{ALiYunSms,
     Ciphertext,
     Csv,
+    ExpressionCalculation,
     JWT,
     SCRedis,
     CcSms,
@@ -44,6 +45,7 @@ use sdModule\common\helper\{ALiYunSms,
  * @method static Resources     resource()
  * @method static ALiYunSms     aLiYunSms(string $accessKeyId = null, string $accessKeySecret = null, string $regionId = null)
  * @method static Csv           csv()
+ * @method static ExpressionCalculation   expressionCalculation()
  * @package sdModule\common
  */
 class Sc extends StaticCallGetInstance
