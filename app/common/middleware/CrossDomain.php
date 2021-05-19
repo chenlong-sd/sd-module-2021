@@ -53,16 +53,12 @@ class CrossDomain
 
     public function handle(Request $request, \Closure $closure)
     {
-        if (in_array(app('http')->getName(), $this->allowApp())) {
+        $Origin = env('APP_DEBUG') ? '*' : env('CROSS_DOMAIN.ALLOW_DOMAIN', '*');
 
-            $Origin = env('APP_DEBUG') ? '*' : env('CROSS_DOMAIN.ALLOW_DOMAIN', '*');
-
-            header('Access-Control-Allow-Origin:' . $Origin);
-            header('Access-Control-Allow-Methods:' . env('CROSS_DOMAIN.ALLOW_METHOD', 'POST,GET,OPTIONS'));
-            header('Access-Control-Allow-Headers:' . implode(',', $this->allowParam()));
-            // 更多....
-
-        }
+        header('Access-Control-Allow-Origin:' . $Origin);
+        header('Access-Control-Allow-Methods:' . env('CROSS_DOMAIN.ALLOW_METHOD', 'POST,GET,OPTIONS'));
+        header('Access-Control-Allow-Headers:' . implode(',', $this->allowParam()));
+        // 更多....
 
         return $closure($request);
     }

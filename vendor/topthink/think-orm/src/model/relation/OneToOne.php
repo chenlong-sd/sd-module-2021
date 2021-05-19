@@ -234,7 +234,7 @@ abstract class OneToOne extends Relation
         // 重新组装模型数据
         foreach ($result->getData() as $key => $val) {
             if (strpos($key, '__')) {
-                list($name, $attr) = explode('__', $key, 2);
+                [$name, $attr] = explode('__', $key, 2);
                 if ($name == $relation) {
                     $list[$name][$attr] = $val;
                     unset($result->$key);
@@ -253,25 +253,25 @@ abstract class OneToOne extends Relation
                 $relationModel->exists(true);
             }
 
-            if ($relationModel && !empty($this->bindAttr)) {
-                $this->bindAttr($relationModel, $result);
+            if (!empty($this->bindAttr)) {
+                $this->bindAttr($result, $relationModel);
             }
         } else {
             $relationModel = null;
         }
 
-        $result->setRelation(Str::snake($relation), $relationModel);
+        $result->setRelation($relation, $relationModel);
     }
 
     /**
      * 绑定关联属性到父模型
      * @access protected
-     * @param  Model $model  关联模型对象
      * @param  Model $result 父模型对象
+     * @param  Model $model  关联模型对象
      * @return void
      * @throws Exception
      */
-    protected function bindAttr(Model $model, Model $result): void
+    protected function bindAttr(Model $result, Model $model = null): void
     {
         foreach ($this->bindAttr as $key => $attr) {
             $key   = is_numeric($key) ? $attr : $key;
@@ -290,13 +290,12 @@ abstract class OneToOne extends Relation
      * @access public
      * @param  array   $where       关联预查询条件
      * @param  string  $key         关联键名
-     * @param  string  $relation    关联名
      * @param  array   $subRelation 子关联
      * @param  Closure $closure
      * @param  array   $cache       关联缓存
      * @return array
      */
-    protected function eagerlyWhere(array $where, string $key, string $relation, array $subRelation = [], Closure $closure = null, array $cache = [])
+    protected function eagerlyWhere(array $where, string $key, array $subRelation = [], Closure $closure = null, array $cache = [])
     {
         // 预载入关联查询 支持嵌套预载入
         if ($closure) {
@@ -306,10 +305,6 @@ abstract class OneToOne extends Relation
 
         if ($this->withField) {
             $this->query->field($this->withField);
-        }
-
-        if ($this->query->getOptions('order')) {
-            $this->query->group($key);
         }
 
         $list = $this->query

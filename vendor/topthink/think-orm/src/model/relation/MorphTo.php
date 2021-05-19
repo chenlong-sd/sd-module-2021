@@ -203,8 +203,6 @@ class MorphTo extends Relation
         }
 
         if (!empty($range)) {
-            // 关联属性名
-            $attr = Str::snake($relation);
 
             foreach ($range as $key => $val) {
                 // 多态类型映射
@@ -225,14 +223,13 @@ class MorphTo extends Relation
                         // 关联模型
                         if (!isset($data[$result->$morphKey])) {
                             $relationModel = null;
-                            throw new Exception('relation data not exists :' . $this->model);
                         } else {
                             $relationModel = $data[$result->$morphKey];
                             $relationModel->setParent(clone $result);
                             $relationModel->exists(true);
                         }
 
-                        $result->setRelation($attr, $relationModel);
+                        $result->setRelation($relation, $relationModel);
                     }
                 }
             }
@@ -292,7 +289,7 @@ class MorphTo extends Relation
             $data->exists(true);
         }
 
-        $result->setRelation(Str::snake($relation), $data ?: null);
+        $result->setRelation($relation, $data ?: null);
     }
 
     /**

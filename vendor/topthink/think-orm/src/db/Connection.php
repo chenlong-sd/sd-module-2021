@@ -14,16 +14,11 @@ namespace think\db;
 
 use Psr\SimpleCache\CacheInterface;
 use think\DbManager;
-use think\db\CacheItem;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException as Exception;
-use think\db\exception\ModelNotFoundException;
-use think\db\exception\PDOException;
 
 /**
  * 数据库连接基础类
  */
-abstract class Connection
+abstract class Connection implements ConnectionInterface
 {
 
     /**
@@ -94,7 +89,7 @@ abstract class Connection
 
     /**
      * Db对象
-     * @var Db
+     * @var DbManager
      */
     protected $db;
 
@@ -112,7 +107,7 @@ abstract class Connection
 
     /**
      * 缓存对象
-     * @var Cache
+     * @var CacheInterface
      */
     protected $cache;
 
@@ -131,33 +126,7 @@ abstract class Connection
         $class = $this->getBuilderClass();
 
         $this->builder = new $class($this);
-
-        // 执行初始化操作
-        $this->initialize();
     }
-
-    /**
-     * 初始化
-     * @access protected
-     * @return void
-     */
-    protected function initialize()
-    {
-    }
-
-    /**
-     * 获取当前连接器类对应的Query类
-     * @access public
-     * @return string
-     */
-    abstract public function getQueryClass(): string;
-
-    /**
-     * 获取当前连接器类对应的Builder类
-     * @access public
-     * @return string
-     */
-    abstract public function getBuilderClass(): string;
 
     /**
      * 获取当前的builder实例对象
@@ -167,6 +136,44 @@ abstract class Connection
     public function getBuilder()
     {
         return $this->builder;
+    }
+
+    /**
+     * 创建查询对象
+     */
+    public function newQuery()
+    {
+        $class = $this->getQueryClass();
+
+        /** @var BaseQuery $query */
+        $query = new $class($this);
+
+        $timeRule = $this->db->getConfig('time_query_rule');
+        if (!empty($timeRule)) {
+            $query->timeRule($timeRule);
+        }
+
+        return $query;
+    }
+
+    /**
+     * 指定表名开始查询
+     * @param $table
+     * @return BaseQuery
+     */
+    public function table($table)
+    {
+        return $this->newQuery()->table($table);
+    }
+
+    /**
+     * 指定表名开始查询(不带前缀)
+     * @param $name
+     * @return BaseQuery
+     */
+    public function name($name)
+    {
+        return $this->newQuery()->name($name);
     }
 
     /**
@@ -217,191 +224,6 @@ abstract class Connection
     }
 
     /**
-     * 设置数据库的配置参数
-     * @access public
-     * @param array $config 配置
-     * @return void
-     */
-    public function setConfig(array $config)
-    {
-        $this->config = array_merge($this->config, $config);
-    }
-
-    /**
-     * 连接数据库方法
-     * @access public
-     * @param array   $config  接参数
-     * @param integer $linkNum 连接序号
-     * @return mixed
-     * @throws Exception
-     */
-    abstract public function connect(array $config = [], $linkNum = 0);
-
-    /**
-     * 释放查询结果
-     * @access public
-     */
-    abstract public function free();
-
-    /**
-     * 查找单条记录
-     * @access public
-     * @param BaseQuery $query 查询对象
-     * @return array
-     * @throws DbException
-     * @throws ModelNotFoundException
-     * @throws DataNotFoundException
-     */
-    abstract public function find(BaseQuery $query): array;
-
-    /**
-     * 使用游标查询记录
-     * @access public
-     * @param BaseQuery $query 查询对象
-     * @return \Generator
-     */
-    abstract public function cursor(BaseQuery $query);
-
-    /**
-     * 查找记录
-     * @access public
-     * @param BaseQuery $query 查询对象
-     * @return array
-     * @throws DbException
-     * @throws ModelNotFoundException
-     * @throws DataNotFoundException
-     */
-    abstract public function select(BaseQuery $query): array;
-
-    /**
-     * 插入记录
-     * @access public
-     * @param BaseQuery   $query        查询对象
-     * @param boolean $getLastInsID 返回自增主键
-     * @return mixed
-     */
-    abstract public function insert(BaseQuery $query, bool $getLastInsID = false);
-
-    /**
-     * 批量插入记录
-     * @access public
-     * @param BaseQuery   $query   查询对象
-     * @param mixed   $dataSet 数据集
-     * @return integer
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    abstract public function insertAll(BaseQuery $query, array $dataSet = []): int;
-
-    /**
-     * 更新记录
-     * @access public
-     * @param BaseQuery $query 查询对象
-     * @return integer
-     * @throws Exception
-     * @throws PDOException
-     */
-    abstract public function update(BaseQuery $query): int;
-
-    /**
-     * 删除记录
-     * @access public
-     * @param BaseQuery $query 查询对象
-     * @return int
-     * @throws Exception
-     * @throws PDOException
-     */
-    abstract public function delete(BaseQuery $query): int;
-
-    /**
-     * 得到某个字段的值
-     * @access public
-     * @param BaseQuery  $query   查询对象
-     * @param string $field   字段名
-     * @param mixed  $default 默认值
-     * @param bool   $one     返回一个值
-     * @return mixed
-     */
-    abstract public function value(BaseQuery $query, string $field, $default = null);
-
-    /**
-     * 得到某个列的数组
-     * @access public
-     * @param BaseQuery  $query  查询对象
-     * @param string $column 字段名 多个字段用逗号分隔
-     * @param string $key    索引
-     * @return array
-     */
-    abstract public function column(BaseQuery $query, string $column, string $key = ''): array;
-
-    /**
-     * 执行数据库事务
-     * @access public
-     * @param callable $callback 数据操作方法回调
-     * @return mixed
-     * @throws PDOException
-     * @throws \Exception
-     * @throws \Throwable
-     */
-    abstract public function transaction(callable $callback);
-
-    /**
-     * 启动事务
-     * @access public
-     * @return void
-     * @throws \PDOException
-     * @throws \Exception
-     */
-    abstract public function startTrans();
-
-    /**
-     * 用于非自动提交状态下面的查询提交
-     * @access public
-     * @return void
-     * @throws PDOException
-     */
-    abstract public function commit();
-
-    /**
-     * 事务回滚
-     * @access public
-     * @return void
-     * @throws PDOException
-     */
-    abstract public function rollback();
-
-    /**
-     * 关闭数据库（或者重新连接）
-     * @access public
-     * @return $this
-     */
-    abstract public function close();
-
-    /**
-     * 获取最近一次查询的sql语句
-     * @access public
-     * @return string
-     */
-    abstract public function getLastSql(): string;
-
-    /**
-     * 获取最近插入的ID
-     * @access public
-     * @param BaseQuery  $query  查询对象
-     * @param string $sequence 自增序列名
-     * @return mixed
-     */
-    abstract public function getLastInsID(BaseQuery $query, string $sequence = null);
-
-    /**
-     * 初始化数据库连接
-     * @access protected
-     * @param boolean $master 是否主服务器
-     * @return void
-     */
-    abstract protected function initConnect(bool $master = true);
-
-    /**
      * 数据库SQL监控
      * @access protected
      * @param string $sql    执行的SQL语句 留空自动获取
@@ -411,19 +233,35 @@ abstract class Connection
     protected function trigger(string $sql = '', bool $master = false): void
     {
         $listen = $this->db->getListen();
-
-        if (!empty($listen)) {
-            $runtime = number_format((microtime(true) - $this->queryStartTime), 6);
-            $sql     = $sql ?: $this->getLastsql();
-
-            if (empty($this->config['deploy'])) {
-                $master = null;
-            }
-
-            foreach ($listen as $callback) {
-                if (is_callable($callback)) {
-                    $callback($sql, $runtime, $master);
+        if (empty($listen)) {
+            $listen[] = function ($sql, $time, $master) {
+                if (0 === strpos($sql, 'CONNECT:')) {
+                    $this->db->log($sql);
+                    return;
                 }
+
+                // 记录SQL
+                if (is_bool($master)) {
+                    // 分布式记录当前操作的主从
+                    $master = $master ? 'master|' : 'slave|';
+                } else {
+                    $master = '';
+                }
+
+                $this->db->log($sql . ' [ ' . $master . 'RunTime:' . $time . 's ]');
+            };
+        }
+
+        $runtime = number_format((microtime(true) - $this->queryStartTime), 6);
+        $sql     = $sql ?: $this->getLastsql();
+
+        if (empty($this->config['deploy'])) {
+            $master = null;
+        }
+
+        foreach ($listen as $callback) {
+            if (is_callable($callback)) {
+                $callback($sql, $runtime, $master);
             }
         }
     }
@@ -446,12 +284,13 @@ abstract class Connection
      * 分析缓存Key
      * @access protected
      * @param BaseQuery $query 查询对象
+     * @param string    $method 查询方法
      * @return string
      */
-    protected function getCacheKey(BaseQuery $query): string
+    protected function getCacheKey(BaseQuery $query, string $method = ''): string
     {
-        if (!empty($query->getOptions('key'))) {
-            $key = 'think:' . $this->getConfig('database') . '.' . $query->getTable() . '|' . $query->getOptions('key');
+        if (!empty($query->getOptions('key')) && empty($method)) {
+            $key = 'think_' . $this->getConfig('database') . '.' . $query->getTable() . '|' . $query->getOptions('key');
         } else {
             $key = $query->getQueryGuid();
         }
@@ -463,18 +302,19 @@ abstract class Connection
      * 分析缓存
      * @access protected
      * @param BaseQuery $query 查询对象
-     * @param array $cache 缓存信息
+     * @param array     $cache 缓存信息
+     * @param string    $method 查询方法
      * @return CacheItem
      */
-    protected function parseCache(BaseQuery $query, array $cache): CacheItem
+    protected function parseCache(BaseQuery $query, array $cache, string $method = ''): CacheItem
     {
-        list($key, $expire, $tag) = $cache;
+        [$key, $expire, $tag] = $cache;
 
         if ($key instanceof CacheItem) {
             $cacheItem = $key;
         } else {
             if (true === $key) {
-                $key = $this->getCacheKey($query);
+                $key = $this->getCacheKey($query, $method);
             }
 
             $cacheItem = new CacheItem($key);
@@ -486,74 +326,14 @@ abstract class Connection
     }
 
     /**
-     * 延时更新检查 返回false表示需要延时
-     * 否则返回实际写入的数值
+     * 获取返回或者影响的记录数
      * @access public
-     * @param string  $type     自增或者自减
-     * @param string  $guid     写入标识
-     * @param float   $step     写入步进值
-     * @param integer $lazyTime 延时时间(s)
-     * @return false|integer
+     * @return integer
      */
-    public function lazyWrite(string $type, string $guid, float $step, int $lazyTime)
+    public function getNumRows(): int
     {
-        if (!$this->cache || !method_exists($this->cache, $type)) {
-            return $step;
-        }
-
-        if (!$this->cache->has($guid . '_time')) {
-            // 计时开始
-            $this->cache->set($guid . '_time', time(), 0);
-            $this->cache->$type($guid, $step);
-        } elseif (time() > $this->cache->get($guid . '_time') + $lazyTime) {
-            // 删除缓存
-            $value = $this->cache->$type($guid, $step);
-            $this->cache->delete($guid);
-            $this->cache->delete($guid . '_time');
-            return 0 === $value ? false : $value;
-        } else {
-            // 更新缓存
-            $this->cache->$type($guid, $step);
-        }
-
-        return false;
+        return $this->numRows;
     }
-
-    /**
-     * 启动XA事务
-     * @access public
-     * @param  string $xid XA事务id
-     * @return void
-     */
-    public function startTransXa(string $xid)
-    {}
-
-    /**
-     * 预编译XA事务
-     * @access public
-     * @param  string $xid XA事务id
-     * @return void
-     */
-    public function prepareXa(string $xid)
-    {}
-
-    /**
-     * 提交XA事务
-     * @access public
-     * @param  string $xid XA事务id
-     * @return void
-     */
-    public function commitXa(string $xid)
-    {}
-
-    /**
-     * 回滚XA事务
-     * @access public
-     * @param  string $xid XA事务id
-     * @return void
-     */
-    public function rollbackXa(string $xid)
-    {}
 
     /**
      * 析构方法
@@ -561,9 +341,6 @@ abstract class Connection
      */
     public function __destruct()
     {
-        // 释放查询
-        $this->free();
-
         // 关闭连接
         $this->close();
     }

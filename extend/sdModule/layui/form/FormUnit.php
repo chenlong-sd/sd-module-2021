@@ -28,7 +28,7 @@ use think\helper\Str;
  * @method static UnitData auxTitle(string $title, string $type = 'grey')
  * @method static UnitData tag(string $name, string $label = '')
  * @method static UnitData switchSc(string $name, string $label = '')
- * @method static UnitData custom()
+ * @method static UnitData custom(string $name = '')
  * @package sdModule\layui\defaultForm
  */
 class FormUnit
