@@ -120,9 +120,9 @@ class Table
 
             $content = $this->data[$field] ?? '——';
 
-            if (in_array($field, $this->image_field)){
+            if (!empty($this->data[$field]) && in_array($field, $this->image_field)){
                 $img_html = '';
-                foreach (explode(',', strtr($content, ['，' => ','])) as $image){
+                foreach (explode(',', strtr($this->data[$field], ['，' => ','])) as $image){
                     $url = preg_match('/^http/', $image) ? $image : $this->root . $image;
                     $img_html .= "<div class='img-table layui-inline'><img src='{$url}'/></div>";
                 }
@@ -217,7 +217,15 @@ class Table
                 $content_attr  = $this->field_content_attr[$field] ?? '';
                 $content_attr .= $this->field_content_attr['-'] ?? '';
                 $field_attr = '';
-                $content = $row[$field] ?? '——';
+                $content = $row[$field] ?: '——';
+                if (!empty($row[$field]) && in_array($field, $this->image_field)){
+                    $img_html = '';
+                    foreach (explode(',', strtr($row[$field], ['，' => ','])) as $image){
+                        $url = preg_match('/^http/', $image) ? $image : $this->root . $image;
+                        $img_html .= "<div class='img-table layui-inline'><img src='{$url}'/></div>";
+                    }
+                    $content = $img_html;
+                }
                 $field = '';
             }
             $tr[] = compact('field', 'field_attr', 'content_attr', 'content', 'title');

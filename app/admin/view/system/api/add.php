@@ -10,6 +10,10 @@
     .layui-tab .layui-input{
         height: 30px;
     }
+    .sc-mn{
+        box-shadow: inset #f1d1d1 0 0 12px;
+        animation: ;
+    }
 </style>
 
 
@@ -42,8 +46,9 @@
         <div class="layui-input-block" style="position: relative">
             <input type="text" name="path" value="<?= $api['path'] ?? '' ?>" required lay-verify="required" placeholder="请输入请求路径" autocomplete="off"
                    class="layui-input">
-            <button id="send" class="layui-btn layui-btn-primary" style="position: absolute;right: 0;top:0"><i
-                        class="layui-icon layui-icon-release"></i></button>
+            <button id="send" class="layui-btn layui-btn-primary sc-mn" style="position: absolute;right: 0;top:0">
+                <i class="layui-icon layui-icon-release"></i> 模拟请求
+            </button>
 
             <select name="path_no" lay-filter="path_no" id="">
                 <?php foreach (explode('|-|', $data['url_prefix']) as $ic_pre){ ?>
@@ -274,6 +279,10 @@
     let response_ = layedit.build('demo',{
         tool: ['left', 'center', 'right', '|', 'strong', 'italic', 'underline']
     });
+
+    <?php if (isset($api['method']) && $api['method'] == 'post'){ ?>
+    $('.layui-tab-title').find('li').eq(1).click();
+    <?php } ?>
 
     // 设置本地默认地址
     let url_prefix_default = layui.sessionData('url_prefix_default');

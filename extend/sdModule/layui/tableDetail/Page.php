@@ -107,7 +107,7 @@ class Page
         if ($this->root) {
             return $this->root;
         }
-        return $this->root = strtr(dirname($_SERVER['SCRIPT_NAME']), ['\\' => '/']);
+        return $this->root = strtr(dirname($_SERVER['SCRIPT_NAME']), ['\\' => '/']) . '/';
     }
 
     public function lang($lang)

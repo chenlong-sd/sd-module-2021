@@ -82,51 +82,122 @@
 {block name="js"}
 
 <script>
-    var $ = layui.jquery, white = [], black = [],record = [], white_count_record = {}, black_count_record = {};
-    var row = 19, line = 19;
+    var $ = layui.jquery,
+        white_x = {}, // 以 X 轴为键存坐标信息
+        white_y = {}, // 以 Y 轴为键存坐标信息
+        black_x = {}, // 以 X 轴为键存坐标信息
+        black_y = {}, // 以 Y 轴为键存坐标信息
+        record = [],
+        white_count_record = {},
+        black_count_record = {},
+        row = 19,
+        line = 19;
     box_init(row, line);
 
+
     $(document).on('click', '.cross_box', function () {
+        if ($(this).find('.cross').hasClass('occupy')) return false;
         let white_count = $('.cross_select_white').length;
         let black_count = $('.cross_select_black').length;
         let is_white = (white_count + black_count) % 2 === 1;
-        $(this).find('.cross').addClass(is_white ? 'cross_select_white' : 'cross_select_black');
-        let index = $(this).index() + 1
-        let x = index % row;
-        let y = Math.ceil(index / row);
-        record.push({x:x,y:y});
+        $(this).find('.cross').addClass(is_white ? 'cross_select_white' : 'cross_select_black').addClass('occupy');
+
+        // 记录坐标信息
+        let x = $(this).data('x');
+        let y = $(this).data('y');
 
         if (is_white) {
-            white_count_record["x_" + x] = (white_count_record["x_" + x] ? white_count_record["x_" + x] : 0) + 1;
-            white_count_record["y_" + y] = (white_count_record["y_" + y] ? white_count_record["y_" + y] : 0) + 1;
-            if (white_count_record["x_" + x] >= 5 || white_count_record["y_" + y] >= 5) {
-                layer.alert('赢了');
-            }
+            white_x[y] ? white_x[y].push(x) : white_x[y] = [x];
+            white_y[x] ? white_y[x].push(y) : white_y[x] = [y];
+            white_x[y].sort((a, b) => a - b);
+            white_y[x].sort((a, b) => a - b);
+            winCheckRowAndLine(white_x);
+            winCheckRowAndLine(white_y);
+            winCheckFork(white_x);
         }else{
-            black_count_record["x_" + x] = (black_count_record["x_" + x] ? black_count_record["x_" + x] : 0) + 1;
-            black_count_record["y_" + y] = (black_count_record["y_" + y] ? black_count_record["y_" + y] : 0) + 1;
-            if (black_count_record["x_" + x] >= 5 || black_count_record["y_" + y] >= 5) {
-                layer.alert('赢了');
+            black_x[y] ? black_x[y].push(x) : black_x[y] = [x];
+            black_y[x] ? black_y[x].push(y) : black_y[x] = [y];
+            black_x[y].sort((a, b) => a - b);
+            black_y[x].sort((a, b) => a - b);
+            winCheckRowAndLine(black_x);
+            winCheckRowAndLine(black_y);
+            winCheckFork(black_x);
+        }
+    });
+
+    //横竖检查是否赢
+    function winCheckRowAndLine(obj) {
+        let li = 1;
+        for (let objKey in obj) {
+            let obj2 = obj[objKey];
+            for (let k2 in obj2) {
+                if (!obj2.hasOwnProperty(k2 - 1) || obj2[k2] - 1 !== obj2[k2 - 1]) {
+                    li = 1;
+                    continue;
+                }
+                li++;
+                if (li >= 5) {
+                    return alert("赢了") ;
+                }
+            }
+        }
+    }
+
+    // 分叉判断赢
+    function winCheckFork(obj) {
+
+        for (let objKey in obj) {
+            if (!obj.hasOwnProperty(objKey + 1)) continue;
+            let obj2 = obj[objKey];
+            for (let k2 in obj2) {
+                if (thorough(obj, objKey, 1, obj2[k2], 1) || thorough(obj, objKey, 1, obj2[k2], -1) ){
+                    return alert("赢了哦") ;
+                }
             }
         }
 
+        /**
+         * 分叉深入判断
+         * @param obj 行数据
+         * @param col 当前行
+         * @param number 连续数量
+         * @param value 当前值
+         * @param fx 方向 -1 1
+         */
+        function thorough(obj, col, number, value, fx = 1) {
+            if (obj[col].indexOf(value + fx)){
+                number++;
+            }
+            if (!obj.hasOwnProperty(col + 1) || number >= 5){
+                return number;
+            }
+            return thorough(obj, col, number, value, fx);
+        }
+    }
 
-    })
 
+
+    /**
+     * 棋面初始化
+     * @param row  行
+     * @param line 列
+     */
     function box_init(row, line)
     {
         let num = row * line,
-            box      = "<div class=\"cross_box\"><div class=\":class\"></div></div>",
+            box      = "<div data-x=':x' data-y=':y' class=\"cross_box\"><div class=\":class\"></div></div>",
             box_html = '';
-        for (let i = 1; i <= num; i++){
-            let class_ = 'cross';
-            if (i <= row) class_ += " cross_down";
-            if (i % line === 1) class_ += " cross_right";
-            if (i % line === 0) class_ += " cross_left";
-            if (i > line * (row - 1)) class_ += " cross_up";
-            if (i === Math.ceil(num/2)) class_ += " cross_tag";
+        for (let x = 1; x <= row; x++){
+            for (let y = 1; y <= line; y++) {
+                let class_ = 'cross';
+                if (y === 1) class_ += " cross_right";
+                if (y === line) class_ += " cross_left";
+                if (((x -1) * line + y) === Math.ceil(num / 2)) class_ += " cross_tag";
+                if (x === row) class_ += " cross_up";
+                if (x === 1) class_ += " cross_down";
 
-            box_html += box.replace(':class', class_);
+                box_html += box.replace(':class', class_).replace(':x', x).replace(':y', y);
+            }
         }
         $('.cross_box_s').html(box_html).css({
             width:row * 42 + 'px',
