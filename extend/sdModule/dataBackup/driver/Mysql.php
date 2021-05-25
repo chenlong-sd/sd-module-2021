@@ -68,6 +68,7 @@ class Mysql implements Driver
 
     /**
      * 数据结构备份
+     * @param string $table
      */
     private function backupStructure(string $table)
     {
@@ -101,8 +102,10 @@ class Mysql implements Driver
         $value = [];
         $length = $i = 0;
         while ($row = $sql->fetch(\PDO::FETCH_NUM)) {
-            $row = array_map('addslashes', $row);
-            $value[] = "('" . implode("','", $row) . "')";
+            $row = array_map(function ($v){
+                return is_null($v) ? "null" : "\"" . addslashes($v) . "\"";
+            }, $row);
+            $value[] = '(' . implode(',', $row) . ')';
             if (!$length) {
                 $length = strlen(current($value));
             }
