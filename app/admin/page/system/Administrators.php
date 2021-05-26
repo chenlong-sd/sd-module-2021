@@ -20,13 +20,6 @@ use think\facade\Db;
 
 class Administrators extends BasePage
 {
-    /**
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return lang('administrator.administrator');
-    }
 
     /**
      * 获取创建列表table的数据

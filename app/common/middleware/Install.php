@@ -22,7 +22,7 @@ class Install
 {
     public function handle(Request $request, \Closure $closure)
     {
-        if (file_exists(App::getRootPath() . '.env') && $request->isGet() && ($request->pathinfo() != 'admin/install.html')) {
+        if (!file_exists(App::getRootPath() . '.env') && $request->isGet() && ($request->pathinfo() != 'admin/install.html')) {
             return redirect(admin_url('install'));
         }
 

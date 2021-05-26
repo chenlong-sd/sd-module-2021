@@ -44,13 +44,8 @@ trait RequestMerge
      */
     private function lists()
     {
-        if (empty($this->getPage()->listPageName())) {
-            throw new SdException('please set the page title');
-        }
-
         $assign = [
             'search'    => $this->getPage()->searchFormData(),
-            'page_name' => $this->getPage()->listPageName(),
             'table'     => $this->getPage()->getTablePageData()
         ];
 

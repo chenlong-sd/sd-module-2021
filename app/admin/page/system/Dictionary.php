@@ -108,14 +108,6 @@ class Dictionary extends BasePage
         return $form->complete();
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return "字典表";
-    }
 
     /**
      * 创建搜索表单的数据

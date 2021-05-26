@@ -51,7 +51,7 @@ class Administrators extends Admin
      * @return string
      * @throws \Exception
      */
-    public function passwordUpdate(MyModel $administrators): string
+    public function passwordUpdate(MyModel $administrators)
     {
         if ($this->request->isPost()) {
             $data = $this->verify('password');

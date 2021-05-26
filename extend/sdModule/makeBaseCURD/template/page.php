@@ -55,14 +55,6 @@ class //=={Table}==// extends BasePage
         return $form->complete();
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return "//=={page_name}==//";
-    }
 
     /**
      * 创建搜索表单的数据

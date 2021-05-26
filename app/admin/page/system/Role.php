@@ -17,15 +17,6 @@ use sdModule\layui\tablePage\TableAux;
 
 class Role extends BasePage
 {
-    public int $md = 12;
-
-    /**
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return $this->lang('role');
-    }
 
     /**
      * 获取创建列表table的数据
@@ -79,7 +70,7 @@ class Role extends BasePage
                 ->column('auth_id', 'table_names');
 
             foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->selectData(Administrators::dataAuth($data['table']))
+                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->options(Administrators::dataAuth($data['table']))
                     ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }

@@ -36,12 +36,4 @@ class Route extends BasePage
         return DefaultForm::create([]);
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return $this->lang("route_m");
-    }
 }

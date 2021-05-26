@@ -12,9 +12,6 @@ use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\TableAux;
-use sdModule\layuiSearch\Form;
-use sdModule\layuiSearch\generate\TimeRange;
-use sdModule\layuiSearch\SearchForm;
 
 class Log extends BasePage
 {
@@ -45,14 +42,6 @@ class Log extends BasePage
         return $table;
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return $this->lang('lists title');
-    }
 
     public function searchFormData():DefaultForm
     {

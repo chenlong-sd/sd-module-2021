@@ -78,14 +78,6 @@ class Api extends BasePage
         return $form->complete();
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return "api接口表";
-    }
 
     /**
      * DefaultForm

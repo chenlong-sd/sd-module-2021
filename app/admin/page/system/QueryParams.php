@@ -63,13 +63,5 @@ class QueryParams extends BasePage
         return $form->complete();
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return "请求参数表";
-    }
 
 }

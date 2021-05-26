@@ -44,12 +44,6 @@ abstract class BasePage
     abstract public function formData(string $scene, array $default_data = []): DefaultForm;
 
     /**
-     * 列表页面的名字
-     * @return string
-     */
-    abstract public function listPageName():string;
-
-    /**
      * 创建搜索表单的数据
      * @return DefaultForm
      * @throws SdException

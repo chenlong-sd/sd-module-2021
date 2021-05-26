@@ -33,7 +33,6 @@ class Page implements Item
             'date'          => date('Y-m-d H:i:s'),
             'search_form'   => [],
             'form_data'     => [],
-            'page_name'     => $this->CURD->pageName ?: $this->CURD->tableComment,
             'quick_search'  => [],
             'use'           => '',
             'namespace'     => $this->CURD->getNamespace($this->CURD->config('namespace.page')),
@@ -226,7 +225,7 @@ class Page implements Item
      */
     private function selectSearch(string $field, string $placeholder, $data, string $alias)
     {
-        $replace = [$alias, $field, $data, $placeholder];
+        $replace = [$alias, $field, $placeholder, $data];
         $this->replace['search_form'][] = sprintf("FormUnit::Select('%s.%s')->placeholder('%s')->options('%s'),", ...$replace);
     }
 

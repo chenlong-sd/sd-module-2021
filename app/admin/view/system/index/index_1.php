@@ -2,301 +2,245 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>layout 后台大布局 - Layui</title>
-    <link rel="stylesheet" href="__PUBLIC__/admin_static/layui/css/layui.css">
+    <title>{:env('company', '')}后台管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/admin_static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/admin_static/css/admin.css" media="all">
     <style>
-        .layui-icon{
-            font-size: 14px!important;
-            margin-left: 10px;
-        }
-        .sc-tab {
-            line-height: 35px;
-            overflow: hidden;
-            position: relative;
-            border-bottom: 1px solid #ddd;
-            height: 35px;
-        }
-        .sc-tab-title {
-            position: absolute;
-            top:0;
-            width: max-content;
-            background-color: white;
-            z-index: 998;
-            transition: left .1s;
-        }
-        .sc-tab .sc-tab-title-item, .sc-tab .sc-tab-left, .sc-tab .sc-tab-right{
-            padding: 0 12px;
-            display: inline-block;
-            box-sizing: border-box;
-            color: grey;
-            float: left;
-            height: 35px;
+        a:hover{
             cursor: pointer;
         }
-        .sc-tab .sc-tab-title-item.sc-tab-select{
-            background-color: #f2f2f2;
-            color: #23262E;
-            border-bottom: 2px solid #23262E;
-        }
-
-        .sc-tab .sc-tab-left{
-            position: absolute;
-            left: 0;
-            float: none;
-            padding: 0;
-            background-color: white;
-            z-index: 999;
-        }
-        .sc-tab .sc-tab-right{
-            position: absolute;
-            right: 0;
-            float: none;
-            padding: 0;
-            background-color: white;
-            z-index: 999;
-        }
-        .sc-home{
-            padding: 0 10px;
-            display: inline-block;
-        }
-        .sc-home:last-child{
-            padding: 0 10px 0 0;
-        }
-        .sc-page{
-            padding: 0;
-            width: 30px;
-            display: inline-block;
-        }
-        .sc-tab .sc-tab-left span:hover,.sc-tab .sc-tab-right span:hover{
-            background-color: #f2f2f2;
-        }
-
-        .cross {
-            background: #ddd;
-            height: 42px;
-            position: relative;
-            width: 2px;
-            left: 20px;
-        }
-
-        .cross:after {
-            background: #ddd;
-            content: "";
-            height: 2px;
-            left: -20px;
-            position: absolute;
-            top: 20px;
-            width: 42px;
-        }
-        .cross_left:after{width: 22px;}
-        .cross_right:after{width: 22px; left: 0;}
-        .cross_up{height: 22px;}
-        .cross_down{height: 22px;top:20px}
-        .cross_down:after{top:0}
-        .cross_down:before{top:-19px!important;}
-        .cross_tag:before{
-            background: #ddd;
-            content: "";
-            height: 10px;
-            left: -4px;
-            position: absolute;
-            top: 16px;
-            width: 10px;
-        }
-         .cross_select_black:before{
-             background: #fff;
-             content: "";
-             height: 40px;
-             left: -20px;
-             position: absolute;
-             z-index: 100;
-             top: 1px;
-             width: 40px;
-             border-radius: 50%;
-             box-shadow: inset 15px 15px 20px #000;
-        }
-        .cross_select_white:before{
-             background: #fff;
-             content: "";
-             height: 40px;
-             left: -20px;
-             position: absolute;
-             z-index: 100;
-             top: 1px;
-             width: 40px;
-             border-radius: 50%;
-             box-shadow: inset 5px 5px 20px #ddd;
-        }
-        .cross_box{
-            display: inline-block;
-            width: 42px;
-            height: 42px;
-            float: left;
-        }
-        .cross_box_s{
-            overflow: hidden;
-        }
     </style>
-    {include file='predefine'}
+    {include file='predefine'/}
 </head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
-        <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">商品管理</a></li>
-            <li class="layui-nav-item"><a href="">用户</a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">其它系统</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">邮件管理</a></dd>
-                    <dd><a href="">消息管理</a></dd>
-                    <dd><a href="">授权管理</a></dd>
-                </dl>
-            </li>
-        </ul>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    贤心
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
-                </dl>
-            </li>
-            <li class="layui-nav-item"><a href="">退了</a></li>
-        </ul>
-    </div>
+<?php
+/**
+ * 菜单html渲染
+ * @param array $menu
+ * @param bool $is_children
+ * @return string
+ */
+function menu_render(array $menu, bool $is_children = false): string
+{
+    $menu_str = $is_children ? '<dl class="layui-nav-child">' : '' ;
+    foreach ($menu as $item){
+        // 弹出的路由信息
+        $href = !empty($item['route']) && empty($item['children']) ? "lay-href=\"" . url($item['route']) . "\"" : '';
+        // 子菜单html
+        $children = empty($item['children']) ? '' : menu_render($item['children'], true);
 
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">所有商品</a>
+        if ($is_children) {
+            $html = '<dd data-name="console" class="">%s</dd>';
+            $content_html = '<a %s>%s</a>%s';
+            $content = sprintf($content_html, $href, $item['title'], $children);
+        }else{
+            $html = '<li data-name="home" class="layui-nav-item">%s</li>';
+
+            $content_html = '<a href="javascript:;" %s lay-tips="%s" lay-direction="2"> 
+                        <i class="layui-icon %s"></i>
+                        <cite>%2$s</cite>
+                    </a>%s';
+            $content = sprintf($content_html, $href, $item['title'], $item['icon'], $children);
+        }
+
+        $menu_str .= sprintf($html, $content);
+    }
+
+    return $is_children ? $menu_str . '</dl>' : $menu_str;
+}
+?>
+
+
+
+<body class="layui-layout-body">
+<div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <!-- 头部区域 -->
+            <ul class="layui-nav layui-layout-left">
+
+
+                <li class="layui-nav-item layadmin-flexible" lay-unselect>
+                    <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    </a>
+                </li>
+
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="" target="_blank" title="前台">
+                        <i class="layui-icon layui-icon-website"></i>
+                    </a>
+                </li>
+
+
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;" layadmin-event="refresh" title="刷新">
+                        <i class="layui-icon layui-icon-refresh-3"></i>
+                    </a>
+                </li>
+
+
+            </ul>
+            <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+                <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <a href="javascript:;" layadmin-event="note">
+                        <i class="layui-icon layui-icon-note"></i>
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-hide-xs"  id="small-part" lay-unselect>
+                    <a href="javascript:;">
+                        <i class="layui-icon layui-icon-component"></i> 小部件
+                    </a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="javascript:;">列表三</a></dd>
-                        <dd><a href="">超链接</a></dd>
+                        <dd>
+                            <a href="javascript:;" lay-event="surprised">休息一下</a>
+                        </dd>
+                        <dd lay-href="<?= admin_url('data-back-up') ?>">
+                            <a href="javascript:;">数据备份</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" layadmin-event="theme">皮肤设置</a>
+                        </dd>
+                        <dd lay-href="<?= admin_url('api') ?>">
+                            <a href="javascript:;" >接口管理</a>
+                        </dd>
+                        <dd lay-href="<?= admin_url('aux') ?>">
+                            <a href="javascript:;" >开发工具</a>
+                        </dd>
                     </dl>
                 </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;">解决方案</a>
+
+
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;">
+                        <cite>{:admin_session('name')}</cite>
+                    </a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="">超链接</a></dd>
+                        <!--                        <dd><a lay-event="defend">基本资料</a></dd>-->
+                        <dd><a lay-href="<?= url('system.administrators/passwordUpdate') ?>">修改密码</a></dd>
+                        <hr>
+                        <dd style="text-align: center;">
+                            <a href="<?= admin_url('login-out') ?>">退出</a>
+                        </dd>
                     </dl>
                 </li>
-                <li class="layui-nav-item"><a href="">云市场</a></li>
-                <li class="layui-nav-item"><a href="">发布商品</a></li>
+
+                <!-- 移动端显示-->
+                <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+                    <a href="javascript:;" layadmin-event="theme"><i class="layui-icon layui-icon-more-vertical"></i></a>
+                </li>
+
+
             </ul>
         </div>
-    </div>
-
-    <div class="layui-body">
-        <div class="sc-tab" >
-            <div class="sc-tab-left">
-                <span class="sc-page"><i class="layui-icon layui-icon-prev"></i></span>
-                <span class="sc-home">主页</span>
-            </div>
-            <div class="sc-tab-title">
-                <div class="sc-tab-title-item">内容主体区域1<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item sc-tab-select">内容主体区域2<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域3<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域4<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域5<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域6<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域7<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域8<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域9<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域10<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域11<i class="layui-icon layui-icon-close"></i></div>
-                <div class="sc-tab-title-item">内容主体区域12<i class="layui-icon layui-icon-close"></i></div>
-            </div>
-            <div class="sc-tab-right">
-                <span class="sc-page"><i class="layui-icon layui-icon-next"></i></span>
-                <span class="sc-home"><i class="layui-icon layui-icon-down"></i></span>
+        <!-- 侧边菜单 -->
+        <div class="layui-side layui-side-menu">
+            <div class="layui-side-scroll">
+                <div class="layui-logo" >
+                    <span>{:env('company', '')}</span>
+                </div>
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+                    <li data-name="home" class="layui-nav-item">
+                        <a href="javascript:;" lay-href="{:admin_url('home')}" lay-tips="主页" lay-direction="2">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>{:lang("home")}</cite>
+                        </a>
+                    </li>
+                    <?= menu_render($menu) ?>
+                </ul>
             </div>
         </div>
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;background-color: rgba(253,152,1,0.53);overflow:hidden;">
+        <!-- 页面标签 -->
 
-            <div class="cross_box_s"></div>
+
+        <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+            <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+            <div class="layui-icon layadmin-tabs-control layui-icon-down">
+                <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+                    <li class="layui-nav-item" lay-unselect>
+                        <a href="javascript:;"></a>
+                        <dl class="layui-nav-child layui-anim-fadein">
+                            <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+                            <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+                            <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+
+            <!--默认无效-->
+            <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+                <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                    <li lay-id="{:admin_url('home')}" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                </ul>
+            </div>
+
 
         </div>
-    </div>
 
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © layui.com - 底部固定区域
+
+        <!-- 主体内容 -->
+        <div class="layui-body" id="LAY_app_body">
+            <div class="layadmin-tabsbody-item layui-show">
+                <iframe src="{:admin_url('home')}" frameborder="0" class="layadmin-iframe"></iframe>
+            </div>
+        </div>
+
+        <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
 </div>
+
 <script src="__PUBLIC__/admin_static/layui/layui.js"></script>
+<script src="__PUBLIC__/admin_static/js/custom.js"></script>
 <script>
-    var $ = layui.jquery,init_left = $('.sc-tab-left').css('width')
-        ,init_right = $('.sc-tab-right').css('width'),
-        all_width   = $('.sc-tab').css('width'),
-        title_width   = $('.sc-tab>.sc-tab-title').css('width'),
-        change      = parseInt(all_width) - parseInt(init_left) - parseInt(init_right) - 200;
-    $('.sc-tab>.sc-tab-title').css({
-        left:init_left
-    })
+    layui.config({
+        base: '__PUBLIC__/admin_static/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
 
-    $('.sc-tab .sc-tab-title-item:not(.sc-tab-select)').hover(function () {
-        $(this).addClass('sc-tab-select');
-    },function (){
-        $(this).removeClass('sc-tab-select');
+    let util = layui.util,layer = layui.layer,dropdown = layui.dropdown;
+    layer.config({
+        extend: 'black/style.css'
+        ,skin:'demo-class'
     });
-    $('.sc-tab-right .sc-page').on('click', function () {
-        let cur = parseInt($('.sc-tab>.sc-tab-title').css('left'));
-        let change_ = cur - change;
-        $('.sc-tab>.sc-tab-title').css({
-            left: (change_ < -parseInt(title_width) ? cur : change_)  + 'px'
-        })
+    util.event('lay-event', {
+        'pwd':()=>{
+            custom.frame("{:url('system.administrators/passwordUpdate')}", '修改密码')
+        },
+        'defend':()=>{
+            custom.frame("{:url('system.administrators/defend')}", '修改资料')
+        },
+        'surprised':()=>{
+            custom.frame("{:url('system.index/game')}", '休息一下', {area:['880px', "890px"]})
+        }
     });
-    $('.sc-tab-left .sc-page').on('click', function () {
-        let cur = parseInt($('.sc-tab>.sc-tab-title').css('left'));
-        let change_ = cur + change;
-        $('.sc-tab>.sc-tab-title').css({
-            left:(change_ > parseInt(init_left) ? parseInt(init_left) : change_) + 'px'
-        })
+    // tab 双击创建弹窗并关闭 tab,以及拉取
+    let DY,DO = false,TMP_LAYER;
+    layui.jquery(document).on('dblclick', '#LAY_app_tabsheader>li', function () {
+        custom.frame(layui.jquery(this).attr('lay-id'), layui.jquery(this).find('span').text());
+        layui.jquery(this).find('.layui-tab-close').click();
+    }).on('dragstart', '#LAY_app_tabsheader>li', function (e) {
+        DY = e.screenY;
+    }).on('dragend', '#LAY_app_tabsheader>li', function (e) {
+        if (DO){
+            console.log(e.screenY - DY);
+            e.screenY - DY < 50 ? layer.close(TMP_LAYER) : layui.jquery(this).find('.layui-tab-close').click();
+        }
+        DO = false;
+    }).on('dragleave', '#LAY_app_tabsheader>li', function (e) {
+        if (!DO) {
+            TMP_LAYER = custom.frame(layui.jquery(this).attr('lay-id'), layui.jquery(this).find('span').text());
+        }
+        DO = true;
     });
 
-    $(document).on('click', '.cross_box', function () {
-        let white = $('.cross_select_white').length;
-        let black = $('.cross_select_black').length;
-        $(this).find('.cross').addClass((white + black) % 2 === 1 ? 'cross_select_white' : 'cross_select_black');
-    })
 
-    box_init(19, 19);
-
-   function box_init(row, line)
-   {
-       let num = row * line,
-           box      = "<div class=\"cross_box\"><div class=\":class\"></div></div>",
-           box_html = '';
-       for (let i = 1; i <= num; i++){
-           let class_ = 'cross';
-           if (i <= row) class_ += " cross_down";
-           if (i % line === 1) class_ += " cross_right";
-           if (i % line === 0) class_ += " cross_left";
-           if (i > line * (row - 1)) class_ += " cross_up";
-           if (i === Math.ceil(num/2)) class_ += " cross_tag";
-
-           box_html += box.replace(':class', class_);
-       }
-       $('.cross_box_s').html(box_html).css({
-           width:row * 42 + 'px',
-           height:line * 42 + 'px',
-       });
-   }
 </script>
 </body>
 </html>
+
+

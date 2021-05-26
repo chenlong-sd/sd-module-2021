@@ -65,14 +65,6 @@ class ApiModule extends BasePage
         return $form->complete();
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return "接口模块";
-    }
 
     /**
      * 创建搜索表单的数据
