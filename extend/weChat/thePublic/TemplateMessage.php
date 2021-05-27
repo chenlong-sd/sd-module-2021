@@ -21,7 +21,7 @@ class TemplateMessage
     /**
      * @var string 发送的用户的openid
      */
-    private $openid = '';
+    private $touser = '';
     /**
      * @var string 模板id
      */
@@ -42,7 +42,7 @@ class TemplateMessage
      */
     public function __construct(string $openid, string $template_id)
     {
-        $this->openid = $openid;
+        $this->touser = $openid;
         $this->template_id = $template_id;
     }
 

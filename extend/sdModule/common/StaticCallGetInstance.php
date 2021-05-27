@@ -88,17 +88,18 @@ abstract class StaticCallGetInstance extends Singleton
      */
     private function getClassname(string $method): string
     {
-        $s = new \ReflectionClass($this);
-        $line_doc = explode(strpos($s->getDocComment(), "\r\n") ? "\r\n" : "\n", $s->getDocComment());
-        foreach ($line_doc as $doc) {
-            if (preg_match('/\* (@method\s)(static(\s)+)?(\w+(\s)+)[A-Za-z]\w*\(.*\)$/', $doc)){
-                preg_match_all('/[A-Za-z]\w*\(/', $doc, $match);
-                if ($match && substr(current($match[0]), 0, -1) === $method){
-                    preg_match('/(\s)+(static(\s)+)+([A-Za-z]+[0-9]*(\s)+)/', $doc, $class);
-                    return trim(strtr(current($class), [' static ' => '']));
-                }
-            }
-        }
-        return '';
+        $reflectionClass = new \ReflectionClass($this);
+        // 匹配所有的可调用的类
+        preg_match_all('/@method( +)static( +)(\w+ +\w+)\(.*\)/', $reflectionClass->getDocComment(), $match);
+        $validClassArr = empty($match[3]) ? [] : $match[3];
+
+        // 重组成 方法名 => 类名 形式
+        $validClassArr = array_map(function ($v) {
+            list($class, $method) = explode(' ', preg_replace('/ +/', ' ', $v));
+            return [$method => $class];
+        }, $validClassArr);
+        $validClassArr = array_merge(...$validClassArr);
+
+        return $validClassArr[$method] ?? '';
     }
 }
