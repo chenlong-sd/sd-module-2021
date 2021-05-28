@@ -77,7 +77,7 @@ class Dictionary extends BasePage
         $table->addBarEvent('dictionary_add')->setDefaultBtn('添加', 'add-1', 'sm')
             ->setJs(TableAux::openPage(url('dictionaryAdd', ['id' => request()->get('id', 0)]), '添加'));
 
-        $table->addEvent('dictionary_edit')->setDefaultBtn('修改', 'edit', 'sm')
+        $table->addEvent('dictionary_edit')->setDefaultBtn('修改', 'edit', 'xs')
             ->setJs(TableAux::openPage([url('dictionaryEdit')], '修改'));
 
         return $table;
