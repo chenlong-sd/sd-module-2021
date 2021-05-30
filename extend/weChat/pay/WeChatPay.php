@@ -126,5 +126,19 @@ class WeChatPay implements \ArrayAccess
         return xml(['return_code' => 'FAIL']);
     }
 
+    /**
+     * 获取通知地址
+     * @param string $uri 地址
+     * @param bool $isIntact 是否是完整地址
+     * @return $this
+     */
+    public function setNoticeUrl(string $uri, bool $isIntact = false): WeChatPay
+    {
+        $this->notify_url = $isIntact ? $uri :
+            $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/' . $uri;
+
+        return $this;
+    }
+
 }
 

@@ -103,18 +103,15 @@ class TableColumn implements \ArrayAccess
         $this->column['templet'] = function () use ($open_value, $title){
             return <<<JS
         let checked = "{$open_value}" == obj.{$this->column['field']} ? "checked" : "";
-return `<input type="checkbox" name="{$this->column['field']}" value="\${obj.id}" lay-skin="switch" lay-text="{$title}" lay-filter="sc{$this->column['field']}" \${checked}>`;
+        return `<input type="checkbox" name="{$this->column['field']}" value="\${obj.id}" lay-skin="switch" lay-text="{$title}" lay-filter="sc{$this->column['field']}" \${checked}>`;
 JS;
         };
-        $js_code->successCallback(<<<CAL
-         switch_obj.elem.checked = !switch_obj.elem.checked;
-         form.render('checkbox');
+        $js_code->setFailCallback(<<<CAL
+         location.reload();
 CAL);
         $this->js = <<<JS
     form.on('switch(sc{$this->column['field']})', function(switch_obj){
         {$js_code}
-        switch_obj.elem.checked = !switch_obj.elem.checked;
-        form.render('checkbox');
     });
 JS;
         return $this;

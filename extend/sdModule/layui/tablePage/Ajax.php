@@ -30,10 +30,18 @@ class Ajax
     private string $data = '';
 
     private ?string $batch = null;
+
     /**
+     * 成功后执行的代码
      * @var string
      */
     private string $successCallback = "";
+
+    /**
+     * 失败后执行的代码
+     * @var string
+     */
+    private string $failCallback = "";
 
     /**
      * 提示输入层
@@ -144,6 +152,7 @@ class Ajax
                     {$this->successCallback}
                 } else {
                     layNotice.warning(res.msg);
+                    {$this->failCallback}
                 } 
             }
         });
@@ -164,6 +173,7 @@ JS;
                      {$this->successCallback}
                 } else {
                     layNotice.warning(res.msg);
+                    {$this->failCallback}
                 } 
             }
         });
@@ -219,6 +229,16 @@ JS;
     public function successCallback(string $successCallback): Ajax
     {
         $this->successCallback = $successCallback;
+        return $this;
+    }
+
+    /**
+     * @param string $failCallback
+     * @return Ajax
+     */
+    public function setFailCallback(string $failCallback): Ajax
+    {
+        $this->failCallback = $failCallback;
         return $this;
     }
 }

@@ -288,7 +288,7 @@ class BackstageListsService
     {
         is_callable($this->each) and $data->each($this->each);
         if (is_callable($this->returnHandle)) {
-            return call_user_func($this->returnHandle, compact('data', 'totalRow'));
+            return call_user_func($this->returnHandle,  $data, $totalRow, $this->model);
         }
         $code  = 0;
         $msg   = lang('success');
