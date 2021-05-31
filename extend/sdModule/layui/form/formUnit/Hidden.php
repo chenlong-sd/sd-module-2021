@@ -7,6 +7,8 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Hidden extends UnitBase
 {
 
@@ -16,9 +18,12 @@ class Hidden extends UnitBase
      */
     public function getHtml(string $attr)
     {
-        return <<<HTML
-                <input type="hidden" name="{$this->name}"  {$attr} value='{$this->preset}' autocomplete="off" class="layui-input">
-HTML;
-
+        return Dom::create('input')->setIsSingleLabel(true)
+            ->addAttr([
+                'name' => $this->name,
+                'value' => $this->preset,
+                'autocomplete' => 'off',
+                'class' => 'layui-input'
+            ]);
     }
 }
