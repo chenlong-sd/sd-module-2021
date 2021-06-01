@@ -25,9 +25,9 @@ class Dom
     public array $attr = [];
 
     /**
-     * @var array 元素标签ID属性
+     * @var string  元素标签ID属性
      */
-    public array $id = [];
+    public string $id = '';
 
     /**
      * @var array 元素标签class属性
@@ -86,10 +86,10 @@ class Dom
 
     /**
      * 设置ID
-     * @param array $id
+     * @param string $id
      * @return Dom
      */
-    public function setId(array $id): Dom
+    public function setId(string $id): Dom
     {
         $this->id = $id;
         return $this;
@@ -162,7 +162,7 @@ class Dom
             return sprintf('<%s %s/>', $this->tag, $attr);
         }
 
-        return sprintf('<%s %s>%s<%1$s/>', $this->tag, $attr, implode(' ', $this->content));
+        return sprintf('<%s %s>%s</%1$s>', $this->tag, $attr, implode(' ', $this->content));
     }
 
     /**
@@ -170,7 +170,7 @@ class Dom
      * @param bool $isSingleLabel
      * @return Dom
      */
-    public function setIsSingleLabel(bool $isSingleLabel): Dom
+    public function setIsSingleLabel(bool $isSingleLabel = true): Dom
     {
         $this->isSingleLabel = $isSingleLabel;
         return $this;

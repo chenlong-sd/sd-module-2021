@@ -16,6 +16,6 @@ class Custom extends UnitBase
      */
     public function getHtml(string $attr)
     {
-        return $this->select_data['html'];
+        return $this->options['html'];
     }
 }

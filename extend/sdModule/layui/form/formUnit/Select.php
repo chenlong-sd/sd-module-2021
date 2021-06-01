@@ -7,37 +7,63 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Select extends UnitBase
 {
+
     /**
-     * @param string $attr
+     * @param array $attr
      * @return mixed|string
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr):Dom
     {
-        $option = "<option value=''>{$this->placeholder}</option>";
-        foreach ($this->select_data as $value => $label) {
-            if (is_array($label)) {
-                $option .= "<optgroup label=\"{$value}\">";
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create();
+
+        $options  = [
+            Dom::create('option')->addContent($this->placeholder)->addAttr('value', '')
+        ];
+        foreach ($this->options as $value => $label) {
+            if (is_array($label)) { // 有分组选项时
+                $optgroup = Dom::create('optgroup')->addAttr('label', $value);
                 foreach ($label as $value_children => $label_children){
-                    $option .= "<option value='{$value_children}' {$this->getCheck($value_children)}>{$label_children}</option>";
+                    $option = Dom::create('option')->addContent($label_children)->addAttr('value', $value_children);
+                    $this->getCheck($value_children) and $option->addAttr('selected', '');
+                    $optgroup->addContent($option->addAttr($attr));
                 }
-                $option .= " </optgroup>";
+                $options[] = $optgroup;
             }else{
-                $option .= "<option value='{$value}' {$this->getCheck($value)}>{$label}</option>";
+                $option = Dom::create('option')->addContent($label)->addAttr('value', $value);
+                $this->getCheck($value) and $option->addAttr('selected', '');
+                $options[] = $option->addAttr($attr);
             }
         }
-        return "<select name=\"{$this->name}\" {$attr} lay-search=\"\">{$option}</select>";
+
+        $select = Dom::create('select')
+            ->addAttr('name', $this->name)
+            ->addAttr('lay-search', '')
+            ->addContent(implode($options));
+
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+            $inputDiv->addClass('layui-input-block');
+        }else{
+            $inputDiv->addClass('layui-input-inline');
+            return $inputDiv->addContent($select);
+        }
+
+        return $itemDom->addContent($inputDiv->addContent($select));
     }
 
     /**
      * 获取选中状态
      * @param $value
-     * @return string
+     * @return bool
      */
-    private function getCheck($value)
+    private function getCheck($value): bool
     {
-        return $value == $this->preset ? 'selected' : '';
+        return $value == $this->default;
     }
 
 }

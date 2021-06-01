@@ -17,6 +17,9 @@ use app\common\controller\Admin;
 use app\common\middleware\admin\PowerAuth;
 use app\common\ResponseJson;
 use sdModule\layui\Dom;
+use sdModule\layui\form\Form;
+use sdModule\layui\form\FormSc;
+use sdModule\layui\form\FormUnit;
 use think\facade\Db;
 
 /**
@@ -77,6 +80,48 @@ class Index extends Admin
      */
     public function home(Route $route)
     {
+        $form = FormSc::create([
+            FormUnit::inline('asd', 'asdasd')->setChildrenItem(
+                FormUnit::text('test1', )->placeholder('asdasd'),
+                FormUnit::text('test', )->placeholder('asdasd')->defaultValue('asdad'),
+                FormUnit::checkbox('cd', )->options([
+                    '1' => 'kaishi',
+                    '2' => 'jieshu',
+                ])->defaultValue([1,2]),
+            ),
+            FormUnit::radio('cd23','asd')->options([
+                '1' => 'kaishi',
+                '2' => 'jieshu',
+            ])->defaultValue(2),
+            FormUnit::select('cd23','asd')->options([
+                '1' => 'kaishi',
+                '2' => 'jieshu',
+                '3' => 'asdadas',
+                '4' => 'cccccc',
+                'asd' => [
+                    '5' => 'asdadas',
+                    '6' => 'cccccc',
+                ]
+            ])->defaultValue(5),
+            FormUnit::time('time', '时间')->setTime('datetime', true),
+            FormUnit::hidden('timess', '时间')->defaultValue('111'),
+            FormUnit::password('pas', '密码')->defaultValue('111'),
+            FormUnit::textarea('texss', '文本域')->defaultValue('111')
+            ->inputAttr(['-' => [
+                'style' => 'height:500px;'
+            ]]),
+            FormUnit::tag('taf', '标签')->defaultValue('asd'),
+            FormUnit::selects('cd23dd','asd')->options([
+                '1' => 'kaishi',
+                '2' => 'jieshu',
+                '3' => 'asdadas',
+                '4' => 'cccccc',
+            ])->defaultValue('1,4'),
+        ]);
+        $form->complete();
+        return $this->fetch('common/save_page', [
+            'form' => $form
+        ]);
         $route_data = array_filter($route->getMenuRoute(), fn($v) => ($v['pid'] != 0));
         return view('', compact('route_data'));
     }

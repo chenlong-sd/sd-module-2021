@@ -13,17 +13,14 @@ class Hidden extends UnitBase
 {
 
     /**
-     * @param string $attr
-     * @return mixed|string
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/1
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr): Dom
     {
-        return Dom::create('input')->setIsSingleLabel(true)
-            ->addAttr([
-                'name' => $this->name,
-                'value' => $this->preset,
-                'autocomplete' => 'off',
-                'class' => 'layui-input'
-            ]);
+        return $this->getInput()->addAttr('type', 'hidden')
+            ->addAttr($attr)->addAttr('value', $this->default);
     }
 }

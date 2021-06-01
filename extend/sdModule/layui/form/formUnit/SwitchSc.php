@@ -20,15 +20,15 @@ class SwitchSc extends UnitBase
      */
     public function getHtml(string $attr)
     {
-        $option_value = array_keys($this->select_data);
+        $option_value = array_keys($this->options);
         if ($this->default) {
             $checked = $this->default == current($option_value) ? 'checked' : '';
         }else{
-            $checked = $this->preset == current($option_value) ? 'checked' : '';
+            $checked = $this->default == current($option_value) ? 'checked' : '';
         }
 
-        $value = $this->default ?: ($this->preset ?: '');
-        $title = implode('|', $this->select_data);
+        $value = $this->default ?: ($this->default ?: '');
+        $title = implode('|', $this->options);
 
         $html  = "<input type=\"checkbox\" lay-filter='{$this->name}' lay-text='{$title}'  {$attr} lay-skin=\"switch\" {$checked} >";
         $html .= "<input type='hidden' name=\"{$this->name}\" value='{$value}'/>";
@@ -40,7 +40,7 @@ class SwitchSc extends UnitBase
      */
     public function getJs()
     {
-        $option_value = array_keys($this->select_data);
+        $option_value = array_keys($this->options);
         $open_value   = current($option_value);
         $close_value  = next($option_value);
         return <<<JS

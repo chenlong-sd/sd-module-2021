@@ -6,6 +6,8 @@
 
 namespace sdModule\layui\form\formUnit;
 
+use sdModule\layui\Dom;
+
 /**
  * 下拉多选
  * Class Selects
@@ -13,27 +15,41 @@ namespace sdModule\layui\form\formUnit;
  */
 class Selects extends UnitBase
 {
-    public ?string $default = '';
 
     /**
-     * @param string $attr
-     * @return mixed|string
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/1
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr): Dom
     {
-        return "<div id='{$this->name}-selects' {$attr} class=\"xm-select-demo\"></div>";
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create();
+        $input    = Dom::create()->addAttr($attr)->addClass('xm-select-demo')->setId("{$this->name}-selects");;
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+            $inputDiv->addClass('layui-input-block');
+        }else{
+            $inputDiv->addClass('layui-input-inline');
+            return $inputDiv->addContent($input);
+        }
+
+        return $itemDom->addContent($inputDiv->addContent($input));
     }
 
     /**
      * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/1
      */
-    public function getJs()
+    public function getJs(): string
     {
         $config = json_encode($this->config, JSON_UNESCAPED_UNICODE);
         if ($this->default){
             $init_value = explode(',', $this->default);
         }else{
-            $init_value = $this->preset ?: [];
+            $init_value = $this->default ?: [];
         }
 
         $init_value = json_encode($init_value, JSON_UNESCAPED_UNICODE);
@@ -87,7 +103,7 @@ JS;
     private function dataHandle()
     {
         $new_data = [];
-        foreach ($this->select_data as $value => $name) {
+        foreach ($this->options as $value => $name) {
             $new_data[] = compact('name', 'value');
         }
         return json_encode($new_data, JSON_UNESCAPED_UNICODE);

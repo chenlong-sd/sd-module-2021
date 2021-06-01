@@ -7,19 +7,31 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Password extends UnitBase
 {
 
     /**
-     * @param string $attr
-     * @return mixed|string
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/1
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr): Dom
     {
-        $placeholder = $this->placeholder ?: $this->lang('please enter');
-        return <<<HTML
-            <input type="password" name="{$this->name}" {$attr}  placeholder="{$placeholder}" value='{$this->preset}' autocomplete="off" class="layui-input">
-HTML;
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create();
+        $input    = $this->getInput()->addAttr('type', 'password')
+            ->addAttr($attr)->addAttr('value', $this->default);
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+            $inputDiv->addClass('layui-input-block');
+        }else{
+            $inputDiv->addClass('layui-input-inline');
+            return $inputDiv->addContent($input);
+        }
 
+        return $itemDom->addContent($inputDiv->addContent($input));
     }
 }

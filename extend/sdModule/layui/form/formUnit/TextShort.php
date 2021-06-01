@@ -23,7 +23,7 @@ class TextShort extends UnitBase
             <div class="layui-input-inline">
                 <input type="text" {$attr} name="{$this->name}" maxlength="32" placeholder="{$placeholder}" autocomplete="off" class="layui-input">
             </div>
-            <div class="layui-form-mid layui-word-aux">{$this->select_data['tip']}</div>
+            <div class="layui-form-mid layui-word-aux">{$this->options['tip']}</div>
         </div>
 HTML;
 

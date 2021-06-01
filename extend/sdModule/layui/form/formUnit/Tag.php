@@ -7,26 +7,53 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Tag extends UnitBase
 {
-    public ?string $default = '';
 
     /**
-     * @param string $attr
-     * @return mixed|string
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/1
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr): Dom
     {
-        $placeholder = $this->placeholder ?: $this->lang('press enter after typing');
-        return <<<HTML
-        <div class="tags sc-input-tags">
-                <input type="text" {$attr} placeholder="{$placeholder}" name="" id="sc-tag-{$this->name}" value='' autocomplete="off" class="layui-input layui-fluid sc-tag-input">
-                <input type="hidden" name="{$this->name}" value="">
-        </div>
-HTML;
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create();
+        $tagDiv   = Dom::create()->addClass('tags sc-input-tags');
+        $tagDiv->addContent(
+            Dom::create('input')->setIsSingleLabel()
+            ->addAttr('value', '')->addAttr('type', 'hidden'),
+        );
+        $tagDiv->addContent(
+            Dom::create('input')->setIsSingleLabel()
+            ->addAttr([
+                'type' => 'text',
+                'placeholder' => $this->placeholder ?: $this->lang('press enter after typing'),
+                'id' => "sc-tag-{$this->name}",
+                'autocomplete' => "off",
+                'class' => "layui-input layui-fluid sc-tag-input",
+            ])->addAttr($attr),
+        );
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+            $inputDiv->addClass('layui-input-block');
+        }else{
+            $inputDiv->addClass('layui-input-inline');
+            return $inputDiv->addContent($tagDiv);
+        }
+
+        return $itemDom->addContent($inputDiv->addContent($tagDiv));
     }
 
-    public function getJs()
+    /**
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/1
+     */
+    public function getJs(): string
     {
         $default = $this->default ? json_encode(explode('|-|', $this->default), JSON_UNESCAPED_UNICODE) : '[]';
         return <<<JS

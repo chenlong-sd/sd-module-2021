@@ -38,7 +38,7 @@ HTML;
     public function getJs()
     {
         return <<<JS
-    window.{$this->name} = custom.fileUpload(layui.jquery, layui.upload, '{$this->name}', "{$this->select_data['type']}");
+    window.{$this->name} = custom.fileUpload(layui.jquery, layui.upload, '{$this->name}', "{$this->options['type']}");
     defaultData.{$this->name} = function(){
          {$this->name}.defaults({$this->getData()});
     };

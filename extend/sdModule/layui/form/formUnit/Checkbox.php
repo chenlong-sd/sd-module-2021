@@ -7,36 +7,54 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Checkbox extends UnitBase
 {
 
-    public ?string $default = '';
-
     /**
-     * @param string $attr
+     * @param array $attr
      * @return mixed|string
      */
-    public function getHtml(string $attr): string
+    public function getHtml(array $attr):Dom
     {
-        $option = '';
-        foreach ($this->select_data as $value => $label) {
-            $option .= "<input type=\"checkbox\" {$attr} name=\"{$this->name}[]\" {$this->getCheck($value)} lay-skin=\"primary\" value=\"{$value}\" title=\"{$label}\">";
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create();
+
+        $options  = [];
+        foreach ($this->options as $value => $label) {
+            $customAttr = [
+                'type'      => 'checkbox',
+                'lay-skin'  => 'primary',
+                'value'     => $value,
+                'title'     => $label
+            ];
+            $checked   = $this->getCheck($value) and $customAttr['checked'] = '';
+            $options[] = $this->getInput()->addAttr($customAttr)->addAttr($attr);
         }
-        return $option;
+
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+            $inputDiv->addClass('layui-input-block');
+        }else{
+            $inputDiv->addClass('layui-input-inline');
+            return $inputDiv->addContent(implode($options));
+        }
+
+        return $itemDom->addContent($inputDiv->addContent(implode($options)));
     }
 
     /**
      * 获取选中状态
      * @param $value
-     * @return string
+     * @return bool
      */
-    private function getCheck($value)
+    private function getCheck($value): bool
     {
-        $data = $this->default ? explode(',', $this->default) : $this->preset;
-        if (!$data){
-            return '';
-        }
-        return in_array($value, $data) ? 'checked' : '';
+        $data = ($this->default && is_string($this->default))
+            ? explode(',', $this->default)
+            : $this->default;
+        return $data && in_array($value, $data);
     }
 
 }

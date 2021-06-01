@@ -6,6 +6,9 @@
 
 namespace sdModule\layui\form;
 
+use sdModule\layui\Dom;
+use sdModule\layui\form\formUnit\UnitBase;
+
 /**
  * Class UnitData
  * @package sdModule\layui\defaultForm
@@ -41,7 +44,7 @@ class UnitData
     /**
      * @var string
      */
-    private string $type = '';
+    private string $formUnitType = '';
     /**
      * @var string
      */
@@ -69,6 +72,11 @@ class UnitData
     private $defaultValue = null;
 
     /**
+     * @var array|UnitBase[]
+     */
+    private array $childrenItem = [];
+
+    /**
      * 生成form单元数据
      * @param string $name
      * @param string $label
@@ -84,7 +92,7 @@ class UnitData
 
     /**
      * 设置默认值
-     * @param string|int $default
+     * @param string|int|array $default
      * @return UnitData
      */
     public function defaultValue($default): UnitData
@@ -131,11 +139,12 @@ class UnitData
     /**
      * 获取对应数据
      * @param string $attr
+     * @param null $default
      * @return mixed|null
      */
-    public function get(string $attr)
+    public function get(string $attr, $default = null)
     {
-        return $this->$attr ?? null;
+        return $this->$attr ?? $default;
     }
 
     /**
@@ -164,7 +173,7 @@ class UnitData
      */
     public function setUnitType(string $type): UnitData
     {
-        $this->type = $type;
+        $this->formUnitType = $type;
         return $this;
     }
 
@@ -199,6 +208,17 @@ class UnitData
     public function customHtml(string $html): UnitData
     {
         $this->options = compact('html');
+        return $this;
+    }
+
+    /**
+     * 设置子项目
+     * @param mixed ...$childrenItem
+     * @return UnitData
+     */
+    public function setChildrenItem(...$childrenItem): UnitData
+    {
+        $this->childrenItem = $childrenItem;
         return $this;
     }
 }
