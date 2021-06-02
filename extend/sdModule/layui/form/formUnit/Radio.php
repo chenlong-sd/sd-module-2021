@@ -22,7 +22,6 @@ class Radio extends UnitBase
         $itemDom  = $this->getItem();
         $inputDiv = Dom::create();
 
-        $options  = [];
         foreach ($this->options as $value => $label) {
             $customAttr = [
                 'type'      => 'radio',
@@ -30,18 +29,17 @@ class Radio extends UnitBase
                 'title'     => $label
             ];
             $checked   = $this->getCheck($value) and $customAttr['checked'] = '';
-            $options[] = $this->getInput()->addAttr($customAttr)->addAttr($attr);
+            $inputDiv->addContent($this->getInput()->addAttr($customAttr)->addAttr($attr));
         }
 
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));
             $inputDiv->addClass('layui-input-block');
         }else{
-            $inputDiv->addClass('layui-input-inline');
-            return $inputDiv->addContent(implode($options));
+            return $inputDiv->addClass('layui-inline');
         }
 
-        return $itemDom->addContent($inputDiv->addContent(implode($options)));
+        return $itemDom->addContent($inputDiv);
     }
 
     /**
@@ -51,7 +49,7 @@ class Radio extends UnitBase
      */
     private function getCheck($value): bool
     {
-        return $value === $this->default;
+        return $value == $this->default;
     }
 
 }

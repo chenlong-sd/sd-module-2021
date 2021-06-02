@@ -27,21 +27,21 @@ class Checkbox extends UnitBase
                 'type'      => 'checkbox',
                 'lay-skin'  => 'primary',
                 'value'     => $value,
-                'title'     => $label
+                'title'     => $label,
+                'name'      => "{$this->name}[]"
             ];
             $checked   = $this->getCheck($value) and $customAttr['checked'] = '';
-            $options[] = $this->getInput()->addAttr($customAttr)->addAttr($attr);
+            $inputDiv->addContent($this->getInput()->addAttr($customAttr)->addAttr($attr));
         }
 
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));
             $inputDiv->addClass('layui-input-block');
         }else{
-            $inputDiv->addClass('layui-input-inline');
-            return $inputDiv->addContent(implode($options));
+            return $inputDiv->addClass('layui-input-inline');
         }
 
-        return $itemDom->addContent($inputDiv->addContent(implode($options)));
+        return $itemDom->addContent($inputDiv);
     }
 
     /**
@@ -51,7 +51,7 @@ class Checkbox extends UnitBase
      */
     private function getCheck($value): bool
     {
-        $data = ($this->default && is_string($this->default))
+        $data = ($this->default && !is_array($this->default))
             ? explode(',', $this->default)
             : $this->default;
         return $data && in_array($value, $data);

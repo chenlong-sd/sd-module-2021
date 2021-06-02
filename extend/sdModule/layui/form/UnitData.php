@@ -202,10 +202,12 @@ class UnitData
 
     /**
      * 自定义HTML
-     * @param string $html
+     * @param Dom $html
      * @return $this
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public function customHtml(string $html): UnitData
+    public function customHtml(Dom $html): UnitData
     {
         $this->options = compact('html');
         return $this;

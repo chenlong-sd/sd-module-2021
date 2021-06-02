@@ -31,7 +31,7 @@ class Selects extends UnitBase
             $itemDom->addContent($this->getLabel($this->label));
             $inputDiv->addClass('layui-input-block');
         }else{
-            $inputDiv->addClass('layui-input-inline');
+            $inputDiv->addClass('layui-inline');
             return $inputDiv->addContent($input);
         }
 
@@ -46,10 +46,9 @@ class Selects extends UnitBase
     public function getJs(): string
     {
         $config = json_encode($this->config, JSON_UNESCAPED_UNICODE);
-        if ($this->default){
+        $init_value = $this->default ?: [];
+        if ($this->default && !is_array($this->default)){
             $init_value = explode(',', $this->default);
-        }else{
-            $init_value = $this->default ?: [];
         }
 
         $init_value = json_encode($init_value, JSON_UNESCAPED_UNICODE);

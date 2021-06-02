@@ -94,7 +94,7 @@ class Test extends BasePage
     public function searchFormData(): Form
     {
         $form_data = [];
-        return Form::create($form_data)->setNoSubmit()->complete();
+        return Form::create($form_data)->setSubmitHtml()->complete();
     }
 
 }

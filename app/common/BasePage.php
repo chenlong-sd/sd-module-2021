@@ -46,12 +46,13 @@ abstract class BasePage
     /**
      * 创建搜索表单的数据
      * @return DefaultForm
-     * @throws SdException
      * @throws \ReflectionException
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
     public function searchFormData(): DefaultForm
     {
-        return DefaultForm::create([])->setNoSubmit()->complete();
+        return DefaultForm::create([])->setSubmitHtml()->complete();
     }
 
 }

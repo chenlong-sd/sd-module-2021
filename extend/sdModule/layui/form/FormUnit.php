@@ -52,12 +52,14 @@ class FormUnit
 
     /**
      * 行内表单
-     * @param array $unit
-     * @return \Closure
+     * @param mixed ...$unit
+     * @return UnitData
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public static function build(...$unit): \Closure
+    public static function build(...$unit)
     {
-        return fn() => $unit;
+        return self::inline('')->setChildrenItem(...$unit);
     }
 
     /**

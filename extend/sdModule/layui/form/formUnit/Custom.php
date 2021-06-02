@@ -7,14 +7,16 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Custom extends UnitBase
 {
 
     /**
-     * @param string $attr
+     * @param array $attr
      * @return mixed|string
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr):Dom
     {
         return $this->options['html'];
     }

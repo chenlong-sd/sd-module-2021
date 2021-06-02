@@ -25,7 +25,7 @@
 {block name="js"}
 
 
-<?= $form->loadJs() /** 加载的外部js代码 */ ?>
+<?= $form->getLoadJs() /** 加载的外部js代码 */ ?>
 
 <script>
     let defaultData = {},form = layui.form, $ = layui.jquery, upload = layui.upload;

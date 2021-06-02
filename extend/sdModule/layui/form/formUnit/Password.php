@@ -28,7 +28,7 @@ class Password extends UnitBase
             $itemDom->addContent($this->getLabel($this->label));
             $inputDiv->addClass('layui-input-block');
         }else{
-            $inputDiv->addClass('layui-input-inline');
+            $inputDiv->addClass('layui-inline');
             return $inputDiv->addContent($input);
         }
 

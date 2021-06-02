@@ -48,6 +48,13 @@ abstract class UnitBase
     public array $childrenItem = [];
 
     /**
+     * 短标签
+     * @var string
+     */
+    public string $shortTip = '';
+
+
+    /**
      * UnitInterface constructor.
      * @param string $name
      * @param string $label
@@ -125,6 +132,16 @@ abstract class UnitBase
     }
 
     /**
+     * @param string $shortTip
+     * @return UnitBase
+     */
+    public function setShortTip(string $shortTip): UnitBase
+    {
+        $this->shortTip = $shortTip;
+        return $this;
+    }
+
+    /**
      * @param string $lang
      * @return mixed
      */
@@ -186,5 +203,16 @@ abstract class UnitBase
     protected function getItem(): Dom
     {
         return Dom::create()->addClass($this->itemClass);
+    }
+
+    /**
+     * 获取提示语的html
+     * @return Dom|string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
+     */
+    protected function getShortTip()
+    {
+        return $this->shortTip ? Dom::create()->addClass('layui-inline layui-word-aux')->addContent($this->shortTip) : '';
     }
 }

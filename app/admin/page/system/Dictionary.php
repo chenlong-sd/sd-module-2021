@@ -118,7 +118,7 @@ class Dictionary extends BasePage
     public function searchFormData(): Form
     {
         $form_data = [];
-        return Form::create($form_data)->setNoSubmit()->complete();
+        return Form::create($form_data)->setSubmitHtml()->complete();
     }
 
     /**
@@ -137,7 +137,7 @@ class Dictionary extends BasePage
             )
         ];
 
-        return DefaultForm::create($form)->setNoSubmit()->complete();
+        return DefaultForm::create($form)->setSubmitHtml()->complete();
     }
 
 }

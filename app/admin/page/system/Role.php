@@ -86,7 +86,7 @@ class Role extends BasePage
     public function searchFormData():DefaultForm
     {
         $form_data = [
-            FormUnit::build(
+            FormUnit::inline('')->setChildrenItem(
                 FormUnit::text('i.id')->placeholder('ID'),
                 FormUnit::text('i.role%%')->placeholder('角色名'),
                 FormUnit::text('ip.role%%')->placeholder('父级角色'),
@@ -96,7 +96,7 @@ class Role extends BasePage
             )
         ];
 
-        return DefaultForm::create($form_data)->setNoSubmit()->complete();
+        return DefaultForm::create($form_data)->setSubmitHtml('')->complete();
     }
 
 }

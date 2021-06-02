@@ -40,7 +40,7 @@ class Dom
     public array $data = [];
 
     /**
-     * @var array
+     * @var array|Dom[] 内容
      */
     public array $content = [];
 
@@ -124,12 +124,12 @@ class Dom
 
     /**
      * 添加内容
-     * @param string $content
+     * @param string|Dom $content
      * @return $this
      * @author chenlong <vip_chenlong@163.com>
      * @date 2021/5/31
      */
-    public function addContent(string $content): Dom
+    public function addContent($content): Dom
     {
         $this->content[] = $content;
         return $this;

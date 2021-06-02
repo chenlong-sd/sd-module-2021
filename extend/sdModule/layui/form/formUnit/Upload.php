@@ -7,41 +7,55 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
 use think\facade\Db;
 
 class Upload extends UnitBase
 {
-    public ?string $default = '';
 
-    public function getHtml(string $attr)
+    /**
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
+     */
+    public function getHtml(array $attr): Dom
     {
-        return <<<HTML
-        <div class="layui-upload">
-            <input type="hidden" name="{$this->name}">
-            <div class="layui-btn-group">
-                <button type="button" class="layui-btn" id="{$this->name}">
-                    <i class="layui-icon layui-icon-upload"></i>选择文件
-                </button>
-            </div>
-            <div class="layui-upload-list">
-                <table class="layui-table {$this->name}-table-xc">
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-HTML;
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create()->addClass('layui-input-block');
+
+        $uploadBox = Dom::create()->addClass('layui-upload')
+            ->addContent(Dom::create('input')->setIsSingleLabel()->addAttr('name', $this->name)->addAttr('type', 'hidden'))
+            ->addContent(Dom::create()->addClass('layui-btn-group')->addContent(
+                Dom::create('button')->addAttr([
+                    'type' => 'button',
+                    'class' => 'layui-btn',
+                    'id' => $this->name
+                ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-upload'))
+                    ->addContent('选择文件')
+            ))->addContent(
+                Dom::create()->addClass('layui-upload-list')->addContent(
+                    Dom::create('table')->addClass("layui-table {$this->name}-table-xc")
+                    ->addContent(Dom::create('tbody'))
+                )
+            );
+
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+        }
+
+        return $itemDom->addContent($inputDiv->addContent($uploadBox));
     }
 
     /**
-     * @return mixed|string
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public function getJs()
+    public function getJs(): string
     {
         return <<<JS
-    window.{$this->name} = custom.fileUpload(layui.jquery, layui.upload, '{$this->name}', "{$this->options['type']}");
-    defaultData.{$this->name} = function(){
-         {$this->name}.defaults({$this->getData()});
-    };
+    window.{$this->name} = custom.fileUpload(layui.jquery, layui.upload, '{$this->name}', "{$this->options['type']}").defaults({$this->getData()});
 JS;
     }
 

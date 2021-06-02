@@ -7,47 +7,65 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class SwitchSc extends UnitBase
 {
-    /**
-     * @var int|mixed
-     */
-    public $default;
 
     /**
-     * @param string $attr
-     * @return mixed|string
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr): Dom
     {
-        $option_value = array_keys($this->options);
-        if ($this->default) {
-            $checked = $this->default == current($option_value) ? 'checked' : '';
-        }else{
-            $checked = $this->default == current($option_value) ? 'checked' : '';
-        }
-
-        $value = $this->default ?: ($this->default ?: '');
         $title = implode('|', $this->options);
 
-        $html  = "<input type=\"checkbox\" lay-filter='{$this->name}' lay-text='{$title}'  {$attr} lay-skin=\"switch\" {$checked} >";
-        $html .= "<input type='hidden' name=\"{$this->name}\" value='{$value}'/>";
-        return $html;
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create();
+        $input    = Dom::create('input')->setIsSingleLabel()->addAttr([
+            'type'          => 'checkbox',
+            'lay-filter'    => $this->name,
+            'lay-skin'      => 'switch',
+            'lay-text'      => $title,
+        ])->addAttr($attr);
+
+        // 第一个值等于默认值时，为选中状态
+        if ($this->default == array_key_first($this->options)) {
+            $input->addAttr('checked', '');
+        }
+        $hidden = Dom::create('input')->setIsSingleLabel()->addAttr([
+            'type' => 'hidden',
+            'name' => $this->name,
+            'value' => $this->default ?: array_key_last($this->options)
+        ]);
+
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+            $inputDiv->addClass('layui-input-block');
+        }else{
+            $inputDiv->addClass('layui-input-inline');
+            return $inputDiv->addContent($input)->addContent($hidden);
+        }
+
+        return $itemDom->addContent($inputDiv->addContent($input)->addContent($hidden));
     }
 
     /**
      * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public function getJs()
+    public function getJs(): string
     {
-        $option_value = array_keys($this->options);
-        $open_value   = current($option_value);
-        $close_value  = next($option_value);
+        $open_value  = array_key_first($this->options);
+        $close_value = array_key_last($this->options);
         return <<<JS
     form.on('switch({$this->name})', function(data){
         let value = data.elem.checked ? "{$open_value}" : "{$close_value}";
         layui.jquery("input[name={$this->name}]").val(value);
-    });  
+    });
 JS;
     }
 }

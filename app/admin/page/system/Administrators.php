@@ -83,7 +83,7 @@ class Administrators extends BasePage
         }
 
         $form = DefaultForm::create($form_data)->setDefaultData($default_data);
-        $form->setShortFrom($this->shortInput());
+        $form->setShortForm($this->shortInput());
 
         return $form->complete();
     }
@@ -128,7 +128,7 @@ class Administrators extends BasePage
 
         ];
 
-        return DefaultForm::create($form_data)->setNoSubmit()->complete();
+        return DefaultForm::create($form_data)->setSubmitHtml()->complete();
     }
 
     /**

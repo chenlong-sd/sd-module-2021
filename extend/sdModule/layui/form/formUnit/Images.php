@@ -7,56 +7,77 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Images extends UnitBase
 {
-    public ?string $default = '';
 
     /**
-     * @param string $attr
-     * @return mixed|string
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr): Dom
     {
-        return <<<HTML
-            <div class="layui-upload">
-                <input type="hidden" name="{$this->name}">
-                <div class="layui-btn-group">
-                    <button type="button" class="layui-btn" id="{$this->name}">
-                        <i class="layui-icon layui-icon-upload"></i>选择图片</button>
-                    {$this->systemResource()}
-                </div>
-                <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-                    <div>图片预览：</div>
-                    <div class="layui-upload-list" id="{$this->name}-show" style="overflow: hidden"></div>
-                </blockquote>
-            </div>
-HTML;
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create()->addClass('layui-input-block');
 
+        $uploadBox = Dom::create()->addClass('layui-upload')
+            ->addContent(Dom::create('input')->setIsSingleLabel()
+                ->addAttr('name', $this->name)->addAttr('type', 'hidden')
+                ->addAttr('value', $this->default)
+            )
+            ->addContent(Dom::create()->addClass('layui-btn-group')
+                ->addContent(Dom::create('button')->addAttr([
+                    'type' => 'button',
+                    'class' => 'layui-btn',
+                    'id' => $this->name
+                ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-upload'))
+                    ->addContent('选择图片')->addContent($this->systemResource())
+            ))->addContent(
+                Dom::create('blockquote')->addClass('layui-elem-quote layui-quote-nm')
+                    ->addAttr('style', 'margin-top: 10px;')
+                    ->addContent(Dom::create()->addContent('图片预览：'))
+                    ->addContent(Dom::create()->addAttr([
+                        'class' => 'layui-upload-list',
+                        'id' => "{$this->name}-show",
+                        'style' => 'overflow: hidden'
+                    ]))
+            );
+
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+        }
+        return $itemDom->addContent($inputDiv->addContent($uploadBox));
     }
 
     /**
-     * @return mixed|string
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public function getJs()
+    public function getJs(): string
     {
         return <<<JS
-    window.{$this->name} = custom.moreUpload(layui.jquery, '{$this->name}', layui.upload).init();
-    defaultData.{$this->name} = function(){
-         {$this->name}.init('{$this->default}'.split(','));
-    };
+    window.{$this->name} = custom.moreUpload(layui.jquery, '{$this->name}', layui.upload).init('{$this->default}'.split(','));
 JS;
 
     }
 
     /**
      * 系统资源
-     * @return string
+     * @return Dom|string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
     private function systemResource()
     {
-        return !env('SYSTEM_RESOURCE')  ? "" : <<<SYS
-<button type="button" class="layui-btn layui-btn-normal" id="{$this->name}-select"><i class="layui-icon layui-icon-picture"></i>系统图片</button>
-SYS;
-
+        return env('SYSTEM_RESOURCE') ? Dom::create('button')->addAttr([
+            'type' => 'button',
+            'class' => 'layui-btn layui-btn-normal',
+            'id' => "{$this->name}-select",
+        ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-picture'))
+            ->addContent('系统资源') : '';
     }
 }

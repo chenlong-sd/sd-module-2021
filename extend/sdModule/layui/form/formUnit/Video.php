@@ -7,53 +7,75 @@
 namespace sdModule\layui\form\formUnit;
 
 
+use sdModule\layui\Dom;
+
 class Video extends UnitBase
 {
-    public ?string $default = '';
 
     /**
-     * @param string $attr
-     * @return mixed|string
+     * @param array $attr
+     * @return Dom
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
-    public function getHtml(string $attr)
+    public function getHtml(array $attr): Dom
     {
-       return <<<HTML
-            <div class="layui-upload">
-                <input type="hidden" name="{$this->name}">
-                 <div class="layui-btn-group">
-                    <button type="button" class="layui-btn" id="{$this->name}">
-                        <i class="layui-icon layui-icon-upload"></i>选择视频</button>
-                </div>
-                <div class="layui-upload-list">
-                    <video class="layui-upload-img" controls="controls" src="" style="max-width: 500px;" id="{$this->name}_show" ></video>
-                    <p id="{$this->name}_tip"></p>
-                </div>
-            </div>
-HTML;
+        $itemDom  = $this->getItem();
+        $inputDiv = Dom::create()->addClass('layui-input-block');
+
+        $uploadBox = Dom::create()->addClass('layui-upload')
+            ->addContent(Dom::create('input')->setIsSingleLabel()->addAttr('name', $this->name)
+                ->addAttr('type', 'hidden')->addAttr('value', ''))
+            ->addContent(Dom::create()->addClass('layui-btn-group')->addContent(
+                Dom::create('button')->addAttr([
+                    'type' => 'button',
+                    'class' => 'layui-btn',
+                    'id' => $this->name
+                ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-upload'))
+                    ->addContent('选择视频')
+            )->addContent($this->systemResource())
+            )->addContent(
+                Dom::create()->addClass('layui-upload-list')->addContent(
+                    Dom::create('video')->addAttr([
+                        'class' => 'layui-upload-img',
+                        'controls' => 'controls',
+                        'src' => '',
+                        'style' => 'max-width: 500px;',
+                        'id' => "{$this->name}_show"
+                    ])
+                )->addContent(Dom::create('p')->setId("{$this->name}_tip"))
+            );
+
+        if ($this->label) {
+            $itemDom->addContent($this->getLabel($this->label));
+        }
+
+        return $itemDom->addContent($inputDiv->addContent($uploadBox));
     }
 
     /**
      * 系统资源
-     * @return string
+     * @return Dom|string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
      */
     private function systemResource()
     {
-        return !env('SYSTEM_RESOURCE')  ? "" : <<<SYS
-<button type="button" class="layui-btn layui-btn-normal" id="{$this->name}-select"><i class="layui-icon layui-icon-picture"></i>系统图片</button>
-SYS;
-
+        return env('SYSTEM_RESOURCE') ? Dom::create('button')->addAttr([
+            'type' => 'button',
+            'class' => 'layui-btn layui-btn-normal',
+            'id' => "{$this->name}-select",
+        ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-picture'))
+            ->addContent('系统资源') : '';
     }
 
     /**
      * @return mixed|string
      */
-    public function getJs()
+    public function getJs(): string
     {
         return <<<JS
-    window.{$this->name} = custom.videoUpload('{$this->name}');
-    defaultData.{$this->name} = function(){
-         {$this->name}.defaults('{$this->default}');
-    };
+    window.{$this->name} = custom.videoUpload('{$this->name}').defaults('{$this->default}');
 JS;
 
     }

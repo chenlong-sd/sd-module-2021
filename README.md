@@ -342,7 +342,7 @@ $form->setDefaultData(['id' => 1, 'title' => 'asdasd']);
 
 
 // 设置表单占中心页面比例，设置后提交按钮会重置到表单下方
-$form->setCustomMd(12); 
+$form->setMd(12); 
 /** @see  app\common\BasePage::$md */
 
 // 自定义js代码， 
@@ -358,7 +358,10 @@ $form->setShortFrom([
 //  把表格风格设置为边框类型
 $form->setSkinToPane();
 
-return $form->complete();
+$form = $form->complete();
+// 精准控制每一个元素  
+// 第一个表单元素的第一个子元素加红色css 
+$form->unit[0]->content[0]->addAttr('style', 'color:red;');
 ```
 * 支持类型
 

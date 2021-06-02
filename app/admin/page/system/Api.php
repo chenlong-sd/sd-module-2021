@@ -95,7 +95,7 @@ class Api extends BasePage
                 FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             ),
         ];
-        return DefaultForm::create($form_data)->setNoSubmit()->complete();
+        return DefaultForm::create($form_data)->setSubmitHtml()->complete();
     }
 
 }

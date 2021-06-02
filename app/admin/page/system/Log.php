@@ -56,6 +56,6 @@ class Log extends BasePage
             )
         ];
 
-        return DefaultForm::create($form_data)->setNoSubmit()->complete();
+        return DefaultForm::create($form_data)->setSubmitHtml()->complete();
     }
 }
