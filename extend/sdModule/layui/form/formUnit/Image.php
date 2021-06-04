@@ -31,14 +31,15 @@ class Image extends UnitBase
                     'class' => 'layui-btn',
                     'id' => $this->name
                 ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-upload'))
-                    ->addContent('选择图片')->addContent($this->systemResource())
-            ))->addContent(
+                    ->addContent('选择图片')
+                    ->addContent($this->systemResource())
+            ))->addContent($this->getShortTip())->addContent(
                 Dom::create()->addClass('layui-upload-list')->addContent(
                     Dom::create('img')->addAttr([
                         'class' => 'layui-upload-img',
                         'alt' => '',
                         'src' => '',
-                        'style' => 'max-width: 300px;',
+                        'style' => 'max-width: 300px;min-height:100px',
                         'id' => "{$this->name}_show"
                     ])
                 )->addContent(Dom::create('p')->setId("{$this->name}_tip"))

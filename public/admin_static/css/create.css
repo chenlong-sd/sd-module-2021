@@ -21,3 +21,6 @@ body{
 .layui-inline .layui-form-select .layui-input{
     width: 182px;
 }
+.layui-form>.layui-form-item{
+    margin-bottom: 10px;
+}

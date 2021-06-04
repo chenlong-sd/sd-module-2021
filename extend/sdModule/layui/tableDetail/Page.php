@@ -52,19 +52,15 @@ class Page
     public function addEvent(string $event): Event
     {
         return new Event($this, $event);
-//        $this->event[$event] = $html;
-//        return $this;
     }
 
     /**
      * @param string $event
      * @return Event
      */
-    public function addAfterEvent(string $event)
+    public function addAfterEvent(string $event): Event
     {
         return new Event($this, $event, true);
-//        $this->afterEvent[$event] = $html;
-//        return $this;
     }
 
     /**
@@ -73,7 +69,7 @@ class Page
      * @param array $data
      * @return $this
      */
-    public function setEventAjaxRequest(string $event, string $url, array $data)
+    public function setEventAjaxRequest(string $event, string $url, array $data): Page
     {
         $data = json_encode($data);
         $this->eventJs[] = "$event(){ sc_event('{$url}', $data) },";
@@ -84,7 +80,7 @@ class Page
      * @param string $js
      * @return Page
      */
-    public function customJs(string $js)
+    public function customJs(string $js): Page
     {
         $this->customJs = $js;
         return $this;
@@ -93,7 +89,7 @@ class Page
     /**
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         include_once __DIR__ . '/template.php';
         return '   ';
@@ -102,12 +98,13 @@ class Page
     /**
      * @return string
      */
-    public function getRoot()
+    public function getRoot(): string
     {
         if ($this->root) {
             return $this->root;
         }
-        return $this->root = preg_replace('/\/+/', '/', strtr(dirname($_SERVER['SCRIPT_NAME']), ['\\' => '/']) . '/');
+        $this->root = preg_replace('/\/+/', '/', strtr(dirname($_SERVER['SCRIPT_NAME']), ['\\' => '/']) . '/') ?: '';
+        return $this->root;
     }
 
     public function lang($lang)

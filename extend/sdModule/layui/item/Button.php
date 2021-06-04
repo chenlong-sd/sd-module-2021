@@ -6,6 +6,8 @@
 
 namespace sdModule\layui\item;
 
+use sdModule\layui\Dom;
+
 /**
  * Class Button
  * @method string danger($size = '') size: xs|sm|''|
@@ -51,29 +53,14 @@ class Button
 
     /**
      * 生成button Html代码
-     * @return string
+     * @return Dom
      */
-    private function button()
+    private function button(): Dom
     {
-        return "<button type=\"button\" {$this->getEventStr()} class=\"{$this->getClassNameStr()}\">{$this->icon()}{$this->title}</button>";
-    }
-
-    /**
-     * 获取事件字符串
-     * @return string
-     */
-    private function getEventStr()
-    {
-        return $this->event ? "lay-event=\"{$this->event}\"" : "";
-    }
-
-    /**
-     * 获取类名字符串
-     * @return string
-     */
-    private function getClassNameStr()
-    {
-        return implode(' ', $this->class_name);
+        return Dom::create('button')->addAttr([
+            'type' =>  'button',
+            'lay-event' => $this->event,
+        ])->addClass($this->class_name)->addContent($this->icon())->addContent($this->title);
     }
 
     /**
@@ -81,7 +68,7 @@ class Button
      * @param string $event
      * @return $this
      */
-    public function setEvent(string $event = '')
+    public function setEvent(string $event = ''): Button
     {
         $this->event = $event;
         return $this;
@@ -92,7 +79,7 @@ class Button
      * @param mixed ...$class_name
      * @return $this
      */
-    public function setBtnClass(...$class_name)
+    public function setBtnClass(...$class_name): Button
     {
         $this->class_name = array_merge($this->class_name, array_map(fn($v) => "layui-btn-{$v}", $class_name));
         return $this;
@@ -103,10 +90,9 @@ class Button
      * @param mixed ...$buttons
      * @return string
      */
-    public function group(...$buttons)
+    public function group(...$buttons): string
     {
-        $button_str = implode($buttons);
-        return "<div class=\"layui-btn-group\">{$button_str}</div>";
+        return Dom::create()->addClass('layui-btn-group')->addContent(implode($buttons));
     }
 
     /**
@@ -115,7 +101,7 @@ class Button
      */
     private function icon()
     {
-        return $this->icon ? "<i class=\"layui-icon layui-icon-{$this->icon}\"></i>" : '';
+        return $this->icon ? Dom::create('i')->addClass("layui-icon layui-icon-{$this->icon}") : '';
     }
 
     /**
@@ -123,7 +109,7 @@ class Button
      * @param $arguments
      * @return string
      */
-    public function __call($name, $arguments)
+    public function __call($name, $arguments): string
     {
         $this->class_name[] = empty($arguments[0]) ? "" : "layui-btn-{$arguments[0]}";
         $this->class_name[] = $name === 'defaults' ? "" : "layui-btn-{$name}";
@@ -132,8 +118,13 @@ class Button
 
     public function __destruct(){}
 
-    public function __toString()
+    /**
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/4
+     */
+    public function __toString(): string
     {
-        return $this->button();
+        return (string)$this->button();
     }
 }

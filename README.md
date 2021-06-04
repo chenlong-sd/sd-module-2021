@@ -310,22 +310,57 @@ use sdModule\layui\form\FormUnit;
 
 //初始化表单
 $form = \sdModule\layui\form\Form::create([
-    FormUnit::hidden('id'),
-    FormUnit::text('title', '标题')->defaultValue('asd'), // 设置表单默认值
-    FormUnit::image('cover', '封面')->inputAttr(['add' => 'disable']), // 设置对应场景该表单 的HTML属性值
-    FormUnit::images('show_images', '展示图')->removeScene(['add']), // 删除在指定场景的该表单
-    FormUnit::text('intro', '简介'),
-    FormUnit::radio('status', '状态')->options(self::getStatusSc(false))->unitConfig(['ss' => 'ss']), // 设置该表单的js配置项，目前只针对selects表单
-    FormUnit::select('administrators_id', '管理员')->options(Administrators::addSoftDelWhere()->column('name', 'id')),
-    FormUnit::select('pid', '上级')->options(Test::addSoftDelWhere()->column('title', 'id')),
-    FormUnit::uEditor('content', '详情'),
-    FormUnit::switchSc('switch', '开关')->options(['1' => '打开', '2' => '关闭']),
-    FormUnit::auxTitle('asdsad', 'line'), // 辅助标题
-    FormUnit::custom()->customHtml('<div></div>'), // 自定义
-    FormUnit::build(  // 一行包含多个表单
-        FormUnit::text('title', '标题')->defaultValue('asd'),
-        FormUnit::text('intro', '简介'),
+     FormUnit::inline('asd', 'asdasd')->setChildrenItem(
+        FormUnit::text('text1', )->placeholder('文本1'),
+        FormUnit::text('text2', )->placeholder('文本2')->defaultValue('自带默认值'),
     ),
+    FormUnit::checkbox('checkbox', "多选")->options([
+        '1' => '多选1，自带默认',
+        '2' => '多选2',
+    ])->defaultValue(1),
+    FormUnit::radio('radio','单选')->options([
+        '1' => '单选1，自带默认',
+        '2' => '单选2',
+    ])->defaultValue(1),
+    FormUnit::select('select','下拉')->options([
+        '1' => '下拉1 ，自带默认',
+        '2' => 'jieshu',
+        '3' => 'asdadas',
+        '4' => 'cccccc',
+        'asd' => [
+            '5' => 'asdadas',
+            '6' => 'cccccc',
+        ]
+    ])->defaultValue(1),
+    FormUnit::time('time', '时间')->setTime('datetime', true)->defaultValue(datetime()),
+    FormUnit::hidden('hidden', '隐藏')->defaultValue('隐藏'),
+    FormUnit::password('password', '密码')->defaultValue('123456'),
+    FormUnit::textarea('textarea', '文本域')->defaultValue('textarea')
+    ->inputAttr(['-' => [
+        'style' => 'height:500px;'
+    ]]),
+    FormUnit::build(
+        FormUnit::tag('tag', '标签')->defaultValue('tag'),
+        FormUnit::selects('cd23dd','asd')->options([
+            '1' => '自带默认',
+            '2' => '自带默认',
+            '3' => '数据默认',
+            '4' => '数据默认',
+        ])->defaultValue('1,2'),
+    ),
+    FormUnit::auxTitle('你很好看呀'),
+    FormUnit::custom('自定义')->customHtml(Dom::create()->addContent('自定义')),
+    FormUnit::switchSc('switch', '开关')->options([
+        1 => 'ON', 2 => 'OFF'
+    ])->defaultValue(1),
+     FormUnit::slider('slide', '滑块')->unitJsConfig([
+                'min' => 20, 'max' => 500
+            ])->defaultValue(150),
+    FormUnit::color('color', '颜色')->colorConfig('rgb', ["rgba(123,123,123,0.2)", "rgba(34,34,34,1)", ]),
+    FormUnit::video('videos', '视频')->defaultValue('upload_resource/20210602/3d0f3ab90d3e811dc456a81d30ddaefd.mp4'),
+    FormUnit::image('image', '图片')->defaultValue('a.jpg'),
+    FormUnit::images('images', '多图片')->defaultValue('a.jpg,b.jpg'),
+    FormUnit::uEditor('ued', '富文本')->defaultValue('自带默认'),
     "这是label" => FormUnit::table(  // table 里面的表单， 一个数组就是一行，每个元素可以使字符串 或FormData
         ["标题", "简介"],
         [FormUnit::text('title')->defaultValue('asd'), FormUnit::text('intro')],
@@ -350,7 +385,7 @@ $form->setJs('location.reload()');
 /** @see  app\common\BasePage::formJs() */
 
 // 设置短标签
-$form->setShortFrom([
+$form->setShortForm([
      'title' => '这是短标签提示语，可为空'
 ]);
 /** @see  app\common\BasePage::shortInput() */

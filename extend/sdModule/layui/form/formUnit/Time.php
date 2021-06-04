@@ -39,10 +39,10 @@ class Time extends UnitBase
      */
     public function getJs(): string
     {
-        $range = is_bool($this->options['range'])
-            ? ($this->options['range'] ? 'true' : 'false')
-            : "'{$this->options['range']}'";
-        $type = $this->options['type'] ?? 'date';
+        $range = is_bool($this->config['range'])
+            ? ($this->config['range'] ? 'true' : 'false')
+            : "'{$this->config['range']}'";
+        $type = $this->config['type'] ?? 'date';
 
         return <<<JS
         layui.laydate.render({

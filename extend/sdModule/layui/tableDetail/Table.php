@@ -76,12 +76,12 @@ class Table
      * 获取table
      * @return array
      */
-    public function getTable()
+    public function getTable(): array
     {
         return $this->table;
     }
 
-    public function __call($method, $vars)
+    public function __call($method, $vars): Table
     {
         $method = parse_name($method);
         $this->$method = current($vars);
@@ -108,7 +108,7 @@ class Table
      * @param array $trField
      * @return array
      */
-    private function trHandel(array $trField)
+    private function trHandel(array $trField): array
     {
         $tr = [];
         foreach ($trField as $field => $title){
@@ -158,7 +158,7 @@ class Table
      * @param string $attr2
      * @return string
      */
-    private function mergeCss(string $attr1, string $attr2)
+    private function mergeCss(string $attr1, string $attr2): string
     {
         if (strpos($attr1, 'style=') !== false && strpos($attr2, 'style=') !== false ) {
             preg_match('/style=("|\')(.*)("|\')/', $attr2, $match1);
@@ -174,7 +174,7 @@ class Table
      * @param string $field
      * @return array
      */
-    private function mergeHandle(string $field)
+    private function mergeHandle(string $field): array
     {
         $content_attr = $field_attr = '';
 
@@ -204,7 +204,7 @@ class Table
      * @param bool $is_title
      * @return array
      */
-    private function multipleColumnsRowHandle(array $row, bool $is_title = false)
+    private function multipleColumnsRowHandle(array $row, bool $is_title = false): array
     {
         $tr = [];
         foreach ($this->field as $field => $title){

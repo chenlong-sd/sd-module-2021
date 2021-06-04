@@ -33,7 +33,7 @@ class Upload extends UnitBase
                     'id' => $this->name
                 ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-upload'))
                     ->addContent('选择文件')
-            ))->addContent(
+            ))->addContent($this->getShortTip())->addContent(
                 Dom::create()->addClass('layui-upload-list')->addContent(
                     Dom::create('table')->addClass("layui-table {$this->name}-table-xc")
                     ->addContent(Dom::create('tbody'))
@@ -55,7 +55,7 @@ class Upload extends UnitBase
     public function getJs(): string
     {
         return <<<JS
-    window.{$this->name} = custom.fileUpload(layui.jquery, layui.upload, '{$this->name}', "{$this->options['type']}").defaults({$this->getData()});
+    window.{$this->name} = custom.fileUpload(layui.jquery, layui.upload, '{$this->name}', "{$this->config['type']}").defaults({$this->getData()});
 JS;
     }
 

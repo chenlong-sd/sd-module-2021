@@ -3,6 +3,8 @@
 
 namespace sdModule\layui\item;
 
+use sdModule\layui\Dom;
+
 /**
  * Class Tag
  * @method string orange($value = '') 橙
@@ -24,7 +26,7 @@ class Tag
      */
     public function rim(string $value): string
     {
-        return "<span class='layui-badge-rim'>{$this->lang($value)}</span>";
+        return Dom::create('span')->addClass('layui-badge-rim')->addContent($this->lang($value));
     }
 
     /**
@@ -37,11 +39,13 @@ class Tag
     {
         $dot = $value ? "" : "-dot";
         if (in_array($color, ['orange', 'green', 'cyan', 'blue', 'black', 'gray', 'red',])) {
-            return "<span class='layui-badge{$dot} layui-bg-{$color}'>{$this->lang($value)}</span>";
+            return Dom::create('span')->addClass("layui-badge{$dot} layui-bg-{$color}")->addContent($this->lang($value));
         }else{
             $color = ltrim($color, 'customColor');
             $color = "#{$color}";
-            return "<span class='layui-badge{$dot}' style='background-color: {$color}'>{$this->lang($value)}</span>";
+            return Dom::create('span')->addClass("layui-badge{$dot}")
+                ->addAttr('style', "background-color: {$color}")
+                ->addContent($this->lang($value));
         }
     }
 

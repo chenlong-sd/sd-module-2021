@@ -34,7 +34,9 @@ abstract class UnitBase
      * @var string|int|array 预设表单值
      */
     public $default = null;
-
+    /**
+     * @var array js配置项
+     */
     public array $config = [];
 
     /**

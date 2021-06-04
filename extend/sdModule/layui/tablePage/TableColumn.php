@@ -93,25 +93,34 @@ class TableColumn implements \ArrayAccess
 
     /**
      * 设置列为开关
-     * @param string $open_value
-     * @param Ajax $js_code
-     * @param string $title
+     * @param array $data 开关的两个数据， [open_value => open_title, close_value => close_title]
+     * @param Ajax $js_code ajax 请求代码
      * @return $this
      */
-    public function switch(string $open_value, Ajax $js_code, string $title = 'ON|OFF'): TableColumn
+    public function switch(array $data, Ajax $js_code): TableColumn
     {
+        $open_value  = array_key_first($data);
+        $close_value = array_key_last($data);
+        $title       = implode('|', $data);
+
         $this->column['templet'] = function () use ($open_value, $title){
             return <<<JS
         let checked = "{$open_value}" == obj.{$this->column['field']} ? "checked" : "";
-        return `<input type="checkbox" name="{$this->column['field']}" value="\${obj.id}" lay-skin="switch" lay-text="{$title}" lay-filter="sc{$this->column['field']}" \${checked}>`;
+        return `<input type="checkbox" data-checked="\${checked}" id="switch-{$this->column['field']}\${obj.id}" name="{$this->column['field']}" value="\${obj.id}" lay-skin="switch" lay-text="{$title}" lay-filter="sc{$this->column['field']}" \${checked}>`;
 JS;
         };
-        $js_code->setFailCallback(<<<CAL
-         location.reload();
-CAL);
+        $js_code->setFailCallback('location.reload();')->dataCode('quest_data');
         $this->js = <<<JS
     form.on('switch(sc{$this->column['field']})', function(switch_obj){
-        {$js_code}
+        let handle_value = switch_obj.elem['data-checked'] === 'checked' ? '{$open_value}' : '{$close_value}';
+        let quest_data = {id:switch_obj.value, handle_value:handle_value};
+        let origin = switch_obj.othis;
+        console.log(switch_obj.othis, handle_value,switch_obj.elem['data-checked']);
+        setTimeout(()=>{
+            switch_obj.elem['data-checked'] = handle_value === '{$open_value}' ? 'checked' : '';
+            switch_obj.othis.prop("class","layui-unselect layui-form-switch layui-form-onswitch").html(origin.html())
+        }, 2000)
+        /*{$js_code}*/
     });
 JS;
         return $this;
@@ -125,6 +134,20 @@ JS;
     public function setTemplate(string $js_code): TableColumn
     {
         $this->column['templet'] = fn() => $js_code;
+        return $this;
+    }
+
+    /**
+     * 设置格式化输出
+     * @param string $format 格式 {var} var 为字段名字 eg：  姓名：{name},年龄：{age}
+     * @return $this
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/4
+     */
+    public function setFormat(string $format): TableColumn
+    {
+        $format = strtr($format, ['{' => '${obj.']);
+        $this->column['templet'] = fn() => "return `$format`;";
         return $this;
     }
 

@@ -35,7 +35,7 @@ class Images extends UnitBase
                     'id' => $this->name
                 ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-upload'))
                     ->addContent('选择图片')->addContent($this->systemResource())
-            ))->addContent(
+            ))->addContent($this->getShortTip())->addContent(
                 Dom::create('blockquote')->addClass('layui-elem-quote layui-quote-nm')
                     ->addAttr('style', 'margin-top: 10px;')
                     ->addContent(Dom::create()->addContent('图片预览：'))

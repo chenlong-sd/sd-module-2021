@@ -34,7 +34,7 @@ class Video extends UnitBase
                 ])->addContent(Dom::create('i')->addClass('layui-icon layui-icon-upload'))
                     ->addContent('选择视频')
             )->addContent($this->systemResource())
-            )->addContent(
+            )->addContent($this->getShortTip())->addContent(
                 Dom::create()->addClass('layui-upload-list')->addContent(
                     Dom::create('video')->addAttr([
                         'class' => 'layui-upload-img',

@@ -217,7 +217,7 @@ class Dom
      * @author chenlong <vip_chenlong@163.com>
      * @date 2021/5/31
      */
-    private function dataMake()
+    private function dataMake(): array
     {
         $data = [];
         foreach ($this->data as $key => $value) {

@@ -107,7 +107,7 @@ class UnitData
      * @param array $config 配置值
      * @return $this
      */
-    public function unitConfig(array $config): UnitData
+    public function unitJsConfig(array $config): UnitData
     {
         $this->config = $config;
         return $this;
@@ -185,7 +185,22 @@ class UnitData
      */
     public function setTime(string $type = 'datetime', $range = false): UnitData
     {
-        $this->options = compact('type', 'range');
+        $this->config = compact('type', 'range');
+        return $this;
+    }
+
+    /**
+     * 颜色配置设置
+     * @param string $format   格式  hex | rgb
+     * @param array $predefine 设置预定义颜色
+     * @param bool $alpha      开启透明度
+     * @return $this
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/4
+     */
+    public function colorConfig(string $format = 'hex', array $predefine = [], bool $alpha = true): UnitData
+    {
+        $this->config = compact('format', 'predefine', 'alpha');
         return $this;
     }
 
@@ -196,7 +211,7 @@ class UnitData
      */
     public function uploadType(string $type = 'file'): UnitData
     {
-        $this->options = compact('type');
+        $this->config = compact('type');
         return $this;
     }
 

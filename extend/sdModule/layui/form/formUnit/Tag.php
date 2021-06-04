@@ -39,13 +39,13 @@ class Tag extends UnitBase
         );
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));
-            $inputDiv->addClass('layui-input-block');
+            $inputDiv->addClass($this->shortTip ? 'layui-inline' : 'layui-input-block');
         }else{
             $inputDiv->addClass('layui-inline');
             return $inputDiv->addContent($tagDiv);
         }
 
-        return $itemDom->addContent($inputDiv->addContent($tagDiv));
+        return $itemDom->addContent($inputDiv->addContent($tagDiv))->addContent($this->getShortTip());
     }
 
     /**

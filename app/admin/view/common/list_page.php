@@ -231,5 +231,6 @@
     }
 
     <?= $search->getUnitJs();?>
+    <?= $table->getCustomJs();?>
 </script>
 {/block}

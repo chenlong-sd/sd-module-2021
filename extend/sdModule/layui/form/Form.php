@@ -107,7 +107,7 @@ class Form
     private function makeUnitHtml()
     {
         foreach ($this->formData as $unitData) {
-            if ($unitData->get('removeScene') == $this->scene) {
+            if (in_array($this->scene, $unitData->get('removeScene'))) {
                 continue;
             }
             $unit = $this->makeCode($unitData);
@@ -119,7 +119,7 @@ class Form
             }
             $inputAttr = $unitData->get('inputAttr');
             $unitDom   = $unit->getHtml(array_merge($inputAttr['-'] ?? [], $inputAttr[$this->scene] ?? []));
-            if ($this->skin && in_array($unitData->get('formUnitType'), ['radio', 'checkbox', 'switch_sc'])) {
+            if ($this->skin && in_array($unitData->get('formUnitType'), ['radio', 'checkbox', 'switch_sc', 'slider'])) {
                 $unitDom->addAttr('pane');
             }
             $this->unit[]   = $unitDom;
@@ -146,7 +146,7 @@ class Form
 
         $default = $this->defaultData[$unitData->get('name', '')] ?? $unitData->get('defaultValue', '');
 
-        $unit->setDefault($default)->setOption($unitData->get('options', []));
+        $unit->setDefault($default)->setOption($unitData->get('options', []))->setConfig($unitData->get('config', []));
 
         if ($unit instanceof Selects) {
             $this->loadJs('Selects', '/admin_static/layui/dist/xm-select.js');

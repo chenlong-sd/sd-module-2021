@@ -26,12 +26,12 @@ class Password extends UnitBase
             ->addAttr($attr)->addAttr('value', $this->default);
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));
-            $inputDiv->addClass('layui-input-block');
+            $inputDiv->addClass($this->shortTip ? 'layui-inline' : 'layui-input-block');
         }else{
             $inputDiv->addClass('layui-inline');
             return $inputDiv->addContent($input);
         }
 
-        return $itemDom->addContent($inputDiv->addContent($input));
+        return $itemDom->addContent($inputDiv->addContent($input))->addContent($this->getShortTip());
     }
 }

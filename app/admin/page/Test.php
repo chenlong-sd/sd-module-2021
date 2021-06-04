@@ -9,6 +9,7 @@ namespace app\admin\page;
 
 use app\common\BasePage;
 use sdModule\layui\TablePage;
+use sdModule\layui\tablePage\Ajax;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layui\form\Form;
 use sdModule\layui\form\FormUnit;
@@ -31,10 +32,10 @@ class Test extends BasePage
         $table = TablePage::create([
             TableAux::column()->checkbox(),
             TableAux::column('id', 'ID'),
-            TableAux::column('title', '标题'),
+            TableAux::column('title', '标题')->setFormat('标题：{title}, 简介：{intro}'),
             TableAux::column('cover', '封面')->image(),
             TableAux::column('intro', '简介'),
-            TableAux::column('status', '状态'),
+            TableAux::column('status_1', '状态')->switch(\app\admin\model\Test::getStatusSc(false), new Ajax(url('test'))),
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
             TableAux::column('create_time', '创建时间'),

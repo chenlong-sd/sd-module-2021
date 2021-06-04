@@ -43,13 +43,13 @@ class SwitchSc extends UnitBase
 
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));
-            $inputDiv->addClass('layui-input-block');
+            $inputDiv->addClass($this->shortTip ? 'layui-inline' : 'layui-input-block');
         }else{
             $inputDiv->addClass('layui-input-inline');
             return $inputDiv->addContent($input)->addContent($hidden);
         }
 
-        return $itemDom->addContent($inputDiv->addContent($input)->addContent($hidden));
+        return $itemDom->addContent($inputDiv->addContent($input)->addContent($hidden))->addContent($this->getShortTip());
     }
 
     /**
