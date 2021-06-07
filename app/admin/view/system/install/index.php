@@ -72,13 +72,16 @@
         </div>
         <div class="layui-col-md6" style="padding: 20px">
             <div class="layui-card">
-                <div class="layui-card-header">更新记录</div>
+                <div class="layui-card-header">更新记录，
+                    <span style="color: #00a2d4">节省后台常规页面的一切HTML代码，重复代码。</span>
+                </div>
                 <div class="layui-card-body">
                     <ul class="layui-timeline">
                         <li class="layui-timeline-item">
                             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                             <div class="layui-timeline-content layui-text">
                                 <h3 class="layui-timeline-title">Version 3.3 </h3>
+                                <p>2021-06-07</p>
                                 <ul>
                                     <li> 优化更新表单组件，精准控制每一个html元素 </li>
                                     <li> 优化列表页初始界面操作 </li>
