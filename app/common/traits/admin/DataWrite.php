@@ -9,7 +9,7 @@ use think\facade\Db;
 use think\Request;
 
 /**
- * 数据写入
+ * 数据写入/更新
  * @property-read Request $request
  * Trait DataWrite
  * @package app\common\controller
@@ -152,6 +152,22 @@ trait DataWrite
         }
 
         return $data;
+    }
+
+    /**
+     * 开关操作数据处理
+     * @return \think\response\Json
+     * @throws \think\db\exception\DbException
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/7
+     */
+    public function switchHandle(): \think\response\Json
+    {
+        $data   = $this->request->post();
+        $result = $this->getDb()->where('id', $data['id'])
+            ->update([$data['field'] => $data['handle_value']]);
+
+        return ResponseJson::mixin($result ? '' : '操作失败');
     }
 }
 

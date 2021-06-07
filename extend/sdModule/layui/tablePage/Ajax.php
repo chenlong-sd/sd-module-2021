@@ -35,7 +35,7 @@ class Ajax
      * 成功后执行的代码
      * @var string
      */
-    private string $successCallback = "";
+    private ?string $successCallback = null;
 
     /**
      * 失败后执行的代码
@@ -49,13 +49,17 @@ class Ajax
      */
     private array $prompt = [];
 
-
+    /**
+     * Ajax constructor.
+     * @param string $url
+     */
     public function __construct(string $url)
     {
         $this->url = $url;
     }
 
     /**
+     * 设置提示语
      * @param string $tip
      * @return Ajax
      */
@@ -66,6 +70,7 @@ class Ajax
     }
 
     /**
+     * 设置批量处理的字段名
      * @param string $isBatch
      * @return $this
      */
@@ -76,6 +81,7 @@ class Ajax
     }
 
     /**
+     * 设置弹出层的配置
      * @param array $config
      * @return $this
      */
@@ -86,16 +92,18 @@ class Ajax
     }
 
     /**
+     * 设置传输的data js 代码
      * @param string $data
      * @return Ajax
      */
-    public function dataCode(string $data = '')
+    public function dataCode(string $data = ''): Ajax
     {
         $this->data = $data;
         return $this;
     }
 
     /**
+     * 设置没有提示层
      * @return $this
      */
     public function noConfirm(): Ajax
@@ -105,6 +113,7 @@ class Ajax
     }
 
     /**
+     * 请求方式
      * @param string $method
      * @return $this
      */
@@ -139,6 +148,7 @@ class Ajax
      */
     public function __toString(): string
     {
+        $successExecute = $this->successCallback === null ? "table.reload('sc');" : $this->successCallback;
         if ($this->confirm) {
             $config = json_encode($this->confirm['config'] ?? []);
             $code = <<<JS
@@ -148,8 +158,7 @@ class Ajax
                 layer.close(window.load___);
                 if (res.code === 200) {
                     layNotice.success('成功');
-                    table.reload('sc');
-                    {$this->successCallback}
+                    {$successExecute}
                 } else {
                     layNotice.warning(res.msg);
                     {$this->failCallback}
@@ -169,8 +178,7 @@ JS;
                 layer.close(load);
                 if (res.code === 200) {
                     layNotice.success('成功');
-                    table.reload('sc');
-                     {$this->successCallback}
+                     {$successExecute}
                 } else {
                     layNotice.warning(res.msg);
                     {$this->failCallback}
@@ -182,7 +190,12 @@ JS;
         return $this->batch ? sprintf(' function batch_js(id){%s} %s', $code, $this->batchData()) : $code;
     }
 
-
+    /**
+     * 批量操作数据
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/7
+     */
     private function batchData(): string
     {
         $please = lang('please select data');
@@ -203,7 +216,13 @@ JS;
 
     }
 
-    private function promptCodeCheck()
+    /**
+     * 弹出输入框检查
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/7
+     */
+    private function promptCodeCheck(): string
     {
         if (empty($this->prompt)) {
             return "%s";

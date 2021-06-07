@@ -78,6 +78,27 @@
                         <li class="layui-timeline-item">
                             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                             <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">Version 3.3 </h3>
+                                <ul>
+                                    <li> 优化更新表单组件，精准控制每一个html元素 </li>
+                                    <li> 优化列表页初始界面操作 </li>
+                                    <li> layui更新到2.6.8 </li>
+                                    <li> 修复数据库备份含json数据是的bug，以及其他已知bug </li>
+                                    <li> <span style="color: red">增加</span>列表页的模板输出 </li>
+                                    <li> <span style="color: red">增加</span>列表页开关操作 </li>
+                                    <li> <span style="color: red">增加</span>列表页开字段合并  </li>
+                                    <li> <span style="color: red">增加</span>滑块表单  </li>
+                                    <li> <span style="color: red">增加</span>颜色选择器表单  </li>
+                                    <li> <span style="color: red">增加</span>单个配置值的设置功能（基础信息配置），用于解决若干个单项无关联的设置  </li>
+                                    <li> <span style="color: red">增加</span>字典管理，用于解决用户自定义配置分类管理的时候  </li>
+                                    <li> <span style="color: red">增加</span>列表页事件的 prompt 弹窗 </li>
+                                    <li> <span style="color: red">增加</span>基于swoole的定时任务 [extend/sdModule/timedTask/start.php]</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
                                 <h3 class="layui-timeline-title">Version 3.2 </h3>
                                 <ul>
                                     <li> 优化更新详情页的代码编写 </li>

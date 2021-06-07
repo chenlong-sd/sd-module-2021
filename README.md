@@ -226,9 +226,12 @@ class test
         $table = TablePage::create([
             TableAux::column()->checkbox(), // 直接传定义列属性的数组，参考layui table
             TableAux::column('id', 'ID'),
-            TableAux::column('title', '标题'),
+            // 设置显示模板 {title} {intro} 为当前行的字段名
+            TableAux::column('title', '标题')->setFormat('标题：{title}, 简介：{intro}'),
             TableAux::column('cover', '封面')->image(),  // 图片
-            TableAux::column('intro', '简介')->setTemplate("if (d.intro == 1) {return 1}else{return 2}"),
+            // 列表开关组件，调用详情查看函数介绍
+            TableAux::column('status', '状态')->switch('status', \app\admin\model\Test::getStatusSc(false), new Ajax(url('test'))),
+            TableAux::column('intro', '简介')->setTemplate("if (obj.intro == 1) {return 1}else{return 2}"),
             TableAux::column('administrators_name', '管理员')->param(['edit' => true]), // 设置更多的列属性
             TableAux::column('parent_title', '上级')->mergeField('create_time', '-'), // 多个字段一起显示
             TableAux::column('create_time', '创建时间'),

@@ -35,7 +35,7 @@ class Test extends BasePage
             TableAux::column('title', '标题')->setFormat('标题：{title}, 简介：{intro}'),
             TableAux::column('cover', '封面')->image(),
             TableAux::column('intro', '简介'),
-            TableAux::column('status_1', '状态')->switch(\app\admin\model\Test::getStatusSc(false), new Ajax(url('test'))),
+            TableAux::column('status_1', '状态')->switch('status', \app\admin\model\Test::getStatusSc(false)),
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
             TableAux::column('create_time', '创建时间'),

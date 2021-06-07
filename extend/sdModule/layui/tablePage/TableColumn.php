@@ -93,34 +93,45 @@ class TableColumn implements \ArrayAccess
 
     /**
      * 设置列为开关
+     * @param string $field 该值对应的字段
      * @param array $data 开关的两个数据， [open_value => open_title, close_value => close_title]
-     * @param Ajax $js_code ajax 请求代码
+     * @param Ajax|null $js_code ajax 请求代码 可不传，默认请求当前的 switchHandle 函数， 自定义的可传这个参数或者重写 switchHandle
      * @return $this
      */
-    public function switch(array $data, Ajax $js_code): TableColumn
+    public function switch(string $field, array $data, ?Ajax $js_code = null): TableColumn
     {
         $open_value  = array_key_first($data);
         $close_value = array_key_last($data);
         $title       = implode('|', $data);
-
+        $js_code     = $js_code instanceof Ajax ? $js_code : new Ajax(url('switchHandle'));
         $this->column['templet'] = function () use ($open_value, $title){
             return <<<JS
         let checked = "{$open_value}" == obj.{$this->column['field']} ? "checked" : "";
         return `<input type="checkbox" data-checked="\${checked}" id="switch-{$this->column['field']}\${obj.id}" name="{$this->column['field']}" value="\${obj.id}" lay-skin="switch" lay-text="{$title}" lay-filter="sc{$this->column['field']}" \${checked}>`;
 JS;
         };
-        $js_code->setFailCallback('location.reload();')->dataCode('quest_data');
+        // 失败执行的js代码
+        $fail = <<<JS
+            switch_obj.elem.setAttribute("data-checked", origin_checked);
+            let checked_class = origin_checked === 'checked' ? 'layui-form-onswitch' : '';
+            switch_obj.othis.attr("class",`layui-unselect layui-form-switch \${checked_class}`).find('em')
+            .html(title[handle_value])
+JS;
+        $js_code->method('post')->setFailCallback($fail)
+            ->successCallback('')->dataCode('quest_data');
+
         $this->js = <<<JS
     form.on('switch(sc{$this->column['field']})', function(switch_obj){
-        let handle_value = switch_obj.elem['data-checked'] === 'checked' ? '{$open_value}' : '{$close_value}';
-        let quest_data = {id:switch_obj.value, handle_value:handle_value};
-        let origin = switch_obj.othis;
-        console.log(switch_obj.othis, handle_value,switch_obj.elem['data-checked']);
-        setTimeout(()=>{
-            switch_obj.elem['data-checked'] = handle_value === '{$open_value}' ? 'checked' : '';
-            switch_obj.othis.prop("class","layui-unselect layui-form-switch layui-form-onswitch").html(origin.html())
-        }, 2000)
-        /*{$js_code}*/
+        let origin_checked = switch_obj.elem.getAttribute('data-checked');
+        let handle_value   = origin_checked === 'checked' ? '{$close_value}' : '{$open_value}';
+        switch_obj.elem.setAttribute("data-checked", origin_checked === 'checked' ? '' : 'checked');
+        let quest_data = {id:switch_obj.value, handle_value:handle_value,field:"{$field}"};
+        // 重新赋值显示用，所以反过来
+        let title = {
+            {$close_value}:"{$data[$open_value]}",
+            {$open_value}:"{$data[$close_value]}",
+        }
+        {$js_code}
     });
 JS;
         return $this;
@@ -128,12 +139,12 @@ JS;
 
     /**
      * 设置展示模板
-     * @param string $js_code
+     * @param string|callable $js_code
      * @return TableColumn
      */
-    public function setTemplate(string $js_code): TableColumn
+    public function setTemplate($js_code): TableColumn
     {
-        $this->column['templet'] = fn() => $js_code;
+        $this->column['templet'] = is_callable($js_code) ? $js_code : fn() => $js_code;
         return $this;
     }
 
