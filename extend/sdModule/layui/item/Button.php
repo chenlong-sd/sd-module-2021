@@ -79,9 +79,9 @@ class Button
      * @param mixed ...$class_name
      * @return $this
      */
-    public function setBtnClass(...$class_name): Button
+    public function addBtnClass(...$class_name): Button
     {
-        $this->class_name = array_merge($this->class_name, array_map(fn($v) => "layui-btn-{$v}", $class_name));
+        $this->class_name = array_merge($this->class_name, $class_name);
         return $this;
     }
 

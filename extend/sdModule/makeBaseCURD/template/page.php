@@ -65,7 +65,7 @@ class //=={Table}==// extends BasePage
     public function searchFormData(): Form
     {
         $form_data = [//=={search_form}==//];
-        return Form::create($form_data)->setNoSubmit()->complete();
+        return Form::create($form_data)->setSubmitHtml()->complete();
     }
 
 }

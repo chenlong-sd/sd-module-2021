@@ -149,10 +149,11 @@ class Ajax
     public function __toString(): string
     {
         $successExecute = $this->successCallback === null ? "table.reload('sc');" : $this->successCallback;
+        $data = $this->data ?: "{}";
         if ($this->confirm) {
             $config = json_encode($this->confirm['config'] ?? []);
             $code = <<<JS
-        let sc_data = {$this->data};
+        let sc_data = {$data};
         if (typeof value !== 'undefined')sc_data.prompt_value = value;
         ScXHR.confirm('{$this->confirm['tip']}',{$config}).ajax({url:"{$this->url}",type:"{$this->method}",data:sc_data,success(res){
                 layer.close(window.load___);
@@ -171,7 +172,7 @@ JS;
         }
 
         $code = <<<JS
-        let sc_data = {$this->data};
+        let sc_data = {$data};
         if (typeof value !== 'undefined')sc_data.prompt_value = value;
         let load = custom.loading();
         layui.jquery.ajax({url:"{$this->url}",type:"{$this->method}",data:sc_data,success(res){

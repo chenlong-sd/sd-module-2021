@@ -16,10 +16,8 @@ use sdModule\layui\tablePage\TableAux;
  */
 class TablePage
 {
-    const HANDLE_STYLE_ALL     = 7;
     const HANDLE_STYLE_NORMAL  = 1;
-    const HANDLE_STYLE_CONTEXT_LI     = 2;
-    const HANDLE_STYLE_CONTEXT_BUTTON = 4;
+    const HANDLE_STYLE_DOWN    = 2;
 
     /**
      * @var int
@@ -92,7 +90,7 @@ class TablePage
     /**
      * @var int 设置表格操作样式
      */
-    private int $handleStyle = self::HANDLE_STYLE_ALL;
+    private int $handleStyle = self::HANDLE_STYLE_NORMAL;
     /**
      * @var array
      */
@@ -102,6 +100,11 @@ class TablePage
      * @var string 自定义js
      */
     private string $customJs = '';
+
+    /**
+     * @var array 下拉菜单的额数据
+     */
+    private $downMenuData = [];
 
     /**
      * 设置操作栏宽度
@@ -144,7 +147,7 @@ class TablePage
     }
 
     /**
-     * @param int $style  1, 2, 3
+     * @param int $style  1, 2,
      * @return TablePage
      */
     public function setHandleStyle(int $style = self::HANDLE_STYLE_NORMAL): TablePage
@@ -160,7 +163,7 @@ class TablePage
      */
     public function getField(): string
     {
-        if ($this->handle && $this->toolEvent && ($this->handleStyle & self::HANDLE_STYLE_NORMAL)) {
+        if ($this->handle && $this->toolEvent) {
             $this->fieldData[] = array_merge([
                 "width"   => $this->handleWidth,
                 "title"   => lang("operating"),
@@ -303,8 +306,8 @@ class TablePage
      */
     public function getTool(): string
     {
-        if (!($this->handleStyle & self::HANDLE_STYLE_NORMAL)) {
-            return '';
+        if ($this->handleStyle !== self::HANDLE_STYLE_NORMAL) {
+            return Layui::button('操作', 'senior')->addBtnClass('menu-down-sc')->normal('xs');
         }
 
         return implode(array_map(function ($event){
@@ -334,102 +337,23 @@ class TablePage
     }
 
     /**
-     * 获取上下文操作
-     * @return string
-     */
-    public function getContextHtml(): string
-    {
-        if (!($this->handleStyle & (self::HANDLE_STYLE_CONTEXT_BUTTON + self::HANDLE_STYLE_CONTEXT_LI))) {
-            return '';
-        }
-
-        $li         = '<div class="shadow" %s>%s %s</div>';
-        $disable_li = '<div class="shadow layui-disabled" %s>%s %s</div>';
-        $html = "";
-        foreach ($this->toolEvent as $event){
-            $where_template = empty($this->whereNotMeet[$event])
-                ? "{{# if (:where) { }} :html {{# }else{ }} :disable {{# } }}"
-                : "{{# if (:where) { }} :html {{# } }}";
-            if (empty($this->toolEventHtml[$event]) || !$this->toolEventHtml[$event] instanceof Button){
-                continue;
-            }
-            $icon  = (fn() => $this->icon())->call($this->toolEventHtml[$event]);
-            $title = (fn() => $this->title)->call($this->toolEventHtml[$event]);
-            $liNormal   = sprintf($li, "lay-event='{$event}'", $icon, $title);
-            $liDisabled = sprintf($disable_li, "", $icon, $title);
-
-            $html .= isset($this->eventWhere[$event])
-                ? strtr($where_template, [
-                    ":where"   => $this->eventWhere[$event],
-                    ":html"    => $liNormal,
-                    ":disable" => $liDisabled
-                ])
-                : ($this->handleStyle & self::HANDLE_STYLE_CONTEXT_LI ? $liNormal : $this->toolEventHtml[$event]);
-        }
-        return $html;
-    }
-
-    /**
-     * 获取上下文的js
-     * @return string
-     */
-    public function getContextJs(): string
-    {
-        if (!($this->handleStyle & (self::HANDLE_STYLE_CONTEXT_BUTTON + self::HANDLE_STYLE_CONTEXT_LI))) {
-            return '';
-        }
-
-        return <<<JS
-            var data = res.data;
-            $('.layui-table-body tr').on('contextmenu', function (e) {
-                var index = $(this).attr('data-index');  //获取该表格行的数据
-                var x = e.originalEvent.x;  //获取鼠标位置x坐标
-                var y = e.originalEvent.y;  //获取鼠标位置y坐标
-
-                window.y_table_data = data[index];    //将该行的数据存放到自己定义的变量中
-                let html = $('#sc-menu-s').html();
-                layui.laytpl(html).render(data[index], function (html) {
-                    let menu = $('#sc-menu');
-                    menu.html(html);
-                    var hw = $('html').offsetWidth;
-                    var hh = $('html').offsetHeight;
-                    let mw = menu.width();
-                    let mh = menu.height();
-                    x = (hw - x - 20) < mw ? (x - mw) : x;
-                    y = (hh - y - 20) < mh ? (y - mh) : y;
-
-                    if ($.trim(html) !== ''){
-                        $("#sc-menu").show().css({
-                            top: y + 'px',    //定位右键菜单的位置
-                            left: x + 'px'
-                        });
-                    }
-                });
-                
-                if ($.trim(html) !== ''){
-                    e.preventDefault();//取消事件的默认动
-                }
-            });
-            $(document).on('click', '#sc-menu>[lay-event]', function (e) {
-                e.stopPropagation();
-                if (table_page.tool_event.hasOwnProperty($(this).attr('lay-event'))) {
-                    table_page.tool_event[$(this).attr('lay-event')]({data:window.y_table_data});
-                    $('#sc-menu').hide();
-                }
-            }).on('contextmenu', '#sc-menu', (e)=>e.preventDefault());
-
-            $(document).click(()=>$('#sc-menu').hide());
-JS;
-
-    }
-
-    /**
      * 获取tool事件js
      * @return false|string
      */
     public function getToolJs()
     {
         return $this->getJsHandle();
+    }
+
+    /**
+     * 获取下拉菜单数据
+     * @return false|string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/7
+     */
+    public function getToolDownData()
+    {
+        return json_encode(array_values($this->downMenuData));
     }
 
     /**
@@ -522,6 +446,9 @@ JS;
         $this->toolEventJs = [
             'update' => TableAux::openPage([$updateUrl], $this->lang('edit')),
         ];
+
+//        (new Event($this, 'update'))->downTitle('修改', 'edit')
+//            ->setJs(TableAux::openPage([$updateUrl], $this->lang('edit')));
     }
 
     /**
@@ -552,6 +479,14 @@ JS;
     {
         $this->customJs .= $customJs;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHandleStyle(): int
+    {
+        return $this->handleStyle;
     }
 }
 

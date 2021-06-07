@@ -68,12 +68,12 @@ class TableAux
     {
         if (is_array($url)) {
             $url_ = array_shift($url);
-            $url_ = strpos($url_, '?') !== false ? "'{$url_}&id=' + obj.data[primary]" : "'{$url_}?id=' + obj.data[primary]";
+            $url_ = strpos($url_, '?') !== false ? "'{$url_}&id=' + obj[primary]" : "'{$url_}?id=' + obj[primary]";
             foreach ($url as $value) {
                 $vArr = explode('->', $value);
                 $field = $vArr[0];
                 $alias = $vArr[1] ?? $vArr[0];
-                $url_ .= " + '&{$alias}=' + obj.data.{$field}";
+                $url_ .= " + '&{$alias}=' + obj.{$field}";
             }
         }else{
             $url_ = "'{$url}'";
@@ -90,7 +90,7 @@ class TableAux
     {
         return preg_replace_callback('/\{\w+\}/', function ($v) {
             $var = strtr(current($v), ['{' => '', '}' => '']);
-            return "'+ obj.data.{$var} +'";
+            return "'+ obj.{$var} +'";
         }, $title);
     }
 
@@ -107,7 +107,7 @@ class TableAux
         if (!access_control($url)) return false;
 
         $tip     = $tip ? self::pageTitleHandle($tip) : lang('Confirm this operation');
-        return (new Ajax($url))->method($type)->setConfig(['icon' => 3])->setTip($tip)->dataCode('obj.data');
+        return (new Ajax($url))->method($type)->setConfig(['icon' => 3])->setTip($tip)->dataCode('obj');
     }
 
     /**

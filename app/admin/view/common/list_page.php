@@ -29,32 +29,9 @@
         bottom:0;
         background: #fff;
     }
-    #sc-menu{
-        background-color: white;
-        box-shadow: 5px 7px 2px rgba(0,0,0, 0.3);
-        padding: 5px;
-        border-radius: 3px;
-        border: 1px solid #ddd;
-        z-index: 10000;
-    }
-    #sc-menu .shadow{
-        list-style: none;
-        line-height: 30px;
-        text-align: center;
-        margin-bottom: 5px;
-        padding: 0 5px;
-        box-sizing: border-box;
-    }
-    #sc-menu .shadow:not(.layui-disabled):hover{
-        background-color: #f2f2f2;
-        cursor: pointer;
-    }
-    .shadow{
-        position: relative;
-        max-width: 270px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1) inset;
-        border: 1px solid #ddd;
-        border-radius: 3px;
+    .layui-menu.layui-dropdown-menu li:not(.layui-disabled):hover{
+        box-shadow: inset 0 0 25px #ddd;
+        border-radius: 5px;
     }
 
 </style>
@@ -117,7 +94,7 @@
         done: function (res) {
             custom.enlarge(layer, $, '.layer-photos-demo');
             window.table = table;
-            <?= $table->getContextJs() ?>
+            dropdownMenu(res.data);
         }
     }
 
@@ -146,7 +123,7 @@
     table.on('toolbar(sc)', function (obj) {
         try {
             if (!/^LAYTABLE_/.test(obj.event)){
-                table_page.toolbar_event[obj.event](obj);
+                table_page.toolbar_event[obj.event](obj.data);
             }
         }catch (e) {
             console.log(e)
@@ -157,14 +134,15 @@
     /**
      * tool 事件
      */
+    <?php if ($table->getHandleStyle() === $table::HANDLE_STYLE_NORMAL){ ?>
     table.on('tool(sc)', function (obj) {
         try {
-            table_page.tool_event[obj.event](obj);
+            table_page.tool_event[obj.event](obj.data);
         }catch (e) {
-            console.log(e)
             notice.error('<?= lang("Operation is undefined") ?>');
         }
     });
+    <?php } ?>
 
     /**
      * 排序事件
@@ -228,6 +206,36 @@
                 }
             });
         })
+    }
+
+    /**
+     * 菜单
+     * @param data
+     */
+    function dropdownMenu(data){
+        let  line_data = {}
+        layui.dropdown.render({
+            elem: '.menu-down-sc'
+            ,data: <?= $table->getToolDownData() ?>
+            ,click: function(data, othis){
+                if (othis.hasClass('layui-disabled')){
+                    return false;
+                }
+                console.log(line_data)
+                table_page.tool_event[data.event](line_data);
+            }
+            ,ready: function(elemPanel, elem){
+                line_data = data[$('.menu-down-sc').index(elem)];
+                for (let i = 0; i < this.data.length; i++){
+                    if (!this.data[i].hasOwnProperty('where')){
+                        continue;
+                    }
+                    if (!eval(this.data[i].where)) {
+                        elemPanel.find('li').eq(i).addClass('layui-disabled');
+                    }
+                }
+            }
+        });
     }
 
     <?= $search->getUnitJs();?>

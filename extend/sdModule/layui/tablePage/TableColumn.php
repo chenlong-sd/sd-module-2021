@@ -6,6 +6,8 @@
 
 namespace sdModule\layui\tablePage;
 
+use think\helper\Str;
+
 /**
  * Class TableColumn
  * @package sdModule\layui\tablePage
@@ -52,6 +54,17 @@ class TableColumn implements \ArrayAccess
     }
 
     /**
+     * @return $this
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/7
+     */
+    public function addSort(): TableColumn
+    {
+        $this->column['sort'] = true;
+        return $this;
+    }
+
+    /**
      * 设置图片模板
      * @return $this
      */
@@ -94,16 +107,25 @@ class TableColumn implements \ArrayAccess
     /**
      * 设置列为开关
      * @param string $field 该值对应的字段
-     * @param array $data 开关的两个数据， [open_value => open_title, close_value => close_title]
+     * @param array $data 开关的两个数据， [open_value => open_title, close_value => close_title], 不传默认读取对应的common/model下的字段设置
      * @param Ajax|null $js_code ajax 请求代码 可不传，默认请求当前的 switchHandle 函数， 自定义的可传这个参数或者重写 switchHandle
      * @return $this
      */
-    public function switch(string $field, array $data, ?Ajax $js_code = null): TableColumn
+    public function switch(string $field = '', array $data = [], ?Ajax $js_code = null): TableColumn
     {
+        $field = $field ?: $this->column['field'];
+        if (!$data) {
+            // 没有传值data, 读取对应的common/model下的字段配置数据
+            $controller = request()->controller();
+            $fieldA     = Str::studly($field);
+            $data       = call_user_func("\\app\\common\\model\\{$controller}::get{$fieldA}Sc", false);
+        }
+
         $open_value  = array_key_first($data);
         $close_value = array_key_last($data);
         $title       = implode('|', $data);
         $js_code     = $js_code instanceof Ajax ? $js_code : new Ajax(url('switchHandle'));
+
         $this->column['templet'] = function () use ($open_value, $title){
             return <<<JS
         let checked = "{$open_value}" == obj.{$this->column['field']} ? "checked" : "";
@@ -158,7 +180,7 @@ JS;
     public function setFormat(string $format): TableColumn
     {
         $format = strtr($format, ['{' => '${obj.']);
-        $this->column['templet'] = fn() => "return `$format`;";
+        $this->setTemplate("return `$format`;");
         return $this;
     }
 
@@ -174,7 +196,7 @@ JS;
         array_unshift($field, $this->column['field']);
         $field = array_map(fn($v) => 'obj.' . $v, $field);
         $code  = 'return ' . implode(" + '{$link_symbol}' +", $field) . ';';
-        $this->column['templet'] = fn() => $code;
+        $this->setTemplate($code);
         return $this;
     }
 

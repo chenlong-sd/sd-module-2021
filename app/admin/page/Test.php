@@ -31,11 +31,11 @@ class Test extends BasePage
     {
         $table = TablePage::create([
             TableAux::column()->checkbox(),
-            TableAux::column('id', 'ID'),
+            TableAux::column('id', 'ID')->addSort(),
             TableAux::column('title', '标题')->setFormat('标题：{title}, 简介：{intro}'),
             TableAux::column('cover', '封面')->image(),
             TableAux::column('intro', '简介'),
-            TableAux::column('status_1', '状态')->switch('status', \app\admin\model\Test::getStatusSc(false)),
+            TableAux::column('status_1', '状态')->switch('status'),
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
             TableAux::column('create_time', '创建时间'),
@@ -45,8 +45,11 @@ class Test extends BasePage
 
         $table->setHandleAttr([
             'align' => 'center',
-            'width' => 150
+            'width' => 250
         ]);
+//        $table->setHandleStyle(TablePage::HANDLE_STYLE_DOWN);
+//        $table->addEvent()->downTitle('测试', 'add-1')
+//            ->setJs((new Ajax(url('asd')))->prompt('asd'));
         return $table;
     }
 

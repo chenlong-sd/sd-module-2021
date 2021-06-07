@@ -8,6 +8,7 @@ namespace sdModule\layui\tablePage;
 
 
 use app\common\SdException;
+use sdModule\layui\Dom;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 
@@ -85,6 +86,33 @@ class Event
     {
         $this->setPageAttr('eventWhere', $where);
         $this->setPageAttr('whereNotMeet', $is_hidden);
+        return $this;
+    }
+
+    /**
+     * 下拉标题设置
+     * @param string $title 菜单标题
+     * @param string $icon 菜单图标
+     * @return Event
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/7
+     */
+    public function downTitle(string $title, string $icon = ''): Event
+    {
+        if ($icon) {
+            if (substr($icon, 0, 9) === 'layui-icon'){
+                $icon = substr($icon, 9);
+            }
+            $icon = Dom::create('i')->addClass("layui-icon layui-icon-{$icon}");
+        }
+
+        $html = Dom::create('span')->addContent($icon)->addContent("{{d.title}}");
+        $this->setPageAttr('downMenuData', [
+            'title' => $title,
+            'templet' => (string)$html,
+            'id' => 'menu' . rand(1, 99999),
+            'event' => $this->event
+        ]);
         return $this;
     }
 
