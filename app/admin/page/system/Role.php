@@ -13,19 +13,20 @@ use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 
 class Role extends BasePage
 {
 
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return ListsPage
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('id', 'ID'),
             TableAux::column('role', '角色名'),
@@ -35,15 +36,17 @@ class Role extends BasePage
             TableAux::column('create_time', '创建时间'),
         ]);
 
-        $table->setHandleWidth(180);
-
-        $table->addBarEvent('directly_under')->setHtml(Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'))
+        $table->setHandleAttr([
+            'width' => 180
+        ]);
+        $table->setEventMode(ListsPage::MENU_MODE);
+        $table->addBarEvent('directly_under')->setNormalBtn('直属', 'username', 'sm')
             ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
 
-        $table->addBarEvent('all')->setHtml(Layui::button('全部', 'group')->setEvent('all')->normal('sm'))
+        $table->addBarEvent('all')->setNormalBtn('全部', 'group', 'sm')
             ->setJs(TableAux::searchWhere(['mode' => 'all']));
 
-        $table->addEvent('power')->setHtml(Layui::button('权限设置', 'auz')->setEvent('power')->normal('xs'))
+        $table->addEvent('power')->setNormalBtn('权限设置', 'auz')
             ->setJs(TableAux::openPage([url('system.Power/power'), 'role_id'], '权限设置'));
 
         return $table;

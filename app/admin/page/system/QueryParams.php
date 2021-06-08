@@ -10,13 +10,8 @@ namespace app\admin\page\system;
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
-use sdModule\layuiSearch\Form;
-use sdModule\layui\form\FormUnit;
-use app\admin\model\system\QueryParams as MyModel;
-use sdModule\layuiSearch\SearchForm;
-use sdModule\layuiSearch\generate\TimeRange;
-
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 
 /**
  * Class QueryParams
@@ -28,9 +23,9 @@ class QueryParams extends BasePage
      * 获取创建列表table的数据
      * @return TablePage
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('id', ''),
             TableAux::column('method', '请求参数类型'),
@@ -42,7 +37,6 @@ class QueryParams extends BasePage
             TableAux::column('delete_time', '删除时间'),
         ]);
 
-        $table->setHandleWidth(150);
         return $table;
     }
 

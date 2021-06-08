@@ -57,10 +57,12 @@ class Button
      */
     private function button(): Dom
     {
-        return Dom::create('button')->addAttr([
-            'type' =>  'button',
-            'lay-event' => $this->event,
-        ])->addClass($this->class_name)->addContent($this->icon())->addContent($this->title);
+        $button = Dom::create('button')->addAttr('type','button')
+            ->addClass($this->class_name)->addContent($this->icon())->addContent($this->title);
+        if ($this->event){
+            $button->addAttr('lay-event', $this->event);
+        }
+        return $button;
     }
 
     /**

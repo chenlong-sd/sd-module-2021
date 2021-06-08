@@ -1,7 +1,10 @@
 {extend name="frame"}
-<?php /** @var \sdModule\layui\tablePage\ListsPage $table */ $table->render(); ?>
+<?php /** @var \sdModule\layui\tablePage\ListsPage $table */ ?>
 {block name="title"}<?=$page_name ?? lang("Lists")?>{/block}
-{block name="meta"}{:token_meta()}{/block}
+{block name="meta"}
+<?php $table->render(); ?>
+{:token_meta()}
+{/block}
 {block name="head"}
 <style>
     .layui-table-body.layui-table-main{
@@ -32,6 +35,10 @@
     .layui-menu.layui-dropdown-menu li:not(.layui-disabled):hover{
         box-shadow: inset 0 0 25px #ddd;
         border-radius: 5px;
+    }
+    .layui-menu-body-title{
+        border-bottom: 1px solid #ddd;
+        text-align: center;
     }
 
 </style>
@@ -217,8 +224,11 @@
                 if (othis.hasClass('layui-disabled')){
                     return false;
                 }
-                console.log(line_data)
-                table_page.tool_event[data.event](line_data);
+                try {
+                    table_page.tool_event[data.id](line_data);
+                }catch (e) {
+                    notice.error('<?= lang("Operation is undefined") ?>');
+                }
             }
             ,ready: function(elemPanel, elem){
                 line_data = data[$('.menu-down-sc').index(elem)];
@@ -226,7 +236,7 @@
                     if (!this.data[i].hasOwnProperty('where')){
                         continue;
                     }
-                    if (!eval(this.data[i].where)) {
+                    if (this.data[i].where && !eval(this.data[i].where)) {
                         elemPanel.find('li').eq(i).addClass('layui-disabled');
                     }
                 }

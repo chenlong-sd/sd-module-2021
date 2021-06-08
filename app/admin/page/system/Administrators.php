@@ -15,7 +15,8 @@ use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 use think\facade\Db;
 
 class Administrators extends BasePage
@@ -23,9 +24,10 @@ class Administrators extends BasePage
 
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return ListsPage
+     * @throws \app\common\SdException
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
         $field_data = [
             TableAux::column()->checkbox(),
@@ -40,11 +42,13 @@ class Administrators extends BasePage
             TableAux::column('create_time', '创建时间'),
         ];
 
-        $table = TablePage::create($field_data);
-        $table->addBarEvent('directly_under')->setHtml(Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'))
+        $table = ListsPage::create($field_data);
+        $table->addBarEvent('directly_under')
+            ->setNormalBtn('直属','username', 'sm')
             ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
 
-        $table->addBarEvent('all')->setHtml(Layui::button('全部', 'group')->setEvent('all')->normal('sm'))
+        $table->addBarEvent('all')
+            ->setNormalBtn('全部','username', 'sm')
             ->setJs(TableAux::searchWhere(['mode' => 'all']));
         return $table;
     }

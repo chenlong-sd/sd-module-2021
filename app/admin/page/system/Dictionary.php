@@ -10,7 +10,8 @@ namespace app\admin\page\system;
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\Form;
 use sdModule\layui\form\FormUnit;
 use app\admin\model\system\Dictionary as MyModel;
@@ -24,11 +25,12 @@ class Dictionary extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return ListsPage
+     * @throws \app\common\SdException
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('sign', '字典标识'),
             TableAux::column('name', '标识名称'),
@@ -48,12 +50,12 @@ class Dictionary extends BasePage
     }
 
     /**
-     * @return TablePage
+     * @return ListsPage
      * @throws \app\common\SdException
      */
     public function getDictionaryPageData()
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('dictionary_value', '字典值'),
             TableAux::column('dictionary_name', '字典名字'),

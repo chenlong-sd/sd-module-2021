@@ -9,6 +9,9 @@ namespace sdModule\layui\tablePage;
 
 use sdModule\layui\Dom;
 use sdModule\layui\Layui;
+use sdModule\layui\tablePage\module\Event;
+use sdModule\layui\tablePage\module\TableAux;
+use sdModule\layui\tablePage\module\TableColumn;
 
 class ListsPage
 {
@@ -28,7 +31,7 @@ class ListsPage
      */
     private array $event = [];
     /**
-     * @var array|\sdModule\layui\tablePage\module\Event[] 头部事件
+     * @var array|Event[] 头部事件
      */
     private array $barEvent = [];
 
@@ -80,7 +83,7 @@ class ListsPage
      */
     public function addEvent(string $event = ''): module\Event
     {
-        return new \sdModule\layui\tablePage\module\Event($this, $event);
+        return new Event($this, $event);
     }
 
     /**
@@ -92,7 +95,7 @@ class ListsPage
      */
     public function addBarEvent(string $event = ''): module\Event
     {
-        return new \sdModule\layui\tablePage\module\Event($this, $event, true);
+        return new Event($this, $event, true);
     }
 
     /**
@@ -104,6 +107,16 @@ class ListsPage
     {
         $this->eventMode = $eventMode;
         return $this;
+    }
+
+    public function removeEvent(array $event)
+    {
+        $this->event = array_diff_key($this->event, array_flip($event));
+    }
+
+    public function removeBarEvent(array $event)
+    {
+        $this->barEvent = array_diff_key($this->barEvent, array_flip($event));
     }
 
     /**
@@ -167,9 +180,12 @@ class ListsPage
                 $icon = Dom::create('i')->addClass("layui-icon layui-icon-{$icon}");
                 $elem->addContent($icon);
             }
-            $dom['templet'] = (string)$elem->addContent($event->title);
-            $dom['title']   = $event->title;
-            $dom['id']      = $event->event;
+            $dom[] = [
+                'templet' => (string)$elem->addContent($event->title),
+                'title'   => $event->title,
+                'id'      => $event->event,
+                'where'   => $event->where,
+            ];
         }
 
         return json_encode($dom, JSON_UNESCAPED_UNICODE);
@@ -202,14 +218,14 @@ class ListsPage
      * @date 2021/6/8
      */
     private function eventPowerCheck()
-    {
-        array_filter($this->event,    fn($v) => $v->js !== 'false');
-        array_filter($this->barEvent, fn($v) => $v->js !== 'false');
+    {;
+        $this->event    = array_filter($this->event,    fn($v) => $v->js !== 'false');
+        $this->barEvent = array_filter($this->barEvent, fn($v) => $v->js !== 'false');
     }
 
     /**
      * 按钮模式的元素html
-     * @param array|\sdModule\layui\tablePage\module\Event[] $element
+     * @param array|Event[] $element
      * @return string
      * @author chenlong <vip_chenlong@163.com>
      * @date 2021/6/8
@@ -218,8 +234,11 @@ class ListsPage
     {
         $btn = [];
         foreach ($element as $event){
-            $btn[] = Layui::button($event->title, $event->icon)->setEvent($event->event)->setSize($event->btnSize)
+            $showButton = Layui::button($event->title, $event->icon)->setEvent($event->event)->setSize($event->btnSize)
                 ->addBtnClass("layui-btn-{$event->btnType}");
+            $disabledButton = Layui::button($event->title, $event->icon)->setSize($event->btnSize)
+                ->addBtnClass("layui-btn-disabled");
+            $btn[] = $event->where ? "{{# if ($event->where) { }} {$showButton} {{# }else{ }} {$disabledButton} {{# } }}" : $showButton;
         }
         return implode($btn);
     }
@@ -232,7 +251,15 @@ class ListsPage
      */
     private function menuModeElement(): string
     {
-        return Layui::button('操作', 'senior')->addBtnClass('menu-down-sc')->normal('xs');
+        $size = 'xs';
+        foreach ($this->filedConfig as $value){
+            if (!empty($value['templet']) && $value['templet'] === '@image') {
+                $size = 'sm';
+                break;
+            }
+        }
+
+        return Layui::button('更多操作', 'more')->addBtnClass('menu-down-sc')->primary($size);
     }
 
     /**
@@ -243,11 +270,11 @@ class ListsPage
      */
     private function setDefaultEvent()
     {
-        $this->addEvent('update')->setNormalBtn('修改', 'edit', 'xs')
+        $this->addEvent('update')->setDefaultBtn('修改', 'edit', 'xs')
             ->setJs(TableAux::openPage([url('update')], '修改'));
 
-        $this->addBarEvent('create')->setDefaultBtn('修改', 'add-1', 'sm')
-            ->setJs(TableAux::openPage(url('update'), '修改'));
+        $this->addBarEvent('create')->setDefaultBtn('新增', 'add-1', 'sm')
+            ->setJs(TableAux::openPage(url('create'), '新增'));
 
         $this->addBarEvent('delete')->setDangerBtn('批量删除', 'delete', 'sm')
             ->setJs(TableAux::batchAjax(url('del'), 'post')->setTip('确认删除吗？'));
@@ -325,6 +352,16 @@ class ListsPage
     public function setHandleAttr(array $handleAttr): ListsPage
     {
         $this->handleAttr = $handleAttr;
+        return $this;
+    }
+
+    /**
+     * @param array $config
+     * @return ListsPage
+     */
+    public function setConfig(array $config): ListsPage
+    {
+        $this->config = array_merge($this->config, $config);
         return $this;
     }
 

@@ -4,13 +4,14 @@
 namespace sdModule\layui;
 
 use sdModule\layui\item\Button;
-use sdModule\layui\tablePage\Event;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\module\Event;
+use sdModule\layui\tablePage\module\TableAux;
 
 /**
  * PHP version 7.4.* ~
  * Class TablePage
  * @package sdModule\layui
+ * @deprecated
  * @method mixed lang($value) 多语言
  * @method mixed url(...$value) 路径
  */

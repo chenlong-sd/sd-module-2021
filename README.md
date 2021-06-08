@@ -190,11 +190,11 @@ class test
 ![示例](./md_image/2.png)
 示例代码
 ```php
-    use sdModule\layui\TablePage;
-    use sdModule\layui\TablePage\TableAux;
+    use sdModule\layui\TablePage\ListsPage;
+    use sdModule\layui\TablePage\module\TableAux;
     use sdModule\layui\Layui;
 
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(), // 直接传定义列属性的数组，参考layui table
             // 添加排序
             TableAux::column('id', 'ID')->addSort(),
@@ -214,13 +214,14 @@ class test
            'align' => 'center',
            'width' => 150
          ]);
-
+         // 设置操作栏为下拉菜单模式
+        $table->setEventMode($table::MENU_MODE); 
         // 添加事件并设置对应的HTML和JS
         $table->addBarEvent('event')->setDefaultBtn('asd', 'add-1', 'xs')->setJs(TableAux::openPage(url('tetest'), 'veve'));
         // 添加事件并设置对应的自定义HTML和JS
         $table->addBarEvent('event')->setHtml('<btn  lay-event="event">点我<btn>')->setJs(TableAux::openPage(url('tetest'), 'veve'));
         // 设置事件的展示条件 
-        $table->addEvent('event')->setWhere('d.status == 1', true);
+        $table->addEvent('event')->setWhere('d.status == 1');
         $table->setConfig(['skin' => 'row']); // 设置layui渲染table的属性值
         
         // 设置layui渲染table的属性值，有页面参数条件时
@@ -241,15 +242,6 @@ class test
         TableAux::ajax(url('incd'), 'get', '确认通过此审核此吗？')->setConfig(['icon' => 3, 'title' => '警告']);
           // 设置js事件，增加列表搜索条件，并重置表格
         TableAux::searchWhere(['id' => 1]);
-
-        // 设置行事件的展示条件， d :当前行数据的对象， 要id => d.id
-        $table->setEventWhere('event', 'd.status_ == 1');
-        //设置表格大小
-        $table->setSize('lg');
-        // 设置操作风格        
-        $table->setHandleStyle(TablePage::HANDLE_STYLE_NORMAL);
-        $table->setHandleStyle(TablePage::HANDLE_STYLE_ALL ^ TablePage::HANDLE_STYLE_CONTEXT_BUTTON);
-        
 ```
 ### 自定义html页面，复制view/admin/common/custom_page.php 文件
 ### 该写HTML页面的时候，就要写

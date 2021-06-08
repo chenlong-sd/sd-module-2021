@@ -62,6 +62,10 @@ class Event
      * @var bool
      */
     private bool $isBar;
+    /**
+     * @var string
+     */
+    public string $where = '';
 
     /**
      * Event constructor.
@@ -69,7 +73,7 @@ class Event
      * @param string $event
      * @param bool $is_bar
      */
-    public function __construct(ListsPage $listsPage, string $event = '', $is_bar = false)
+    public function __construct(ListsPage $listsPage, string $event = '', bool $is_bar = false)
     {
         $this->event     = $event ?: 'event_' . mt_rand(1, 999);
         $this->listsPage = $listsPage;
@@ -133,6 +137,19 @@ class Event
     {
         $this->js = $js;
         return $this->resetEvent();
+    }
+
+    /**
+     * 设置展示条件
+     * @param string $whereExpression
+     * @return Event
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    public function setWhere(string $whereExpression): Event
+    {
+        $this->where = $whereExpression;
+        return $this;
     }
 
     /**

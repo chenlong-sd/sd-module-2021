@@ -7,8 +7,8 @@
 namespace //=={namespace}==//;
 
 use app\common\BasePage;
-use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\Form;
 //=={use}==//
 
@@ -21,11 +21,11 @@ class //=={Table}==// extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return ListsPage
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             //=={table_page}==//
         ]);
 

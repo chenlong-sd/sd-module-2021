@@ -11,7 +11,8 @@ use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
 use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 
 class Log extends BasePage
 {
@@ -24,9 +25,9 @@ class Log extends BasePage
      * 获取创建列表table的数据
      * @return TablePage
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('method', '请求方式'),
             TableAux::column('route_title', '权限节点名'),
@@ -36,7 +37,6 @@ class Log extends BasePage
             TableAux::column('create_time', '创建时间'),
         ]);
 
-        $table->setHandleWidth(150);
         $table->removeEvent(['update', 'delete']);
         $table->removeBarEvent(['create', 'delete']);
         return $table;

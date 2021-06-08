@@ -4,7 +4,7 @@
  * User: chenlong <vip_chenlong@163.com>
  */
 
-namespace sdModule\layui\tablePage;
+namespace sdModule\layui\tablePage\module;
 
 
 class OpenPage

@@ -9,8 +9,8 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\FormUnit;
 
 
@@ -22,35 +22,35 @@ class Api extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return ListsPage
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
-            TableAux::column('method', '接口名')->mergeField('api_name', '== '),
+            TableAux::column('method', '接口名')->mergeField('api_name', ' '),
             TableAux::column('path', '路径'),
             TableAux::column('status', '对接状态'),
             TableAux::column('update_time', '修改时间'),
         ]);
 
-        $table->setHandleWidth(210);
         $table->setConfig([
             'where' => ['search' => ['api_module_id' => request()->get('id')]],
             'page' => false,
+            'widht' => 210
         ]);
         $table->removeBarEvent(['create','delete']);
-        $table->setEventWhere('docking', 'd.status_1 == 1');
+
         $table->addEvent('see')
             ->setNormalBtn('查看','read','xs')
             ->setJs(TableAux::openPage([url('update?see=1')], '查看', ['area' => ['90%', "90%"]]));
-        $table->addEvent('docking')
+        $table->addEvent('docking')->setWhere('d.status_1 == 1')
             ->setWarmBtn('已对接','','xs')
             ->setJs(TableAux::ajax(url('docking'), '确认已对接？'));
         $table->addBarEvent('createii')->setDefaultBtn('新增','add-1','sm')
             ->setJs(TableAux::openPage(url(sprintf('system.api/create?api_module_id=%s', request()->get('id'))), '创建', ['area' => ['90%', '90%']]));
 
-        $table->setCustomJs("setInterval(()=>table.reload('sc'), 60000)");
+        $table->addJs("setInterval(()=>table.reload('sc'), 60000)");
 
         return $table;
     }

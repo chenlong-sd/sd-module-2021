@@ -10,7 +10,8 @@ namespace app\admin\page\system;
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\FormUnit;
 
 
@@ -22,12 +23,12 @@ class ApiModule extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return ListsPage
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData(): ListsPage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('item_name', '模块名')
                 ->setTemplate("return obj.api.length ? '<span style=\"color:red;font-weight: bold\">[ 待对接 ]</span> ' + obj.item_name : '<span style=\"color:black\">'+ obj.item_name +'</span>'"),
@@ -35,7 +36,9 @@ class ApiModule extends BasePage
             TableAux::column('update_time', '修改时间'),
         ]);
 
-        $table->setHandleWidth(150);
+        $table->setHandleAttr([
+            'width' => 150
+        ]);
         $table->addEvent('api')->setNormalBtn('接口','release','xs')
             ->setJs(TableAux::openTabs([url('system.Api/index'), 'url_prefix', 'api_module_id'], '【{item_name}】接口维护'));
         return $table;

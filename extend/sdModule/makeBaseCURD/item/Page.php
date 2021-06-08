@@ -226,7 +226,7 @@ class Page implements Item
     private function selectSearch(string $field, string $placeholder, $data, string $alias)
     {
         $replace = [$alias, $field, $placeholder, $data];
-        $this->replace['search_form'][] = sprintf("FormUnit::Select('%s.%s')->placeholder('%s')->options('%s'),", ...$replace);
+        $this->replace['search_form'][] = sprintf("FormUnit::Select('%s.%s')->placeholder('%s')->options(%s),", ...$replace);
     }
 
     /**

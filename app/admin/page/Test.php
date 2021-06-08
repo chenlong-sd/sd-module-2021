@@ -1,17 +1,15 @@
 <?php
 /**
  * Test.php
- * Date: 2021-05-06 15:48:38
+ * Date: 2021-06-09 00:44:55
  * User: chenlong <vip_chenlong@163.com>
  */
 
 namespace app\admin\page;
 
 use app\common\BasePage;
-use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\Ajax;
 use sdModule\layui\tablePage\ListsPage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\Form;
 use sdModule\layui\form\FormUnit;
 use app\admin\model\Test as MyModel;
@@ -26,38 +24,27 @@ class Test extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return ListsPage
      */
-    public function getTablePageData()
+    public function getTablePageData(): ListsPage
     {
         $table = ListsPage::create([
             TableAux::column()->checkbox(),
-            TableAux::column('id', 'ID')->addSort(),
-            TableAux::column('title', '标题')->setFormat('标题：{title}, 简介：{intro}'),
+            TableAux::column('id', 'ID'),
+            TableAux::column('title', '标题'),
             TableAux::column('cover', '封面')->image(),
             TableAux::column('intro', '简介'),
-            TableAux::column('status_1', '状态')->switch('status'),
+            TableAux::column('status', '状态'),
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
-            TableAux::column('create_time', '创建时间'),
             TableAux::column('update_time', '修改时间'),
-            TableAux::column('delete_time', '删除时间'),
         ]);
-
-        $table->addEvent('')->setHtml('ads', 'add-1')
-            ->setJs(TableAux::openPage([url('update')], '修改{title}'));
-        $table->addBarEvent('')->setHtml('ads', 'add-1')
-            ->setJs(TableAux::openPage(url('create'), '新增'));
-//        $table->setEventMode($table::MENU_MODE);
-//        halt($table->getEventElement());
 
         $table->setHandleAttr([
             'align' => 'center',
-            'width' => 250
+            'width' => 150
         ]);
-//        $table->setHandleStyle(TablePage::HANDLE_STYLE_DOWN);
-//        $table->addEvent()->downTitle('测试', 'add-1')
-//            ->setJs((new Ajax(url('asd')))->prompt('asd'));
+
         return $table;
     }
 
@@ -88,14 +75,6 @@ class Test extends BasePage
         return $form->complete();
     }
 
-    /**
-     * 列表页面的名字
-     * @return string
-     */
-    public function listPageName(): string
-    {
-        return "测试表";
-    }
 
     /**
      * 创建搜索表单的数据
@@ -105,7 +84,13 @@ class Test extends BasePage
      */
     public function searchFormData(): Form
     {
-        $form_data = [];
+        $form_data = [
+            FormUnit::build(
+                FormUnit::Text('i.title%%')->placeholder('标题'),
+                FormUnit::Select('i.status')->placeholder('状态')->options(MyModel::getStatusSc(false)),
+                FormUnit::custom()->customHtml(Form::searchSubmit()),
+            )
+        ];
         return Form::create($form_data)->setSubmitHtml()->complete();
     }
 
