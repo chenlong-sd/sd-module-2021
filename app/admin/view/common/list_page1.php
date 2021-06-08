@@ -1,5 +1,5 @@
 {extend name="frame"}
-<?php /** @var \sdModule\layui\tablePage\ListsPage $table */ $table->render(); ?>
+<?php /** @var \sdModule\layui\TablePage $table */ ?>
 {block name="title"}<?=$page_name ?? lang("Lists")?>{/block}
 {block name="meta"}{:token_meta()}{/block}
 {block name="head"}
@@ -55,12 +55,12 @@
 {block name="custom"}
 <!-- table_head 模板-->
 <script id='table_head' type='text/html'>
-    <?= $table->getEventElement(true); ?>
+    <?= $table->getToolbar(); ?>
 </script>
 
 <!-- table_line 模板-->
 <script id='table_line' type='text/html'>
-    <?= $table->getEventElement(); ?>
+    <?= $table->getTool(); ?>
 </script>
 
 <div id="sc-menu" style="display: none;min-width: 100px; position: absolute"></div>
@@ -85,7 +85,7 @@
         , title: '<?=$page_name ?? lang("List data")?>'
         , limits: [10, 20, 30, 40, 50, 100, 200, 1000]
         , cols: [
-            <?= $table->getFiledConfig() ?>
+            <?= $table->getField() ?>
         ],
         done: function (res) {
             custom.enlarge(layer, $, '.layer-photos-demo');
@@ -108,9 +108,9 @@
 
     let table_page = {
         // toolbar事件定义
-        toolbar_event: {<?= $table->getEventJs(true); ?>},
+        toolbar_event:<?= $table->getToolbarJs(); ?>,
         // tool事件定义
-        tool_event: {<?= $table->getEventJs(); ?>},
+        tool_event:<?= $table->getToolJs(); ?>,
     }
 
     /**
@@ -130,7 +130,7 @@
     /**
      * tool 事件
      */
-    <?php if ($table->getEventMode() === $table::BUTTON_MODE){ ?>
+    <?php if ($table->getHandleStyle() === $table::HANDLE_STYLE_NORMAL){ ?>
     table.on('tool(sc)', function (obj) {
         try {
             table_page.tool_event[obj.event](obj.data);
@@ -212,7 +212,7 @@
         let  line_data = {}
         layui.dropdown.render({
             elem: '.menu-down-sc'
-            ,data: <?= $table->getMenuModeEventData() ?>
+            ,data: <?= $table->getToolDownData() ?>
             ,click: function(data, othis){
                 if (othis.hasClass('layui-disabled')){
                     return false;
@@ -235,6 +235,6 @@
     }
 
     <?= $search->getUnitJs();?>
-    <?= $table->getJs();?>
+    <?= $table->getCustomJs();?>
 </script>
 {/block}

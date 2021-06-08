@@ -34,13 +34,12 @@ class TableAux
     public static function openPage($url, string $title, array $config = [], $isParent = false)
     {
         $url_ = self::pageUrlHandle($url);
-        if (!access_control($url_)) return false;
         $window   = $isParent ? 'parent' : '';
         $config   = json_encode($config, JSON_UNESCAPED_UNICODE);
 
         $pageCode = sprintf("custom.frame(%s, '%s', %s, %s);", $url_, self::pageTitleHandle($title), $config, $window);
 
-        return new OpenPage($pageCode);
+        return new OpenPage($pageCode, access_control($url_));
     }
 
     /**
@@ -53,10 +52,9 @@ class TableAux
     public static function openTabs($url, string $title)
     {
         $url_ = self::pageUrlHandle($url);
-        if (!access_control($url_)) return false;
         $pageCode = sprintf("custom.openTabsPage(%s + '&__sc_tab__=1', '%s')", $url_, self::pageTitleHandle($title));
 
-        return new OpenPage($pageCode);
+        return new OpenPage($pageCode, access_control($url_));
     }
 
     /**
@@ -64,7 +62,7 @@ class TableAux
      * @param array|string $url, 是数组时，后面的参数从该行获取并拼接到链接中
      * @return string
      */
-    private static function pageUrlHandle($url)
+    private static function pageUrlHandle($url): string
     {
         if (is_array($url)) {
             $url_ = array_shift($url);
@@ -104,8 +102,6 @@ class TableAux
      */
     public static function ajax(string $url, string $tip, string $type = 'get')
     {
-        if (!access_control($url)) return false;
-
         $tip     = $tip ? self::pageTitleHandle($tip) : lang('Confirm this operation');
         return (new Ajax($url))->method($type)->setConfig(['icon' => 3])->setTip($tip)->dataCode('obj');
     }
@@ -130,9 +126,9 @@ class TableAux
      * @return string
      * @throws \app\common\SdException
      */
-    public static function jump(string $url)
+    public static function jump(string $url): string
     {
-        if (!access_control($url)) return false;
+        if (!access_control($url)) return 'false';
 
         return "location.href = '{$url}'";
     }

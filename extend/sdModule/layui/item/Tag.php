@@ -26,7 +26,8 @@ class Tag
      */
     public function rim(string $value): string
     {
-        return Dom::create('span')->addClass('layui-badge-rim')->addContent($this->lang($value));
+        $dom = Dom::create('span')->addClass('layui-badge-rim')->addContent($this->lang($value));
+        return strtr($dom, ['"' => '\'']);
     }
 
     /**
@@ -39,14 +40,15 @@ class Tag
     {
         $dot = $value ? "" : "-dot";
         if (in_array($color, ['orange', 'green', 'cyan', 'blue', 'black', 'gray', 'red',])) {
-            return Dom::create('span')->addClass("layui-badge{$dot} layui-bg-{$color}")->addContent($this->lang($value));
+            $dom = Dom::create('span')->addClass("layui-badge{$dot} layui-bg-{$color}")->addContent($this->lang($value));
         }else{
             $color = ltrim($color, 'customColor');
             $color = "#{$color}";
-            return Dom::create('span')->addClass("layui-badge{$dot}")
+            $dom = Dom::create('span')->addClass("layui-badge{$dot}")
                 ->addAttr('style', "background-color: {$color}")
                 ->addContent($this->lang($value));
         }
+        return strtr($dom, ['"' => '\'']);
     }
 
     /**

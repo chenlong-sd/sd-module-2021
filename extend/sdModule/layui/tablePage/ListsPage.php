@@ -16,9 +16,9 @@ class ListsPage
     const BUTTON_MODE = 2;
 
     /**
-     * @var string 字段的配置
+     * @var array 字段的配置
      */
-    private string $filedConfig = '';
+    private array $filedConfig = [];
     /**
      * @var array table 的配置
      */
@@ -38,12 +38,23 @@ class ListsPage
     private int $eventMode = self::BUTTON_MODE;
 
     /**
+     * @var array 页面的js
+     */
+    private array $js = [];
+    /**
+     * @var array 操作列的数据
+     */
+    private array $handleAttr = [];
+
+    /**
      * ListsPage constructor.
      * @param TableColumn[] $filedConfig
+     * @throws \app\common\SdException
      */
     public function __construct(array $filedConfig)
     {
-        $this->filedConfig = $this->fieldConfigDataHandle($filedConfig);
+        $this->filedConfig = $filedConfig;
+        $this->setDefaultEvent();
     }
 
 
@@ -51,6 +62,7 @@ class ListsPage
      * 创建列表页面数据
      * @param TableColumn[] $filedConfig
      * @return ListsPage
+     * @throws \app\common\SdException
      * @author chenlong <vip_chenlong@163.com>
      * @date 2021/6/8
      */
@@ -94,6 +106,30 @@ class ListsPage
         return $this;
     }
 
+    /**
+     * 开始页面渲染
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    public function render()
+    {
+        $this->eventPowerCheck();
+    }
+
+    /**
+     * 获取事件js
+     * @param bool $is_bar 是否是头部事件
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    public function getEventJs(bool $is_bar = false): string
+    {
+        $event = $is_bar ? $this->barEvent : $this->event;
+        $js    = array_map(fn($v) => "{$v->event}(obj){{$v->js}},", $event);
+        return implode($js);
+    }
+
 
     /**
      * 获取事件元素的html
@@ -104,7 +140,10 @@ class ListsPage
      */
     public function getEventElement(bool $is_bar = false): string
     {
-        return $this->btnModeElement($is_bar ? $this->barEvent :$this->event);
+        if ($this->eventMode === self::BUTTON_MODE) {
+            return $this->btnModeElement($is_bar ? $this->barEvent : $this->event);
+        }
+        return $is_bar ? $this->btnModeElement($this->barEvent): $this->menuModeElement();
     }
 
     /**
@@ -129,13 +168,44 @@ class ListsPage
                 $elem->addContent($icon);
             }
             $dom['templet'] = (string)$elem->addContent($event->title);
-            $dom['title'] = $event->title;
-            $dom['id'] = $event->event;
+            $dom['title']   = $event->title;
+            $dom['id']      = $event->event;
         }
 
         return json_encode($dom, JSON_UNESCAPED_UNICODE);
     }
 
+
+    /**
+     * 添加js
+     * @param string $js
+     * @return ListsPage
+     */
+    public function addJs(string $js): ListsPage
+    {
+        $this->js[] = $js;
+        return $this;
+    }
+
+    /**
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    public function getJs(): string
+    {
+        return implode($this->js);
+    }
+
+    /**
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    private function eventPowerCheck()
+    {
+        array_filter($this->event,    fn($v) => $v->js !== 'false');
+        array_filter($this->barEvent, fn($v) => $v->js !== 'false');
+    }
 
     /**
      * 按钮模式的元素html
@@ -155,6 +225,35 @@ class ListsPage
     }
 
     /**
+     * 按钮模式的元素html
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    private function menuModeElement(): string
+    {
+        return Layui::button('操作', 'senior')->addBtnClass('menu-down-sc')->normal('xs');
+    }
+
+    /**
+     * 默认事件
+     * @throws \app\common\SdException
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    private function setDefaultEvent()
+    {
+        $this->addEvent('update')->setNormalBtn('修改', 'edit', 'xs')
+            ->setJs(TableAux::openPage([url('update')], '修改'));
+
+        $this->addBarEvent('create')->setDefaultBtn('修改', 'add-1', 'sm')
+            ->setJs(TableAux::openPage(url('update'), '修改'));
+
+        $this->addBarEvent('delete')->setDangerBtn('批量删除', 'delete', 'sm')
+            ->setJs(TableAux::batchAjax(url('del'), 'post')->setTip('确认删除吗？'));
+    }
+
+    /**
      * 字段数据处理，主要针对模板处理
      * @param TableColumn[] $filedConfig
      * @return string
@@ -166,17 +265,19 @@ class ListsPage
         $functionReplace = [];
 
         foreach ($filedConfig as $column) {
+            if ($column->js) $this->addJs($column->js);
+
             if (empty($column['templet'])) {
                 continue;
             }
 
-            $field             = empty($column['field']) ? 'field' . rand(1, 999) : $column['field'];
-            $column['templet'] = "@{$field}";
-
+            $field = empty($column['field']) ? 'field' . rand(1, 999) : $column['field'];
             if ($column['templet'] instanceof \Closure) {
                 $js_code = call_user_func($column['templet']);
                 $functionReplace["\"@{$field}\""] = "function(obj){{$js_code}}";
+                $column['templet'] = "@{$field}";
             } elseif ($column['templet'] === '@image') {
+                $column['templet'] = "@{$field}";
                 $this->config['size'] = 'lg';
                 $functionReplace["\"@{$field}\""] = "function (obj) {return custom.tableImageShow(obj.{$field});}";
             }
@@ -184,6 +285,47 @@ class ListsPage
 
         $filedConfig = json_encode(array_map(fn($v) => array_filter($v->toArray()), $filedConfig), JSON_UNESCAPED_UNICODE);
         return strtr($filedConfig, $functionReplace);
+    }
+
+    /**
+     * @return string
+     */
+    public function getFiledConfig(): string
+    {
+        if ($this->event) {
+            $handle = array_merge(['templet' => "#table_line"], $this->handleAttr);
+            $this->filedConfig[] = TableAux::column('', '操作')->param($handle);
+        }
+
+        return $this->fieldConfigDataHandle($this->filedConfig);
+    }
+
+    /**
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    public function getConfig(): string
+    {
+        return json_encode($this->config);
+    }
+
+    /**
+     * @return int
+     */
+    public function getEventMode(): int
+    {
+        return $this->eventMode;
+    }
+
+    /**
+     * @param array $handleAttr
+     * @return ListsPage
+     */
+    public function setHandleAttr(array $handleAttr): ListsPage
+    {
+        $this->handleAttr = $handleAttr;
+        return $this;
     }
 
 }

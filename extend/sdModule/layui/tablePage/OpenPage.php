@@ -20,12 +20,19 @@ class OpenPage
     private string $confirm = '';
 
     /**
+     * @var string 权限控制
+     */
+    private string $power = 'normal';
+
+    /**
      *  constructor.
      * @param string $pageCode
+     * @param bool $power
      */
-    public function __construct(string $pageCode)
+    public function __construct(string $pageCode, bool $power)
     {
         $this->pageCode = $pageCode;
+        $this->power    = $power ? 'normal' : 'false';
     }
 
     /**
@@ -46,6 +53,10 @@ class OpenPage
      */
     public function __toString(): string
     {
+        if ($this->power === 'false') {
+            return $this->power;
+        }
+
         if ($this->confirm) {
             return sprintf($this->confirm, $this->pageCode);
         }

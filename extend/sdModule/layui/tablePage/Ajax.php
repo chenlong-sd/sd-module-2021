@@ -50,12 +50,19 @@ class Ajax
     private array $prompt = [];
 
     /**
+     * @var string 权限字符 normal false
+     */
+    private string $power = 'normal';
+
+    /**
      * Ajax constructor.
      * @param string $url
+     * @throws \app\common\SdException
      */
     public function __construct(string $url)
     {
         $this->url = $url;
+        $this->power = access_control($url) ? 'normal' : 'false';
     }
 
     /**
@@ -148,6 +155,10 @@ class Ajax
      */
     public function __toString(): string
     {
+        if ($this->power === 'false') {
+            return $this->power;
+        }
+
         $successExecute = $this->successCallback === null ? "table.reload('sc');" : $this->successCallback;
         $data = $this->data ?: "{}";
         if ($this->confirm) {

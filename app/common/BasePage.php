@@ -33,7 +33,7 @@ abstract class BasePage
      * 获取创建列表table的数据
      * @return TablePage
      */
-    abstract public function getTablePageData():TablePage;
+    abstract public function getTablePageData();
 
     /**
      * 生成表单的数据

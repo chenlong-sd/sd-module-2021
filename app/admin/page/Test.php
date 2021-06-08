@@ -28,7 +28,7 @@ class Test extends BasePage
      * 获取创建列表table的数据
      * @return TablePage
      */
-    public function getTablePageData(): TablePage
+    public function getTablePageData()
     {
         $table = ListsPage::create([
             TableAux::column()->checkbox(),
@@ -44,15 +44,17 @@ class Test extends BasePage
             TableAux::column('delete_time', '删除时间'),
         ]);
 
-        $table->addEvent('')->setHtml('ads', 'add-1');
-        $table->addBarEvent('')->setHtml('ads', 'add-1');
-        $table->setEventMode($table::MENU_MODE);
-        halt($table->getMenuModeEventData());
+        $table->addEvent('')->setHtml('ads', 'add-1')
+            ->setJs(TableAux::openPage([url('update')], '修改{title}'));
+        $table->addBarEvent('')->setHtml('ads', 'add-1')
+            ->setJs(TableAux::openPage(url('create'), '新增'));
+//        $table->setEventMode($table::MENU_MODE);
+//        halt($table->getEventElement());
 
-//        $table->setHandleAttr([
-//            'align' => 'center',
-//            'width' => 250
-//        ]);
+        $table->setHandleAttr([
+            'align' => 'center',
+            'width' => 250
+        ]);
 //        $table->setHandleStyle(TablePage::HANDLE_STYLE_DOWN);
 //        $table->addEvent()->downTitle('测试', 'add-1')
 //            ->setJs((new Ajax(url('asd')))->prompt('asd'));
