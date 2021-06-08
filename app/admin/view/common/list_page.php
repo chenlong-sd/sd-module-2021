@@ -63,10 +63,6 @@
     <?= $table->getTool(); ?>
 </script>
 
-<script id="sc-menu-s" type="text/html">
-    <?= $table->getContextHtml() ?>
-</script>
-
 <div id="sc-menu" style="display: none;min-width: 100px; position: absolute"></div>
 
 {/block}

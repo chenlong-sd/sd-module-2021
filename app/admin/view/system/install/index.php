@@ -70,7 +70,7 @@
                 </div>
             </form>
         </div>
-        <div class="layui-col-md6" style="padding: 20px">
+        <div class="layui-col-md6" style="padding: 20px;max-height: 700px;overflow: auto;">
             <div class="layui-card">
                 <div class="layui-card-header">更新记录，
                     <span style="color: #00a2d4">节省后台常规页面的一切HTML代码，重复代码。</span>

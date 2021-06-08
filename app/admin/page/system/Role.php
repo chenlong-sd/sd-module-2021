@@ -35,7 +35,7 @@ class Role extends BasePage
             TableAux::column('create_time', '创建时间'),
         ]);
 
-        $table->setHandleWidth(170);
+        $table->setHandleWidth(180);
 
         $table->addBarEvent('directly_under')->setHtml(Layui::button('直属', 'username')->setEvent('directly_under')->normal('sm'))
             ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));

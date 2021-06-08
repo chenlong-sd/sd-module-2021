@@ -99,9 +99,22 @@ class Button
      * 获取图标字符串
      * @return string
      */
-    private function icon()
+    private function icon(): string
     {
         return $this->icon ? Dom::create('i')->addClass("layui-icon layui-icon-{$this->icon}") : '';
+    }
+
+    /**
+     * 设置按钮大小
+     * @param string $size
+     * @return Button
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/8
+     */
+    public function setSize(string $size): Button
+    {
+        $this->class_name[] = "layui-btn-{$size}";
+        return $this;
     }
 
     /**

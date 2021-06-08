@@ -28,7 +28,9 @@ class ApiModule extends Admin
     {
         $model = \app\admin\model\system\ApiModule::field('i.id,i.item_name,url_prefix,i.update_time')
             ->with('api');
-        return $service->setModel($model)->getListsData();
+        return $service->setModel($model)->setEach(function ($v) {
+            $v->url_prefix = implode(', ', explode('|-|', $v->url_prefix));
+        })->getListsData();
     }
 
 }

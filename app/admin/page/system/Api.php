@@ -28,7 +28,7 @@ class Api extends BasePage
     {
         $table = TablePage::create([
             TableAux::column()->checkbox(),
-            TableAux::column('method', '接口名')->mergeField('api_name', ' '),
+            TableAux::column('method', '接口名')->mergeField('api_name', '== '),
             TableAux::column('path', '路径'),
             TableAux::column('status', '对接状态'),
             TableAux::column('update_time', '修改时间'),

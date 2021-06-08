@@ -10,6 +10,7 @@ namespace app\admin\page;
 use app\common\BasePage;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\Ajax;
+use sdModule\layui\tablePage\ListsPage;
 use sdModule\layui\tablePage\TableAux;
 use sdModule\layui\form\Form;
 use sdModule\layui\form\FormUnit;
@@ -29,7 +30,7 @@ class Test extends BasePage
      */
     public function getTablePageData(): TablePage
     {
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('id', 'ID')->addSort(),
             TableAux::column('title', '标题')->setFormat('标题：{title}, 简介：{intro}'),
@@ -43,10 +44,15 @@ class Test extends BasePage
             TableAux::column('delete_time', '删除时间'),
         ]);
 
-        $table->setHandleAttr([
-            'align' => 'center',
-            'width' => 250
-        ]);
+        $table->addEvent('')->setHtml('ads', 'add-1');
+        $table->addBarEvent('')->setHtml('ads', 'add-1');
+        $table->setEventMode($table::MENU_MODE);
+        halt($table->getMenuModeEventData());
+
+//        $table->setHandleAttr([
+//            'align' => 'center',
+//            'width' => 250
+//        ]);
 //        $table->setHandleStyle(TablePage::HANDLE_STYLE_DOWN);
 //        $table->addEvent()->downTitle('测试', 'add-1')
 //            ->setJs((new Ajax(url('asd')))->prompt('asd'));
