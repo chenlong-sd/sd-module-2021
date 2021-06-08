@@ -97,6 +97,8 @@
                                     <li> <span style="color: red">增加</span>字典管理，用于解决用户自定义配置分类管理的时候  </li>
                                     <li> <span style="color: red">增加</span>列表页事件的 prompt 弹窗 </li>
                                     <li> <span style="color: red">增加</span>基于swoole的定时任务 [extend/sdModule/timedTask/start.php]</li>
+                                    <li> <span style="color: red">增加</span>列表页操作下拉菜单模式</li>
+                                    <li> <span style="color: red">增加</span>微信APIV3接口退款</li>
                                 </ul>
                             </div>
                         </li>
