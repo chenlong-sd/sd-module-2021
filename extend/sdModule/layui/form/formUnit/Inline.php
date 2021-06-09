@@ -32,8 +32,8 @@ class Inline extends UnitBase
             $item->addContent($this->getLabel($this->label));
         }
 
-        foreach ($this->childrenItem as $dom) {
-            $item->addContent($dom->setItemClass('layui-inline')->getHtml([]));
+        foreach ($this->childrenItem as [$dom, $attr]) {
+            $item->addContent($dom->setItemClass('layui-inline')->getHtml($attr));
         }
         return $item;
     }

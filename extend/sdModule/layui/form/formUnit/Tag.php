@@ -71,6 +71,7 @@ class Tag extends UnitBase
                 return false;
             }
         });
+        $('input[name={$this->name}]').val({$default}.join('|-|'));
         $("#sc-tag-{$this->name}").on('blur', ()=>{
              window.submit_sc = false;
         }).on('focus', ()=> {

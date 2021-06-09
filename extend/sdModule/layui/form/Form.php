@@ -114,17 +114,33 @@ class Form
 
             if ($childrenItemData = $unitData->get('childrenItem', [])) {
                 foreach ($childrenItemData as $itemDatum) {
-                    $unit->addChildrenItem($this->makeCode($itemDatum));
+                    $childrenUnit = $this->makeCode($itemDatum);
+                    $unit->addChildrenItem($childrenUnit, $this->formAttrHandle($childrenUnit, $itemDatum));
                 }
             }
-            $inputAttr = $unitData->get('inputAttr');
-            $unitDom   = $unit->getHtml(array_merge($inputAttr['-'] ?? [], $inputAttr[$this->scene] ?? []));
-            if ($this->skin && in_array($unitData->get('formUnitType'), ['radio', 'checkbox', 'switch_sc', 'slider'])) {
-                $unitDom->addAttr('pane');
-            }
-            $this->unit[]   = $unitDom;
+
+            $this->unit[] = $unit->getHtml($this->formAttrHandle($unit, $unitData));
         }
-        $this->unit[]   = $this->submitHtml;
+        $this->unit[] = $this->submitHtml;
+    }
+
+    /**
+     * 表单元素属性处理
+     * @param UnitBase $unit
+     * @param UnitData $unitData
+     * @return array
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/9
+     */
+    private function formAttrHandle(UnitBase $unit, UnitData $unitData): array
+    {
+        $inputAttr   = $unitData->get('inputAttr');
+        $currentAttr = array_merge($inputAttr['-'] ?? [], $inputAttr[$this->scene] ?? []);
+
+        if ($this->skin && in_array($unitData->get('formUnitType'), ['radio', 'checkbox', 'switch_sc', 'slider'])) {
+            $currentAttr['pane'] = '';
+        }
+        return $currentAttr;
     }
 
     /**

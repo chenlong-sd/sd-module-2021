@@ -123,13 +123,14 @@ abstract class UnitBase
     /**
      * 设置子项目
      * @param UnitBase[]|UnitBase $childrenItem
+     * @param array $attr 调用子项目的的额外属性
      * @return UnitBase
      */
-    public function addChildrenItem($childrenItem): UnitBase
+    public function addChildrenItem($childrenItem, array $attr): UnitBase
     {
         is_array($childrenItem)
-            ? $this->childrenItem = array_merge($this->childrenItem, $childrenItem)
-            : $this->childrenItem[] = $childrenItem;
+            ? $this->childrenItem = array_merge($this->childrenItem, [$childrenItem, $attr])
+            : $this->childrenItem[] = [$childrenItem, $attr];
         return $this;
     }
 
