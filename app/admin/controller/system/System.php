@@ -21,7 +21,8 @@ use sdModule\layui\form\Form;
 use sdModule\layui\form\FormUnit;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\TableAux;
+use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\tablePage\module\TableAux;
 use think\facade\Db;
 use think\facade\Env;
 use think\helper\Arr;
@@ -77,7 +78,7 @@ class System extends Admin
                 'data' => $tables
             ]);
         }
-        $table = TablePage::create([
+        $table = ListsPage::create([
             TableAux::column("name", '表名'),
             TableAux::column("comment", '表注释'),
             TableAux::column("length", '数据长度')->setTemplate("return (obj.length / 1024) + ' KB'"),
@@ -97,11 +98,13 @@ class System extends Admin
         $table->addEvent('back_up')->setWarmBtn('开始备份', 'slider', 'xs')
             ->setJs(TableAux::openPage([url('system.System/backUp'), 'name'], '备份{comment}数据中')->setConfirm('确认备份{comment}数据吗？', ['icon' => 3]));
 
-        $table->setHandleWidth(220);
+        $table->setHandleAttr([
+            'width' => 220
+        ]);
 
         return $this->fetch('common/list_page', [
             'table' => $table,
-            'search' => Form::create([])->setNoSubmit()->complete(),
+            'search' => Form::create([])->setSubmitHtml()->complete(),
         ]);
     }
 
@@ -137,7 +140,7 @@ class System extends Admin
             ]);
         }
 
-        $tables = TablePage::create([
+        $tables = ListsPage::create([
             TableAux::column('filename', '文件'),
             TableAux::column('time', '备份时间'),
             TableAux::column('size', '文件大小')->setTemplate("return (obj.size / 1024) + ' KB'")
@@ -162,7 +165,7 @@ class System extends Admin
         $tables->setConfig(['page' => false]);
         return $this->fetch('common/list_page', [
             'table' => $tables,
-            'search' => Form::create([])->setNoSubmit()->complete(),
+            'search' => Form::create([])->setSubmitHtml()->complete(),
         ]);
     }
 
@@ -324,7 +327,7 @@ class System extends Admin
         ]);
         return ResponseJson::success();
     }
-    
+
     /**
      * @param string $table
      * @return \think\response\Json
