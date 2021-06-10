@@ -87,6 +87,7 @@
                                     <li> 优化列表页初始界面操作 </li>
                                     <li> layui更新到2.6.8 </li>
                                     <li> 修复数据库备份含json数据是的bug，以及其他已知bug </li>
+                                    <li> <span style="color: red">增加</span>开放后台登录administrators表限制，现可配置表登录后台</li>
                                     <li> <span style="color: red">增加</span>列表页行统计 </li>
                                     <li> <span style="color: red">增加</span>列表页的模板输出 </li>
                                     <li> <span style="color: red">增加</span>列表页开关操作 </li>

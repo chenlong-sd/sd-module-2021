@@ -43,8 +43,9 @@ return [
     ],
 
     // 开放登录后台的表设置，设置后该表账号可以登录后台
+    // ====== 表必须拥有的字段：id, role_id ==== //
+    // ====== 需在角色里面分配对应的角色及权限  ==== //
    'open_login_table' => [
-       // ====== 表必须拥有的字段：id, role_id ==== //
        // 可用角色数据获取 \app\admin\model\system\Role::selectData($table)
        'table，不含表前缀的表名' => [
            'name'     => '账号类型名字，例：公司账号',
@@ -63,12 +64,13 @@ return [
                // 系统自带 id, role_id, route, table, is_admin, 如有冲突请取别名
            ],
        ],
-       'user' => [
-           'name'     => '用户',
-           'account'  => 'account',
-           'password' => 'password',
-           'session'  => ['name']
-       ],
+       // 例
+//       'user' => [
+//           'name'     => '用户',
+//           'account'  => 'account',
+//           'password' => 'password',
+//           'session'  => ['name']
+//       ],
    ]
 ];
 
