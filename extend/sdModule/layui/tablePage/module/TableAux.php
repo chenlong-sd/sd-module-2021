@@ -101,7 +101,7 @@ class TableAux
      * @return false|Ajax
      * @throws \app\common\SdException
      */
-    public static function ajax(string $url, string $tip, string $type = 'get')
+    public static function ajax(string $url, string $tip = '', string $type = 'get')
     {
         $tip     = $tip ? self::pageTitleHandle($tip) : lang('Confirm this operation');
         return (new Ajax($url))->method($type)->setConfig(['icon' => 3])->setTip($tip)->dataCode('obj');
