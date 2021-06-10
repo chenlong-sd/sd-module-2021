@@ -47,23 +47,23 @@ return [
     // ====== 需在角色里面分配对应的角色及权限  ==== //
    'open_login_table' => [
        // 可用角色数据获取 \app\admin\model\system\Role::selectData($table)
-       'table，不含表前缀的表名' => [
-           'name'     => '账号类型名字，例：公司账号',
-           'account'  => '账号字段, 例：account',
-           // 密码字段使用 \sdModule\common\Sc::password()->encryption($password) 加密
-           'password' => '密码字段, 例：password',
-           'status'   => [
-               // '状态字段' => '允许登录的值', 不设置不限制
-               'status' => 1,
-           ],
-           'session'  => [
-               'name'
-               // 不设置不额外存数据
-               // session存储数据, example: 'filed_alias' => 'field', 'field', '字段别名' => '字段', '字段'
-               // 必带字段 name, 没有该字段请改别名为name ，例： 'name' => 'title',
-               // 系统自带 id, role_id, route, table, is_admin, 如有冲突请取别名
-           ],
-       ],
+//       'table，不含表前缀的表名' => [
+//           'name'     => '账号类型名字，例：公司账号',
+//           'account'  => '账号字段, 例：account',
+//           // 密码字段使用 \sdModule\common\Sc::password()->encryption($password) 加密
+//           'password' => '密码字段, 例：password',
+//           'status'   => [
+//               // '状态字段' => '允许登录的值', 不设置不限制
+//               'status' => 1,
+//           ],
+//           'session'  => [
+//               'name'
+//               // 不设置不额外存数据
+//               // session存储数据, example: 'filed_alias' => 'field', 'field', '字段别名' => '字段', '字段'
+//               // 必带字段 name, 没有该字段请改别名为name ，例： 'name' => 'title',
+//               // 系统自带 id, role_id, route, table, is_admin, 如有冲突请取别名
+//           ],
+//       ],
        // 例
 //       'user' => [
 //           'name'     => '用户',
