@@ -114,8 +114,8 @@ class test
 #### sd-module后台配置文件《 admin.php 》
 
 ```php
-[
-  // 维护模式后台账号登录的规则
+return [
+    // 维护模式后台账号登录的规则
     'maintain_admin_rule' => [
         'account' => '/__mt$/',
         'password' => '/^__mt/'
@@ -147,43 +147,36 @@ class test
 //    百度编辑器上传地址
     'editor_upload' => '',
 
-    // 软删除
-    'soft_delete' => [
-        //  字段
-        'field' => 'delete_time',
-        //  默认值
-        'default' => 0,
-        // 删除后的值，timestamp(时间戳)|mixed
-        'value' => 'timestamp',
-    ],
-    // 表时间字段处理：type 可取  datetime | timestamp
-    'time_field' => [
-        'create_time' => [
-            'field' => 'create_time',
-            'type' => 'datetime'
-        ],
-        'update_time' => [
-            'field' => 'update_time',
-            'type' => 'datetime'
-        ],
-    ],
-
-    // table list 的表格默认配置，参考layui的表格基础参数配置
-
-    'layui_config' => [
-        'skin' => 'nob',
-//        'size' => 'lg',
-        'even' =>  true
-    ],
-
     // 数据权限配置
     'data_auth' => [
-        ['table' => 'role', 'field' => 'role', 'remark' => '角色', ],
-        ['table' => 'test', 'field' => 'title', 'remark' => '测试', ],
-        ['table' => 'administrators', 'field' => 'name', 'remark' => '管理员', ],
-    ]
+//        ['table' => '表名', 'field' => '选取时展示字段', 'remark' => '该权限名字', ],
+//        ['table' => 'test', 'field' => 'title', 'remark' => '测试', ],
 
+    ],
+
+    // 开放登录后台的表设置，设置后该表账号可以登录后台
+   'open_login_table' => [
+       // ====== 表必须拥有的字段：id, role_id ==== //
+       // 可用角色数据获取 \app\admin\model\system\Role::selectData($table)
+       'table，不含表前缀的表名' => [
+           'name'     => '账号类型名字，例：公司账号',
+           'account'  => '账号字段, 例：account',
+           'password' => '密码字段, 例：password',
+           'status'   => [
+               // '状态字段' => '允许登录的值', 不设置不限制
+               'status' => 1,
+           ],
+           'session'  => [
+               // 不设置不额外存数据
+               // session存储数据, example: 'filed_alias' => 'field', 'field', '字段别名' => '字段', '字段'
+               // 必带字段 name, 没有该字段请改别名为name ，例： 'name' => 'title',
+               // 系统自带 id, role_id, route, table, is_admin, 如有冲突请取别名
+           ],
+       ],
+   ]
 ];
+
+
 ```
 
 ## 列表页面简单操作

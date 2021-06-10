@@ -139,16 +139,9 @@ trait DataWrite
     {
         $this->beforeWrite($data);
 
-        $value = [
-            'datetime'  => date('Y-m-d H:i:s'),
-            'timestamp' => time()
-        ];
-
-        $time_info = config('admin.time_field');
-
-        $data[$time_info['update_time']['field']] = $value[$time_info['update_time']['type']];
+        $data['update_time'] = datetime();
         if (empty($data[$this->primary])) {
-            $data[$time_info['create_time']['field']] = $value[$time_info['create_time']['type']];
+            $data['create_time'] = datetime();
         }
 
         return $data;

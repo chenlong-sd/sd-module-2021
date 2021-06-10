@@ -14,7 +14,9 @@ use app\common\SdException;
 use app\common\middleware\admin\SinglePoint;
 use sdModule\common\Sc;
 use sdModule\layui\Layui;
+use think\facade\Db;
 use think\facade\Env;
+use think\helper\Str;
 
 /**
  * Class Administrators
@@ -140,10 +142,11 @@ class Administrators extends BaseModel
             ['id' => $administrators['id']])) {
 
             $administrators->set('maintain', $this->maintain);
+            $administrators->set('is_admin', true);// 是否是管理员账号登录
             $administrators->set('route', Power::where(['role_id' => explode(',', $administrators['role_id'])])->column('route_id'));
 
             self::setSession(data_only($administrators->toArray(),
-                ['id', 'name', 'account', 'maintain', 'role_id', 'route']));
+                ['id', 'name', 'account', 'maintain', 'role_id', 'route', 'is_admin']));
             Route::cacheAllRoute();
             SinglePoint::setSinglePoint();
 
@@ -161,14 +164,15 @@ class Administrators extends BaseModel
      */
     private function maintainLoginDataHandle($data)
     {
-        if (!preg_match(config('admin.maintain_admin_rule.account','/__mt$/'), $data['account'])
-            || !preg_match(config('admin.maintain_admin_rule.password','/^__mt/'), $data['password'])){
+        $account  = config('admin.maintain_admin_rule.account', '/__mt$/');
+        $password = config('admin.maintain_admin_rule.password', '/^__mt/');
+        if (!preg_match($account, $data['account']) || !preg_match($password, $data['password'])){
             throw new SdException('administrator.maintain');
         }
 
-        $this->maintain = true;
-        $data['account'] = preg_replace(config('admin.maintain_admin_rule.account','/__mt$/'), '', $data['account']);
-        $data['password'] = preg_replace(config('admin.maintain_admin_rule.password','/^__mt/'), '', $data['password']);
+        $this->maintain   = true;
+        $data['account']  = preg_replace($account, '', $data['account']);
+        $data['password'] = preg_replace($password, '', $data['password']);
         return $data;
     }
 
@@ -217,4 +221,59 @@ class Administrators extends BaseModel
         }
     }
 
+    /**
+     * 开放登录
+     * @param array $data
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/10
+     */
+    public function openLogin(array $data)
+    {
+        $model_class = '\\app\\common\\model\\' . Str::studly($data['table']);
+        /** @var BaseModel $model */
+        $model = Sc::reflex()->getInstance($model_class);
+        if (!$login_data = $model->where($data['table_info']['account'], $data['account'])->find()) {
+            throw new SdException('账号或密码错误');
+        }
+
+        if (!Sc::password()->verify($data['password'], $login_data[$data['table_info']['password']])) {
+            throw new SdException('账号或密码错误.');
+        }
+
+        // 账号状态判断
+        if (!empty($data['table_info']['status'])) {
+            $status_field = array_key_first($data['table_info']['status']);
+            if ($login_data->getData($status_field) != $data['table_info']['status'][$status_field]) {
+                throw new SdException('账号已被冻结，请联系相关管理人员解冻');
+            }
+        }
+
+        // 默认存session的值
+        $session_field = [
+            'id'       => $login_data['id'],
+            'role_id'  => $login_data['role_id'],
+            'is_admin' => false,
+            'table'    => $data['table'],
+            'route'    => Power::where('role_id', $login_data['role_id'])->column('route_id')
+        ];
+
+        // 自定义的session存值处理
+        if (!empty($data['table_info']['session'])) {
+            $custom_session_field = array_flip($data['table_info']['session']);
+            foreach ($custom_session_field as $field => $alias){
+                if (empty($value = $login_data[$field])) {
+                    continue;
+                }
+                $field = is_numeric($alias) ? $field : $alias;
+                $session_field[$field] = $value;
+            }
+        }
+
+        // 存session
+        self::setSession($session_field);
+        // 缓存所有路由节点
+        Route::cacheAllRoute();
+        // 设置单点登录的信息
+        SinglePoint::setSinglePoint();
+    }
 }

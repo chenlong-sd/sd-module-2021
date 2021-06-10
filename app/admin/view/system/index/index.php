@@ -64,7 +64,7 @@
                         <i class="layui-icon layui-icon-theme"></i>
                     </a>
                 </li>
-                {if admin_session('id') == 1}
+                {if (admin_session('is_admin') && admin_session('id') == 1)}
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
                     <a  lay-href="{:admin_url('data-back-up')}" lay-text="数据备份" lay-event="">
                         <i class="layui-icon layui-icon-templeate-1"></i>

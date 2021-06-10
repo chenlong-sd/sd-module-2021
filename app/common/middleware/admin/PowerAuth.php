@@ -31,7 +31,7 @@ class PowerAuth
     public function handle(Request $request, \Closure $closure)
     {
         // 超级管理员直接越过验证
-        if (admin_session('id') === 1) return $closure($request);
+        if (admin_session('is_admin') && admin_session('id') === 1) return $closure($request);
 
         // 获取当前路由的ID
         $route_id = array_search($request->middleware('route_path'), cache(config('admin.route_cache')) ?: []);

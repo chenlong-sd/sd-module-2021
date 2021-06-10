@@ -123,9 +123,10 @@ class BackstageListsService
             $table = strtr(array_key_first(current($join)), [env('DATABASE.PREFIX') => '']);
             $alias = current(current($join));
 
-            $primary = strtr(config('admin.primary'), ['{table}' => $table]);
+            $primary = strtr(config('admin.primary_key'), ['{table}' => $table]);
+
             if ($where   = \app\common\BaseModel::dataAuthWhere($table)){
-                $join[2] .= " AND {$alias}.$primary IN ($where)";
+                $join[2] .= " AND {$alias}.$primary IN (". implode(',', $where) .")";
             }
         }
     }
@@ -145,6 +146,7 @@ class BackstageListsService
             list($field, $expr) = $this->ruleAnalysis($field);
             $this->ruleMatch($field, $expr, $value);
         }
+
         return $this;
     }
 

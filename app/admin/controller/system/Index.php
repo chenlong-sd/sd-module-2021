@@ -16,10 +16,8 @@ use app\admin\validate\system\Administrators as AdministratorsValidate;
 use app\common\controller\Admin;
 use app\common\middleware\admin\PowerAuth;
 use app\common\ResponseJson;
-use sdModule\layui\Dom;
-use sdModule\layui\form\Form;
-use sdModule\layui\form\FormSc;
-use sdModule\layui\form\FormUnit;
+use app\common\SdException;
+use think\facade\Config;
 use think\facade\Db;
 
 /**
@@ -49,6 +47,36 @@ class Index extends Admin
             $this->validate($data, AdministratorsValidate::class . '.login');
 
             return ResponseJson::mixin($administrators->login(data_only($data, ['account', 'password'])));
+        }
+
+        return $this->fetch('login');
+    }
+
+    /**
+     * 开放登录
+     * @param AdministratorsModel $administrators
+     * @return \think\response\Json|\think\response\View
+     * @throws SdException
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/10
+     */
+    public function openLogin(AdministratorsModel $administrators)
+    {
+        if ($this->request->isPost()) {
+            $table      = $this->request->param('name');
+            $open_table = Config::get('admin.open_login_table', []);
+            if (!isset($open_table[$table])){
+                throw new SdException('账号或密码错误，请确认');
+            }
+            $data = $this->request->post();
+            $this->validate($data, AdministratorsValidate::class . '.login');
+
+            $data['table']      = $table;
+            $data['table_info'] = $open_table[$table];
+
+            $administrators->openLogin(data_only($data, ['password', 'account', 'table', 'table_info']));
+
+            return ResponseJson::success();
         }
 
         return $this->fetch('login');
@@ -108,9 +136,11 @@ class Index extends Admin
      * 退出登录
      * @return \think\response\Redirect|void
      */
-    public function loginOut()
+    public function loginOut(): \think\response\Redirect
     {
+        $open = admin_session('table') ?: '';
+        $open and $open = "/" . $open;
         session(null);
-        return redirect(admin_url('login'));
+        return redirect(admin_url('login' . $open));
     }
 }

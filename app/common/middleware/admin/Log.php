@@ -46,7 +46,9 @@ class Log
         return [
             'method'            => array_search($request->method(), \app\admin\model\system\Log::getMethodSc(false)) ?: 1,
             'route_id'          => array_search($request->middleware('route_path'), cache(config('admin.route_cache')) ?: []) ?: 0,
-            'administrators_id' => admin_session('id', 0),
+            'administrators_id' => admin_session('is_admin') ? admin_session('id', 0) : 0,
+            'open_table'        => admin_session('is_admin') ? "" : admin_session('table', ""),
+            'open_id'           => admin_session('is_admin') ? "" : admin_session('id', 0),
             'param'             => json_encode($this->param(), JSON_UNESCAPED_UNICODE),
             'route'             => $request->middleware('route_path'),
             'create_time'       => ($time = date('Y-m-d H:i:s')),

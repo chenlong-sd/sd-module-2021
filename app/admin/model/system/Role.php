@@ -27,6 +27,9 @@ class Role extends BaseModel
         'pid' => 'int',
         'describe' => 'varchar',
         'administrators_id' => 'int',
+        'assign_table' => 'int',
+        'open_table' => 'int',
+        'open_id' => 'int',
         'create_time' => 'datetime',
         'update_time' => 'datetime',
         'delete_time' => 'int',
@@ -79,5 +82,22 @@ class Role extends BaseModel
         if (($insert_into = data_except($data, $have)) && !DataAuth::insertAll($insert_into)) {
             throw new SdException('权限新增失败！');
         }
+    }
+
+    /**
+     * 返回角色的选择数据
+     * @param string|null $table
+     * @return array
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/10
+     */
+    public static function selectData(string $table = null): array
+    {
+        $where = $table ? ['assign_table' => $table] : [];
+        admin_session('is_admin')
+            ? $where['administrators_id'] = admin_session('id')
+            : $where = array_merge($where, ['open_id' => admin_session('id'), 'open_table' => admin_session('table')]);
+
+        return self::where($where)->column('role', 'id');
     }
 }

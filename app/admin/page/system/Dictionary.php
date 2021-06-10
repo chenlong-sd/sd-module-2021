@@ -132,11 +132,11 @@ class Dictionary extends BasePage
     public function dictionarySearchFormData(): DefaultForm
     {
         $form = [
-            FormUnit::build(
-                FormUnit::text('dictionary_value')->placeholder('字典值'),
-                FormUnit::text('dictionary_name')->placeholder('字典名'),
-                FormUnit::custom()->customHtml(Form::searchSubmit())
-            )
+//            FormUnit::build(
+//                FormUnit::text('dictionary_value')->placeholder('字典值'),
+//                FormUnit::text('dictionary_name')->placeholder('字典名'),
+//                FormUnit::custom()->customHtml(Form::searchSubmit())
+//            )
         ];
 
         return DefaultForm::create($form)->setSubmitHtml()->complete();

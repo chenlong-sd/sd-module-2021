@@ -14,6 +14,7 @@ use app\common\BaseModel;
 use app\common\SdException;
 use sdModule\common\Sc;
 use sdModule\layui\Layui;
+use think\facade\Config;
 use think\facade\Log;
 
 /**
@@ -86,11 +87,11 @@ class Route extends BaseModel
      */
     public function getMenuRoute()
     {
-        if (admin_session('id') === 1) {
+        if (admin_session('is_admin') && admin_session('id') == Config::get('admin.super', 1)) {
             $left_route = $this->routeFromType(self::TYPE_MENU, 'id,title,route,pid,icon');
         }else{
             $left_route = self::where([
-                    ['p.role_id', 'in', admin_session('role_id')],
+                    ['p.role_id', 'in', explode(',', admin_session('role_id'))],
                     ['i.type', '=', self::TYPE_MENU],
                 ])->alias('i')
                 ->join('power p', 'p.route_id = i.id')

@@ -15,6 +15,7 @@ use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\ListsPage;
 use sdModule\layui\tablePage\module\TableAux;
+use think\facade\Config;
 
 class Role extends BasePage
 {
@@ -31,15 +32,13 @@ class Role extends BasePage
             TableAux::column('id', 'ID'),
             TableAux::column('role', '角色名'),
             TableAux::column('parent_role', '父级角色'),
-            TableAux::column('describe', '角色描述'),
-            TableAux::column('administrators_id', '创建者'),
             TableAux::column('create_time', '创建时间'),
         ]);
 
         $table->setHandleAttr([
             'width' => 180
         ]);
-        $table->setEventMode(ListsPage::MENU_MODE);
+
         $table->addBarEvent('directly_under')->setNormalBtn('直属', 'username', 'sm')
             ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
 
@@ -67,6 +66,12 @@ class Role extends BasePage
             FormUnit::text('role', '角色名'),
             FormUnit::textarea('describe', '角色描述'),
         ];
+
+        if ($assign_table = Config::get('admin.open_login_table', [])) {
+            $assign_table = array_map(fn($v) => $v['name'] ?? '——', $assign_table);
+            $form_data[] = FormUnit::select('assign_table', '账户可用')->options($assign_table);
+        }
+
         if (env('APP.DATA_AUTH', false)){
             $default = DataAuth::where(['delete_time' => 0])
                 ->where(['role_id' => request()->get('id')])
@@ -77,7 +82,10 @@ class Role extends BasePage
                     ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }
-        $form = DefaultForm::create($form_data)->setDefaultData($default_data);
+        $form = DefaultForm::create($form_data)
+            ->setShortForm([
+                'assign_table' => '该类型账户可使用该角色权限登录使用系统'
+            ])->setDefaultData($default_data);
 
         return $form->complete();
     }

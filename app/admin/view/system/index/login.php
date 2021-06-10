@@ -80,20 +80,21 @@
 <script type="text/javascript" src="__PUBLIC__/admin_static/js/custom.js"></script>
 
 <script>
+    console.log(window.location);
     let tip = "{$Request.get.tip}";
     if (self !== top) {
         top.window.location.href = window.location.href;
     } else {
         if (tip) {
             layer.alert(tip, function () {
-                location.href = "{:admin_url('login')}"
+                location.href = window.location.origin + window.location.pathname
             });
         }
     }
 
     document.onkeyup = (e) => {
         if (e.key === 'Enter') {
-            if(tip) return location.href = "{:admin_url('login')}";
+            if(tip) return location.href = window.location.origin + window.location.pathname;
 
             let s = document.getElementsByTagName('button');
             for (let i = 0; i < s.length; i++) {
@@ -119,8 +120,7 @@
         form.on('submit(LAY-user-login-submit)', function (obj) {
             let load = custom.loading('{:lang("login load")}');
             $.ajax({
-                url: "{:admin_url('login')}"
-                , type: 'post'
+                type: 'post'
                 , data: obj.field
                 , headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

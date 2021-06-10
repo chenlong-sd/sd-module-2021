@@ -26,8 +26,10 @@ class SinglePoint
     public function handle(Request $request, \Closure $closure)
     {
         if (!env('APP_DEBUG', false) && !$this->verifySinglePoint()) {
+            $table = admin_session('table', '');
+            $table and $table = '/' . $table;
             session(null);
-            return redirect(admin_url('login', [
+            return redirect(admin_url('login' . $table, [
                 'tip' => lang('login single point')
             ]));
         }
@@ -37,18 +39,35 @@ class SinglePoint
     /**
      * 验证单点登录
      * @return bool
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/10
      */
-    private function verifySinglePoint()
+    private function verifySinglePoint(): bool
     {
-        $singPoint = cache(self::SINGLE_POINT_PRE . admin_session('id'));
+        $singPoint = cache(self::singlePointKey());
         return !$singPoint || $singPoint == Session::getId();
     }
 
     /**
      * 设置单点登录
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/10
      */
     public static function setSinglePoint()
     {
-        cache(self::SINGLE_POINT_PRE . admin_session('id'), Session::getId(), config('session.expire'));
+        cache(self::singlePointKey(), Session::getId(), config('session.expire'));
+    }
+
+    /**
+     * 单点登录的键获取
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/10
+     */
+    private static function singlePointKey(): string
+    {
+        return admin_session('is_admin')
+            ? self::SINGLE_POINT_PRE . admin_session('id')
+            : self::SINGLE_POINT_PRE . admin_session('table') . admin_session('id');
     }
 }

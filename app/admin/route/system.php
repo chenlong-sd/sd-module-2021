@@ -26,7 +26,10 @@ Route::post('image', 'app\\SystemUpload@imageUpload');/** @see \app\SystemUpload
 // 本地上传
 Route::post('file-upload', 'app\\SystemUpload@fileUpload');/** @see \app\SystemUpload::fileUpload() */
 // 登录
-Route::rule('login', 'system.Index/login', 'GET|POST'); /** @see \app\admin\controller\system\Index::login() */
+Route::group('login', function () {
+    Route::rule('/', 'system.Index/login', 'GET|POST'); /** @see \app\admin\controller\system\Index::login() */
+    Route::rule(':name', 'system.Index/openLogin', 'GET|POST'); /** @see \app\admin\controller\system\Index::login() */
+});
 // 主页
 Route::get('home', 'system.Index/home');/** @see \app\admin\controller\system\Index::home() */
 // 数据权限的数据

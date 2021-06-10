@@ -155,7 +155,7 @@ if (!function_exists('access_control')) {
      */
     function access_control($url, $exception = false)
     {
-        if (admin_session('id') == 1 || !config('admin.access_control')) {
+        if (admin_session('is_admin') && admin_session('id') == 1) {
             return true;
         }
         if (!$pathinfo = pathinfo($url)) {
@@ -171,9 +171,9 @@ if (!function_exists('access_control')) {
             $root = addcslashes(in_array('admin', $domain_bind) ? request()->domain() : request()->root(), '/\\');
             $logo = preg_replace("/^$root\//", '', implode('/', [$pathinfo['dirname'], $pathinfo['filename']]));
         }
-
+        $logo     = parse_name($logo, 1);
         $all_node = cache(config('admin.route_cache')) ?: [];
-        $node_id = array_search($logo, $all_node);
+        $node_id  = array_search($logo, $all_node);
         if ((!$node_id && !in_array($pathinfo['filename'], ['create', 'update', 'del']))
             || ($node_id && in_array($node_id, admin_session('route')))
         ) {

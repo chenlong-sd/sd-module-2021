@@ -37,7 +37,8 @@ class BaseModel extends Model
      */
     public static function dataAuthWhere(string $table)
     {
-        if (!env('APP.DATA_AUTH') || ($admin_id = admin_session('id')) == 1){
+        $admin_id = admin_session('id');
+        if (!env('APP.DATA_AUTH') || (admin_session('is_admin') && $admin_id == 1)){
             return [];
         }
         $role_id  = admin_session('role_id');

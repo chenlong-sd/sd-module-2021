@@ -33,13 +33,13 @@ class TableAux
      */
     public static function openPage($url, string $title, array $config = [], $isParent = false)
     {
-        $url_ = self::pageUrlHandle($url);
+        $power = access_control(is_array($url) ? current($url) : $url);
+        $url_  = self::pageUrlHandle($url);
         $window   = $isParent ? 'parent' : '';
         $config   = json_encode($config, JSON_UNESCAPED_UNICODE);
 
         $pageCode = sprintf("custom.frame(%s, '%s', %s, %s);", $url_, self::pageTitleHandle($title), $config, $window);
-
-        return new OpenPage($pageCode, access_control($url_));
+        return new OpenPage($pageCode, $power);
     }
 
     /**
@@ -51,10 +51,11 @@ class TableAux
      */
     public static function openTabs($url, string $title)
     {
+        $power = access_control(is_array($url) ? current($url) : $url);
         $url_ = self::pageUrlHandle($url);
         $pageCode = sprintf("custom.openTabsPage(%s + '&__sc_tab__=1', '%s')", $url_, self::pageTitleHandle($title));
 
-        return new OpenPage($pageCode, access_control($url_));
+        return new OpenPage($pageCode, $power);
     }
 
     /**
@@ -115,8 +116,6 @@ class TableAux
      */
     public static function batchAjax(string $url, $type = 'get')
     {
-        if (!access_control($url)) return false;
-
         return (new Ajax($url))->method($type)->setBatch('id')->dataCode('{id:id}');
     }
 

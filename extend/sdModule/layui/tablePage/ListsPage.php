@@ -218,7 +218,7 @@ class ListsPage
      * @date 2021/6/8
      */
     private function eventPowerCheck()
-    {;
+    {
         $this->event    = array_filter($this->event,    fn($v) => $v->js !== 'false');
         $this->barEvent = array_filter($this->barEvent, fn($v) => $v->js !== 'false');
     }

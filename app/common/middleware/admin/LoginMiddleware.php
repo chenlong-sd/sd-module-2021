@@ -23,7 +23,7 @@ use think\Response;
 class LoginMiddleware
 {
     /** @var array 无需登录的请求地址 */
-    const EXCEPT_PATH = ['System.Index/login'];
+    const EXCEPT_PATH = ['System.Index/login', 'System.Index/openLogin'];
 
     /**
      * @param Request  $request
