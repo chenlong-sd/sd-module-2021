@@ -29,7 +29,7 @@ class Selects extends UnitBase
         $input    = Dom::create()->addAttr($attr)->addClass('xm-select-demo')->setId("{$this->name}-selects");;
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));
-            $inputDiv->addClass('layui-input-block');
+            $inputDiv->addClass($this->shortTip ? 'layui-inline' : 'layui-input-block');
         }else{
             $inputDiv->addClass('layui-inline');
             return $inputDiv->addContent($input);

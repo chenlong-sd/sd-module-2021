@@ -36,7 +36,7 @@ class Checkbox extends UnitBase
 
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));
-            $inputDiv->addClass('layui-input-block');
+            $inputDiv->addClass($this->shortTip ? 'layui-inline' : 'layui-input-block');
         }else{
             return $inputDiv->addClass('layui-input-inline');
         }

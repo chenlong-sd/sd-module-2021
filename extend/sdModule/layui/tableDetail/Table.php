@@ -225,6 +225,8 @@ class Table
                         $img_html .= "<div class='img-table layui-inline'><img src='{$url}'/></div>";
                     }
                     $content = $img_html;
+                }elseif (!empty($this->custom_field[$field])){
+                    $content = strtr($this->custom_field[$field], ['{var}' => $content]);
                 }
                 $field = '';
             }
