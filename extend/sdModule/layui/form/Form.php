@@ -118,8 +118,12 @@ class Form
                     $unit->addChildrenItem($childrenUnit, $this->formAttrHandle($childrenUnit, $itemDatum));
                 }
             }
-
-            $this->unit[] = $unit->getHtml($this->formAttrHandle($unit, $unitData));
+            $attr = $this->formAttrHandle($unit, $unitData);
+            $dom  = $unit->getHtml($attr);
+            if (isset($attr['pane'])) {
+                $dom->addAttr('pane', '');
+            }
+            $this->unit[] = $dom;
         }
         $this->unit[] = $this->submitHtml;
     }

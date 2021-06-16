@@ -13,6 +13,7 @@ use app\common\traits\admin\{AdminMiddleware,
     RequestMerge};
 use app\common\BaseModel;
 use app\common\BasePage;
+use app\common\ResponseJson;
 use app\common\SdException;
 use app\common\traits\Lang;
 use think\facade\Db;
@@ -22,8 +23,8 @@ use think\response\View;
 
 /**
  * Class Admin
- * @method string|bool customAdd($data)     自定义添加
- * @method string|bool customEdit($data)    自定义修改
+ * @method ResponseJson customAdd($data)     自定义添加
+ * @method ResponseJson customEdit($data)    自定义修改
  * @method void        delete($id)          自定义删除
  * @method View        edit()               数据更新页面
  * @package app\common\controller

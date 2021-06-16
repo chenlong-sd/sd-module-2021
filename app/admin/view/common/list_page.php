@@ -216,7 +216,7 @@
      * @param data
      */
     function dropdownMenu(data){
-        let  line_data = {}
+        let  line_data = {},d = {};
         layui.dropdown.render({
             elem: '.menu-down-sc'
             ,data: <?= $table->getMenuModeEventData() ?>
@@ -231,7 +231,7 @@
                 }
             }
             ,ready: function(elemPanel, elem){
-                line_data = data[$('.menu-down-sc').index(elem)];
+                line_data = d = data[$('.menu-down-sc').index(elem)];
                 for (let i = 0; i < this.data.length; i++){
                     if (!this.data[i].hasOwnProperty('where')){
                         continue;

@@ -168,7 +168,9 @@ if (!function_exists('access_control')) {
             $route = array_column(\think\facade\Route::getRuleList(), 'route', 'rule');
             $logo = $route[$pathinfo['filename']];
         } else {
-            $root = addcslashes(in_array('admin', $domain_bind) ? request()->domain() : request()->root(), '/\\');
+            $root = in_array('admin', $domain_bind) ? request()->domain() : request()->root();
+            $root = strtr(dirname(request()->baseFile()) . $root, ['\\' => '/']);
+            $root = addcslashes(preg_replace('/\/+/', '/', $root), '/');
             $logo = preg_replace("/^$root\//", '', implode('/', [$pathinfo['dirname'], $pathinfo['filename']]));
         }
         $logo     = parse_name($logo, 1);

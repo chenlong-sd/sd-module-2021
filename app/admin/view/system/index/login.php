@@ -71,7 +71,6 @@
 
     <div class="layui-trans layadmin-user-login-footer">
 <!--        <a href="https://www.layui.com/" target="_blank">layui.com</a>-->
-        <a href="http://www.mlscd.com/" target="_blank">成都码邻蜀科技有限公司 ©2016-2020</a>
     </div>
 
 </div>

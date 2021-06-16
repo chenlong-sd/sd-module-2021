@@ -8,6 +8,8 @@ use app\BaseController;
 use app\common\middleware\BeComplicatedBy;
 use app\common\middleware\Token;
 use app\common\ResponseJson;
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\SdMailer;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -99,26 +101,6 @@ HTML;
 
     }
 
-    public function formMake()
-    {
-        if ($this->request->post()) {
-            return ResponseJson::success($this->request->post());
-        }
-
-        return FormMake::make([
-            'sel' => FormMake::makeUnitSelect('下拉', ['1' => '鸟', '2' => 'sd']),
-            'text' => FormMake::makeUnitText('号'),
-            'pass' => FormMake::makeUnitPassword('密码'),
-            'ra' => FormMake::makeUnitRadio('单选', ['1' => 'as', '2' => 'sd']),
-            'checkbox' => FormMake::makeUnitCheckbox('多选',  ['1' => 'as', '2' => 'sd']),
-            'time_range' => FormMake::makeUnitTime('时间范围',  ['date']),
-            'time' => FormMake::makeUnitTime('时间',  'date'),
-            'textarea' => FormMake::makeUnitTextarea('文本域'),
-            'image' => FormMake::makeUnitImage('单图'),
-            'images' => FormMake::makeUnitImages('多图'),
-            'u_editor' => FormMake::makeUnitUEditor('百度编辑器'),
-        ], ['ra' => 1, 'textarea' => 'nihaoma', 'time' => '2020-05-02'], 9, true);
-    }
 
     public function xt()
     {

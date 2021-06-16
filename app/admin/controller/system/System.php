@@ -306,6 +306,7 @@ class System extends Admin
 
         $form = Form::create($form)
             ->setDefaultData(array_column($data, 'key_value', 'id'))
+            ->setSkinToPane()
             ->setJs('
             layui.jquery(".layui-form-label").css({width:"270px"});
             layui.jquery(".layui-input-block").css({marginLeft:"300px"});
