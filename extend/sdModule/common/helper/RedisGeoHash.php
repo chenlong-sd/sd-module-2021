@@ -32,7 +32,7 @@ class RedisGeoHash
      * redis版本支持：3.2+
      * @var \Redis
      */
-    private \Redis $redis;
+    private $redis;
 
     /**
      * 数据存储路径

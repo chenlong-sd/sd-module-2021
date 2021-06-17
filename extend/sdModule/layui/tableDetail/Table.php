@@ -26,25 +26,56 @@ namespace sdModule\layui\tableDetail;
  */
 class Table
 {
-    private bool $line_mode = false;
-
-    private array $data = [];
-
-    private array $field = [];
-
-    private string $title = '';
-
-    private array $image_field = [];
-
-    private array $custom_field = [];
-
-    private array $field_attr = [];
-
-    private array $field_content_attr = [];
-
-    private array $table = [];
-
-    private string $root = '';
+    /**
+     * 是否是多行数据模式
+     * @var bool
+     */
+    private $line_mode = false;
+    /**
+     * 数据
+     * @var array
+     */
+    private $data = [];
+    /**
+     * 字段数据
+     * @var array
+     */
+    private $field = [];
+    /**
+     * 内容标题
+     * @var string
+     */
+    private $title = '';
+    /**
+     * 图片字段合集
+     * @var array
+     */
+    private $image_field = [];
+    /**
+     * 自定义字段
+     * @var array
+     */
+    private $custom_field = [];
+    /**
+     * 字段属性
+     * @var array
+     */
+    private $field_attr = [];
+    /**
+     * 显示内容属性
+     * @var array
+     */
+    private $field_content_attr = [];
+    /**
+     * 表集合
+     * @var array
+     */
+    private $table = [];
+    /**
+     * 根路径
+     * @var string
+     */
+    private $root = '';
 
     /**
      * 创建
@@ -62,6 +93,7 @@ class Table
     }
 
     /**
+     * 完成构建
      * @return $this
      */
     public function complete()
@@ -88,6 +120,11 @@ class Table
         return $this;
     }
 
+    /**
+     * 字段处理
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
     private function fieldHandle()
     {
         $this->table = [];
@@ -154,6 +191,7 @@ class Table
     }
 
     /**
+     * 合并 Css
      * @param string $attr1
      * @param string $attr2
      * @return string
@@ -236,6 +274,7 @@ class Table
     }
 
     /**
+     * 获取标题
      * @return string
      */
     public function getTitle(): string
@@ -244,6 +283,7 @@ class Table
     }
 
     /**
+     * 判断是否是多行数据
      * @return bool
      */
     public function isLineMode(): bool
@@ -252,6 +292,7 @@ class Table
     }
 
     /**
+     * 设置多行数据
      * @param bool $line_mode
      * @return Table
      */

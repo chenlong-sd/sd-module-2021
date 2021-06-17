@@ -17,25 +17,25 @@ abstract class BaseController
      * Request实例
      * @var \think\Request
      */
-    protected \think\Request $request;
+    protected $request;
 
     /**
      * 应用实例
      * @var \think\App
      */
-    protected App $app;
+    protected $app;
 
     /**
      * 是否批量验证
      * @var bool
      */
-    protected bool $batchValidate = false;
+    protected $batchValidate = false;
 
     /**
      * 控制器中间件
      * @var array
      */
-    protected array $middleware = [];
+    protected $middleware = [];
 
     /**
      * 构造方法

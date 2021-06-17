@@ -13,17 +13,17 @@ use OSS\OssClient;
  */
 class ALiYunOSS
 {
-    private string $accessKeyId = "";
-    private string $accessKeySecret = "";
-    private string $endpoint = "";
+    private $accessKeyId = "";
+    private $accessKeySecret = "";
+    private $endpoint = "";
 
-    private string $bucket = "";
-    private string $dir = "";
+    private $bucket = "";
+    private $dir = "";
 
     /**
      * @var OssClient
      */
-    private ?OssClient $ossClient = null;
+    private $ossClient = null;
 
     /**
      * ALiYunOSS constructor.

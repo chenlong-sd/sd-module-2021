@@ -9,14 +9,14 @@ namespace sdModule\common\helper;
 class Pinyin
 {
     //中文字符串
-    private static string $string = '';
+    private static $string = '';
     //拼音
-    private static string $pinyin = '';
-    private static string $encoding = 'UTF-8';
+    private static $pinyin = '';
+    private static $encoding = 'UTF-8';
     //短拼音
-    private static string $short_pinyin = '';
+    private static $short_pinyin = '';
     //单个汉字拼音的字典
-    private static array $dic = [
+    private static $dic = [
         '腌' => 'yan',
         '嗄' => 'a',
         '迫' => 'po',

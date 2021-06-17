@@ -15,13 +15,13 @@ class QrCode
     /***
      * @var array
      */
-    private array $param = [];
+    private $param = [];
 
     /**
      * 无限制
      * @var string 
      */
-    private string $url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=ACCESS_TOKEN";
+    private $url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=ACCESS_TOKEN";
 
     /**
      * 无限数量

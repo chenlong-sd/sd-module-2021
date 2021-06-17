@@ -37,7 +37,7 @@ class Admin extends BaseController
         DataDelete, RequestMerge, Lang;
 
     /** @var string 带命名空间的模型名，默认为当前控制器对应的模型 */
-    private string $model = '';
+    private  $model = '';
 
     /**
      * @var Model|Db
@@ -47,13 +47,13 @@ class Admin extends BaseController
     /**
      * @var BasePage|null
      */
-    private ?BasePage $pageInstance = null;
+    private $pageInstance = null;
 
     /**
      *  表主键
      * @var string
      */
-    public string $primary;
+    public $primary;
 
 
     public function initialize()

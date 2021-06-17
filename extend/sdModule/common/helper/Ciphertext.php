@@ -29,7 +29,7 @@ class Ciphertext
     /**
      * @var string
      */
-    private string $iv;
+    private $iv;
 
 
     /**

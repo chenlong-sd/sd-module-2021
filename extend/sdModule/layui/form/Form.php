@@ -19,32 +19,32 @@ class Form
     /**
      * @var UnitData[] 表单元素数据
      */
-    public array $formData;
+    public $formData;
 
     /**
      * @var string 场景
      */
-    public string $scene;
+    public $scene;
 
     /**
      * @var array|Dom[] 表单元素
      */
-    public array $unit = [];
+    public $unit = [];
 
     /**
      * @var array 表单元素的js
      */
-    public array $unitJs = [];
+    public $unitJs = [];
 
     /**
      * @var array 加载的外部js
      */
-    public array $loadJs = [];
+    public $loadJs = [];
 
     /**
      * @var array 默认数据
      */
-    public array $defaultData = [];
+    public $defaultData = [];
 
     /**
      * @var string|Dom 提交按钮的html
@@ -54,22 +54,22 @@ class Form
     /**
      * @var string 提交的js
      */
-    public string $submitJs = '';
+    public $submitJs = '';
 
     /**
      * @var string 表单风格
      */
-    public string $skin = '';
+    public $skin = '';
 
     /**
      * @var int|null 页面占比 1- 12
      */
-    public ?int $md = null;
+    public $md = null;
 
     /**
      * @var array 提示语
      */
-    private array $tip = [];
+    private $tip = [];
 
 
     /**
@@ -107,7 +107,7 @@ class Form
     private function makeUnitHtml()
     {
         foreach ($this->formData as $unitData) {
-            if (in_array($this->scene, $unitData->get('removeScene'))) {
+            if (in_array($this->scene, $unitData->get('removeScene', []))) {
                 continue;
             }
             $unit = $this->makeCode($unitData);
@@ -115,10 +115,11 @@ class Form
             if ($childrenItemData = $unitData->get('childrenItem', [])) {
                 foreach ($childrenItemData as $itemDatum) {
                     $childrenUnit = $this->makeCode($itemDatum);
-                    $unit->addChildrenItem($childrenUnit, $this->formAttrHandle($childrenUnit, $itemDatum));
+                    $unit->addChildrenItem($childrenUnit, $this->formAttrHandle($itemDatum));
                 }
             }
-            $attr = $this->formAttrHandle($unit, $unitData);
+
+            $attr = $this->formAttrHandle($unitData);
             $dom  = $unit->getHtml($attr);
             if (isset($attr['pane'])) {
                 $dom->addAttr('pane', '');
@@ -130,13 +131,12 @@ class Form
 
     /**
      * 表单元素属性处理
-     * @param UnitBase $unit
      * @param UnitData $unitData
      * @return array
      * @author chenlong <vip_chenlong@163.com>
      * @date 2021/6/9
      */
-    private function formAttrHandle(UnitBase $unit, UnitData $unitData): array
+    private function formAttrHandle(UnitData $unitData): array
     {
         $inputAttr   = $unitData->get('inputAttr');
         $currentAttr = array_merge($inputAttr['-'] ?? [], $inputAttr[$this->scene] ?? []);
@@ -144,6 +144,11 @@ class Form
         if ($this->skin && in_array($unitData->get('formUnitType'), ['radio', 'checkbox', 'switch_sc', 'slider'])) {
             $currentAttr['pane'] = '';
         }
+
+        if ($unitData->get('required', false)) {
+            $currentAttr['lay-verify'] = 'required';
+        }
+
         return $currentAttr;
     }
 
@@ -166,7 +171,9 @@ class Form
 
         $default = $this->defaultData[$unitData->get('name', '')] ?? $unitData->get('defaultValue', '');
 
-        $unit->setDefault($default)->setOption($unitData->get('options', []))->setConfig($unitData->get('config', []));
+        $unit->setDefault($default)->setOption($unitData->get('options', []))
+            ->setConfig($unitData->get('config', []))
+            ->setRequired($unitData->get('required', false));
 
         if ($unit instanceof Selects) {
             $this->loadJs('Selects', '/admin_static/layui/dist/xm-select.js');

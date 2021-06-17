@@ -25,7 +25,7 @@ class Install
     /**
      * @var array 默认配置
      */
-    private array $default = [
+    private $default = [
         'type'          => 'mysql',
         'host'          => '127.0.0.1',
         'database'      => 'sd_cms_s',
@@ -150,7 +150,9 @@ class Install
      */
     private function initEnv($config)
     {
-        $replace = array_combine(array_map(fn($value) => (':SD__' . $value), array_keys($this->default)), $config);
+        $replace = array_combine(array_map(function ($value) {
+            return (':SD__' . $value);
+        }, array_keys($this->default)), $config);
 
         $range_arr = range(1, 9) + range('a', 'z') + range('A', 'Z');
         shuffle($range_arr);

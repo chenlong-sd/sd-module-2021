@@ -17,7 +17,11 @@ use weChat\apiv3\pay\{Refund};
  */
 class WeChatV3 extends StaticCallGetInstance
 {
-
+    /**
+     * @return string[]
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
     protected function getNamespace()
     {
         return [

@@ -15,14 +15,16 @@ use think\helper\Str;
 class TableColumn implements \ArrayAccess
 {
     /**
+     * 列数据配置
      * @var array
      */
-    private array $column = [];
+    private $column = [];
 
     /**
+     * 额外的js代码
      * @var string
      */
-    public string $js = '';
+    public $js = '';
 
     /**
      * TableColumn constructor.
@@ -166,7 +168,9 @@ JS;
      */
     public function setTemplate($js_code): TableColumn
     {
-        $this->column['templet'] = is_callable($js_code) ? $js_code : fn() => $js_code;
+        $this->column['templet'] = is_callable($js_code) ? $js_code : function () use ($js_code) {
+            return $js_code;
+        };
         return $this;
     }
 
@@ -194,7 +198,9 @@ JS;
     {
         $field = (array)$field;
         array_unshift($field, $this->column['field']);
-        $field = array_map(fn($v) => 'obj.' . $v, $field);
+        $field = array_map(function ($v) {
+            return 'obj.' . $v;
+        }, $field);
         $code  = 'return ' . implode(" + '{$link_symbol}' +", $field) . ';';
         $this->setTemplate($code);
         return $this;

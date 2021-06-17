@@ -16,11 +16,11 @@ class CommonModel implements Item
     /**
      * @var CURD
      */
-    private CURD $CURD;
+    private $CURD;
     /**
      * @var array 替换值
      */
-    private array $replace;
+    private $replace;
 
     /**
      * CommonModel constructor.

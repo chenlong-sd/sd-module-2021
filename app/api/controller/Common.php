@@ -24,7 +24,7 @@ class Common extends Api
     /**
      * @var array 默认是不需要token的，需要的话，修改此参数或注释
      */
-    public array $middleware = [
+    public $middleware = [
         Token::class => [
             'except' => ['getToken']
         ]

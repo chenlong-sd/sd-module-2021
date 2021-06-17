@@ -14,17 +14,17 @@ class Validate implements Item
     /**
      * @var array
      */
-    private array $replace = [];
+    private $replace = [];
 
     /**
      * @var string
      */
-    private string $primary_key;
+    private $primary_key;
 
     /**
      * @var CURD
      */
-    private CURD $CURD;
+    private $CURD;
 
     public function __construct(CURD $CURD)
     {
@@ -48,7 +48,13 @@ class Validate implements Item
         $this->fieldRuleHandle();
     }
 
-    public function make()
+    /**
+     * 创建文件
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
+    public function make(): string
     {
         $file_content = file_get_contents($this->CURD->config('template.validate'));
 
@@ -92,7 +98,7 @@ class Validate implements Item
      * 替换字符串处理
      * @return array
      */
-    private function replaceHandle()
+    private function replaceHandle(): array
     {
         $replace = [];
         foreach ($this->replace as $key => $value) {

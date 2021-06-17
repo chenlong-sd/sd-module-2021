@@ -21,33 +21,33 @@ class ListsPage
     /**
      * @var array 字段的配置
      */
-    private array $filedConfig = [];
+    private $filedConfig = [];
     /**
      * @var array table 的配置
      */
-    private array $config = [];
+    private $config = [];
     /**
      * @var array 行事件
      */
-    private array $event = [];
+    private $event = [];
     /**
      * @var array|Event[] 头部事件
      */
-    private array $barEvent = [];
+    private $barEvent = [];
 
     /**
      * @var int 事件模式
      */
-    private int $eventMode = self::BUTTON_MODE;
+    private $eventMode = self::BUTTON_MODE;
 
     /**
      * @var array 页面的js
      */
-    private array $js = [];
+    private $js = [];
     /**
      * @var array 操作列的数据
      */
-    private array $handleAttr = [];
+    private $handleAttr = [];
 
     /**
      * ListsPage constructor.
@@ -109,11 +109,23 @@ class ListsPage
         return $this;
     }
 
+    /**
+     * 删除事件
+     * @param array $event
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
     public function removeEvent(array $event)
     {
         $this->event = array_diff_key($this->event, array_flip($event));
     }
 
+    /**
+     * 删除bar事件
+     * @param array $event
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
     public function removeBarEvent(array $event)
     {
         $this->barEvent = array_diff_key($this->barEvent, array_flip($event));
@@ -139,7 +151,9 @@ class ListsPage
     public function getEventJs(bool $is_bar = false): string
     {
         $event = $is_bar ? $this->barEvent : $this->event;
-        $js    = array_map(fn($v) => "{$v->event}(obj){{$v->js}},", $event);
+        $js    = array_map(function ($v) {
+            return "{$v->event}(obj){{$v->js}},";
+        }, $event);
         return implode($js);
     }
 
@@ -219,8 +233,12 @@ class ListsPage
      */
     private function eventPowerCheck()
     {
-        $this->event    = array_filter($this->event,    fn($v) => $v->js !== 'false');
-        $this->barEvent = array_filter($this->barEvent, fn($v) => $v->js !== 'false');
+        $this->event    = array_filter($this->event,    function ($v) {
+            return $v->js !== 'false';
+        });
+        $this->barEvent = array_filter($this->barEvent, function ($v) {
+            return $v->js !== 'false';
+        });
     }
 
     /**
@@ -310,11 +328,14 @@ class ListsPage
             }
         }
 
-        $filedConfig = json_encode(array_map(fn($v) => array_filter($v->toArray()), $filedConfig), JSON_UNESCAPED_UNICODE);
+        $filedConfig = json_encode(array_map(function ($v) {
+            return array_filter($v->toArray());
+        }, $filedConfig), JSON_UNESCAPED_UNICODE);
         return strtr($filedConfig, $functionReplace);
     }
 
     /**
+     * 获取字段显示配置
      * @return string
      */
     public function getFiledConfig(): string
@@ -328,6 +349,7 @@ class ListsPage
     }
 
     /**
+     * 获取页面表格配置
      * @return string
      * @author chenlong <vip_chenlong@163.com>
      * @date 2021/6/8
@@ -338,6 +360,7 @@ class ListsPage
     }
 
     /**
+     * 获取事件模式
      * @return int
      */
     public function getEventMode(): int
@@ -346,6 +369,7 @@ class ListsPage
     }
 
     /**
+     * 设置操作栏的属性
      * @param array $handleAttr
      * @return ListsPage
      */
@@ -356,6 +380,7 @@ class ListsPage
     }
 
     /**
+     * 设置配置
      * @param array $config
      * @return ListsPage
      */

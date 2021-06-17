@@ -25,7 +25,7 @@ class Tag extends UnitBase
         $tagDiv   = Dom::create()->addClass('tags sc-input-tags');
         $tagDiv->addContent(
             Dom::create('input')->setIsSingleLabel()->addAttr('name', $this->name)
-            ->addAttr('value', '')->addAttr('type', 'hidden'),
+            ->addAttr('value', '')->addAttr('type', 'hidden')
         );
         $tagDiv->addContent(
             Dom::create('input')->setIsSingleLabel()
@@ -35,7 +35,7 @@ class Tag extends UnitBase
                 'id' => "sc-tag-{$this->name}",
                 'autocomplete' => "off",
                 'class' => "layui-input layui-fluid sc-tag-input",
-            ])->addAttr($attr),
+            ])->addAttr($attr)
         );
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));

@@ -12,7 +12,7 @@ abstract class ConfigBase extends Singleton
     /**
      * @var array 配置内容
      */
-    protected array $config = [];
+    protected $config = [];
 
     /**
      * 获取配置

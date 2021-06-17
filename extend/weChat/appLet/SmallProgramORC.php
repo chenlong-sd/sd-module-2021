@@ -31,10 +31,10 @@ class SmallProgramORC
      *  OCR 类型
      * @var string
      */
-    private string $ocrType = '';
+    private $ocrType = '';
 
 //  请求路径标本
-    private string $requestUrl = 'https://api.weixin.qq.com/cv/ocr/%s?type=%s%s&access_token=%s';
+    private $requestUrl = 'https://api.weixin.qq.com/cv/ocr/%s?type=%s%s&access_token=%s';
 
     /**
      * SmallProgramORC constructor.

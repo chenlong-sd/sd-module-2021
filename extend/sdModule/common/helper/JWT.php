@@ -39,24 +39,24 @@ class JWT
     const END_LEN = 3;
 
     /** @var string 加密算法类型 */
-    private string $alg = 'sha256';
+    private $alg = 'sha256';
 
     /**
      * token的基本数据
      * @var array
      */
-    private array $payload = [];
+    private $payload = [];
 
     /**
      * @var array refreshToken 数据
      */
-    private array $refresh = [];
+    private $refresh = [];
 
     /**
      * 携带的数据
      * @var array
      */
-    private array $data;
+    private $data;
 
     /**
      * JWT constructor.
@@ -77,7 +77,7 @@ class JWT
     public function __construct(array $data = [])
     {
         $this->data = $data;
-        $alg        = hash_hmac_algos();
+        $alg        = version_compare(PHP_VERSION, '7.2', '>=') ? hash_hmac_algos() : ['sha256'];
         $this->alg  = $alg[array_rand($alg)];
         // 生成签发时间，生效时间，过期时间,唯一标识
         $this->setIat()->setNbf()->setExp()->setIss()->setJti();

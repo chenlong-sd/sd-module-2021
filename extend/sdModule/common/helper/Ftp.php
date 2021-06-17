@@ -13,12 +13,12 @@ namespace sdModule\common\helper;
 class Ftp
 {
 
-    private string $hostname   = '';
-    private string $username   = '';
-    private string $password   = '';
-    private int $port       = 21;
-    private bool $passive    = true;
-    private bool $debug      = true;
+    private $hostname   = '';
+    private $username   = '';
+    private $password   = '';
+    private $port       = 21;
+    private $passive    = true;
+    private $debug      = true;
     /**
      * @var bool|int
      */

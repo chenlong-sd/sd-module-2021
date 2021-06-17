@@ -15,9 +15,9 @@ class Page implements Item
     /**
      * @var CURD
      */
-    private CURD $CURD;
+    private $CURD;
 
-    private array $replace;
+    private $replace;
 
     /**
      * 初始化
@@ -48,9 +48,12 @@ class Page implements Item
     }
 
     /**
-     * @return mixed 创建
+     * 创建文件
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
      */
-    public function make()
+    public function make(): string
     {
         $file_content = file_get_contents($this->CURD->config('template.page'));
 
@@ -61,7 +64,7 @@ class Page implements Item
      * 替换字符串处理
      * @return array
      */
-    private function replaceHandle()
+    private function replaceHandle(): array
     {
         $replace = [];
         foreach ($this->replace as $key => $value) {
@@ -78,6 +81,7 @@ class Page implements Item
     }
 
     /**
+     * 加载类文件
      * @param $useClass
      */
     private function useAdd($useClass)
@@ -253,10 +257,10 @@ class Page implements Item
 
     /**
      * 多属性字段获取
-     * @param $field
+     * @param string $field
      * @return string
      */
-    private function attrFieldGet(string $field)
+    private function attrFieldGet(string $field): string
     {
         $field = parse_name($field, 1);
         $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');

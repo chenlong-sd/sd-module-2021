@@ -23,22 +23,22 @@ class Button
     /**
      * @var array css类名
      */
-    private array $class_name = ["layui-btn"];
+    private $class_name = ["layui-btn"];
 
     /**
      * @var string 事件名
      */
-    private string $event = '';
+    private $event = '';
 
     /**
      * @var string 图标类
      */
-    private string $icon = '';
+    private $icon = '';
 
     /**
      * @var string 标题
      */
-    private string $title = '';
+    private $title = '';
 
     /**
      * Button constructor.

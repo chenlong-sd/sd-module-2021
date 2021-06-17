@@ -11,46 +11,46 @@ namespace sdModule\common\helper;
 class Infinite
 {
     /** @var string 主键 */
-    protected string $primaryKey = 'id';
+    protected $primaryKey = 'id';
 
     /** @var string 父级字段名 */
-    protected string $parents = 'pid';
+    protected $parents = 'pid';
 
     /** @var string 自己字段名称 */
-    protected string $childrenKey = 'children';
+    protected $childrenKey = 'children';
 
     /** @var int 返回的级数，0为全部 */
-    protected int $series = 0;
+    protected $series = 0;
 
     /**
      * @var string 多于返回的级数的数据处理
      * @example merge | del  (合并 或 删除，默认合并）
      */
-    protected string $surplusHandle = 'merge';
+    protected $surplusHandle = 'merge';
 
     /**
      * 对每个元素的额外处理函数，参数就是元素自身,返回新的元素
      * @var \Closure|null
      */
-    protected ?\Closure $call = null;
+    protected $call = null;
 
     /**
      * 处理完之后再进行处理的匿名函数
      * @var \Closure|null
      */
-    protected ?\Closure $afterCall = null;
+    protected $afterCall = null;
 
     /** @var bool 是否记录传承链接，连接字段为 inherit */
-    protected bool $inherit = false;
+    protected $inherit = false;
 
     /** @var bool 返回值是否以主键为键 */
-    protected bool $keyIsPrimary = false;
+    protected $keyIsPrimary = false;
 
     /**
      * 要处理的数据
      * @var array
      */
-    private array $data;
+    private $data;
 
     /**
      * Infinite constructor.

@@ -18,7 +18,7 @@ class SystemUpload
 {
     const UPLOAD_DIR = 'upload_resource';
 
-    private string $verify_type = 'image';
+    private $verify_type = 'image';
 
     private const VERIFY_RULE = [
         'image' => [

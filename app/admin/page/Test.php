@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-06-09 00:44:55
+ * Date: 2021-06-17 16:27:13
  * User: chenlong <vip_chenlong@163.com>
  */
 
@@ -37,14 +37,15 @@ class Test extends BasePage
             TableAux::column('status', '状态'),
             TableAux::column('administrators_name', '管理员'),
             TableAux::column('parent_title', '上级'),
+            TableAux::column('create_time', '创建时间'),
             TableAux::column('update_time', '修改时间'),
+            TableAux::column('delete_time', '删除时间'),
         ]);
 
         $table->setHandleAttr([
             'align' => 'center',
             'width' => 150
         ]);
-
         return $table;
     }
 
@@ -84,13 +85,7 @@ class Test extends BasePage
      */
     public function searchFormData(): Form
     {
-        $form_data = [
-            FormUnit::build(
-                FormUnit::Text('i.title%%')->placeholder('标题'),
-                FormUnit::Select('i.status')->placeholder('状态')->options(MyModel::getStatusSc(false)),
-                FormUnit::custom()->customHtml(Form::searchSubmit()),
-            )
-        ];
+        $form_data = [];
         return Form::create($form_data)->setSubmitHtml()->complete();
     }
 

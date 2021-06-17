@@ -71,7 +71,7 @@ class ReflexCall
             }else if($parameter->isArray()){
                 $param[$parameter->getName()] = [];
             }else if ($parameter->isCallable()) {
-                $param[$parameter->getName()] = fn()=>null;
+                $param[$parameter->getName()] = function () {return null;};
             }else {
                 $param[$parameter->getName()] = $parameter->allowsNull() ? null : '';
             }

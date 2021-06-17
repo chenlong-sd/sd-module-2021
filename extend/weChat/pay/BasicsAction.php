@@ -7,8 +7,6 @@
 namespace weChat\pay;
 
 
-use think\Exception;
-
 trait BasicsAction
 {
     /**
@@ -65,7 +63,7 @@ trait BasicsAction
      * 生成随机字符串
      * @return string
      */
-    private function random()
+    private function random(): string
     {
         $array   = array_merge(range('A', 'Z'), range('a', 'z'), range(0, 9));
         $random  = mt_rand(24, 31);
@@ -83,7 +81,7 @@ trait BasicsAction
      * @param array $signArray
      * @return string
      */
-    private function sign(array $signArray = [])
+    private function sign(array $signArray = []): string
     {
         if (empty($signArray)) {
             foreach ($this as $key => $value) {
@@ -114,7 +112,7 @@ trait BasicsAction
      * @param array $data
      * @return string
      */
-    private function xml($data = [])
+    private function xml($data = []): string
     {
         $data or $this->sign();      // 生成签名
         $xml = '<xml>' . PHP_EOL;
@@ -130,10 +128,10 @@ trait BasicsAction
 
     /**
      * 获取内部属性
-     * @param $attr
-     * @return string
+     * @param string $attr
+     * @return mixed
      */
-    public function getAttr($attr = '')
+    public function getAttr(string $attr = '')
     {
         return $this->$attr ?? '';
     }
@@ -144,7 +142,7 @@ trait BasicsAction
      * @param $appId
      * @return $this
      */
-    public function setAppId(string $appId)
+    public function setAppId(string $appId): BasicsAction
     {
         if ($appId) {
             $this->appid = $appId;
@@ -159,7 +157,7 @@ trait BasicsAction
      * @param $key  string  秘钥
      * @return $this
      */
-    public function setMchAndKey(string $mch, string $key)
+    public function setMchAndKey(string $mch, string $key): BasicsAction
     {
         if (!empty($mch) && !empty($key)) {
             $this->mch_id = $mch;
@@ -193,8 +191,10 @@ trait BasicsAction
      * @param string $url 路径
      * @param mixed $data 数据
      * @param array|null $cert 证书
-     * @return mixed
-     * @throws Exception
+     * @return bool|string
+     * @throws \Exception
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
      */
     private static function postRequest(string $url, $data, array $cert = null)
     {
@@ -216,7 +216,7 @@ trait BasicsAction
         }
         $output = curl_exec($curl);
         if (curl_errno($curl)) {
-            throw new Exception(curl_error($curl));
+            throw new \Exception(curl_error($curl));
         }
         curl_close($curl);
         return $output;

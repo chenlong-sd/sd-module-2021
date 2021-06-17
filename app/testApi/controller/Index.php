@@ -24,7 +24,7 @@ use think\facade\Log;
 
 class Index extends BaseController
 {
-    public array $middleware = [BeComplicatedBy::class];
+    public $middleware = [BeComplicatedBy::class];
     const DD = 33;
     const FD = 233;
 

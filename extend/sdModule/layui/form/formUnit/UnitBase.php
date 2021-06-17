@@ -14,22 +14,22 @@ abstract class UnitBase
     /**
      * @var string
      */
-    public string $name;
+    public $name;
 
     /**
      * @var string
      */
-    public string $label;
+    public $label;
 
     /**
      * @var string
      */
-    public string $placeholder;
+    public $placeholder;
 
     /**
      * @var array
      */
-    public array $options = [];
+    public $options = [];
     /**
      * @var string|int|array 预设表单值
      */
@@ -37,23 +37,27 @@ abstract class UnitBase
     /**
      * @var array js配置项
      */
-    public array $config = [];
+    public $config = [];
 
     /**
      * @var string 表单基础元素的类
      */
-    public string $itemClass = 'layui-form-item';
+    public $itemClass = 'layui-form-item';
 
     /**
      * @var array|UnitBase[] 子项目
      */
-    public array $childrenItem = [];
+    public $childrenItem = [];
 
     /**
      * 短标签
      * @var string
      */
-    public string $shortTip = '';
+    public $shortTip = '';
+    /**
+     * @var bool 是否必填
+     */
+    private $isRequired = false;
 
 
     /**
@@ -99,6 +103,19 @@ abstract class UnitBase
     public function setConfig(array $config): UnitBase
     {
         $this->config = $config;
+        return $this;
+    }
+
+    /**
+     * 设置必填
+     * @param bool $is_required
+     * @return $this
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
+    public function setRequired(bool $is_required = false): UnitBase
+    {
+        $this->isRequired = $is_required;
         return $this;
     }
 
@@ -194,7 +211,22 @@ abstract class UnitBase
      */
     protected function getLabel(string $labelText): Dom
     {
-        return Dom::create('label')->addClass('layui-form-label')->addContent($labelText);
+        return Dom::create('label')->addClass('layui-form-label')
+            ->addContent($labelText)->addContent($this->requiredDom());
+    }
+
+    /**
+     * 必选的Dom获取
+     * @return Dom|string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
+    private function requiredDom()
+    {
+        return $this->isRequired ? Dom::create('span')
+            ->addAttr([
+                'style' => 'position: absolute;font-size: 25px;color: red;top: 14px;right: 3px;',
+            ])->addContent('*') : '';
     }
 
     /**

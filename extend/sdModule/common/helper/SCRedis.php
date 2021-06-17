@@ -12,7 +12,7 @@ class SCRedis
     /**
      * @var array 基础配置
      */
-    private static array $option = [
+    private static $option = [
         'host' => '127.0.0.1',
         'port' => 6379,
         'password' => '',
@@ -33,17 +33,17 @@ class SCRedis
     /**
      * @var null 唯一标识，不传的时候默认为调用类名加方法
      */
-    private ?string $key = null;
+    private $key = null;
 
     /**
      * @var int 最长锁时间
      */
-    private int $exp = 3;
+    private $exp = 3;
 
     /**
      * @var string 有锁时（即锁尚未放开）的返回值
      */
-    private string $tip = '操作太快了哟';
+    private $tip = '操作太快了哟';
 
     /**
      * SCRedis constructor.
@@ -106,7 +106,9 @@ class SCRedis
     public function lockAndTransaction(callable $callback, array $param = [])
     {
         return $this->lock(function () use ($callback, $param){
-            return Db::transaction(fn() => call_user_func($callback, ...$param));
+            return Db::transaction(function () use ($callback, $param) {
+                return call_user_func($callback, ...$param);
+            });
         }, []);
     }
 

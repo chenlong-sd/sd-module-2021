@@ -33,7 +33,12 @@ class Inline extends UnitBase
         }
 
         foreach ($this->childrenItem as [$dom, $attr]) {
-            $item->addContent($dom->setItemClass('layui-inline')->getHtml($attr));
+            /** @var Dom $newDom */
+            $newDom = $dom->setItemClass('layui-inline')->getHtml($attr);
+            if (isset($attr['pane'])){
+                $newDom->addAttr('pane', '');
+            }
+            $item->addContent($newDom);
         }
         return $item;
     }

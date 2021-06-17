@@ -68,7 +68,9 @@ class Role extends BasePage
         ];
 
         if ($assign_table = Config::get('admin.open_login_table', [])) {
-            $assign_table = array_map(fn($v) => $v['name'] ?? '——', $assign_table);
+            $assign_table = array_map(function ($v) {
+                return $v['name'] ?? '——';
+            }, $assign_table);
             $form_data[] = FormUnit::select('assign_table', '账户可用')->options($assign_table);
         }
 

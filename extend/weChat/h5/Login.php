@@ -21,7 +21,7 @@ class Login
      * 配置标签
      * @var string
      */
-    private string $config_tag = '';
+    private $config_tag = '';
 
     /**
      * Login constructor.

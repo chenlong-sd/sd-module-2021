@@ -7,6 +7,7 @@
 namespace weChat\pay;
 
 use app\common\SdException;
+use think\response\Xml;
 use weChat\common\Helper;
 
 /**
@@ -32,7 +33,7 @@ class WeChatPay implements \ArrayAccess
      * WeChatPay constructor.
      * @param string $trade_type 支付类型
      */
-    public function __construct($trade_type = self::JS_API)
+    public function __construct(string $trade_type = self::JS_API)
     {
         $this->trade_type = $trade_type;                   // 支付方式
 
@@ -46,7 +47,7 @@ class WeChatPay implements \ArrayAccess
     /**
      * 发起下单请求，返回微信统一下单返回的数据
      * @return mixed
-     * @throws \think\Exception
+     * @throws \Exception
      */
     public function request()
     {
@@ -58,9 +59,9 @@ class WeChatPay implements \ArrayAccess
      * 生成调起支付接口的提交数据
      * @param string|bool $prepayId 微信返回的 prepay_id(request方法), 为true 的时候可直接调用返回微信支付所需数据
      * @return array
-     * @throws SdException|\think\Exception
+     * @throws SdException|\Exception
      */
-    public function requestPayData($prepayId)
+    public function requestPayData($prepayId): array
     {
         if ($prepayId === true) {
             $prepayId = $this->request();
@@ -110,18 +111,18 @@ class WeChatPay implements \ArrayAccess
 
     /**
      * 异步成功通知
-     * @return \think\response\Xml
+     * @return Xml
      */
-    public static function AsyncReturnSuccess()
+    public static function AsyncReturnSuccess(): Xml
     {
         return xml(['return_code' => 'SUCCESS']);
     }
 
     /**
      * 异步失败通知
-     * @return \think\response\Xml
+     * @return Xml
      */
-    public static function AsyncReturnFail()
+    public static function AsyncReturnFail(): Xml
     {
         return xml(['return_code' => 'FAIL']);
     }

@@ -78,6 +78,5 @@ class Image extends UnitBase
         return <<<JS
     window.{$this->name} = custom.upload(layui.jquery, layui.upload, '{$this->name}').defaults('{$this->default}');
 JS;
-
     }
 }

@@ -27,45 +27,45 @@ class Event
     /**
      * @var string 事件名字
      */
-    public string $event;
+    public $event;
 
     /**
      * @var string 菜单标题
      */
-    public string $title = '';
+    public $title = '';
 
     /**
      * @var string 图标
      */
-    public string $icon = '';
+    public $icon = '';
 
     /**
      * @var string 按钮大小
      */
-    public string $btnSize = 'xs';
+    public $btnSize = 'xs';
 
     /**
      * @var string 按钮类型
      */
-    public string $btnType = 'default';
+    public $btnType = 'default';
 
     /**
      * @var string  事件的JS代码
      */
-    public string $js = '';
+    public $js = '';
     /**
      * @var ListsPage
      */
-    private ListsPage $listsPage;
+    private $listsPage;
 
     /**
      * @var bool
      */
-    private bool $isBar;
+    private $isBar;
     /**
      * @var string
      */
-    public string $where = '';
+    public $where = '';
 
     /**
      * Event constructor.

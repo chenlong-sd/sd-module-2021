@@ -2,7 +2,7 @@
 /**
  * Test.php
  * User: ChenLong
- * DateTime: 2021-06-09 00:44:55
+ * DateTime: 2021-06-17 16:27:13
  */
 
 namespace app\admin\controller;
@@ -29,7 +29,7 @@ class Test extends Admin
         $mode = $this->getModel()
             ->join('administrators', 'i.administrators_id = administrators.id ', 'left')
             ->join('test', 'i.pid = test.id ', 'left')
-            ->field('i.id,i.title,i.cover,i.intro,i.status,administrators.name administrators_name,i.administrators_id,test.title parent_title,i.pid,i.update_time');
+            ->field('i.id,i.title,i.cover,i.intro,i.status,administrators.name administrators_name,i.administrators_id,test.title parent_title,i.pid,i.create_time,i.update_time,i.delete_time');
 
         return $service->setModel($mode)->getListsData();
     }

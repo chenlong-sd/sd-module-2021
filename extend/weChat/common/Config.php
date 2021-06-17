@@ -27,7 +27,7 @@ class Config
     /**
      * @return Config
      */
-    private static function getInstance()
+    private static function getInstance(): Config
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -57,7 +57,7 @@ class Config
      * @param string $param
      * @return string
      */
-    public static function appPay($param = '')
+    public static function appPay(string $param = '')
     {
         return self::get('app_pay.' . $param) ?: self::get('common_pay.' . $param);
     }
@@ -67,7 +67,7 @@ class Config
      * @param string $param
      * @return string
      */
-    public static function xPay($param = '')
+    public static function xPay(string $param = '')
     {
         return self::get('small_pay.' . $param) ?: self::get('common_pay.' . $param);
     }
@@ -77,7 +77,7 @@ class Config
      * @param string $param
      * @return string
      */
-    public static function sPay($param = '')
+    public static function sPay(string $param = '')
     {
         return self::get('scan_pay.' . $param) ?: self::get('common_pay.' . $param);
     }
@@ -87,7 +87,7 @@ class Config
      * @param string $param
      * @return string
      */
-    public static function cashBonus($param = '')
+    public static function cashBonus(string $param = '')
     {
         return self::get('cash.' . $param) ?: self::get('common_pay.' . $param);
     }

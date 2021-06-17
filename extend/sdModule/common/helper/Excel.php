@@ -26,35 +26,35 @@ class Excel
     /**
      * @var Spreadsheet
      */
-    private ?Spreadsheet $office;
+    private $office;
     /**
      * @var IReader|null
      */
-    private ?IReader $read;
+    private $read;
 
     /**
      * @var string 文件路径
      */
-    private string $excel_path;
+    private $excel_path;
 
     /**
      * @var string 文件格式
      */
-    private string $format;
+    private $format;
 
     /**
      * @var int 当前写入行
      */
-    private int $currentWriteLine = 1;
+    private $currentWriteLine = 1;
 
     /**
      * @var string 临时路劲
      */
-    private string $tmp_path;
+    private $tmp_path;
     /**
      * @var bool
      */
-    private bool $stop_read = false;
+    private $stop_read = false;
 
     /**
      * Excel constructor.
@@ -254,13 +254,13 @@ class Excel
     {
         return new class($start_line, $end_line) implements IReadFilter
         {
-            private int $startRow = 1;
+            private $startRow = 1;
 
-            private int $endRow = 1;
+            private $endRow = 1;
 
-            private string $start_line;
+            private $start_line;
 
-            private string $end_line;
+            private $end_line;
 
             public function __construct($start_line, $end_line)
             {

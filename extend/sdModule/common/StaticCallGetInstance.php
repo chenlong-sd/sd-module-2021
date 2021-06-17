@@ -17,7 +17,7 @@ abstract class StaticCallGetInstance extends Singleton
      * 组件实例组
      * @var array
      */
-    private array $instances = [];
+    private $instances = [];
 
     /**
      * 返回命名空间

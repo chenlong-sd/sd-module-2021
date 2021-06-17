@@ -9,43 +9,51 @@ namespace weChat\apiv3\pay;
 
 use weChat\common\Helper;
 
+/**
+ * 微信退款
+ * Class Refund
+ * @package weChat\apiv3\pay
+ * @author chenlong<vip_chenlong@163.com>
+ * @date 2021/6/17
+ */
 class Refund
 {
     private const URL = "https://api.mch.weixin.qq.com/v3/refund/domestic/refunds";
     /**
      * @var string 原商户订单号
      */
-    public string $out_trade_no = '';
+    public $out_trade_no = '';
     /**
      * @var string 原交易订单号
      */
-    public string $transaction_id = '';
+    public $transaction_id = '';
     /**
      * @var string 回调地址
      */
-    public string $notify_url = '';
+    public $notify_url = '';
     /**
      * @var string 退款订单号
      */
-    public string $out_refund_no = '';
+    public $out_refund_no = '';
     /**
      * @var string 退款原因
      */
-    public string $reason = '';
+    public $reason = '';
     /**
      * @var string 退款资金来源
      */
-    public string $funds_account = '';
+    public $funds_account = '';
     /**
      * @var array 退款金额信息
      * 退款金额	refund
      * 原订单金额	total
      * 退款币种	currency default CNY
      */
-    public array $amount = [];
+    public $amount = [];
 
     /**
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function request()
     {
@@ -56,7 +64,7 @@ class Refund
      * 参数处理
      * @return array
      */
-    private function paramHandle()
+    private function paramHandle(): array
     {
         $this->defaultOutRefundNo();
         return array_filter((array)$this);
@@ -73,6 +81,7 @@ class Refund
     }
 
     /**
+     * 设置商户订单号
      * @param string $out_trade_no
      * @return Refund
      */
@@ -83,6 +92,7 @@ class Refund
     }
 
     /**
+     * 设置微信交易ID
      * @param string $transaction_id
      * @return Refund
      */
@@ -93,6 +103,7 @@ class Refund
     }
 
     /**
+     * 设置通知地址
      * @param string $notify_url
      * @return Refund
      */
@@ -103,6 +114,7 @@ class Refund
     }
 
     /**
+     * 设置退款订单号
      * @param string $out_refund_no
      * @return Refund
      */
@@ -113,6 +125,7 @@ class Refund
     }
 
     /**
+     * 设置退款原因
      * @param string $reason
      * @return Refund
      */
@@ -123,6 +136,7 @@ class Refund
     }
 
     /**
+     * 设置退款账户
      * @param string $funds_account
      * @return Refund
      */
@@ -133,6 +147,7 @@ class Refund
     }
 
     /**
+     * 设置金额
      * @param int $refund 退款金额
      * @param int $total 原订单金额
      * @param string $currency 退款币种

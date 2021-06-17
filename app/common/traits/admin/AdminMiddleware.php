@@ -20,9 +20,9 @@ namespace app\common\traits\admin;
  */
 trait AdminMiddleware
 {
-    private array $onlyMiddleware = [];
-    private array $exceptMiddleware = [];
-    private array $customMiddleware = [];
+    private $onlyMiddleware = [];
+    private $exceptMiddleware = [];
+    private $customMiddleware = [];
 
     /**
      * 注册中间件

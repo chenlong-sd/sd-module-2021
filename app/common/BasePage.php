@@ -21,12 +21,12 @@ abstract class BasePage
     /**
      * @var string 列表数据页面模板
      */
-    public string $list_template = 'common/list_page';
+    public $list_template = 'common/list_page';
 
     /**
      * @var string 表单页面模板
      */
-    public string $form_template = 'common/save_page';
+    public $form_template = 'common/save_page';
 
 
     /**

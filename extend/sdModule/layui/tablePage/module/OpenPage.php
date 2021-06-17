@@ -12,17 +12,17 @@ class OpenPage
     /**
      * @var string
      */
-    private string $pageCode;
+    private $pageCode;
 
     /**
      * @var string
      */
-    private string $confirm = '';
+    private $confirm = '';
 
     /**
      * @var string 权限控制
      */
-    private string $power = 'normal';
+    private $power = 'normal';
 
     /**
      *  constructor.

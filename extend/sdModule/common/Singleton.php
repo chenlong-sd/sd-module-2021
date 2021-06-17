@@ -13,7 +13,10 @@ namespace sdModule\common;
  */
 abstract class Singleton
 {
-    private static ?Singleton $instance = null;
+    /**
+     * @var Singleton|null
+     */
+    private static $instance = null;
 
     /**
      * 获取自身

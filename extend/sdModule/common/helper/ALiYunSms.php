@@ -20,49 +20,49 @@ class ALiYunSms
     /**
      * @var RpcRequest
      */
-    private RpcRequest $rpc;
+    private $rpc;
 
     private const HOST = 'dysmsapi.aliyuncs.com';
     /**
      * @var string
      */
-    private string $product = 'Dysmsapi';
+    private $product = 'Dysmsapi';
     /**
      * @var string
      */
-    private string $method = 'POST';
+    private $method = 'POST';
     /**
      * @var string
      */
-    private string $action = 'SendSms';
+    private $action = 'SendSms';
     /**
      * @var string
      */
-    private string $version = '2017-05-25';
+    private $version = '2017-05-25';
     /**
      * @var string
      */
-    private string $sign;
+    private $sign;
 
     /**
      * @var string
      */
-    private string $regionId;
+    private $regionId;
 
     /**
      * @var array
      */
-    private array $template = [];
+    private $template = [];
 
     /**
      * @var mixed|string 模板代码
      */
-    private string $template_code = '';
+    private $template_code = '';
 
     /**
      * @var array
      */
-    private array $param_list = [];
+    private $param_list = [];
 
     /**
      * ALiYunSms constructor.

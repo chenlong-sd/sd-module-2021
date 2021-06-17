@@ -52,7 +52,7 @@ class Administrators extends BaseModel
     /**
      * @var bool 维护模式
      */
-    private bool $maintain = false;
+    private $maintain = false;
 
     /**
      * 分类值展示处理

@@ -19,7 +19,7 @@ class JsApi
      * @param $api_list array   接口列表
      * @return array
      */
-    public function getJsApiConfig($url, $api_list)
+    public function getJsApiConfig(string $url, array $api_list): array
     {
         $str = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $strLen = strlen($str) - 1;

@@ -1,14 +1,21 @@
 <?php
 
+use sdModule\timedTask\ScTaskInterface;
+use Swoole\Coroutine;
+use Swoole\Coroutine\System;
+use Swoole\Process;
+use Swoole\Timer;
+use function Swoole\Coroutine\run;
+
 function task()
 {
     // 自动加载文件引入
     include __DIR__ . '/../../../vendor/autoload.php';
     timer_log('asdsd');
     $date = new DateTime();
-    \Swoole\Coroutine\System::sleep(60 - $date->format('s'));
+    System::sleep(60 - $date->format('s'));
     $taskArr = loadTask();
-    \Swoole\Timer::tick(60000, function () use ($taskArr){
+    Timer::tick(60000, function () use ($taskArr){
         $date = new DateTime();
         foreach ($taskArr as $value) {
             $crontab = timeAnalysis($value['crontab']);
@@ -44,7 +51,7 @@ function task()
             /**
              * 创建协程执行任务
              */
-            \Swoole\Coroutine::create(function () use ($value, $crontab) {
+            Coroutine::create(function () use ($value, $crontab) {
                 performTask($crontab[0], $value['task']);
             });
         }
@@ -73,15 +80,15 @@ if (preg_match('/^[4-9]\.[5-9]\.[0-9]/', SWOOLE_VERSION)) {
     /**
      * 协程方式回收子进程
      */
-    \Swoole\Coroutine\run(function () use ($pid){
-        $status = \Swoole\Coroutine\System::waitPid($pid) ?: [];
+    run(function () use ($pid){
+        $status = System::waitPid($pid) ?: [];
         timer_log(json_encode($status));
     });
 }else{
     /**
      * 回收子进程
      */
-    $status = \Swoole\Process::wait(true) ?: [];
+    $status = Process::wait(true) ?: [];
     timer_log(json_encode($status));
 }
 
@@ -112,7 +119,7 @@ function loadTask(): array
     $taskArr = [];
     foreach ($config as $task => $crontab) {
         $taskClass = new $task();
-        if (!$taskClass instanceof \sdModule\timedTask\ScTaskInterface){
+        if (!$taskClass instanceof ScTaskInterface){
             unset($taskClass);
             continue;
         }
@@ -204,9 +211,9 @@ function timeCheck(array $time, int $current): bool
 /**
  * 执行任务
  * @param array $crontab
- * @param \sdModule\timedTask\ScTaskInterface $task
+ * @param ScTaskInterface $task
  */
-function performTask(array $crontab, \sdModule\timedTask\ScTaskInterface $task)
+function performTask(array $crontab, ScTaskInterface $task)
 {
     /**
      * 没有间隔执行
@@ -221,7 +228,7 @@ function performTask(array $crontab, \sdModule\timedTask\ScTaskInterface $task)
             $task->handle();
         }else{
             $tick = $crontab[0] > 59 ? 59 : ($crontab[0] < 1 ? 1 : $crontab[0]);
-            \Swoole\Timer::after($tick * 1000, function () use ($task){
+            Timer::after($tick * 1000, function () use ($task){
                 $task->handle();
             });
         }
@@ -246,17 +253,19 @@ function performTask(array $crontab, \sdModule\timedTask\ScTaskInterface $task)
 
         /**
          * 定时间隔执行的函数
-         * @param \sdModule\timedTask\ScTaskInterface $task
+         * @param ScTaskInterface $task
          * @param int $timer
          * @param int $tick
          * @param int $max
          */
-        $tickFun = function (\sdModule\timedTask\ScTaskInterface $task, int &$timer, int $tick, int $max) {
-            \Swoole\Coroutine::create(fn() => $task->handle());
-            \Swoole\Timer::tick($tick * 1000, function ($timer_id) use ($task, &$timer, $tick, $max){
+        $tickFun = function (ScTaskInterface $task, int &$timer, int $tick, int $max) {
+            Coroutine::create(function () use ($task) {
+                return $task->handle();
+            });
+            Timer::tick($tick * 1000, function ($timer_id) use ($task, &$timer, $tick, $max){
                 $timer += $tick;
                 if ($timer > $max){
-                    \Swoole\Timer::clear($timer_id);
+                    Timer::clear($timer_id);
                 }else{
                     $task->handle();
                 }
@@ -270,7 +279,7 @@ function performTask(array $crontab, \sdModule\timedTask\ScTaskInterface $task)
         if ($timer == 0){
             $tickFun($task, $timer, $tick, $max);
         }else{
-            \Swoole\Timer::after($timer * 1000, function ()  use ($tickFun, $task, &$timer, $tick, $max) {
+            Timer::after($timer * 1000, function ()  use ($tickFun, $task, &$timer, $tick, $max) {
                 $tickFun($task, $timer, $tick, $max);
             });
         }

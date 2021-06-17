@@ -4,28 +4,25 @@
 namespace sdModule\makeBaseCURD\item;
 
 
-use sdModule\layuiSearch\generate\TimeRange;
-use sdModule\layuiSearch\SearchForm;
 use sdModule\makeBaseCURD\CURD;
-use function GuzzleHttp\Psr7\str;
 
 class Controller implements Item
 {
     /***
      * @var array 替换数据
      */
-    private array $replace;
+    private $replace;
 
     /**
      * @var array 字段详情信息
      */
-    private array $field_info;
+    private $field_info;
 
 
     /**
      * @var CURD
      */
-    private CURD $CURD;
+    private $CURD;
 
     /**
      * 模块文件创建
@@ -77,7 +74,7 @@ class Controller implements Item
      * 替换字符串处理
      * @return array
      */
-    private function replaceHandle()
+    private function replaceHandle(): array
     {
         $replace = [];
 
@@ -99,7 +96,7 @@ class Controller implements Item
      * @param $type
      * @return string
      */
-    private function warp($type)
+    private function warp($type): string
     {
         $warp = [
             'use'        => "\r\n",
@@ -111,6 +108,7 @@ class Controller implements Item
     }
 
     /**
+     * 加载类
      * @param $useClass
      */
     private function useAdd($useClass)
@@ -148,6 +146,7 @@ class Controller implements Item
     }
 
     /**
+     * 数据查询关联表处理
      * @param string $table join 表
      * @param string $field 字段
      * @param string $join_field 关联字段

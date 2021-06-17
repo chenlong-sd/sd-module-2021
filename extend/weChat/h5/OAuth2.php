@@ -26,18 +26,20 @@ class OAuth2
      * @param string $param 参数 （支持数字和字母）
      * @return string
      */
-    public static function getAuthUrl($url, $type = self::SNS_API_BASE, $param = 'STATE')
+    public static function getAuthUrl(string $url, string $type = self::SNS_API_BASE, string $param = 'STATE'): string
     {
         return sprintf(self::AUTH_URL, Config::get('appId'), urlencode($url), $type, $param);
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @param string $param
      * @param string $type
      * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
      */
-    public function getOAuth2Url($url, $param = 'STATE', $type = self::SNS_API_USER_INFO)
+    public function getOAuth2Url(string $url, string $param = 'STATE', string $type = self::SNS_API_USER_INFO): string
     {
         return sprintf(self::AUTH_URL, Config::get('appId'), urlencode($url), $type, $param);
     }

@@ -205,7 +205,9 @@ if (!function_exists('get_class_attr')) {
         }
 
         if (is_object($class)) {
-            return (fn() => $this->$attr ?? $default)->call($class);
+            return (function () use ($attr, $default) {
+                return $this->$attr ?? $default;
+            })->call($class);
         }
         return $default;
     }
@@ -221,8 +223,12 @@ if (!function_exists('data_filter')) {
      */
     function data_filter(array $data): array
     {
-        $data = array_map(fn($v) => is_array($v) ? $v : trim($v), $data);
-        return array_filter($data, fn($v) => !empty($v) || $v === 0 || $v === '0');
+        $data = array_map(function ($v) {
+            return is_array($v) ? $v : trim($v);
+        }, $data);
+        return array_filter($data, function ($v) {
+            return !empty($v) || $v === 0 || $v === '0';
+        });
     }
 }
 

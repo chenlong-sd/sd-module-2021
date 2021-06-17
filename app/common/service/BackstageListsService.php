@@ -17,12 +17,15 @@ use think\Paginator;
 
 class BackstageListsService
 {
-    private Query $model;
+    /**
+     * @var Query
+     */
+    private $model;
 
     /**
      * @var bool 是否分页显示
      */
-    private bool $pagination = true;
+    private $pagination = true;
 
     /**
      * @var callable
@@ -31,7 +34,7 @@ class BackstageListsService
     /**
      * @var string
      */
-    private string $alias = 'i';
+    private $alias = 'i';
 
     /**
      * @var callable 返回处理回调
@@ -41,7 +44,7 @@ class BackstageListsService
     /**
      * @var array 统计行数据
      */
-    private array $totalRow = [];
+    private $totalRow = [];
 
     /**
      * @var array 快捷搜索的字段，最多支持两个，匹配方式参考：$this->exprArr
@@ -50,10 +53,10 @@ class BackstageListsService
      *  'test%%'     => '看看',
      * ]
      */
-    private array $quickSearchField;
+    private $quickSearchField;
 
     /** @var array  表达式替换 */
-    private array $exprArr = [
+    private $exprArr = [
         '_=' => '=',
         '_<' => '<',
         '_>' => '>',

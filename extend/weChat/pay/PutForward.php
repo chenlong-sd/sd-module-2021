@@ -8,6 +8,7 @@
 
 namespace weChat\pay;
 
+use Exception;
 use weChat\common\Helper;
 use weChat\common\Config;
 
@@ -38,9 +39,9 @@ class PutForward
      * 发起请求
      * @param array $wxCert 证书路径（可选）
      * @return mixed
-     * @throws \think\Exception
+     * @throws Exception
      */
-    public function request($wxCert = [])
+    public function request(array $wxCert = [])
     {
         $wxCert or $wxCert = Config::get('cert');
         $result = self::postRequest(self::REQUEST_URL, $this->xml(), $wxCert);
@@ -53,9 +54,9 @@ class PutForward
      * @param $partner_trade_no     string  订单号
      * @param array $wxCert 证书路径（可选，包含  cert 和 key ）
      * @return mixed
-     * @throws \think\Exception
+     * @throws Exception
      */
-    public function query($partner_trade_no, $wxCert = [])
+    public function query(string $partner_trade_no, array $wxCert = [])
     {
         $wxCert or $wxCert = Config::get('cert');
         $requestData = [

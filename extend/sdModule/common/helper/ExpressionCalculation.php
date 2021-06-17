@@ -17,27 +17,27 @@ class ExpressionCalculation
      * 详细表达式单元
      * @var array
      */
-    private array $exprItem = [];
+    private $exprItem = [];
 
     /**
      * @var string 最终表达式
      */
-    private string $expr = '';
+    private $expr = '';
 
-    private array $extendCallable = [];
+    private $extendCallable = [];
 
-    private array $extendPreg = [];
+    private $extendPreg = [];
 
-    private array $extendExpr = [];
+    private $extendExpr = [];
 
     /**
      * @var int 括号表达式索引
      */
-    private int $index = 1;
+    private $index = 1;
     /**
      * @var int 扩展表达式索引
      */
-    private int $ExtendIndex = 1;
+    private $ExtendIndex = 1;
 
     /**
      * 创建表达式并计算

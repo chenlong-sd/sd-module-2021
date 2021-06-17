@@ -19,7 +19,7 @@ class Api extends BaseController
     /**
      * @var array|string[] 控制器中间件
      */
-    public array $middleware = [Token::class, BeComplicatedBy::class ];
+    public $middleware = [Token::class, BeComplicatedBy::class ];
 
     /**
      * 初始化函数

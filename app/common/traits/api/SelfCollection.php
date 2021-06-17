@@ -23,7 +23,7 @@ trait SelfCollection
     /**
      * @var array|string[]
      */
-    public array $exclude_field = [
+    public $exclude_field = [
         'create_time',
         'update_time',
         'delete_time'
@@ -59,14 +59,18 @@ trait SelfCollection
     {
         $this->block();
         if (empty($table)  || !in_array($table, array_keys($this->provideTableInfo())) || !($field_info = Db::name($table)->getFields())) {
-            return ResponseJson::fail( '缺少query参数table,或table参数不支持此接口',);
+            return ResponseJson::fail( '缺少query参数table,或table参数不支持此接口');
         }
 
-        $field_info = array_filter($field_info, fn($v) => !in_array($v['name'], $this->exclude_field));
+        $field_info = array_filter($field_info, function ($v) {
+            return !in_array($v['name'], $this->exclude_field);
+        });
 
         return ResponseJson::success([
             'data_link' => "{{base_url}}/sc-data?table={$table}&field={{field}}&id={{id}}",
-            'field_info' => array_map(fn($v) => $v['comment'], $field_info),
+            'field_info' => array_map(function ($v) {
+                return $v['comment'];
+            }, $field_info),
             'message' => '[field_info] 包含字段信息及描述， [data_link] 包含获取数据的链接地址， {{base_url}} 为根地址，'
                 .'{{field}}为字段(多个以逗号分割) ,{{id}}为获取数据标识(数字类型)。',
         ]);

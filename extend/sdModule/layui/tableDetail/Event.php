@@ -21,11 +21,18 @@ use sdModule\layui\Layui;
  */
 class Event
 {
-    private Page $page;
-
-    private string $event;
-
-    private bool $isAfter;
+    /**
+     * @var Page
+     */
+    private $page;
+    /**
+     * @var string
+     */
+    private $event;
+    /**
+     * @var bool
+     */
+    private $isAfter;
 
     /**
      * Event constructor.

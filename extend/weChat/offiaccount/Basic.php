@@ -18,7 +18,7 @@ class Basic
     /**
      * @var string 配置标签
      */
-    private string $configTag;
+    private $configTag;
 
     public function __construct(string $config_tag = '')
     {

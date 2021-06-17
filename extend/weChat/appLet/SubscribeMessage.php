@@ -20,23 +20,23 @@ class SubscribeMessage
     /**
      * @var string 用户openid
      */
-    private string $openid = '';
+    private $openid = '';
     /**
      * @var string 获取配置标签标签
      */
-    private string $configTag = '';
+    private $configTag = '';
     /**
      * @var string|null 跳转类型
      */
-    private ?string $type = '';
+    private $type = '';
     /**
      * @var string 跳转页面
      */
-    private string $page = '';
+    private $page = '';
     /**
      * @var string 模板ID
      */
-    private string $templateId = '';
+    private $templateId = '';
 
     /**
      * SubscribeMessage constructor.
@@ -93,7 +93,9 @@ class SubscribeMessage
         $data = [
             'touser'      => $this->openid,
             'template_id' => $this->templateId,
-            'data'        => array_map(fn($value) => compact('value'), $data)
+            'data'        => array_map(function ($value) {
+                return compact('value');
+            }, $data)
         ];
 
         $this->type and $data['miniprogram_state'] = $this->type;

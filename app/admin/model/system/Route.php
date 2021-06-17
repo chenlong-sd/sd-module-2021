@@ -145,7 +145,9 @@ class Route extends BaseModel
     public static function cacheAllRoute()
     {
         $route       = self::column('route', 'id');
-        $cache_route = array_map(fn($value) => parse_name($value, 1), $route);
+        $cache_route = array_map(function ($value) {
+            return parse_name($value, 1);
+        }, $route);
 
         cache(config('admin.route_cache'), $cache_route);
     }

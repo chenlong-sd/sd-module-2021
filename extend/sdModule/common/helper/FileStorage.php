@@ -20,12 +20,12 @@ class FileStorage
     /**
      * @var string 存储的文件夹
      */
-    private string $storage_dir = '';
+    private $storage_dir = '';
 
     /**
      * @var string 当前组
      */
-    private string $current_group = '';
+    private $current_group = '';
 
 
     /**

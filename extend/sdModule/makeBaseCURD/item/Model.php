@@ -7,9 +7,6 @@
 namespace sdModule\makeBaseCURD\item;
 
 
-use sdModule\layui\form\FormUnit;
-use sdModule\layuiSearch\generate\TimeRange;
-use sdModule\layuiSearch\SearchForm;
 use sdModule\makeBaseCURD\CURD;
 
 /**
@@ -21,12 +18,12 @@ class Model implements Item
     /**
      * @var CURD
      */
-    private CURD $CURD;
+    private $CURD;
 
     /**
      * @var array 替换值
      */
-    private array $replace;
+    private $replace;
 
     public function __construct(CURD $CURD)
     {
@@ -45,7 +42,13 @@ class Model implements Item
         $this->getAttr();
     }
 
-    public function make()
+    /**
+     * 创建文件
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
+    public function make(): string
     {
         $file_content = file_get_contents($this->CURD->config('template.model'));
 
@@ -86,7 +89,7 @@ CODE;
      * 替换字符串处理
      * @return array
      */
-    private function replaceHandle()
+    private function replaceHandle(): array
     {
         $replace = [];
         foreach ($this->replace as $key => $value) {
@@ -98,6 +101,7 @@ CODE;
     }
 
     /**
+     * 加载类
      * @param $useClass
      */
     private function useAdd($useClass)

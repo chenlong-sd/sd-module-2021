@@ -4,8 +4,12 @@
 namespace weChat\common;
 
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\RequestOptions;
 use think\facade\Cache;
 use think\facade\Log;
+use think\helper\Str;
 
 /**
  * 公用的一些操作方法
@@ -174,6 +178,67 @@ trait Helper
     {
         $xmlToObject = simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NOCDATA);
         return json_decode(json_encode($xmlToObject), true);
+    }
+
+    /**
+     * 支付V3接口
+     * @param string $url
+     * @param array $data
+     * @return array|mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function PayApiV3Post(string $url, array $data): array
+    {
+        $client = new Client();
+        try {
+            $response = $client->post($url, [
+                RequestOptions::BODY => json_encode($data),
+                RequestOptions::HEADERS     => [
+                    "User-Agent" => $_SERVER['HTTP_USER_AGENT'],
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => "WECHATPAY2-SHA256-RSA2048  " . self::payV3Sign($url, $data, 'POST')
+                ]
+            ]);
+        } catch (RequestException $exception) {
+            Helper::log($exception->getResponse()->getBody()->getContents());
+            return [];
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * 支付apiv3签名
+     * @param string $url
+     * @param array $body
+     * @param string $method
+     * @return string
+     */
+    private static function payV3Sign(string $url, array $body = [], string $method = 'GET'): string
+    {
+        $urlParts = parse_url($url);
+        $canonicalUrl = $urlParts['path'] . (!empty($urlParts['query']) ? "?{$urlParts['query']}" : "");
+        $signArr = [
+            'method'    => $method,
+            'uri'       => $canonicalUrl,
+            'timestamp' => time(),
+            'nonce_str' => Str::random(8),
+            'body'      => $method === 'GET' ? '' : json_encode($body)
+        ];
+        $signStr = implode("\n", $signArr) . "\n";
+        openssl_sign($signStr, $signature, openssl_get_privatekey(file_get_contents(Config::get('cert.key'))), 'sha256WithRSAEncryption');
+
+        $replaceValue = [
+            Config::get('common_pay.mch_id'),
+            $signArr['nonce_str'],
+            $signArr['timestamp'],
+            Config::get('common_pay.serial_no'),
+            base64_encode($signature)
+        ];
+        $str = 'mchid="%s",nonce_str="%s",timestamp="%d",serial_no="%s",signature="%s"';
+
+        return sprintf($str, ...$replaceValue);
     }
 }
 

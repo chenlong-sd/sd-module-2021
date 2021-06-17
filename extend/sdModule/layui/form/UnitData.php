@@ -15,66 +15,11 @@ use sdModule\layui\form\formUnit\UnitBase;
  */
 class UnitData
 {
-    const SELECT    = 'select';
-    const TEXT      = 'text';
-    const HIDDEN    = 'hidden';
-    const PASSWORD  = 'password';
-    const RADIO     = 'radio';
-    const CHECKBOX  = 'checkbox';
-    const IMAGE     = 'image';
-    const UPLOAD    = 'upload';
-    const IMAGES    = 'images';
-    const TEXTAREA  = 'textarea';
-    const TIME      = 'time';
-    const U_EDITOR  = 'u_editor';
-    const SELECTS   = 'selects';
-    const TEXT_SHORT= 'textShort';
-    const TAG       = 'tag';
-    const SWITCH    = 'switch_sc';
-    const AUX_TITLE = 'aux_title';
-
     /**
-     * @var string
+     * @var array 表单配置项数据
+     *
      */
-    private string $name;
-    /**
-     * @var string
-     */
-    private string $label = '';
-    /**
-     * @var string
-     */
-    private string $formUnitType = '';
-    /**
-     * @var string
-     */
-    private string $placeholder = '';
-    /**
-     * @var array
-     */
-    private array  $options = [];
-    /**
-     * @var array
-     */
-    private array  $removeScene = [];
-    /**
-     * @var array
-     */
-    private array  $config = [];
-    /**
-     * @var array
-     */
-    private array  $inputAttr = [];
-
-    /**
-     * @var null|array|int
-     */
-    private $defaultValue = null;
-
-    /**
-     * @var array|UnitBase[]
-     */
-    private array $childrenItem = [];
+    private $unitConfig = [];
 
     /**
      * 生成form单元数据
@@ -84,9 +29,9 @@ class UnitData
      */
     public static function create(string $name = '', string $label = ''): UnitData
     {
-        $instance        = new self();
-        $instance->name  = $name;
-        $instance->label = $label;
+        $instance = new self();
+        $instance->unitConfig['name']  = $name;
+        $instance->unitConfig['label'] = $label;
         return $instance;
     }
 
@@ -97,7 +42,7 @@ class UnitData
      */
     public function defaultValue($default): UnitData
     {
-        $this->defaultValue = $default;
+        $this->unitConfig['defaultValue'] = $default;
         return $this;
     }
 
@@ -109,7 +54,7 @@ class UnitData
      */
     public function unitJsConfig(array $config): UnitData
     {
-        $this->config = $config;
+        $this->unitConfig['config'] = $config;
         return $this;
     }
 
@@ -120,7 +65,7 @@ class UnitData
      */
     public function removeScene(array $scene): UnitData
     {
-        $this->removeScene = $scene;
+        $this->unitConfig['removeScene'] = $scene;
         return $this;
     }
 
@@ -132,7 +77,7 @@ class UnitData
      */
     public function inputAttr(array $attr): UnitData
     {
-        $this->inputAttr = $attr;
+        $this->unitConfig['inputAttr'] = $attr;
         return $this;
     }
 
@@ -144,7 +89,7 @@ class UnitData
      */
     public function get(string $attr, $default = null)
     {
-        return $this->$attr ?? $default;
+        return $this->unitConfig[$attr] ?? $default;
     }
 
     /**
@@ -153,7 +98,7 @@ class UnitData
      */
     public function options(array $options): UnitData
     {
-        $this->options = $options;
+        $this->unitConfig['options'] = $options;
         return $this;
     }
 
@@ -163,7 +108,19 @@ class UnitData
      */
     public function placeholder(string $placeholder): UnitData
     {
-        $this->placeholder = $placeholder;
+        $this->unitConfig['placeholder'] = $placeholder;
+        return $this;
+    }
+
+    /**
+     * 设置表单必填
+     * @return $this
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/17
+     */
+    public function required(): UnitData
+    {
+        $this->unitConfig['required'] = true;
         return $this;
     }
 
@@ -173,7 +130,7 @@ class UnitData
      */
     public function setUnitType(string $type): UnitData
     {
-        $this->formUnitType = $type;
+        $this->unitConfig['formUnitType'] = $type;
         return $this;
     }
 
@@ -185,7 +142,7 @@ class UnitData
      */
     public function setTime(string $type = 'datetime', $range = false): UnitData
     {
-        $this->config = compact('type', 'range');
+        $this->unitConfig['config'] = compact('type', 'range');
         return $this;
     }
 
@@ -200,7 +157,7 @@ class UnitData
      */
     public function colorConfig(string $format = 'hex', array $predefine = [], bool $alpha = true): UnitData
     {
-        $this->config = compact('format', 'predefine', 'alpha');
+        $this->unitConfig['config'] = compact('format', 'predefine', 'alpha');
         return $this;
     }
 
@@ -211,7 +168,7 @@ class UnitData
      */
     public function uploadType(string $type = 'file'): UnitData
     {
-        $this->config = compact('type');
+        $this->unitConfig['config'] = compact('type');
         return $this;
     }
 
@@ -224,7 +181,7 @@ class UnitData
      */
     public function customHtml(Dom $html): UnitData
     {
-        $this->options = compact('html');
+        $this->unitConfig['options'] = compact('html');
         return $this;
     }
 
@@ -235,7 +192,7 @@ class UnitData
      */
     public function setChildrenItem(...$childrenItem): UnitData
     {
-        $this->childrenItem = $childrenItem;
+        $this->unitConfig['childrenItem'] = $childrenItem;
         return $this;
     }
 }

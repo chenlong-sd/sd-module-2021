@@ -102,7 +102,7 @@ class Api extends Admin
             $param = array_merge(
                 $this->paramHandle($data['get'] ?? [], $id, self::PARAM_TYPE_GET),
                 $this->paramHandle($data['post'] ?? [], $id, self::PARAM_TYPE_POST),
-                $this->paramHandle($data['head'] ?? [], $id, self::PARAM_TYPE_HEAD),
+                $this->paramHandle($data['head'] ?? [], $id, self::PARAM_TYPE_HEAD)
             );
 
             \app\admin\model\system\QueryParams::insertAll($param);

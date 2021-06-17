@@ -15,6 +15,7 @@ use sdModule\layui\form\formUnit\UnitBase;
 /**
  * Class Form
  * @package sdModule\layui\defaultForm
+ * @deprecated
  */
 class FormD
 {

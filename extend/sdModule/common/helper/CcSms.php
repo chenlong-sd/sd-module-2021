@@ -14,56 +14,56 @@ class CcSms
     private const URL = 'http://182.140.233.19/sms/send/index.php';
     private static $APP_KEY = '';
 
-    private string $name='';
+    private $name='';
     /**
      * @var string 账号
      */
-    private string $account = '';
+    private $account = '';
 
     /**
      * @var string 密码
      */
-    private string $password = '';
+    private $password = '';
 
     /**
      * @var string 模板ID
      */
-    private string $template;
+    private $template;
 
     /***
      * @var string 类型，1 是短信，其他的自己看去
      */
-    private string $types = '1';
+    private $types = '1';
 
     /**
      * @var string 参数
      */
-    private string $parameter;
+    private $parameter;
 
     /**
      * @var string 内容,可直接复制过来
      */
-    private string $content;
+    private $content;
 
     /**
      * @var string 时间戳
      */
-    private string $timestamp;
+    private $timestamp;
 
     /**
      * @var string 签名
      */
-    private string $sign;
+    private $sign;
 
     /**
      * @var string 定时发送 eq: 2018-1-1 12:00:00 ,为空则是即时
      */
-    private string $sendtime;
+    private $sendtime;
 
     /**
      * @var string 手机号
      */
-    private string $mobile;
+    private $mobile;
 
     /**
      * 初始化并设置手机号
@@ -72,7 +72,6 @@ class CcSms
      */
     public function __construct($phone)
     {
-        dump(1111);
         $this->mobile = $phone;
         $this->account = env('CC_SMS.CS_ACCOUNT', '');
         $this->password = env('CC_SMS.CS_PASSWORD', '');

@@ -36,7 +36,7 @@ class Index extends Admin
     /**
      * 登录
      * @param AdministratorsModel $administrators
-     * @return string
+     * @return \think\response\Json|\think\response\View
      * @throws \Exception
      */
     public function login(AdministratorsModel $administrators)
@@ -106,9 +106,11 @@ class Index extends Admin
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function home(Route $route)
+    public function home(Route $route): \think\response\View
     {
-        $route_data = array_filter($route->getMenuRoute(), fn($v) => ($v['pid'] != 0));
+        $route_data = array_filter($route->getMenuRoute(), function ($v) {
+            return ($v['pid'] != 0);
+        });
         return view('', compact('route_data'));
     }
 

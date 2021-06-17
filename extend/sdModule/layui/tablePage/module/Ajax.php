@@ -10,49 +10,57 @@ namespace sdModule\layui\tablePage\module;
 class Ajax
 {
     /**
+     * 确认框配置
      * @var array
      */
-    private array $confirm = [];
+    private $confirm = [];
 
     /**
+     * 请求方式
      * @var string
      */
-    private string $method = 'GET';
+    private $method = 'GET';
 
     /**
+     * 请求路径
      * @var string
      */
-    private string $url = '';
+    private $url = '';
 
     /**
+     * 请求数据的代码
      * @var string
      */
-    private string $data = '';
-
-    private ?string $batch = null;
+    private $data = '';
+    /**
+     * 是否是批量数据请求处理
+     * @var null
+     */
+    private $batch = null;
 
     /**
      * 成功后执行的代码
      * @var string
      */
-    private ?string $successCallback = null;
+    private $successCallback = null;
 
     /**
      * 失败后执行的代码
      * @var string
      */
-    private string $failCallback = "";
+    private $failCallback = "";
 
     /**
      * 提示输入层
      * @var array
      */
-    private array $prompt = [];
+    private $prompt = [];
 
     /**
-     * @var string 权限字符 normal false
+     * 权限字符 normal false， 用于判断该操作是否有权限可以操作
+     * @var string
      */
-    private string $power = 'normal';
+    private $power = 'normal';
 
     /**
      * Ajax constructor.

@@ -30,7 +30,7 @@ use weChat\pay\WeChatPay;
 class WeChat extends StaticCallGetInstance
 {
     /**
-     * @return array|string|\string[][]
+     * @return array|string[]|string
      */
     protected function getNamespace()
     {

@@ -24,13 +24,15 @@ class ResponseJson
 
     private const SUCCESS_MSG = 'success';
     private const FAIL_MSG = 'fail';
-
-    private static array $TEMPLATE = ['code', 'data', 'msg'];
+    /**
+     * @var string[]
+     */
+    private static $TEMPLATE = ['code', 'data', 'msg'];
 
     /**
      * @var array 额外参数
      */
-    private static array $param = [];
+    private static $param = [];
 
     /**
      * @param array $data

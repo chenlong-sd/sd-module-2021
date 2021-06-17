@@ -13,7 +13,7 @@ use sdModule\layui\tablePage\ListsPage;
 
 class Route extends BasePage
 {
-    public string $list_template = 'lists';
+    public $list_template = 'lists';
 
     /**
      * 获取创建列表table的数据

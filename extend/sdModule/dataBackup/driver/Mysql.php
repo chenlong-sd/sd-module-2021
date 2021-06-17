@@ -17,11 +17,18 @@ use sdModule\dataBackup\Driver;
  */
 class Mysql implements Driver
 {
-    private \PDO $PDO;
-
-    private array $tables;
-
-    private int $type;
+    /**
+     * @var \PDO
+     */
+    private $PDO;
+    /**
+     * @var array
+     */
+    private $tables;
+    /**
+     * @var int
+     */
+    private $type;
 
     const INSERT = "INSERT INTO `%s` VALUES %s;\r\n";
 

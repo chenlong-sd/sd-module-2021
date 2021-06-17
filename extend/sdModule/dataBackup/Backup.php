@@ -17,30 +17,30 @@ class Backup
     /**
      * @var \PDO
      */
-    private \PDO $PDO;
+    private $PDO;
 
     /**
      * @var string 链接数据库的dsn
      */
-    private string $dsn = '';
+    private $dsn = '';
 
     /**
      * @var string 数据库驱动类型
      */
-    private string $driver = '';
+    private $driver = '';
     /**
      * @var string 表名
      */
-    private string $table = '';
+    private $table = '';
     /**
      * @var string 文件路径
      */
-    public static string $filename = '';
+    public static $filename = '';
     /**
      * 数据存储文件夹
      * @var string|mixed
      */
-    public static string $dir = '';
+    public static $dir = '';
 
     /**
      * Backup constructor.

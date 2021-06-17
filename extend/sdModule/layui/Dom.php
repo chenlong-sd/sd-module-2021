@@ -17,37 +17,37 @@ class Dom
     /**
      * @var string 元素标签
      */
-    private string $tag = 'div';
+    private $tag = 'div';
 
     /**
      * @var array 元素标签属性
      */
-    public array $attr = [];
+    public $attr = [];
 
     /**
      * @var string  元素标签ID属性
      */
-    public string $id = '';
+    public $id = '';
 
     /**
      * @var array 元素标签class属性
      */
-    public array $class = [];
+    public $class = [];
 
     /**
      * @var array 元素标签data-*属性
      */
-    public array $data = [];
+    public $data = [];
 
     /**
      * @var array|Dom[] 内容
      */
-    public array $content = [];
+    public $content = [];
 
     /**
      * @var bool 是否是单标签
      */
-    public bool $isSingleLabel = false;
+    public $isSingleLabel = false;
 
     /**
      * Dom constructor.

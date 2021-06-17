@@ -11,7 +11,10 @@ use think\facade\Log;
 
 class Csv
 {
-    private array $header = [
+    /**
+     * @var string[]
+     */
+    private $header = [
         "Content-Type" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition" => "attachment;filename=\"%s\"",
         "Cache-Control" => "max-age=0"
@@ -88,7 +91,9 @@ class Csv
         $data = [];
         while (($row = fgetcsv($fd)) !== false) {
             $num++;
-            $data[] = array_map(fn($v) => iconv('gbk', 'utf-8', $v), $row);
+            $data[] = array_map(function ($v) {
+                return iconv('gbk', 'utf-8', $v);
+            }, $row);
             if ($num >= $number) {
                 call_user_func($handle, $data);
                 $data = [];
@@ -108,7 +113,9 @@ class Csv
         $i  = 0;
         foreach ($this->data as $value) {
             $value = $value instanceof \ArrayAccess ? $value->toArray() : $value;
-            fputcsv($fd, array_map(fn($v) => iconv('utf-8', 'gbk', $v), $value));
+            fputcsv($fd, array_map(function ($v) {
+                return iconv('utf-8', 'gbk', $v);
+            }, $value));
             $i++;
             if ($i >= 10000) {
                 ob_flush();

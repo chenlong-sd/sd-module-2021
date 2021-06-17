@@ -14,7 +14,9 @@ Route::any('install', 'system.Install/index');/** @see \app\admin\controller\sys
 // 辅助
 Route::any('aux', 'system.System/devAux');/** @see \app\admin\controller\system\System::devAux() */
 // 文件创建
-Route::any('file-make', fn() => CURD::work());
+Route::any('file-make', function () {
+    return CURD::work();
+});
 // 查询的数据字段
 Route::any('field', 'system.System/field');
 // 查询数据字段

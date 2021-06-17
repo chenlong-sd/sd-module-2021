@@ -12,22 +12,35 @@ namespace sdModule\layui\tableDetail;
  */
 class Page
 {
-    private string $page_name;
-
-    private string $root = '';
-
-    private string $customJs = '';
-
-    private array $event = [];
-
-    private array $afterEvent = [];
-
-    private array $eventJs = [];
+    /**
+     * @var string
+     */
+    private $page_name;
+    /**
+     * @var string
+     */
+    private $root = '';
+    /**
+     * @var string
+     */
+    private $customJs = '';
+    /**
+     * @var array
+     */
+    private $event = [];
+    /**
+     * @var array
+     */
+    private $afterEvent = [];
+    /**
+     * @var array
+     */
+    private $eventJs = [];
 
     /**
      * @var array | Table[]
      */
-    private array $table = [];
+    private $table = [];
 
     
     public function __construct(string $page_name)

@@ -29,40 +29,40 @@ class CURD
     /**
      * @var array 配置数据
      */
-    private array $config = [];
+    private $config = [];
 
     /**
      * @var string|null 表名
      */
-    public ?string $table;
+    public $table;
     /**
      * @var string|null 页面名字
      */
-    public ?string $pageName;
+    public $pageName;
 
     /**
      * @var array|null 创建模块
      */
-    public ?array $makeModule;
+    public $makeModule;
     /**
      * @var null|array  字段数据
      */
-    public ?array $data;
+    public $data;
 
     /**
      * @var array 表字段信息
      */
-    public array $fieldInfo;
+    public $fieldInfo;
 
     /**
      * @var string 表注释
      */
-    public string $tableComment;
+    public $tableComment;
 
     /**
      * @var string 创建子目录
      */
-    public string $childrenDir = '';
+    public $childrenDir = '';
 
     /**
      * 开始工作
@@ -131,6 +131,7 @@ class CURD
     }
 
     /**
+     * join 关联处理
      * @param $data
      * @return array
      */
@@ -504,7 +505,7 @@ class CURD
      * @param string $before 缩进之前
      * @return string
      */
-    public function indentation(int $number, $before = "\r\n"): string
+    public function indentation(int $number, string $before = "\r\n"): string
     {
         return $before . str_pad('', $number * 4, ' ');
     }
