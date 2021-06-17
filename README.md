@@ -1,5 +1,5 @@
 # sd-module 
-#####`version 3.3` `php 7.4~` `thinkphp6`
+#####`version 3.3` `php 7.3~` `thinkphp6`
 
 ##数据库规则
 * 主键：`id` 类型`int`
