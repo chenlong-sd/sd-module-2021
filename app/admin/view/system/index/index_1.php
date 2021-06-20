@@ -32,17 +32,18 @@ function menu_render(array $menu, bool $is_children = false): string
         $children = empty($item['children']) ? '' : menu_render($item['children'], true);
 
         if ($is_children) {
-            $html = '<dd data-name="console" class="">%s</dd>';
-            $content_html = '<a %s>%s</a>%s';
-            $content = sprintf($content_html, $href, $item['title'], $children);
+            $html           = '<dd data-name="console" class="">%s</dd>';
+            $content_html   = '<a %s>%s</a>%s';
+            $content        = sprintf($content_html, $href, $item['title'], $children);
         }else{
-            $html = '<li data-name="home" class="layui-nav-item">%s</li>';
+            $html           = '<li data-name="home" class="layui-nav-item">%s</li>';
 
-            $content_html = '<a href="javascript:;" %s lay-tips="%s" lay-direction="2"> 
+            $content_html   = '
+                    <a href="javascript:;" %s lay-tips="%s" lay-direction="2"> 
                         <i class="layui-icon %s"></i>
                         <cite>%2$s</cite>
                     </a>%s';
-            $content = sprintf($content_html, $href, $item['title'], $item['icon'], $children);
+            $content        = sprintf($content_html, $href, $item['title'], $item['icon'], $children);
         }
 
         $menu_str .= sprintf($html, $content);
@@ -199,8 +200,14 @@ function menu_render(array $menu, bool $is_children = false): string
     layui.config({
         base: '__PUBLIC__/admin_static/' //静态资源所在路径
     }).extend({
-        index: 'lib/index' //主入口模块
+        index: 'lib/index', //主入口模块
+        notice:'layui/dist/notice'
     }).use('index');
+
+
+    layui.use('notice',function () {
+        window.layNotice = layui.notice;
+    });
 
     let util = layui.util,layer = layui.layer,dropdown = layui.dropdown;
     layer.config({

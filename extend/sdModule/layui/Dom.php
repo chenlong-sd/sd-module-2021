@@ -17,7 +17,7 @@ class Dom
     /**
      * @var string 元素标签
      */
-    private $tag = 'div';
+    public $tag = 'div';
 
     /**
      * @var array 元素标签属性

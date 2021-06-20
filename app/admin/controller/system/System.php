@@ -16,9 +16,12 @@ use app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
 use app\common\service\BackstageListsService;
+use app\common\service\BaseConfigService;
 use sdModule\dataBackup\Backup;
+use sdModule\layui\Dom;
 use sdModule\layui\form\Form;
 use sdModule\layui\form\FormUnit;
+use sdModule\layui\form\UnitData;
 use sdModule\layui\Layui;
 use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\ListsPage;
@@ -215,9 +218,20 @@ class System extends Admin
     {
         if ($this->request->isPost()) {
             $this->validate($this->request->post(), BaseConfig::class . '.add');
-            $data = Arr::only($this->request->post(), ['group_id', 'group_name', 'key_id', 'key_name', 'form_type', 'options',  'id']);
+            $data = Arr::only($this->request->post(), ['group','key','sort','form_type','required','placeholder','short_tip','key_value','options','id' ]);
             $data = array_filter($data);
             $data['update_time'] = datetime();
+            $group = explode('=', $data['group']);
+            $key   = explode('=', $data['key']);
+            if (count($group) != 2 || count($key) != 2) {
+                throw new SdException('分组信息或者参数信息错误');
+            }
+            $data['group_id']   = $group[0];
+            $data['group_name'] = $group[1];
+            $data['key_id']     = $key[0];
+            $data['key_name']   = $key[1];
+            unset($data['group'], $data['key']);
+
             if (!empty($data['options'])) {
                 $optionArr = [];
                 foreach (array_filter(explode("\n", $data['options'])) as $o){
@@ -241,7 +255,7 @@ class System extends Admin
             ]);
         }
 
-        $base = BaseConfigM::field(['id', 'group_id', 'group_name', 'key_id', 'key_name', 'form_type', 'options'])->select()->toArray();
+        $base = BaseConfigM::select()->toArray();
         foreach ($base as &$value) {
             if ($value['options']) {
                 $options = json_decode($value['options'], true);
@@ -251,6 +265,8 @@ class System extends Admin
                 }
                 $value['options'] = $op;
             }
+            $value['group'] = "{$value['group_id']}={$value['group_name']}";
+            $value['key'] = "{$value['key_id']}={$value['key_name']}";
         }
 
         return $this->fetch('base', [
@@ -291,28 +307,53 @@ class System extends Admin
         }
 
         // 页面数据
-        $form = [];
+        $form_data = $short_form = $inline = $key = [];
+        $init_sort_value = 1;
         $data = BaseConfigM::where(compact('group_id'))
-            ->field(['id', 'group_id', 'key_id', 'key_name', 'form_type', 'options', 'key_value'])
-            ->select()->each(function ($v) use (&$form){
+            ->field(['id', 'group_id', 'key_id', 'key_name', 'form_type', 'options', 'key_value', 'short_tip', 'placeholder', 'required', 'sort'])
+            ->order('sort', 'acs')->order('id', 'asc')
+            ->select()->each(function ($v) use (&$form_data, &$short_form, &$init_sort_value, &$inline, &$key){
                 $form_type = Str::camel($v->form_type);
                 $v->id     = 'id' . $v->id;
-                $form_unit = FormUnit::$form_type($v->id, Layui::tag()->rim("{$v->group_id}.{$v->key_id}") . " " . $v->key_name);
-                if ($v->options){
-                    $form_unit->options(json_decode($v->options, true));
-                }
-                $form[] = $form_unit;
-            })->toArray();
+                /** @var UnitData $form_unit */
+                $form_unit = FormUnit::$form_type($v->id,  $v->key_name . BaseConfigService::getDebugParamInfo($v->group_id, $v->key_id, $v->sort));
+                // 选项值设置
+                $v->options  and $form_unit->options(json_decode($v->options, true));
+                // 必选设置
+                $v->getData('required') == 1  and $form_unit->required();
+                // placeholder 设置
+                $v->placeholder and $form_unit->placeholder($v->placeholder);
+                // 短标签设置
+                $v->short_tip and $short_form[$v->id] = $v->short_tip;
 
-        $form = Form::create($form)
+                // 当前的排序值不等于上一次的排序值
+                if ($v->sort != $init_sort_value && $inline) {
+                    // 有行内表单的时候，看看行内表单的个数，大于一个则加入行内，否则不处理
+                    $form_data[] = count($inline) > 1 ? FormUnit::build(...$inline) : current($inline);
+                    $init_sort_value = $v->sort;
+                    $inline = [];
+                }
+                $inline[] = $form_unit;
+            })->toArray();
+        $form_data[] = count($inline) > 1 ? FormUnit::build(...$inline) : current($inline);
+        $form = Form::create($form_data)
             ->setDefaultData(array_column($data, 'key_value', 'id'))
             ->setSkinToPane()
             ->setJs('
-            layui.jquery(".layui-form-label").css({width:"270px"});
-            layui.jquery(".layui-input-block").css({marginLeft:"300px"});
-            layui.jquery(".layui-container").css({margin:"0"});
-            ')->complete();
+            layui.jquery(".layui-form-label").on("mouseover", function(){ 
+                if(layui.jquery(this).find(".sc-key")){
+                  layui.jquery(this).css({overflow:"visible"}).find(".sc-key").show();
+                }
+            }).on("mouseout", function(){
+                if(layui.jquery(this).find(".sc-key")){
+                  layui.jquery(this).css({overflow:"hidden"}).find(".sc-key").hide();
+                }
+            })
+            ');
+        // 短标签设置
+        $short_form and $form->setShortForm($short_form);
 
+        $form->complete();
         return $this->fetch('common/save_page', compact('form'));
     }
 
@@ -323,9 +364,7 @@ class System extends Admin
      */
     public function deleteConfig(int $id = 0)
     {
-        BaseConfigM::where('id', $id)->update([
-            'delete_time' => time(),
-        ]);
+        BaseConfigM::destroy([$id], true);
         return ResponseJson::success();
     }
 

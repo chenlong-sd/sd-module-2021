@@ -26,7 +26,7 @@
 
     <div class="layadmin-user-login-main">
         <div class="layadmin-user-login-box layadmin-user-login-header">
-            <h2>{:env('company', '')}{:lang('backstage')}</h2>
+            <h2><?= env('company') ?: 'sd-module' ?></h2>
         </div>
         <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
             <div class="layui-form-item">

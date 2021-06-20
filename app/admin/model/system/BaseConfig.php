@@ -22,6 +22,9 @@ use app\common\BaseModel;
  * @property $form_type
  * @property $options
  * @property $key_value
+ * @property $placeholder
+ * @property $short_tip
+ * @property $required
  * @property $create_time
  * @property $update_time
  * @property $delete_time
@@ -38,12 +41,15 @@ class BaseConfig extends BaseModel
         'key_id' => 'varchar',
         'key_name' => 'varchar',
         'form_type' => 'varchar',
+        'placeholder' => 'varchar',
+        'short_tip' => 'varchar',
+        'sort' => 'varchar',
+        'required' => 'varchar',
         'options' => 'json',
         'key_value' => 'text',
         'create_time' => 'datetime',
         'update_time' => 'datetime',
         'delete_time' => 'int',
-
     ];
 
 

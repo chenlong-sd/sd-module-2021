@@ -14,11 +14,6 @@ namespace think;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-//if (version_compare(PHP_VERSION, '7.4.0', '<')){
-//    echo '该系统最低版本7.4.0， 你的PHP版本为：' . PHP_VERSION;
-//    return '';
-//}
-
 // 执行HTTP应用并响应
 $http = (new App())->http;
 

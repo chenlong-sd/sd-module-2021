@@ -112,19 +112,22 @@ CREATE TABLE `sd_api_module`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sd_base_config`;
 CREATE TABLE `sd_base_config`  (
-   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-   `group_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分组标识',
-   `group_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '分组名称',
-   `key_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '配置标识',
-   `key_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '配置名称',
-   `form_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '表单类型',
-   `options` json NULL COMMENT '表单选项值',
-   `key_value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '值',
-   `create_time` datetime(0) NOT NULL COMMENT '创建时间',
-   `update_time` datetime(0) NOT NULL COMMENT '跟新时间',
-   `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
-   PRIMARY KEY (`id`) USING BTREE,
-   UNIQUE INDEX `group_id`(`group_id`, `key_id`) USING BTREE
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `group_id` varchar(32) NOT NULL DEFAULT '' COMMENT '分组标识',
+    `group_name` varchar(32) NOT NULL DEFAULT '' COMMENT '分组名称',
+    `key_id` varchar(32) NOT NULL DEFAULT '' COMMENT '配置标识',
+    `key_name` varchar(32) NOT NULL DEFAULT '' COMMENT '配置名称',
+    `form_type` varchar(32) NOT NULL DEFAULT '' COMMENT '表单类型',
+    `options` json DEFAULT NULL COMMENT '表单选项值',
+    `key_value` text COMMENT '值',
+    `required` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否必填：0=否，1=是',
+    `placeholder` varchar(32) NOT NULL DEFAULT '' COMMENT 'placeholder',
+    `short_tip` varchar(32) NOT NULL DEFAULT '' COMMENT '短标签提示语',
+    `create_time` datetime NOT NULL COMMENT '创建时间',
+    `update_time` datetime NOT NULL COMMENT '跟新时间',
+    `delete_time` int(11) NOT NULL DEFAULT '0' COMMENT '删除时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE KEY `group_id` (`group_id`,`key_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '基本配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------

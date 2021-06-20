@@ -97,7 +97,7 @@ class Dictionary extends BasePage
     {
         $unit = [
             FormUnit::hidden('id'),
-            FormUnit::text('sign', '标识')->removeScene(['value_add', 'value_edit'])->placeholder('例：ball'),
+            FormUnit::text('sign', '标识')->removeScene(['value_add', 'value_edit'])->placeholder('例：ball')->required(),
             FormUnit::hidden('pid', '标识ID')->removeScene(['add', 'edit', 'value_edit'])->defaultValue(request()->get('id', 0)),
             FormUnit::text('name', '标识名称')->removeScene(['value_add', 'value_edit'])->placeholder('例：球类'),
             FormUnit::text('dictionary_value', '字典值')->removeScene(['add', 'edit'])->placeholder('例：basketball'),
@@ -105,7 +105,7 @@ class Dictionary extends BasePage
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false))->defaultValue(1),
         ];
 
-        $form = Form::create($unit, $scene)->setDefaultData($default_data);
+        $form = Form::create($unit, $scene)->setSkinToPane()->setDefaultData($default_data);
 
         return $form->complete();
     }

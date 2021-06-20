@@ -201,6 +201,10 @@
         index: 'lib/index' //主入口模块
     }).use('index');
 
+    layui.use('notice',function () {
+        window.layNotice = layui.notice;
+    });
+
     layui.use(['util','layer'], function () {
         let util = layui.util,layer = layui.layer;
         //let alias = eval('(' + window.localStorage['layuiAdmin'] + ')').theme.color.alias;

@@ -12,6 +12,11 @@
 {block name="meta"}{:token_meta()}{/block}
 
 {block name="body"}
+<style>
+    .layui-inline .layui-form-select .layui-input{
+        width: 182px;
+    }
+</style>
 <?php
 $page_group = array_column($base, 'group_name', 'group_id');
 $tab_group  = $page_group;
@@ -31,7 +36,7 @@ $page_base  = array_column($base, null, 'id');
         </ul>
         <div class="layui-tab-content">
             <?php if (env('APP_DEBUG')){ ?>
-                <div class="layui-tab-item layui-show">
+                <div class="layui-tab-item layui-show" style="padding: 10px">
                     <blockquote class="layui-elem-quote">
                         取值方式：<span class="layui-badge-rim">base_config($key, $default)</span> 或
                         <span class="layui-badge-rim">\app\common\service\BaseConfigService::get($key, $default)</span>
@@ -39,71 +44,81 @@ $page_base  = array_column($base, null, 'id');
                     <form action="" lay-filter="base-config" class="layui-form" style="width: 800px">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">选择分组</label>
-                                <div class="layui-input-block">
-                                    <select lay-filter="group">
-                                        <option value=""></option>
-                                        <option value="default_group">默认分组</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="layui-inline">
                                 <label class="layui-form-label">修改配置</label>
                                 <div class="layui-input-block">
                                     <select lay-filter="have" lay-search></select>
                                 </div>
                             </div>
-                        </div>
-                        <hr class="layui-border-red">
-                        <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">分组标识</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" maxlength="32" name="group_id" placeholder="标识，eg：system_param" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">分组名称</label>
-                                <div class="layui-input-inline">
-                                    <input type="text"  maxlength="32" name="group_name" placeholder="名称，eg：系统参数" autocomplete="off" class="layui-input">
-                                </div>
+                                <button type="button" style="display: none" id="sc-delete" class="layui-btn layui-btn-danger"><i class="layui-icon layui-icon-delete"></i></button>
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <label class="layui-form-label">配置标识</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" maxlength="32" name="key_id"  placeholder="eg:company_name" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">配置名称</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" maxlength="32" name="key_name" placeholder="eg:公司名称" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <button id="sc-delete" style="display: none" class="layui-btn layui-btn-danger">删除配置</button>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">表单类型</label>
+                            <label class="layui-form-label">分组信息</label>
                             <div class="layui-input-block">
-                                <select name="form_type">
-                                    <option value=""></option>
-                                    <option value="text">文本</option>
-                                    <option value="image">单图</option>
-                                    <option value="video">视频</option>
-                                    <option value="images">多图</option>
-                                    <option value="select">下拉</option>
-                                    <option value="radio">单选</option>
-                                    <option value="switchSc">开关</option>
-                                    <option value="textarea">文本域</option>
-                                    <option value="u_editor">富文本</option>
-                                    <option value="checkbox">多选</option>
-                                    <option value="date">日期</option>
-                                    <option value="time">时间</option>
-                                </select>
+                                <input type="search" lay-verify="required" list="group" maxlength="32" name="group" placeholder="标识=名称, eg：system_param=系统参数" autocomplete="off" class="layui-input">
+                                <datalist id="group"></datalist>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">参数信息</label>
+                            <div class="layui-input-block">
+                                <input type="search" lay-verify="required" maxlength="32" name="key"  placeholder="标识=名称, eg：company=公司名称" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">表单类型</label>
+                                <div class="layui-input-block">
+                                    <select lay-verify="required" name="form_type">
+                                        <option value=""></option>
+                                        <option value="text">文本</option>
+                                        <option value="image">单图</option>
+                                        <option value="video">视频</option>
+                                        <option value="images">多图</option>
+                                        <option value="select">下拉</option>
+                                        <option value="radio">单选</option>
+                                        <option value="switchSc">开关</option>
+                                        <option value="textarea">文本域</option>
+                                        <option value="u_editor">富文本</option>
+                                        <option value="checkbox">多选</option>
+                                        <option value="date">日期</option>
+                                        <option value="time">时间</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">是否必填</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="required" value="1" title="必填">
+                                    <input type="radio" name="required" value="0" title="选填" checked>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">表单默认值</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="key_value"  placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">排序位置</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="sort"  placeholder="位置相同为一行" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">placeholder</label>
+                            <div class="layui-input-block">
+                                <input type="text" maxlength="16" name="placeholder"  placeholder="表单的placeholder" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">表单提示</label>
+                            <div class="layui-input-block">
+                                <input type="text" maxlength="24" name="short_tip"  placeholder="短标签后面的提示语" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item layui-form-text">
@@ -146,7 +161,7 @@ $page_base  = array_column($base, null, 'id');
 
     var group_data = <?= json_encode($page_group, 256) ?>;
     var base_data  = <?= json_encode($page_base, 256) ?>;
-    groupRender(group_data, 'select[lay-filter=group]');
+    groupRender(group_data, '#group');
     haveRender(base_data, 'select[lay-filter=have]');
     form.render();
 
@@ -157,20 +172,8 @@ $page_base  = array_column($base, null, 'id');
             data: data.field,
             success:function (res){
                 if (res.code === 200) {
-                    notice.success('成功');
-                    if (!data.field.id) {
-                        data.field.id = res.data.id;
-                    }else{
-                        delete group_data[base_data[data.field.id].group_id];
-                    }
-                    group_data[data.field.group_id] = data.field.group_name;
-                    base_data[data.field.id] = data.field;
-                    groupRender(group_data, 'select[lay-filter=group]');
-                    haveRender(base_data, 'select[lay-filter=have]');
-                    form.render();
-                    $('#base-config').click();
-                    $('input[name=id]').val('');
-                    $('#sc-delete').hide();
+                    parent.notice.success('成功！');
+                    location.reload();
                 } else {
                     notice.warning(res.msg);
                 }
@@ -179,23 +182,22 @@ $page_base  = array_column($base, null, 'id');
         return false;
     });
 
-    form.on('select(group)', function(data){
-        $('input[name=group_id]').val(data.value);
-        $('input[name=group_name]').val(group_data.hasOwnProperty(data.value) ? group_data[data.value] : '');
-        form.render();
-        return false;
-    });
-
     form.on('select(have)', function(data){
-        form.val('base-config', base_data[data.value]);
-        $('#sc-delete').show();
+        if (!data.value) {
+            layui.jquery('form')[0].reset();
+            $('input[name=id]').val('');
+            $('#sc-delete').hide();
+        }else{
+            form.val('base-config', base_data[data.value]);
+            $('#sc-delete').show();
+        }
         return false;
     });
 
     function groupRender(obj, selector) {
-        let html = '<option value=""></option>';
+        let html = '';
         for (let objKey in obj) {
-            html += `<option value="${objKey}">${obj[objKey]}</option>`;
+            html += `<option value="${objKey}=${obj[objKey]}">`;
         }
         $(selector).html(html);
     }
@@ -232,14 +234,8 @@ $page_base  = array_column($base, null, 'id');
             },
             success: function (res) {
                 if (res.code === 200) {
-                    notice.success('成功！');
-                    delete base_data[id];
-                    groupRender(group_data, 'select[lay-filter=group]');
-                    haveRender(base_data, 'select[lay-filter=have]');
-                    form.render();
-                    $('#base-config').click();
-                    $('input[name=id]').val('');
-                    $('#sc-delete').hide();
+                    parent.notice.success('成功！');
+                    location.reload();
                 }else{
                     notice.warning('失败！')
                 }
