@@ -10,6 +10,7 @@
 namespace app\admin\model\system;
 
 use app\common\BaseModel;
+use app\common\middleware\admin\LoginMiddleware;
 use app\common\SdException;
 use app\common\middleware\admin\SinglePoint;
 use sdModule\common\Sc;
@@ -277,6 +278,6 @@ class Administrators extends BaseModel
         // 设置单点登录的信息
         SinglePoint::setSinglePoint();
         // 记录登录的人的类型
-        Cookie::set('user_type', '');
+        Cookie::set(LoginMiddleware::USER_TYPE_KEY, $data['table']);
     }
 }

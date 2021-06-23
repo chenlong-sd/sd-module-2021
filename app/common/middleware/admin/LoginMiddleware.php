@@ -11,6 +11,7 @@ namespace app\common\middleware\admin;
 
 
 use app\admin\controller\system\Administrators;
+use think\facade\Cookie;
 use think\Request;
 use think\Response;
 
@@ -25,6 +26,9 @@ class LoginMiddleware
     /** @var array 无需登录的请求地址 */
     const EXCEPT_PATH = ['System.Index/login', 'System.Index/openLogin'];
 
+    /** @var string 设置 cookie 的健值 */
+    const USER_TYPE_KEY = '__Sd_user_type';
+
     /**
      * @param Request  $request
      * @param \Closure $closure
@@ -35,7 +39,9 @@ class LoginMiddleware
         $request = $this->requestAction($request);
         // TODO 路径加密 ---
         if (!Administrators::LoginCheck() && !in_array($request->middleware('route_path'), self::EXCEPT_PATH)) {
-            return redirect(admin_url('login'));
+            $route = 'login';
+            ($open_table = Cookie::get(self::USER_TYPE_KEY, '')) and $route .= "/$open_table";
+            return redirect(admin_url($route));
         }
 
         return $closure($request);
@@ -59,6 +65,6 @@ class LoginMiddleware
 
     private function verifySecret()
     {
-        
+
     }
 }
