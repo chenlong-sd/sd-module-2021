@@ -49,7 +49,7 @@ class Index extends Admin
             return ResponseJson::mixin($administrators->login(data_only($data, ['account', 'password'])));
         }
 
-        return $this->fetch('login');
+        return $this->fetch('login1');
     }
 
     /**

@@ -14,6 +14,7 @@ use app\common\SdException;
 use app\common\middleware\admin\SinglePoint;
 use sdModule\common\Sc;
 use sdModule\layui\Layui;
+use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Env;
 use think\helper\Str;
@@ -275,5 +276,7 @@ class Administrators extends BaseModel
         Route::cacheAllRoute();
         // 设置单点登录的信息
         SinglePoint::setSinglePoint();
+        // 记录登录的人的类型
+        Cookie::set('user_type', '');
     }
 }
