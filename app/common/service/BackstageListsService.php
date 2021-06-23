@@ -12,6 +12,7 @@ use app\common\SdException;
 use think\db\Query;
 use think\facade\Env;
 use think\facade\Log;
+use think\helper\Arr;
 use think\helper\Str;
 use think\Paginator;
 
@@ -28,10 +29,6 @@ class BackstageListsService
     private $pagination = true;
 
     /**
-     * @var callable
-     */
-    private $listSearchParamHandle;
-    /**
      * @var string
      */
     private $alias = 'i';
@@ -45,15 +42,6 @@ class BackstageListsService
      * @var array 统计行数据
      */
     private $totalRow = [];
-
-    /**
-     * @var array 快捷搜索的字段，最多支持两个，匹配方式参考：$this->exprArr
-     * @example [
-     *  'api_name%%' => '接口名',
-     *  'test%%'     => '看看',
-     * ]
-     */
-    private $quickSearchField;
 
     /** @var array  表达式替换 */
     private $exprArr = [
@@ -80,6 +68,12 @@ class BackstageListsService
      * @var callable
      */
     private $each = null;
+
+    /**
+     * 自定义的查询处理
+     * @var null|callable
+     */
+    private $customSearch = null;
 
     /**
      * @param BaseModel|Query|string $model
@@ -141,15 +135,16 @@ class BackstageListsService
     private function setWhere(): BackstageListsService
     {
         $search = data_filter(request()->get('search', []));
-        if(!empty($this->listSearchParamHandle) && is_callable($this->listSearchParamHandle)){
-            $search = call_user_func($this->listSearchParamHandle, $search);
+        // 自定义的查询处理
+        if (is_callable($this->customSearch)) {
+            $exceptParam = call_user_func($this->customSearch, $search, $this->model);
+            $search      = Arr::except($search, $exceptParam);
         }
 
         foreach ($search as $field => $value) {
             list($field, $expr) = $this->ruleAnalysis($field);
             $this->ruleMatch($field, $expr, $value);
         }
-
         return $this;
     }
 
@@ -225,15 +220,7 @@ class BackstageListsService
         try {
             $this->getNewModel();
             $this->viewSql($viewSql);
-            if ($this->totalRow) {
-                $totalField = [];
-                foreach ($this->totalRow as $field){
-                    $alias = strpos($field, '.') === false ? $field : preg_replace('/^.+\./', '', $field);
-                    $totalField[] = "sum({$field}) $alias";
-                }
-
-                $totalRow = (clone $this->model)->allowEmpty()->cache(30)->setOption('field', [])->field(implode(',', $totalField))->find()->toArray();
-            }
+            $totalRow = $this->totalRawHandle();
 
             if ($this->hasPagination()) {
                 $result = $this->model->paginate(request()->get('limit', 10));
@@ -252,6 +239,31 @@ class BackstageListsService
     }
 
     /**
+     * 统计字段处理
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/21
+     */
+    private function totalRawHandle(): array
+    {
+        if (!$this->totalRow) return [];
+
+        $totalField = [];
+        foreach ($this->totalRow as $fun => $field){
+            // 如果 fun是字符串，则判定为是自定义的字段对应统计函数，
+            is_numeric($fun) ? $fun = 'sum' : list($fun, $field) = [$field, $fun];
+            $alias = strpos($field, '.') === false ? $field : preg_replace('/^.+\./', '', $field);
+            $totalField[] = "$fun($field) $alias";
+        }
+
+        return (clone $this->model)->allowEmpty()->cache(30)->setOption('field', [])
+            ->field(implode(',', $totalField))->find()->toArray();
+    }
+
+    /**
      * 获取新的处理后的 model
      * @param BaseModel|Query|string $model
      * @return Query
@@ -264,7 +276,7 @@ class BackstageListsService
         }
 
         try {
-            $this->setWhere()->listsSort()->quickSearch();
+            $this->setWhere()->listsSort();
 
             if ($joinOptions = $this->model->getOptions('join')) {
                 foreach ($joinOptions as &$join) {
@@ -311,13 +323,13 @@ class BackstageListsService
     /**
      * 查看sql
      * @param bool $viewSql
-     * @return BackstageListsService
+     * @return void
      * @throws SdException
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    private function viewSql(bool $viewSql): BackstageListsService
+    private function viewSql(bool $viewSql): void
     {
         $page  = request()->get('page', 1);
         $limit = request()->get('limit', 10);
@@ -327,7 +339,6 @@ class BackstageListsService
                 : $this->model->fetchSql()->select();
             throw new SdException($sql);
         }
-        return $this;
     }
 
     /**
@@ -350,50 +361,9 @@ class BackstageListsService
     }
 
     /**
-     * 快捷搜索处理
-     * @return BackstageListsService
-     */
-    private function quickSearch(): BackstageListsService
-    {
-        $quickSearch = trim(request()->get('quick_search', ''));
-
-        if (!$quickSearch || !$this->quickSearchField) return $this;
-
-        $field = array_keys($this->quickSearchField);
-
-        list($firstField, $firstExpr) = $this->ruleAnalysis($field[0]);
-        $fieldRaw = "{$firstField} {$firstExpr} :search_1";
-
-        $quickSearch = $this->quickSearchValueMatch($firstExpr, $quickSearch);
-
-        if (!empty($field[1])){
-            list($LastField, $LastExpr) = $this->ruleAnalysis($field[1]);
-            $fieldRaw .= " OR {$LastField} {$LastExpr} :search_2";
-            $this->model->whereRaw($fieldRaw, [
-                'search_1' => $this->quickSearchValueMatch($firstExpr, $quickSearch),
-                'search_2' => $this->quickSearchValueMatch($LastExpr, $quickSearch)
-            ]);
-        }else{
-            $this->model->whereRaw($fieldRaw, ['search_1' => $this->quickSearchValueMatch($firstExpr, $quickSearch)]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * 快捷搜索匹配
-     * @param $expr
-     * @param $value
-     * @return string
-     */
-    private function quickSearchValueMatch($expr, $value): string
-    {
-        return $expr === '=' ? $value : "%{$value}%";
-    }
-
-    /**
      * 设置统计行
      * @param array $fieldLists
+     * @example ['price']   ['number' => 'count']
      * @return $this
      */
     public function setTotalRow(array $fieldLists): BackstageListsService
@@ -414,17 +384,7 @@ class BackstageListsService
     }
 
     /**
-     * 设置收缩参数处理的回调
-     * @param callable $listSearchParamHandle
-     * @return BackstageListsService
-     */
-    public function setListSearchParamHandle(callable $listSearchParamHandle): BackstageListsService
-    {
-        $this->listSearchParamHandle = $listSearchParamHandle;
-        return $this;
-    }
-
-    /**
+     * 设置是否分页
      * @param bool $pagination
      * @return BackstageListsService
      */
@@ -435,22 +395,31 @@ class BackstageListsService
     }
 
     /**
-     * @param array $quickSearchField
-     * @return BackstageListsService
-     */
-    public function setQuickSearchField(array $quickSearchField): BackstageListsService
-    {
-        $this->quickSearchField = $quickSearchField;
-        return $this;
-    }
-
-    /**
+     * 设置循环处理数据的函数
      * @param callable $each
+     * @example function($data) { $data->example = 1; }
      * @return BackstageListsService
      */
     public function setEach(callable $each): BackstageListsService
     {
         $this->each = $each;
+        return $this;
+    }
+
+    /**
+     * 自定义的查询处理, 函数返回已经处理过得字段， 函数带参数为 [搜索的参数， 当前查询的对象]
+     * @param callable|null $customSearch
+     * @example function ($search, $model) {
+     *      if($search['data']){
+     *          $model->where('data', '>', '1');
+     *      }
+     *      return ['data'];
+     *   }
+     * @return BackstageListsService
+     */
+    public function setCustomSearch(callable $customSearch): BackstageListsService
+    {
+        $this->customSearch = $customSearch;
         return $this;
     }
 }

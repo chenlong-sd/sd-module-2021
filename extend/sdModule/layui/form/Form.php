@@ -170,10 +170,12 @@ class Form
         ]);
 
         $default = $this->defaultData[$unitData->get('name', '')] ?? $unitData->get('defaultValue', '');
+        $required = $unitData->get('required', '');
+        $required !== true and $required = (array)$required;
 
         $unit->setDefault($default)->setOption($unitData->get('options', []))
             ->setConfig($unitData->get('config', []))
-            ->setRequired($unitData->get('required', false));
+            ->setRequired($required === true || in_array($this->scene, $required));
 
         if ($unit instanceof Selects) {
             $this->loadJs('Selects', '/admin_static/layui/dist/xm-select.js');

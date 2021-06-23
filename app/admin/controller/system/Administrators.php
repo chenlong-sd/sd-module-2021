@@ -12,6 +12,7 @@ namespace app\admin\controller\system;
 
 use app\admin\model\system\AdministratorsRole;
 use app\admin\model\system\Role as RoleModel;
+use app\common\BaseQuery;
 use app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
@@ -41,15 +42,16 @@ class Administrators extends Admin
             ->field('i.id,i.name,i.account,i.status, i.status status_sc,GROUP_CONCAT(r.role) role,i.lately_time,i.create_time')
             ->group('i.id');
 
-        return $service->setModel($model)->setListSearchParamHandle([$this, 'listSearchParamHandle'])->getListsData();
+        return $service->setModel($model)->setCustomSearch([$this, 'listSearchParamHandle'])->getListsData();
     }
 
 
     /**
      * 修改密码
      * @param MyModel $administrators
-     * @return string
-     * @throws \Exception
+     * @return \think\response\Json|\think\response\View
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/23
      */
     public function passwordUpdate(MyModel $administrators)
     {
@@ -120,19 +122,28 @@ class Administrators extends Admin
         return session('?' . self::LOGIN_SESSION_KEY);
     }
 
-
-    public function listSearchParamHandle($search)
+    /**
+     * @param array $search
+     * @param BaseQuery $model
+     * @return mixed
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/23
+     */
+    public function listSearchParamHandle(array $search, BaseQuery $model)
     {
         if (isset($search['mode']) && $search['mode'] === 'all'){
             $all_role = RoleModel::field('id,pid,role,administrators_id')->select()->toArray();
             $mySubordinate = Sc::infinite($all_role)->handle(['administrators_id' => admin_session('id')], true);
 
-            $search['r.id_I'] = array_column($mySubordinate, 'id');
+            $model->whereIn('r.id', array_column($mySubordinate, 'id'));
         }else{
-            $search['r.administrators_id'] = admin_session('id');
+            $model->where('r.administrators_id', admin_session('id'));
         }
-        unset($search['mode']);
-        return $search;
+
+        return ['mode'];
     }
 }
 

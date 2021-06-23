@@ -9,6 +9,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\system\Role as RoleModel;
+use app\common\BaseQuery;
 use app\common\service\BackstageListsService;
 use sdModule\common\Sc;
 
@@ -30,7 +31,7 @@ class Role extends \app\common\controller\Admin
             ->join('role ip', 'i.pid = ip.id', 'left')
             ->field('i.id,i.id role_id,i.role,i.pid,administrators.name administrators_id,i.create_time,ip.role parent_role');
 
-        return $service->setModel($model)->setListSearchParamHandle([$this, 'listSearchParamHandle'])->getListsData();
+        return $service->setModel($model)->setCustomSearch([$this, 'listSearchParamHandle'])->getListsData();
     }
 
     /**
@@ -60,7 +61,17 @@ class Role extends \app\common\controller\Admin
         }
     }
 
-    public function listSearchParamHandle($search)
+    /**
+     * @param array $search
+     * @param BaseQuery $model
+     * @return string[]
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/23
+     */
+    public function listSearchParamHandle(array $search, BaseQuery $model): array
     {
         if (isset($search['mode']) && $search['mode'] === 'all'){
             if (admin_session('is_admin')) {
@@ -71,17 +82,17 @@ class Role extends \app\common\controller\Admin
             }
             $mySubordinate = Sc::infinite($all_role)->handle(['administrators_id' => admin_session('id')], true);
 
-            $search['id_I'] = array_column($mySubordinate, 'id');
+            $model->whereIn('i.id', array_column($mySubordinate, 'id'));
         }else{
             if (admin_session('is_admin')) {
-                $search['i.administrators_id'] = admin_session('id');
+                $model->where('i.administrators_id', admin_session('id'));
             } else {
-                $search['i.open_table'] = admin_session('table');
-                $search['i.open_id']    = admin_session('id');
+                $model->where([
+                    'i.open_table' => admin_session('table'),
+                    'i.open_id'    => admin_session('id')
+                ]);
             }
         }
-
-        unset($search['mode']);
-        return $search;
+        return ['mode'];
     }
 }

@@ -114,13 +114,14 @@ class UnitData
 
     /**
      * 设置表单必填
+     * @param string|array|bool $scene
      * @return $this
      * @author chenlong<vip_chenlong@163.com>
-     * @date 2021/6/17
+     * @date 2021/6/23
      */
-    public function required(): UnitData
+    public function required($scene = true): UnitData
     {
-        $this->unitConfig['required'] = true;
+        $this->unitConfig['required'] = $scene;
         return $this;
     }
 

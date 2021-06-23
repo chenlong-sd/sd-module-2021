@@ -61,8 +61,8 @@ class Test extends BasePage
     {
         $unit = [
             FormUnit::hidden('id'),
-            FormUnit::text('title', '标题'),
-            FormUnit::image('cover', '封面'),
+            FormUnit::text('title', '标题')->required(),
+            FormUnit::image('cover', '封面')->required(['edit']),
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false)),
@@ -70,7 +70,6 @@ class Test extends BasePage
             FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
             FormUnit::uEditor('content', '详情'),
         ];
-
         $form = Form::create($unit, $scene)->setDefaultData($default_data);
 
         return $form->complete();
