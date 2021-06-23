@@ -67,6 +67,23 @@
     .cross_box_s{
         overflow: hidden;
     }
+    .win{
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        width: 200px;
+        color: white;
+        font-family: cursive;
+        font-size: 45px;
+        text-align: center;
+        margin-left: -100px;
+        z-index: 999;
+        box-shadow: 0 0 20px red;
+        background-color: rgba(0,0,0,.6);
+        border-radius: 5px;
+        display: none;
+        user-select: none;
+    }
 </style>
 {/block}
 {block name="body"}
@@ -74,7 +91,7 @@
 <div style="padding: 15px;background-color: rgba(253,152,1,0.53);overflow:hidden;">
 
     <div class="cross_box_s"></div>
-
+    <div class="win">黑棋胜</div>
 </div>
 
 {/block}
@@ -87,16 +104,16 @@
         white_y = {}, // 以 Y 轴为键存坐标信息
         black_x = {}, // 以 X 轴为键存坐标信息
         black_y = {}, // 以 Y 轴为键存坐标信息
-        record = [],
-        white_count_record = {},
-        black_count_record = {},
         row = 19,
-        line = 19;
+        line = 19,
+        is_end = false;
+
+
     box_init(row, line);
 
 
     $(document).on('click', '.cross_box', function () {
-        if ($(this).find('.cross').hasClass('occupy')) return false;
+        if ($(this).find('.cross').hasClass('occupy') || is_end) return false;
         let white_count = $('.cross_select_white').length;
         let black_count = $('.cross_select_black').length;
         let is_white = (white_count + black_count) % 2 === 1;
@@ -114,6 +131,9 @@
             winCheckRowAndLine(white_x);
             winCheckRowAndLine(white_y);
             winCheckFork(white_x);
+            if (is_end) {
+                $('.win').text('白棋胜').show();
+            }
         }else{
             black_x[y] ? black_x[y].push(x) : black_x[y] = [x];
             black_y[x] ? black_y[x].push(y) : black_y[x] = [y];
@@ -122,6 +142,9 @@
             winCheckRowAndLine(black_x);
             winCheckRowAndLine(black_y);
             winCheckFork(black_x);
+            if (is_end) {
+                $('.win').show();
+            }
         }
     });
 
@@ -131,13 +154,13 @@
         for (let objKey in obj) {
             let obj2 = obj[objKey];
             for (let k2 in obj2) {
-                if (!obj2.hasOwnProperty(k2 - 1) || obj2[k2] - 1 !== obj2[k2 - 1]) {
+                if (!obj2.hasOwnProperty(k2 * 1 - 1) || obj2[k2] - 1 !== obj2[k2 * 1 - 1]) {
                     li = 1;
                     continue;
                 }
                 li++;
                 if (li >= 5) {
-                    return alert("赢了") ;
+                   return is_end = true;
                 }
             }
         }
@@ -145,13 +168,12 @@
 
     // 分叉判断赢
     function winCheckFork(obj) {
-
         for (let objKey in obj) {
-            if (!obj.hasOwnProperty(objKey + 1)) continue;
+            if (!obj.hasOwnProperty(objKey * 1 + 1)) continue;
             let obj2 = obj[objKey];
             for (let k2 in obj2) {
-                if (thorough(obj, objKey, 1, obj2[k2], 1) || thorough(obj, objKey, 1, obj2[k2], -1) ){
-                    return alert("赢了哦") ;
+                if (thorough(obj, objKey, 1, obj2[k2], 1) >= 5 || thorough(obj, objKey, 1, obj2[k2], -1) >= 5){
+                    return is_end = true;
                 }
             }
         }
@@ -165,11 +187,13 @@
          * @param fx 方向 -1 1
          */
         function thorough(obj, col, number, value, fx = 1) {
-            if (obj[col].indexOf(value + fx)){
-                number++;
-            }
-            if (!obj.hasOwnProperty(col + 1) || number >= 5){
+            col   = col * 1 + 1;
+            value = value * 1 + fx;
+            if (!obj.hasOwnProperty(col) || number >= 5){
                 return number;
+            }
+            if (obj[col].indexOf(value) >= 0){
+                number++;
             }
             return thorough(obj, col, number, value, fx);
         }
