@@ -60,15 +60,17 @@ class Dictionary extends Admin
     /**
      * 字典值新增
      * @return \think\response\Json|\think\response\View
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/24
      */
     public function dictionaryAdd()
     {
         if ($this->request->isAjax()) {
-            $this->validate($data = $this->request->post(), DictionaryValidate::class . '.value_add');
+            $this->validate($data = data_filter($this->request->post()), DictionaryValidate::class . '.value_add');
             DictionaryModel::create([
                 'pid' => $data['pid'],
                 'dictionary_value'  => $data['dictionary_value'],
-                'dictionary_name'   => $data['dictionary_name'],
+                'dictionary_name'   => $data['dictionary_name'] ?? $data['dictionary_value'],
                 'status'            => $data['status'],
                 'create_time'       => datetime(),
                 'update_time'       => datetime(),
@@ -89,13 +91,13 @@ class Dictionary extends Admin
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function dictionaryEdit($id = 0)
+    public function dictionaryEdit(int $id = 0)
     {
         if ($this->request->isAjax()) {
-            $this->validate($data = $this->request->post(), DictionaryValidate::class . '.value_edit');
+            $this->validate($data = data_filter($this->request->post()), DictionaryValidate::class . '.value_edit');
             DictionaryModel::update([
                 'dictionary_value'  => $data['dictionary_value'],
-                'dictionary_name'   => $data['dictionary_name'],
+                'dictionary_name'   => $data['dictionary_name'] ?? $data['dictionary_value'],
                 'status'            => $data['status'],
                 'update_time'       => datetime(),
             ], compact('id'));

@@ -107,6 +107,10 @@ class Dictionary extends BasePage
 
         $form = Form::create($unit, $scene)->setSkinToPane()->setDefaultData($default_data);
 
+        if ($scene === 'value_add') {
+            $form->setSuccessHandle('window.parent.notice.success("'. lang('success') .'");location.reload();');
+        }
+
         return $form->complete();
     }
 

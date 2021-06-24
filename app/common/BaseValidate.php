@@ -70,7 +70,7 @@ class BaseValidate  extends Validate
             }
         }
 
-        if ($db->where($map)->field($pk)->find()) {
+        if ($db->where($map)->where('delete_time', 0)->field($pk)->find()) {
             return false;
         }
 

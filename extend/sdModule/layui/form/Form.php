@@ -71,6 +71,11 @@ class Form
      */
     private $tip = [];
 
+    /**
+     * @var string 成功后处理的代码
+     */
+    private $successHandle = '';
+
 
     /**
      * Form constructor.
@@ -82,7 +87,6 @@ class Form
         $this->formData   = $formData;
         $this->scene      = $scene;
         $this->submitHtml = $this->defaultSubmit();
-        $this->submitJs   = $this->defaultSubmitJs();
         $this->unitJs[]   = $this->closePageJs();
     }
 
@@ -332,7 +336,7 @@ class Form
     public function getJs(): string
     {
         echo implode($this->unitJs);
-        return $this->submitJs;
+        return $this->submitJs ?: $this->defaultSubmitJs();
     }
 
     /**
@@ -404,6 +408,17 @@ JS;
     private function defaultSubmitJs(): string
     {
         $success = lang("success");
+        $successCode = $this->successHandle ?: <<<SUC
+                    parent.layer.close(window.closeLayerIndex);
+                    try{
+                        window.parent.notice.success('{$success}');
+                    }catch (e) {
+                        notice.success('{$success}');
+                    }
+                    if (window.parent.table){
+                        window.parent.table.reload('sc');
+                    }
+SUC;
 
         return <<<JS
 
@@ -419,15 +434,7 @@ JS;
             , success: function (res) {
                 layer.close(load);
                 if (res.code === 200) {
-                    parent.layer.close(window.closeLayerIndex);
-                    try{
-                        window.parent.notice.success('{$success}');
-                    }catch (e) {
-                        notice.success('{$success}');
-                    }
-                    if (window.parent.table){
-                        window.parent.table.reload('sc');
-                    }
+                    $successCode
                 } else {
                     notice.warning(res.msg);
                 }
@@ -484,6 +491,20 @@ JS;
     public function setJs(string $customJs): Form
     {
         $this->unitJs[] = $customJs;
+        return $this;
+    }
+
+    /**
+     * 设置成功后的处理代码
+     * @param string|callable $successHandle
+     * @example setSuccessHandle('location.reload();')
+     * @example setSuccessHandle(function(){
+     *      return 'location.reload();';
+     * })
+     */
+    public function setSuccessHandle($successHandle): Form
+    {
+        $this->successHandle = is_callable($successHandle) ? call_user_func($successHandle) : $successHandle;
         return $this;
     }
 }
