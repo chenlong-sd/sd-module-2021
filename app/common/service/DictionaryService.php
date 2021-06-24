@@ -31,9 +31,9 @@ class DictionaryService
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function getALl()
+    public static function getAll()
     {
-        $data =Dictionary::alias('i')->where('i.status', 1)
+        $data = Dictionary::alias('i')->where('i.status', 1)
             ->join('dictionary d', 'd.id = i.pid AND d.status = 1')
             ->field(['i.dictionary_name', 'i.dictionary_value', 'd.sign'])->select()->toArray();
 

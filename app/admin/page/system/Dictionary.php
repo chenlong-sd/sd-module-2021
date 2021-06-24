@@ -9,7 +9,6 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\TablePage;
 use sdModule\layui\tablePage\ListsPage;
 use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\Form;
@@ -59,7 +58,7 @@ class Dictionary extends BasePage
             TableAux::column()->checkbox(),
             TableAux::column('dictionary_value', '字典值'),
             TableAux::column('dictionary_name', '字典名字'),
-            TableAux::column('status', '状态'),
+            TableAux::column('status_1', '状态')->switch('status', MyModel::getStatusSc(false)),
             TableAux::column('update_time', '修改时间'),
         ]);
 
@@ -101,7 +100,7 @@ class Dictionary extends BasePage
             FormUnit::hidden('pid', '标识ID')->removeScene(['add', 'edit', 'value_edit'])->defaultValue(request()->get('id', 0)),
             FormUnit::text('name', '标识名称')->removeScene(['value_add', 'value_edit'])->placeholder('例：球类'),
             FormUnit::text('dictionary_value', '字典值')->removeScene(['add', 'edit'])->placeholder('例：basketball'),
-            FormUnit::text('dictionary_name', '字典名字')->removeScene(['add', 'edit'])->placeholder('例：篮球'),
+            FormUnit::text('dictionary_name', '字典名字')->removeScene(['add', 'edit'])->placeholder('例：篮球，不填则默认为字典值，如basketball'),
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false))->defaultValue(1),
         ];
 

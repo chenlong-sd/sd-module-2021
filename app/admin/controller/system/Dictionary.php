@@ -12,7 +12,6 @@ use app\admin\validate\system\Dictionary as DictionaryValidate;
 use \app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\service\BackstageListsService;
-use app\common\service\DictionaryService;
 
 
 /**
@@ -30,21 +29,23 @@ class Dictionary extends Admin
      */
     public function listData(BackstageListsService $service)
     {
-        $mode = $this->getModel()->where('pid', 0)->field('i.id,i.sign,i.name,i.status,i.update_time');
+        $mode = $this->getModel()->where('pid', 0)->field('i.id,i.sign,i.name,i.status,i.status status_1,i.update_time');
 
         return $service->setModel($mode)->getListsData();
     }
 
     /**
      * 字典配置页面
-     * @return \think\response\View
+     * @return false|mixed|\think\response\Json|\think\response\View
      * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/6/24
      */
     public function dictionary()
     {
         if ($this->request->isAjax()) {
             $model = $this->getModel()->join('dictionary', 'i.pid = dictionary.id ', 'left')
-                ->field('i.id,i.dictionary_value,i.dictionary_name,i.update_time,i.status');
+                ->field('i.id,i.dictionary_value,i.dictionary_name,i.update_time,i.status,i.status status_1');
 
             $service = new BackstageListsService();
             return $service->setModel($model)->getListsData();
