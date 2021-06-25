@@ -149,7 +149,10 @@ class Form
             $currentAttr['pane'] = '';
         }
 
-        if ($unitData->get('required', false)) {
+        $required = $unitData->get('required', '');
+        $required !== true and $required = (array)$required;
+
+        if ($required === true || in_array($this->scene, $required)) {
             $currentAttr['lay-verify'] = 'required';
         }
 

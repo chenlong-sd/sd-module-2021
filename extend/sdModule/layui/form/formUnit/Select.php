@@ -30,20 +30,20 @@ class Select extends UnitBase
                 foreach ($label as $value_children => $label_children){
                     $option = Dom::create('option')->addContent($label_children)->addAttr('value', $value_children);
                     $this->getCheck($value_children) and $option->addAttr('selected', '');
-                    $optgroup->addContent($option->addAttr($attr));
+                    $optgroup->addContent($option);
                 }
                 $options[] = $optgroup;
             }else{
                 $option = Dom::create('option')->addContent($label)->addAttr('value', $value);
                 $this->getCheck($value) and $option->addAttr('selected', '');
-                $options[] = $option->addAttr($attr);
+                $options[] = $option;
             }
         }
 
         $select = Dom::create('select')
             ->addAttr('name', $this->name)
             ->addAttr('lay-search', '')
-            ->addContent(implode($options));
+            ->addContent(implode($options))->addAttr($attr);
 
         if ($this->label) {
             $itemDom->addContent($this->getLabel($this->label));

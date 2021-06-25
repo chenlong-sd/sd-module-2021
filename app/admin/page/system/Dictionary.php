@@ -108,7 +108,7 @@ class Dictionary extends BasePage
 
         if ($scene === 'value_add') {
             $form->setJs('layui.jquery("input[name=dictionary_value]").focus();');
-            $form->setSuccessHandle('window.parent.notice.success("'. lang('success') .'");location.reload();');
+            $form->setSuccessHandle('window.parent.notice.success("'. lang('success') .'");parent.table.reload("sc");location.reload();');
         }
 
         return $form->complete();

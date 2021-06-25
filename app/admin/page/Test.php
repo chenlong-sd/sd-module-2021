@@ -66,11 +66,44 @@ class Test extends BasePage
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false)),
-            FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
+            FormUnit::select('administrators_id', '管理员')->inputAttr(['-' => ['lay-filter' => 'ss']])->options(Administrators::column('name', 'id')),
             FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
             FormUnit::uEditor('content', '详情'),
         ];
         $form = Form::create($unit, $scene)->setDefaultData($default_data);
+
+        $data = [
+             1 => [
+                'id' => 1,
+                'name' => 'yao',
+                'children' => [
+                    2 => [
+                        'id' => 2,
+                        'name' => 'youyao'
+                    ]
+                ]
+            ]
+        ];
+        $data = json_encode($data);
+        $form->setJs(<<<JS
+        let uvd = {$data};
+        layui.form.on('select(ss)', function (obj){
+             console.log(obj.value);
+             layui.jquery('select[name=pid]').html(optionHtmlMake(uvd[obj.value].children));
+             layui.form.render();
+        });
+
+        function optionHtmlMake(obj){
+            console.log(obj)
+            let html = '<option value=""></option>';
+            for(var i = 0; i < obj.length; i++) {
+                html += `<option value="\${obj[i].id}">\${obj[i].name}</option>`;
+            }
+            return html;
+        }
+JS);
+
+
 
         return $form->complete();
     }
