@@ -140,9 +140,9 @@ CREATE TABLE `sd_base_config`  (
 DROP TABLE IF EXISTS `sd_dictionary`;
 CREATE TABLE `sd_dictionary`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `sign` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标识',
+  `sign` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标识',
   `pid` int(11) NOT NULL DEFAULT 0 COMMENT '标识ID',
-  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标识名称',
+  `name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标识名称',
   `dictionary_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '字典值',
   `dictionary_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '字典名字',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：1=正常，2=停用',

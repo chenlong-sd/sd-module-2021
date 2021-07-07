@@ -155,7 +155,6 @@ class Form
         if ($required === true || in_array($this->scene, $required)) {
             $currentAttr['lay-verify'] = 'required';
         }
-
         return $currentAttr;
     }
 
