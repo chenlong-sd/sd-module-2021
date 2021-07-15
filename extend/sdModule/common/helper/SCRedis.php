@@ -60,7 +60,7 @@ class SCRedis
      * @return mixed|string|null
      * @throws \Throwable
      */
-    public function lock(callable $callback, array $param = [])
+    public function lock(callable $callback, ...$param)
     {
         if ($this->key === null) {
             $id_info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -81,7 +81,7 @@ class SCRedis
      * @return mixed
      * @throws \Throwable
      */
-    public function wait(callable $callable, array $param = [])
+    public function wait(callable $callable, ...$param)
     {
         if ($this->key === null) {
             $id_info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -103,7 +103,7 @@ class SCRedis
      * @return mixed|string|null
      * @throws \Throwable
      */
-    public function lockAndTransaction(callable $callback, array $param = [])
+    public function lockAndTransaction(callable $callback, ...$param)
     {
         return $this->lock(function () use ($callback, $param){
             return Db::transaction(function () use ($callback, $param) {

@@ -128,6 +128,11 @@ class TableColumn implements \ArrayAccess
         $title       = implode('|', $data);
         $js_code     = $js_code instanceof Ajax ? $js_code : new Ajax(url('switchHandle'));
 
+        if ((string)$js_code === 'false') {
+            $this->column['field'] = $field;
+            return $this;
+        }
+
         $this->column['templet'] = function () use ($open_value, $title){
             return <<<JS
         let checked = "{$open_value}" == obj.{$this->column['field']} ? "checked" : "";
