@@ -61,7 +61,9 @@
                 , success:function (res) {
                     layer.close(load);
                     if (res.code === 200) {
-                        notice.success('success');
+                        notice.success('修改成功，请重新登录。', function (){
+                            top.window.location.href = "{:admin_url('login-out')}";
+                        });
                         document.getElementsByTagName('form')[0].reset();
                     }else{
                         notice.warning(res.msg);

@@ -383,7 +383,8 @@ class Form
         $close = request()->get('__sc_tab__') ? "custom.closeTabsPage()" : "parent.layer.closeAll()";
         return <<<JS
     $('#close').click(function () {
-        return {$close};
+        {$close};
+        return false;
     });
 JS;
 

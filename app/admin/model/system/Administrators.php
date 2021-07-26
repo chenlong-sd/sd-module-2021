@@ -231,10 +231,7 @@ class Administrators extends BaseModel
      */
     public function openLogin(array $data)
     {
-        $model_class = '\\app\\common\\model\\' . Str::studly($data['table']);
-        /** @var BaseModel $model */
-        $model = Sc::reflex()->getInstance($model_class);
-        if (!$login_data = $model->where($data['table_info']['account'], $data['account'])->find()) {
+        if (!$login_data = Db::name($data['table'])->where($data['table_info']['account'], $data['account'])->find()) {
             throw new SdException('账号或密码错误');
         }
 
@@ -245,7 +242,7 @@ class Administrators extends BaseModel
         // 账号状态判断
         if (!empty($data['table_info']['status'])) {
             $status_field = array_key_first($data['table_info']['status']);
-            if ($login_data->getData($status_field) != $data['table_info']['status'][$status_field]) {
+            if ($login_data[$status_field] != $data['table_info']['status'][$status_field]) {
                 throw new SdException('账号已被冻结，请联系相关管理人员解冻');
             }
         }

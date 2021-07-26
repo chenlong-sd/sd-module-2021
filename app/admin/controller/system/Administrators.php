@@ -19,6 +19,7 @@ use app\common\SdException;
 use app\common\service\BackstageListsService;
 use sdModule\common\Sc;
 use app\admin\model\system\Administrators as MyModel;
+use think\facade\Db;
 
 /**
  * Class Administrators
@@ -48,16 +49,17 @@ class Administrators extends Admin
 
     /**
      * 修改密码
-     * @param MyModel $administrators
      * @return \think\response\Json|\think\response\View
+     * @throws \think\db\exception\DbException
      * @author chenlong<vip_chenlong@163.com>
-     * @date 2021/6/23
+     * @date 2021/7/26
      */
-    public function passwordUpdate(MyModel $administrators)
+    public function passwordUpdate()
     {
         if ($this->request->isPost()) {
             $data = $this->verify('password');
-            $password = $administrators::where(['id' => admin_session('id')])->value('password');
+            $table = admin_session('is_admin') ? 'administrators' : admin_session('table');
+            $password = Db::name($table)->where(['id' => admin_session('id')])->value('password');
 
             if (!Sc::password()->verify($data['password_old'], $password)){
                 return ResponseJson::fail(lang('administrator.old password error'));
@@ -66,7 +68,7 @@ class Administrators extends Admin
                 return ResponseJson::fail(lang('administrator.password Unanimous'));
             }
 
-            $result = $administrators::where(['id' => admin_session('id')])->update([
+            $result = Db::name($table)->where(['id' => admin_session('id')])->update([
                 'password' => Sc::password()->encryption($data['password']),
                 'update_time' => date('Y-m-d H:i:s')
             ]);

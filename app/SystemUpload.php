@@ -40,6 +40,10 @@ class SystemUpload
         'word' => [
             'mime' => ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
             'ext' => ['doc', 'docx',],
+        ],
+        'pdf' => [
+            'mime' => ['application/pdf'],
+            'ext' => ['pdf', 'PDF', 'Pdf',],
         ]
     ];
 
@@ -66,8 +70,10 @@ class SystemUpload
         /** @var  UploadedFile $file */
         $file = $files[$file_form_name];
 
-        $this->fileTypeVerify();
-        $this->mimeVerify($file);
+        if ($this->verify_type !== 'all') {
+            $this->fileTypeVerify();
+            $this->mimeVerify($file);
+        }
 
         return $file;
     }
@@ -78,7 +84,8 @@ class SystemUpload
      */
     private function fileTypeVerify()
     {
-        $allow = $this->verify_type === 'all';
+        $allow = false;
+
         foreach (explode('*', $this->verify_type) as $verify_type) {
             if (isset(self::VERIFY_RULE[$verify_type])) {
                 $allow = true;
@@ -99,7 +106,7 @@ class SystemUpload
      */
     private function mimeVerify(UploadedFile $file)
     {
-        $allow = $this->verify_type === 'all';
+        $allow = false;
         foreach (explode('*', $this->verify_type) as $verify_type) {
             $rule = self::VERIFY_RULE[$verify_type];
             if (in_array($file->getMime(), $rule['mime']) && in_array($file->getOriginalExtension(), $rule['ext'])) {
