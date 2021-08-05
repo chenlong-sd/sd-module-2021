@@ -110,6 +110,9 @@ function menu_render(array $menu, bool $is_children = false): string
                         <dd lay-href="<?= admin_url('aux') ?>">
                             <a href="javascript:;" >开发工具</a>
                         </dd>
+                        <dd>
+                            <a target="_blank" href="https://www.kancloud.cn/chenlon-sd/sd-module-2021" >开发手册</a>
+                        </dd>
                     </dl>
                 </li>
 

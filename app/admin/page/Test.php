@@ -46,6 +46,9 @@ class Test extends BasePage
             'align' => 'center',
             'width' => 150
         ]);
+
+        $table->addEvent()->setJs(TableAux::ajax(url('create'), '确认请求慢', 'post')->prompt('请输入价格', ['formType' => 1])->setBatch());
+
         return $table;
     }
 
