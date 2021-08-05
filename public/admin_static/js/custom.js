@@ -305,6 +305,7 @@ custom = {
             elem: event_id
             , url: UPLOAD_URL
             , multiple: true
+            , field: 'limit_images'
             , before: function (obj) {
                 load = custom.loading('图片上传中...');
                 moreUpload.preview(obj);
@@ -397,6 +398,7 @@ custom = {
         let up = upload.render({
             elem: "#" + name
             , url: UPLOAD_URL
+            , field: 'limit_image'
             , before: function (obj) {
                 load = custom.loading('图片上传中...')
                 //预读本地文件示例，不支持ie8
@@ -453,7 +455,7 @@ custom = {
         upload.render({
             elem: "#" + name
             , url: UPLOAD_FILE_URL
-            , field: type
+            , field: "limit_" + type
             , multiple: true
             , accept: accept.hasOwnProperty(type) ? type : 'file'
             , before: function (obj) {
@@ -527,7 +529,7 @@ custom = {
         upload.render({
             elem: "#" + name
             , url: UPLOAD_FILE_URL
-            , field: 'video'
+            , field: 'limit_video'
             , multiple: true
             , accept: 'video'
             , before: function (obj) {

@@ -380,7 +380,7 @@ class System extends Admin
         $sql  = Db::query("SHOW CREATE TABLE `{$table}`");
         return ResponseJson::success([
             'field' => array_column($data, 'Field'),
-            'sql' => strtr(current($sql)['Create Table'], ["\n" => "<br/>&nbsp;&nbsp;&nbsp;&nbsp;"])
+            'sql' => current($sql)['Create Table']
         ]);
     }
 

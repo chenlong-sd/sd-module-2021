@@ -66,6 +66,10 @@ class SystemUpload
         $file_form_name = version_compare(PHP_VERSION,'7.3.0', '<') ?
             array_keys($files)[0] : array_key_first($files);
         $this->verify_type = $type === null ? (string)$file_form_name : $type;
+        if (substr($this->verify_type, 0, 6) !== 'limit_') {
+            throw new SdException('文件上传接口不被允许。');
+        }
+        $this->verify_type = substr($this->verify_type, 6);
 
         /** @var  UploadedFile $file */
         $file = $files[$file_form_name];
@@ -129,7 +133,7 @@ class SystemUpload
      */
     public function imageUpload()
     {
-        return $this->localhostUpload($this->fileVerify('image'));
+        return $this->localhostUpload($this->fileVerify('limit_image'));
     }
 
     /**

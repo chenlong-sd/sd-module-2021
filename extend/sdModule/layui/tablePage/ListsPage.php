@@ -252,6 +252,7 @@ class ListsPage
     {
         $btn = [];
         foreach ($element as $event){
+            if (!$event->title && !$event->icon) continue;
             $showButton = Layui::button($event->title, $event->icon)->setEvent($event->event)->setSize($event->btnSize)
                 ->addBtnClass("layui-btn-{$event->btnType}");
             $disabledButton = Layui::button($event->title, $event->icon)->setSize($event->btnSize)

@@ -20,9 +20,9 @@
     </div>
     <div class="layui-col-md3">
         <div class="layui-card" data-href="<?= admin_url('field') ?>">
-            <div class="layui-card-header"><b>数据查询字段</b></div>
+            <div class="layui-card-header"><b>数据表详情查询</b></div>
             <div class="layui-card-body">
-                查询的字段太多了，<br/>来体验看看。
+                查询的字段太多了，看看是否存在某个表，复制字段注释<br/>来体验看看。
             </div>
         </div>
     </div>

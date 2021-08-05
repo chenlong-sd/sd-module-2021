@@ -55,6 +55,10 @@ class Excel
      * @var bool
      */
     private $stop_read = false;
+    /**
+     * @var int 数据开始行
+     */
+    private $data_start_row = 2;
 
     /**
      * Excel constructor.
@@ -63,7 +67,7 @@ class Excel
      * @param string $format 文件格式： Xlsx | Xls | Xml | Ods | Slk | Gnumeric | Html | Csv
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
-    public function __construct(string $excel_path, string $mode = 'read', string $format = 'Xls')
+    public function __construct(string $excel_path, string $mode = 'read', string $format = '')
     {
         $this->excel_path = $excel_path;
         $this->format     = $format;
@@ -234,7 +238,7 @@ class Excel
             'data_title'  => current($sheet->rangeToArray(sprintf("A1:%s1", $column))),
         ];
 
-        for ($i = 2; $i <= $row; $i += $number) {
+        for ($i = $this->data_start_row; $i <= $row; $i += $number) {
             $end = ($row > ($i + $number)) ? $i + $number - 1 : $row;
             if ($this->stop_read) {
                 break;
@@ -288,5 +292,16 @@ class Excel
                 return false;
             }
         };
+    }
+
+    /**
+     * 设置数据开始的行数
+     * @param int $data_start_row
+     * @return Excel
+     */
+    public function setDataStartRow(int $data_start_row): Excel
+    {
+        $this->data_start_row = $data_start_row;
+        return $this;
     }
 }
