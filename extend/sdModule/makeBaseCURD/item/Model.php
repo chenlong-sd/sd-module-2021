@@ -37,6 +37,7 @@ class Model implements Item
             'search_form'     => [],
             'namespace'       => $this->CURD->getNamespace($this->CURD->config('namespace.model')),
             'commonNamespace' => $this->CURD->getNamespace($this->CURD->config('namespace.common_model')),
+            'describe'        => $this->CURD->pageName ?: $this->CURD->tableComment
         ];
 
         $this->getAttr();

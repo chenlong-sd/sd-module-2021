@@ -43,6 +43,7 @@ class Controller implements Item
             'use'          => '',
             'quick_search' => [],
             'namespace'    => $this->CURD->getNamespace($this->CURD->config('namespace.controller')),
+            'describe'     => $this->CURD->pageName ?: $this->CURD->tableComment
         ];
     }
 

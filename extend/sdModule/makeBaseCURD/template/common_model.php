@@ -12,6 +12,7 @@ use app\common\BaseModel;
 //=={use}==//
 
 /**
+ * //=={describe}==// 模型
  * Class //=={Table}==//
 //=={property}==//
  * @package //=={namespace}==//\//=={Table}==//

@@ -7,6 +7,7 @@
 namespace sdModule\layui\form;
 
 
+use sdModule\layui\form\formUnit\Table;
 use think\helper\Str;
 
 /**
@@ -66,11 +67,13 @@ class FormUnit
 
     /**
      * 表格形式的表单
-     * @param mixed ...$unit
-     * @return array
+     * @param ...$unit
+     * @return UnitData
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/6
      */
-    public static function table(...$unit): array
+    public static function table(...$unit)
     {
-        return $unit;
+        return UnitData::create('t' . mt_rand(1, 10000))->setUnitType('Table')->setChildrenItem(...$unit);
     }
 }

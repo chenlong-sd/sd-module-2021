@@ -128,6 +128,17 @@ abstract class UnitBase
     }
 
     /**
+     * 设置元素的CSS
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/6
+     */
+    public function getCss(): string
+    {
+        return '';
+    }
+
+    /**
      * @param string $itemClass
      * @return UnitBase
      */

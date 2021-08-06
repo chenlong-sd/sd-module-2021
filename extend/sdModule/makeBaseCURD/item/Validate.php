@@ -43,6 +43,7 @@ class Validate implements Item
                 'edit' => [$this->primary_key]
             ],
             'namespace' => $this->CURD->getNamespace($this->CURD->config('namespace.validate')),
+            'describe'  => $this->CURD->pageName ?: $this->CURD->tableComment
         ];
 
         $this->fieldRuleHandle();

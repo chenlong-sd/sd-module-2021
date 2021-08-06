@@ -37,6 +37,11 @@ class Form
     public $unitJs = [];
 
     /**
+     * @var array 表单元素的js
+     */
+    public $unitCss = [];
+
+    /**
      * @var array 加载的外部js
      */
     public $loadJs = [];
@@ -119,9 +124,14 @@ class Form
             if ($childrenItemData = $unitData->get('childrenItem', [])) {
                 foreach ($childrenItemData as $itemDatum) {
                     $childrenUnit = $this->makeCode($itemDatum);
+                    $this->unitJs[]  = $childrenUnit->getJs();
+                    $this->unitCss[] = $childrenUnit->getCss();
                     $unit->addChildrenItem($childrenUnit, $this->formAttrHandle($itemDatum));
                 }
             }
+
+            $this->unitJs[]  = $unit->getJs();
+            $this->unitCss[] = $unit->getCss();
 
             $attr = $this->formAttrHandle($unitData);
             $dom  = $unit->getHtml($attr);
@@ -192,7 +202,7 @@ class Form
         if (isset($this->tip[$unitData->get('name', '')])) {
             $unit->setShortTip($this->tip[$unitData->get('name', '')]);
         }
-        $this->unitJs[] = $unit->getJs();
+
         return $unit;
     }
 
@@ -350,6 +360,17 @@ class Form
     public function getUnitJs(): string
     {
         return implode($this->unitJs);
+    }
+
+    /**
+     * 获取单元css
+     * @return string
+     * @author chenlong <vip_chenlong@163.com>
+     * @date 2021/6/2
+     */
+    public function getUnitCss(): string
+    {
+        return implode($this->unitCss);
     }
 
     /**
