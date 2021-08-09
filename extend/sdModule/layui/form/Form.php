@@ -80,6 +80,10 @@ class Form
      * @var string 成功后处理的代码
      */
     private $successHandle = '';
+    /**
+     * @var array 表单显示条件
+     */
+    private $formShowWhere = [];
 
 
     /**
@@ -115,13 +119,15 @@ class Form
      */
     private function makeUnitHtml()
     {
+        $this->extractDisplayConditions();
+
         foreach ($this->formData as $unitData) {
             if (in_array($this->scene, $unitData->get('removeScene', []))) {
                 continue;
             }
             $unit = $this->makeCode($unitData);
 
-            if ($childrenItemData = $unitData->get('childrenItem', [])) {
+            if ($childrenItemData = ($unitData->get('childrenItem', []))) {
                 foreach ($childrenItemData as $itemDatum) {
                     $childrenUnit = $this->makeCode($itemDatum);
                     $this->unitJs[]  = $childrenUnit->getJs();
@@ -144,6 +150,34 @@ class Form
     }
 
     /**
+     * 提取显示条件
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/9
+     */
+    private function extractDisplayConditions()
+    {
+        foreach ($this->formData as $unitData) {
+            /** @var UnitData[] $childrenItemData */
+            if ($childrenItemData = $unitData->get('childrenItem', [])) {
+                foreach ($childrenItemData as $itemDatum) {
+                    $itemDatum->get('boxId') or $itemDatum->setBoxId($itemDatum->get('name', '') . 'sc-box-form-rand' . mt_rand(0, 99999));
+                    if (!$showWhere = $itemDatum->get('showWhere', [])) continue;
+                    $this->formShowWhere[$showWhere['field']][] = [
+                        'value'  => $showWhere['value'],
+                        'box_id' => $itemDatum->get('boxId', '')
+                    ];
+                }
+            }
+            $unitData->get('boxId') or $unitData->setBoxId($unitData->get('name', '') . 'sc-box-form-rand' . mt_rand(0, 99999));
+            if (!$showWhere = $unitData->get('showWhere', [])) continue;
+            $this->formShowWhere[$showWhere['field']][] = [
+                'value'  => $showWhere['value'],
+                'box_id' => $unitData->get('boxId', '')
+            ];
+        }
+    }
+
+    /**
      * 表单元素属性处理
      * @param UnitData $unitData
      * @return array
@@ -152,10 +186,10 @@ class Form
      */
     private function formAttrHandle(UnitData $unitData): array
     {
-        $inputAttr   = $unitData->get('inputAttr');
+        $inputAttr   = $unitData->get('inputAttr', []);
         $currentAttr = array_merge($inputAttr['-'] ?? [], $inputAttr[$this->scene] ?? []);
 
-        if ($this->skin && in_array($unitData->get('formUnitType'), ['radio', 'checkbox', 'switch_sc', 'slider'])) {
+        if ($this->skin && in_array($unitData->get('formUnitType', ''), ['radio', 'checkbox', 'switch_sc', 'slider'])) {
             $currentAttr['pane'] = '';
         }
 
@@ -179,19 +213,21 @@ class Form
     private function makeCode(UnitData $unitData): UnitBase
     {
         /** @var UnitBase $unit */
-        $unit = Sc::reflex()->getInstance($this->getUnitClassname($unitData->get('formUnitType')), [
+        $unit = Sc::reflex()->getInstance($this->getUnitClassname($unitData->get('formUnitType', '')), [
             'name'          => $unitData->get('name', ''),
             'label'         => $unitData->get('label', ''),
             'placeholder'   => $unitData->get('placeholder', ''),
         ]);
 
-        $default = $this->defaultData[$unitData->get('name', '')] ?? $unitData->get('defaultValue', '');
-        $required = $unitData->get('required', '');
+        $default = $this->defaultData[$unitData->get('name', '')] ?? $unitData->get('defaultValue' , "");
+        $required = $unitData->get("required", '');
         $required !== true and $required = (array)$required;
 
         $unit->setDefault($default)->setOption($unitData->get('options', []))
-            ->setConfig($unitData->get('config', []))
-            ->setRequired($required === true || in_array($this->scene, $required));
+            ->setConfig($unitData->get("config", []))
+            ->setRequired($required === true || in_array($this->scene, $required))
+            ->setShowWhere($this->formShowWhere[$unitData->get('name', '')] ?? [])
+            ->setBoxId($unitData->get('boxId', ''));
 
         if ($unit instanceof Selects) {
             $this->loadJs('Selects', '/admin_static/layui/dist/xm-select.js');
@@ -530,5 +566,10 @@ JS;
     {
         $this->successHandle = is_callable($successHandle) ? call_user_func($successHandle) : $successHandle;
         return $this;
+    }
+
+    public function setFormShowWhere()
+    {
+
     }
 }

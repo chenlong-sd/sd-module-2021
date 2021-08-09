@@ -21,7 +21,6 @@ class Checkbox extends UnitBase
         $itemDom  = $this->getItem();
         $inputDiv = Dom::create();
 
-        $options  = [];
         foreach ($this->options as $value => $label) {
             $customAttr = [
                 'type'      => 'checkbox',
@@ -30,7 +29,7 @@ class Checkbox extends UnitBase
                 'title'     => $label,
                 'name'      => "{$this->name}[]"
             ];
-            $checked   = $this->getCheck($value) and $customAttr['checked'] = '';
+            $this->getCheck($value) and $customAttr['checked'] = '';
             $inputDiv->addContent($this->getInput()->addAttr($customAttr)->addAttr($attr));
         }
 

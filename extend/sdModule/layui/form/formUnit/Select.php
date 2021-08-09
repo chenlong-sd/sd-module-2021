@@ -43,6 +43,7 @@ class Select extends UnitBase
         $select = Dom::create('select')
             ->addAttr('name', $this->name)
             ->addAttr('lay-search', '')
+            ->addAttr('lay-filter', "filter-$this->name")
             ->addContent(implode($options))->addAttr($attr);
 
         if ($this->label) {
@@ -64,6 +65,18 @@ class Select extends UnitBase
     private function getCheck($value): bool
     {
         return $value == $this->default;
+    }
+
+    public function getJs(): string
+    {
+        list($where_str, $default) = $this->getShowWhereJs();
+        return !$this->showWhere ? '' : <<<JS
+        $default
+        layui.form.on('select(filter-$this->name)', function(data){
+          let value = data.value;
+          $where_str
+        });
+JS;
     }
 
 }

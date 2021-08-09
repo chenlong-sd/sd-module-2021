@@ -24,11 +24,12 @@ class Radio extends UnitBase
 
         foreach ($this->options as $value => $label) {
             $customAttr = [
-                'type'      => 'radio',
-                'value'     => $value,
-                'title'     => $label
+                'type'          => 'radio',
+                'lay-filter'    => "filter-$this->name",
+                'value'         => $value,
+                'title'         => $label
             ];
-            $checked   = $this->getCheck($value) and $customAttr['checked'] = '';
+            $this->getCheck($value) and $customAttr['checked'] = '';
             $inputDiv->addContent($this->getInput()->addAttr($customAttr)->addAttr($attr));
         }
 
@@ -52,4 +53,15 @@ class Radio extends UnitBase
         return $value == $this->default;
     }
 
+    public function getJs() :string
+    {
+        list($where_str, $default) = $this->getShowWhereJs();
+        return  !$this->showWhere ? '' : <<<JS
+        $default
+        layui.form.on('radio(filter-$this->name)', function(data){
+          let value = data.value;
+          $where_str
+        });
+JS;
+    }
 }

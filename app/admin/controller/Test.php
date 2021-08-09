@@ -31,7 +31,7 @@ class Test extends Admin
             ->join('test', 'i.pid = test.id ', 'left')
             ->field('i.id,i.title,i.cover,i.intro,i.status,administrators.name administrators_name,i.administrators_id,test.title parent_title,i.pid,i.create_time,i.update_time,i.delete_time');
 
-        return $service->setModel($mode)->setPagination()->getListsData();
+        return $service->setModel($mode)->getListsData();
     }
 
 }

@@ -196,4 +196,31 @@ class UnitData
         $this->unitConfig['childrenItem'] = $childrenItem;
         return $this;
     }
+
+    /**
+     * 设置展示条件
+     * @param string $field
+     * @param $value
+     * @return UnitData
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/9
+     */
+    public function setShowWhere(string $field, $value)
+    {
+        $this->unitConfig['showWhere'] = compact('field', 'value');
+        return $this;
+    }
+
+    /**
+     * 设置表单盒子的ID
+     * @param string $id
+     * @return $this
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/9
+     */
+    public function setBoxId(string $id)
+    {
+        $this->unitConfig['boxId'] = $id;
+        return $this;
+    }
 }

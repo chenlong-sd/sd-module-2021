@@ -46,8 +46,8 @@ class Test extends BasePage
             'align' => 'center',
             'width' => 150
         ]);
-
-        $table->addEvent()->setJs(TableAux::ajax(url('create'), '确认请求慢', 'post')->prompt('请输入价格', ['formType' => 1])->setBatch());
+        $table->setEventMode($table::MENU_MODE);
+        $table->addEvent()->setWarmBtn('dsd')->setJs(TableAux::ajax(url('create'), '确认请求慢', 'post')->prompt('请输入价格', ['formType' => 1]));
 
         return $table;
     }
@@ -67,9 +67,11 @@ class Test extends BasePage
             FormUnit::text('title', '标题')->required(),
             FormUnit::image('cover', '封面')->required(['edit']),
             FormUnit::images('show_images', '展示图'),
-            FormUnit::text('intro', '简介'),
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false)),
-            FormUnit::select('administrators_id', '管理员')->inputAttr(['-' => ['lay-filter' => 'ss']])->options(Administrators::column('name', 'id')),
+            FormUnit::build(
+                FormUnit::text('intro', '简介'),
+                FormUnit::select('administrators_id', '管理员')->inputAttr(['-' => ['lay-filter' => 'ss']])->options(Administrators::column('name', 'id')),
+            )->setShowWhere('status', 1),
             FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
             FormUnit::uEditor('content', '详情'),
         ];

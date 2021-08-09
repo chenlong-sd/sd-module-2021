@@ -54,7 +54,18 @@ class Table extends UnitBase
         foreach ($this->childrenItem as [$children, $attr]) {
             $title_tr->addContent(Dom::create('td')->addClass('s-title')->addContent($children->label));
         }
-        return $table->addContent($title_tr)->addContent($this->inputTr());
+
+        $table->addContent($title_tr);
+
+        if ($this->default) {
+            foreach ($this->default as $default){
+                $table->addContent($this->inputTr($default));
+            }
+        }else{
+            $table->addContent($this->inputTr());
+        }
+
+        return $table;
     }
 
     /**
@@ -63,7 +74,7 @@ class Table extends UnitBase
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/8/6
      */
-    private function inputTr(): Dom
+    private function inputTr(array $default = []): Dom
     {
         $form_tr = Dom::create('tr');
         /**
@@ -77,7 +88,7 @@ class Table extends UnitBase
                 throw new \Exception("table包含表单支持项：text, select, checkbox, 你使用了【{$type}】类型" );
             }
 
-            $form_tr->addContent(Dom::create('td')->addContent(call_user_func([$this, $type], $children, $attr)));
+            $form_tr->addContent(Dom::create('td')->addContent(call_user_func([$this, $type], $children, $attr, $default)));
         }
         return $form_tr;
     }
@@ -89,9 +100,7 @@ class Table extends UnitBase
      */
     public function getJs(): string
     {
-        $tr = $this->inputTr();
         return <<<JS
-        console.log('$tr');
         \$('#sc-form-table-$this->name').on('click', 'tr:last-child>td:last-child', function (e) {
             e.stopPropagation();
             let html = `{$this->inputTr()}`;
@@ -178,29 +187,32 @@ CSS;
     /**
      * @param UnitBase $unitBase
      * @param array $attr
+     * @param array $default
      * @return Dom
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/8/6
      */
-    private function text(UnitBase $unitBase, array $attr)
+    private function text(UnitBase $unitBase, array $attr, array $default)
     {
         return Dom::create('input')->setIsSingleLabel()
             ->addAttr([
                 'name'         => "$unitBase->name[]",
                 'class'        => 'layui-input',
                 'autocomplete' => 'off',
-                'placeholder'  => $unitBase->placeholder
+                'placeholder'  => $unitBase->placeholder,
+                'value'        => $default[$unitBase->name] ?? ''
             ])->addAttr($attr);
     }
 
     /**
      * @param UnitBase $unitBase
      * @param array $attr
+     * @param array $default
      * @return Dom
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/8/6
      */
-    private function select(UnitBase $unitBase, array $attr)
+    private function select(UnitBase $unitBase, array $attr, array $default)
     {
         $options  = [
             Dom::create('option')->addContent($unitBase->placeholder)->addAttr('value', '')
@@ -210,13 +222,17 @@ CSS;
                 $optgroup = Dom::create('optgroup')->addAttr('label', $value);
                 foreach ($label as $value_children => $label_children){
                     $option = Dom::create('option')->addContent($label_children)->addAttr('value', $value_children);
-                    $value_children == $unitBase->default and $option->addAttr('selected', '');
+                    if (!empty($default[$unitBase->name])){
+                        $value_children == $default[$unitBase->name] and $option->addAttr('selected', '');
+                    }
                     $optgroup->addContent($option);
                 }
                 $options[] = $optgroup;
             }else{
                 $option = Dom::create('option')->addContent($label)->addAttr('value', $value);
-                $value == $unitBase->default and $option->addAttr('selected', '');
+                if (!empty($default[$unitBase->name])){
+                    $value == $default[$unitBase->name] and $option->addAttr('selected', '');
+                }
                 $options[] = $option;
             }
         }
@@ -231,22 +247,26 @@ CSS;
      * 多选形式的表单
      * @param UnitBase $unitBase
      * @param array $attr
+     * @param array $default
      * @return Dom
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/8/6
      */
-    public function checkbox(UnitBase $unitBase, array $attr)
+    public function checkbox(UnitBase $unitBase, array $attr, array $default)
     {
         $inputDiv = Dom::create();
+        $default = explode(',', $default[$unitBase->name] ?? '');
+
         foreach ($unitBase->options as $value => $label) {
             $customAttr = [
                 'type'      => 'checkbox',
                 'lay-skin'  => 'primary',
                 'value'     => $value,
                 'title'     => $label,
-                'name'      => "{$unitBase->name}[]"
+                'name'      => "$unitBase->name[]"
             ];
-            $value == $unitBase->default and $customAttr['checked'] = '';
+
+            in_array($value, $default) and $customAttr['checked'] = '';
             $inputDiv->addContent(Dom::create('input')->setIsSingleLabel()
                 ->addAttr([
                     'class'        => 'layui-input',

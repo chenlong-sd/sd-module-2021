@@ -4,6 +4,7 @@
 {block name="meta"}{:token_meta()}{/block}
 {block name="head"}
 <link rel="stylesheet" href="__PUBLIC__/admin_static/css/create.css">
+<?= $form->getUnitCss() /** 加载的单元CSS代码 */ ?>
 {/block}
 {block name="body"}
 

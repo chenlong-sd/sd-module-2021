@@ -58,6 +58,14 @@ abstract class UnitBase
      * @var bool 是否必填
      */
     private $isRequired = false;
+    /**
+     * @var array 展示条件
+     */
+    public $showWhere = [];
+    /**
+     * @var string
+     */
+    private $boxID = '';
 
 
     /**
@@ -120,11 +128,70 @@ abstract class UnitBase
     }
 
     /**
+     * 设置展示条件
+     * @param array $where
+     * @return UnitBase
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/9
+     */
+    public function setShowWhere(array $where): UnitBase
+    {
+        $this->showWhere = $where;
+        return $this;
+    }
+
+    /**
+     * 设置盒子的ID
+     * @param string $id
+     * @return $this
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/9
+     */
+    public function setBoxId(string $id): UnitBase
+    {
+        $this->boxID = $id;
+        return $this;
+    }
+
+    /**
+     * 获取控制显示条件的js
+     * @return array
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/9
+     */
+    protected function getShowWhereJs(): array
+    {
+        $where_str = $default = '';
+        $defaultValue = is_array($this->default) ? '' : $this->default;
+        foreach ($this->showWhere as $value){
+            $show_value = json_encode(array_map(function ($v){
+                return is_object($v) ? $v : (string)$v;
+            },(array)$value['value']));
+
+            $str = "if($show_value.includes(%s)){ \$('#{$value['box_id']}').show();}else{ \$('#{$value['box_id']}').hide();}";
+
+            $where_str .= sprintf($str, 'value');
+            $default   .= sprintf($str, "'$defaultValue'");
+        }
+
+        return [$where_str, $default];
+    }
+
+
+    /**
      * @return string
      */
     public function getJs(): string
     {
-        return '';
+        list($where_str, $default) = $this->getShowWhereJs();
+
+        return !$this->showWhere ? '' : <<<JS
+        $default
+        \$('input[name=$this->name]').on('change', function (){
+            let value = \$(this).val();
+            $where_str
+        });
+JS;
     }
 
     /**
@@ -248,7 +315,7 @@ abstract class UnitBase
      */
     protected function getItem(): Dom
     {
-        return Dom::create()->addClass($this->itemClass);
+        return Dom::create()->setId($this->boxID)->addClass($this->itemClass);
     }
 
     /**

@@ -231,7 +231,7 @@
                 }
             }
             ,ready: function(elemPanel, elem){
-                line_data = d = data[$('.menu-down-sc').index(elem)];
+                line_data = d = data[$(elem).parents('tr').data('index')];
                 for (let i = 0; i < this.data.length; i++){
                     if (!this.data[i].hasOwnProperty('where')){
                         continue;
