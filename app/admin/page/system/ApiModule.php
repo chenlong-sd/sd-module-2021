@@ -31,7 +31,8 @@ class ApiModule extends BasePage
         $table = ListsPage::create([
             TableAux::column()->checkbox(),
             TableAux::column('item_name', '模块名')
-                ->setTemplate("return obj.api.length ? '<span style=\"color:red;font-weight: bold\">[ 待对接 ]</span> ' + obj.item_name : '<span style=\"color:black\">'+ obj.item_name +'</span>'"),
+                ->setTemplate("return obj.api.length ? `<span style=\"color:red;font-weight: bold\">[ 待对接数：\${obj.api.length} ]</span> \${obj.item_name}`: '<span style=\"color:black\">'+ obj.item_name +'</span>'"),
+            TableAux::column('api_number', '接口数量'),
             TableAux::column('url_prefix', '路径前缀'),
             TableAux::column('update_time', '修改时间'),
         ]);

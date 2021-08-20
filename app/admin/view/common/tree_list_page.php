@@ -75,6 +75,7 @@
                 done:function (res) {
                     custom.enlarge(layer, $, '.layer-photos-demo');
                     dropdownMenu(res.data);
+                    <?= $table->getDoneJs() ?>
                 }
             };
             /** @var {object} */

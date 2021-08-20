@@ -49,6 +49,8 @@ class ListsPage
      */
     private $handleAttr = [];
 
+    private $doneJs = '';
+
     /**
      * ListsPage constructor.
      * @param TableColumn[] $filedConfig
@@ -100,7 +102,7 @@ class ListsPage
 
     /**
      * 设置事件模式
-     * @param int $eventMode
+     * @param int $eventMode ListsPage::MENU_MODE ListsPage::MENU_MODE
      * @return ListsPage
      */
     public function setEventMode(int $eventMode): ListsPage
@@ -360,6 +362,11 @@ class ListsPage
         return json_encode($this->config);
     }
 
+    public function getDoneJs()
+    {
+        return $this->doneJs;
+    }
+
     /**
      * 获取事件模式
      * @return int
@@ -388,6 +395,16 @@ class ListsPage
     public function setConfig(array $config): ListsPage
     {
         $this->config = array_merge($this->config, $config);
+        return $this;
+    }
+
+    /**
+     * @param string $doneJs
+     * @return ListsPage
+     */
+    public function setDoneJs(string $doneJs): ListsPage
+    {
+        $this->doneJs = $doneJs;
         return $this;
     }
 

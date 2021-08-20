@@ -34,4 +34,8 @@ class Test extends Admin
         return $service->setModel($mode)->getListsData();
     }
 
+    public function test()
+    {
+        halt($this->request->param());
+    }
 }

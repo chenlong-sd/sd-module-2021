@@ -9,6 +9,7 @@ namespace sdModule\layui\form;
 
 use sdModule\common\Sc;
 use sdModule\layui\Dom;
+use sdModule\layui\form\formUnit\Select;
 use sdModule\layui\form\formUnit\Selects;
 use sdModule\layui\form\formUnit\UEditor;
 use sdModule\layui\form\formUnit\UnitBase;
@@ -84,6 +85,11 @@ class Form
      * @var array 表单显示条件
      */
     private $formShowWhere = [];
+
+    /**
+     * @var array 联动选项
+     */
+    private $linkage = [];
 
 
     /**
@@ -161,19 +167,35 @@ class Form
             if ($childrenItemData = $unitData->get('childrenItem', [])) {
                 foreach ($childrenItemData as $itemDatum) {
                     $itemDatum->get('boxId') or $itemDatum->setBoxId($itemDatum->get('name', '') . 'sc-box-form-rand' . mt_rand(0, 99999));
-                    if (!$showWhere = $itemDatum->get('showWhere', [])) continue;
-                    $this->formShowWhere[$showWhere['field']][] = [
-                        'value'  => $showWhere['value'],
-                        'box_id' => $itemDatum->get('boxId', '')
-                    ];
+                    if ($showWhere = $itemDatum->get('showWhere', [])){
+                        $this->formShowWhere[$showWhere['field']][] = [
+                            'value'  => $showWhere['value'],
+                            'box_id' => $itemDatum->get('boxId', '')
+                        ];
+                    }
+                    if ($linkage = $itemDatum->get('linkage', [])){
+                        $this->linkage[$linkage['field']][] = [
+                            'field'   => $itemDatum->get('name', ''),
+                            'options' => $linkage['options']
+                        ];
+                    }
                 }
             }
             $unitData->get('boxId') or $unitData->setBoxId($unitData->get('name', '') . 'sc-box-form-rand' . mt_rand(0, 99999));
-            if (!$showWhere = $unitData->get('showWhere', [])) continue;
-            $this->formShowWhere[$showWhere['field']][] = [
-                'value'  => $showWhere['value'],
-                'box_id' => $unitData->get('boxId', '')
-            ];
+
+            if ($linkage = $unitData->get('linkage', [])){
+                $this->linkage[$linkage['field']][] = [
+                    'field'   => $unitData->get('name', ''),
+                    'options' => $linkage['options']
+                ];
+            }
+
+            if ($showWhere = $unitData->get('showWhere', [])) {
+                $this->formShowWhere[$showWhere['field']][] = [
+                    'value'  => $showWhere['value'],
+                    'box_id' => $unitData->get('boxId', '')
+                ];
+            }
         }
     }
 
@@ -237,6 +259,10 @@ class Form
         }
         if (isset($this->tip[$unitData->get('name', '')])) {
             $unit->setShortTip($this->tip[$unitData->get('name', '')]);
+        }
+
+        if ($unit instanceof Select && !empty($this->linkage[$unitData->get('name')])) {
+            $unit->linkageOptions = $this->linkage[$unitData->get('name')];
         }
 
         return $unit;

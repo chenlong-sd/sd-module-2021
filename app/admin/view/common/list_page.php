@@ -98,6 +98,7 @@
             custom.enlarge(layer, $, '.layer-photos-demo');
             window.table = table;
             dropdownMenu(res.data);
+            <?= $table->getDoneJs() ?>
         }
     }
 

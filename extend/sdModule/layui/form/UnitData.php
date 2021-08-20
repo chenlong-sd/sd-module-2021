@@ -223,4 +223,24 @@ class UnitData
         $this->unitConfig['boxId'] = $id;
         return $this;
     }
+
+    /**
+     * 联动选项
+     * @param string $field 联动的字段，只能为下拉类型的
+     * @param array $options 联动的选项，二维数组，
+     * @example [
+     *      ['id' => '1', 'linkage_id' => '1', 'label' => 'test1'],
+     *      ['id' => '2', 'linkage_id' => '1', 'label' => 'test2'],
+     *      ['id' => '3', 'linkage_id' => '2', 'label' => 'test3'],
+     *      ['id' => '4', 'linkage_id' => '2', 'label' => 'test4'],
+     * ]
+     * @return $this
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/20
+     */
+    public function linkageOptions(string $field, array $options)
+    {
+        $this->unitConfig['linkage'] = compact('field', 'options');
+        return $this;
+    }
 }

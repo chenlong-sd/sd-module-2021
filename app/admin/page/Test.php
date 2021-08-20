@@ -47,7 +47,9 @@ class Test extends BasePage
             'width' => 150
         ]);
         $table->setEventMode($table::MENU_MODE);
-        $table->addEvent()->setWarmBtn('dsd')->setJs(TableAux::ajax(url('create'), '确认请求慢', 'post')->prompt('请输入价格', ['formType' => 1]));
+        $table->addBarEvent()->setWarmBtn('dsd')->setJs(TableAux::batchAjax(url('test'),  'post'));
+
+
 
         return $table;
     }
@@ -76,6 +78,10 @@ class Test extends BasePage
             FormUnit::uEditor('content', '详情'),
         ];
         $form = Form::create($unit, $scene)->setDefaultData($default_data);
+
+        if ($scene == 'add') {
+            $form->setSubmitHtml();
+        }
 
         $data = [
              1 => [

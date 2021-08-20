@@ -26,7 +26,9 @@ class ApiModule extends Admin
      */
     public function listData(BackstageListsService $service)
     {
-        $model = \app\admin\model\system\ApiModule::field('i.id,i.item_name,url_prefix,i.update_time')
+        $model = \app\admin\model\system\ApiModule::field('i.id,i.item_name,url_prefix,i.update_time,count(a.id) api_number')
+            ->join('api a', 'a.api_module_id = i.id', 'left')
+            ->group('i.id')
             ->with('api');
         return $service->setModel($model)->setEach(function ($v) {
             $v->url_prefix = implode(', ', explode('|-|', $v->url_prefix));

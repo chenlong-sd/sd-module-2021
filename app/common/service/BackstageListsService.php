@@ -74,6 +74,10 @@ class BackstageListsService
      * @var null|callable
      */
     private $customSearch = null;
+    /**
+     * @var callable
+     */
+    private $customSort = null;
 
     /**
      * @param BaseModel|Query|string $model
@@ -344,6 +348,8 @@ class BackstageListsService
     /**
      * 处理排序字段
      * @return BackstageListsService
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/18
      */
     private function listsSort(): BackstageListsService
     {
@@ -353,7 +359,11 @@ class BackstageListsService
             $sortField = $sortArr[1] ?: $this->model->getPk();
             $sortType  = $sortArr[2] ?: 'DESC';
 
-            $this->model->order(implode('.', [$sortAlias, $sortField]), $sortType);
+            if (is_callable($this->customSort)) {
+                call_user_func($this->customSort, [$sortField, $sortType], $this->model);
+            }else{
+                $this->model->order(implode('.', [$sortAlias, $sortField]), $sortType);
+            }
         }else{
             $this->model->order("{$this->alias}.{$this->model->getPk()}", 'DESC');
         }
@@ -407,7 +417,7 @@ class BackstageListsService
     }
 
     /**
-     * 自定义的查询处理, 函数返回已经处理过得字段， 函数带参数为 [搜索的参数， 当前查询的对象]
+     * 自定义的查询处理, 函数返回已经处理过得字段， 函数带参数为 function(搜索的参数， 当前查询的对象)
      * @param callable|null $customSearch
      * @example function ($search, $model) {
      *      if($search['data']){
@@ -420,6 +430,19 @@ class BackstageListsService
     public function setCustomSearch(callable $customSearch): BackstageListsService
     {
         $this->customSearch = $customSearch;
+        return $this;
+    }
+
+    /**
+     * 自定义排序， 函数带参数为 function([排序的参数, 排序方式]， 当前查询的对象)
+     * @param callable $customSort
+     * @return $this
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/8/18
+     */
+    public function setCustomSort(callable $customSort): BackstageListsService
+    {
+        $this->customSort = $customSort;
         return $this;
     }
 }
