@@ -593,9 +593,4 @@ JS;
         $this->successHandle = is_callable($successHandle) ? call_user_func($successHandle) : $successHandle;
         return $this;
     }
-
-    public function setFormShowWhere()
-    {
-
-    }
 }

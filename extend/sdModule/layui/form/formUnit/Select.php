@@ -90,10 +90,11 @@ class Select extends UnitBase
             let options_{$linkageOption['field']} = linkage_{$linkageOption['field']}.hasOwnProperty(value) ? linkage_{$linkageOption['field']}[value] : [];
             let {$linkageOption['field']}_html = '<option value=""></optino>';
             for (let index in options_{$linkageOption['field']}) {
-                   {$linkageOption['field']}_html += `<option value="\${options_{$linkageOption['field']}[index].id}">\${options_{$linkageOption['field']}[index].label}</option>`;
+                    let selected = linkage_init && options_{$linkageOption['field']}[index].id == defaultData.{$linkageOption['field']} ? 'selected'  : '';
+                   {$linkageOption['field']}_html += `<option \${selected} value="\${options_{$linkageOption['field']}[index].id}">\${options_{$linkageOption['field']}[index].label}</option>`;
             }
             $(`select[name={$linkageOption['field']}]`).html({$linkageOption['field']}_html);
-            try{ linkage_fn_{$linkageOption['field']}(0); }catch (e) {}
+            try{ linkage_fn_{$linkageOption['field']}(linkage_init ? defaultData.{$linkageOption['field']} : 0, linkage_init); }catch (e) {}
 JS;
         }
 
@@ -115,9 +116,10 @@ JS;
           form.render();
         });
 
-        function linkage_fn_{$this->name}(value) {
+        function linkage_fn_{$this->name}(value, linkage_init) {
             $linkage
         }
+        linkage_fn_{$this->name}(defaultData.{$this->name}, 1);
 JS;
     }
 

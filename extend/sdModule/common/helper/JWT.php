@@ -206,10 +206,10 @@ class JWT
 
     /**
      * 设置过期时间
-     * @param int $time 单位秒,设置null则不过期
+     * @param int|null $time 单位秒,设置null则不过期
      * @return JWT
      */
-    public function setExp(int $time = 0): JWT
+    public function setExp(?int $time = 0): JWT
     {
         if ($time ===  null) {
             $this->payload['exp'] = null;

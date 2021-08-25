@@ -259,7 +259,13 @@ class ListsPage
                 ->addBtnClass("layui-btn-{$event->btnType}");
             $disabledButton = Layui::button($event->title, $event->icon)->setSize($event->btnSize)
                 ->addBtnClass("layui-btn-disabled");
-            $btn[] = $event->where ? "{{# if ($event->where) { }} {$showButton} {{# }else{ }} {$disabledButton} {{# } }}" : $showButton;
+
+            if ($event->where) {
+                $where = preg_replace('/\{([a-zA-Z0-9_]+)\}/', 'd.$1', $event->where);
+                $btn[] = "{{# if ($where) { }} {$showButton} {{# }else{ }} {$disabledButton} {{# } }}";
+            }else{
+                $btn[] = $showButton;
+            }
         }
         return implode($btn);
     }
