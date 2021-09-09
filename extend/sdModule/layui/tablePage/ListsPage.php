@@ -278,6 +278,11 @@ class ListsPage
      */
     private function menuModeElement(): string
     {
+        $this->event = array_map(function ($v) {
+            $v->where = preg_replace('/\{([a-zA-Z0-9_]+)\}/', 'd.$1', $v->where);
+            return $v;
+        }, $this->event);
+
         $size = 'xs';
         foreach ($this->filedConfig as $value){
             if (!empty($value['templet']) && $value['templet'] === '@image') {

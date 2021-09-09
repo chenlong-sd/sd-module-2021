@@ -30,7 +30,8 @@ class Api extends BasePage
             TableAux::column()->checkbox(),
             TableAux::column('method', '接口名')->mergeField('api_name', ' '),
             TableAux::column('path', '路径'),
-            TableAux::column('status', '对接状态'),
+            TableAux::column('status', '对接状态')
+                ->setTemplate("return obj.status_1 == 1 ? obj.status + ' <span style=\"color: #FFB800\">对接完请改变状态</span>' : obj.status"),
             TableAux::column('update_time', '修改时间'),
         ]);
 

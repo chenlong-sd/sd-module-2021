@@ -31,6 +31,7 @@ class Role extends BasePage
             TableAux::column()->checkbox(),
             TableAux::column('id', 'ID'),
             TableAux::column('role', '角色名'),
+            TableAux::column('assign_table', '角色类型'),
             TableAux::column('parent_role', '父级角色'),
             TableAux::column('create_time', '创建时间'),
         ]);

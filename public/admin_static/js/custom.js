@@ -55,6 +55,8 @@ custom = {
      * @returns {*}
      */
     , frame: function (url, title, param, parent_window) {
+        let layer1  = parent_window ? parent_window.layer : layer;
+        let window1 = parent_window ? parent_window : window;
         let frame = {
             type: 2,
             content: url
@@ -64,27 +66,26 @@ custom = {
             , title: title
             , moveOut: true
             , skin: 'demo-class'
-            , zIndex: layer.zIndex //重点1
+            , zIndex: layer1.zIndex //重点1
             , success: function(layero, index){
-                layer.setTop(layero); //重点2
-                let iframeWin = window[layero.find('iframe')[0]['name']];
+                let iframeWin = window1.frames[layero.find('iframe').attr('id')];
                 iframeWin.closeLayerIndex = index;
                 if (layero.find('.layui-layer-setwin').find('[id^=sc-window-tab]').length < 1) {
-                    layero.find('.layui-layer-setwin').prepend('<a id="sc-window-tab'+ layer.zIndex +'" href="#"><i class="layui-icon layui-icon-up"></i></a>');
-                    layui.jquery(document).on('click', '#sc-window-tab' + layer.zIndex, function () {
+                    layero.find('.layui-layer-setwin').prepend('<a id="sc-window-tab'+ layer1.zIndex +'" href="#"><i class="layui-icon layui-icon-up"></i></a>');
+                    layui.jquery(iframeWin.document).on('click', '#sc-window-tab' + layer1.zIndex, function () {
                         let hf = /\?/.test(iframeWin.location.href) ? "&__sc_tab__=1" : "?__sc_tab__=1";
                         custom.openTabsPage(layero.find('iframe').attr('src') + hf + '#' + layero.attr('times'), layero.find('.layui-layer-title').text());
-                        layer.close(index);
+                        layer1.close(index);
                     });
-
                     layui.jquery(iframeWin.document).on('click', function (){
-                        layero.css('z-Index', ++layer.zIndex);
+                        layero.css('z-Index', ++layer1.zIndex);
                     });
                 }
+                layer1.setTop(layero); //重点2
             }
         };
 
-        if (layui.jquery('.layui-layer-iframe').length > 0) {
+        if (window1.layui.jquery('.layui-layer-iframe').length > 0) {
             frame.offset = [parseInt(Math.random()*(21),10) + '%', parseInt(Math.random()*(21),10) + '%'];
         }
 
@@ -94,7 +95,7 @@ custom = {
             }
         }
 
-        return parent_window ? parent_window.layer.open(frame) : layer.open(frame);
+        return layer1.open(frame);
     }
     /**
      * 在父级打开弹窗

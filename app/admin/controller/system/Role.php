@@ -12,6 +12,7 @@ use app\admin\model\system\Role as RoleModel;
 use app\common\BaseQuery;
 use app\common\service\BackstageListsService;
 use sdModule\common\Sc;
+use think\facade\Config;
 
 /**
  * Class Role
@@ -29,9 +30,13 @@ class Role extends \app\common\controller\Admin
     {
         $model = RoleModel::join('administrators', 'i.administrators_id = administrators.id', 'left')
             ->join('role ip', 'i.pid = ip.id', 'left')
-            ->field('i.id,i.id role_id,i.role,i.pid,administrators.name administrators_id,i.create_time,ip.role parent_role');
+            ->field('i.assign_table,i.id,i.id role_id,i.role,i.pid,administrators.name administrators_id,i.create_time,ip.role parent_role');
 
-        return $service->setModel($model)->setCustomSearch([$this, 'listSearchParamHandle'])->getListsData();
+        $open_table = Config::get('admin.open_login_table', []);
+        return $service->setModel($model)->setCustomSearch([$this, 'listSearchParamHandle'])
+            ->setEach(function ($v) use ($open_table){
+                $v->assign_table = $v->assign_table ? ($open_table[$v->assign_table]['name'] ?? '未知') : '系统账号';
+            })->getListsData();
     }
 
     /**

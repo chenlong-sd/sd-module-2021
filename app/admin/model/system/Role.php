@@ -94,10 +94,13 @@ class Role extends BaseModel
     public static function selectData(string $table = null): array
     {
         $where = $table ? ['assign_table' => $table] : [];
-        admin_session('is_admin')
-            ? $where['administrators_id'] = admin_session('id')
-            : $where = array_merge($where, ['open_id' => admin_session('id'), 'open_table' => admin_session('table')]);
-
+        if (admin_session('is_admin')) {
+            $where['administrators_id'] = admin_session('id');
+        }else{
+            if (admin_session('table') == $table) {
+                $where = array_merge($where, ['open_id' => admin_session('id'), 'open_table' => admin_session('table')]);
+            }
+        }
         return self::where($where)->column('role', 'id');
     }
 }

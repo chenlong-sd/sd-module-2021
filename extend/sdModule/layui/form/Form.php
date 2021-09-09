@@ -463,7 +463,7 @@ class Form
      */
     private function closePageJs(): string
     {
-        $close = request()->get('__sc_tab__') ? "custom.closeTabsPage()" : "parent.layer.closeAll()";
+        $close = request()->get('__sc_tab__') ? "custom.closeTabsPage()" : "parent.layer.close(closeLayerIndex)";
         return <<<JS
     $('#close').click(function () {
         {$close};

@@ -53,7 +53,7 @@ class TableAux
     {
         $power = access_control(is_array($url) ? current($url) : $url);
         $url_ = self::pageUrlHandle($url);
-        $pageCode = sprintf("custom.openTabsPage(%s + '&__sc_tab__=1', '%s')", $url_, self::pageTitleHandle($title));
+        $pageCode = sprintf("custom.openTabsPage(%s + '%s__sc_tab__=1', '%s')", $url_, strpos($url_, '?') === false ? '?' : '&', self::pageTitleHandle($title));
 
         return new OpenPage($pageCode, $power);
     }
