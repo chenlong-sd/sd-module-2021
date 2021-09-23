@@ -24,7 +24,7 @@
     layui.use(['table', 'jquery', 'form', 'tree'], function() {
         var table = layui.table,$ = layui.jquery, form = layui.form, tree = layui.tree,util = layui.util;
 
-
+        let load = custom.loading('数据渲染中...');
         $.ajax({
             url: '{:url("tree")}?role_id={$Request.get.role_id ?: 0}'
             , success:function (res) {
@@ -40,6 +40,9 @@
             },
             error:function (err) {
                 console.log(err)
+            },
+            complete(){
+                layer.close(load);
             }
         });
 

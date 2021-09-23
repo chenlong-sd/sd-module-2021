@@ -10,12 +10,12 @@ use sdModule\layui\Dom;
 
 /**
  * Class Button
- * @method string danger($size = '') size: xs|sm|''|
- * @method string primary($size = '')
- * @method string normal($size = '')
- * @method string warm($size = '')
- * @method string disabled($size = '')
- * @method string defaults($size = '')
+ * @method Button danger($size = '') size: xs|sm|''|
+ * @method Button primary($size = '')
+ * @method Button normal($size = '')
+ * @method Button warm($size = '')
+ * @method Button disabled($size = '')
+ * @method Button defaults($size = '')
  * @package sdModule\layui\item
  */
 class Button
@@ -122,9 +122,9 @@ class Button
     /**
      * @param $name
      * @param $arguments
-     * @return string
+     * @return Button
      */
-    public function __call($name, $arguments): string
+    public function __call($name, $arguments)
     {
         $this->class_name[] = empty($arguments[0]) ? "" : "layui-btn-{$arguments[0]}";
         $this->class_name[] = $name === 'defaults' ? "" : "layui-btn-{$name}";

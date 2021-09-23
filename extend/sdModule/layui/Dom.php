@@ -60,14 +60,15 @@ class Dom
 
     /**
      * 创建标签
-     * @param string $tag
+     * @param string $tag 标签名
+     * @param bool $isSingleLabel 是否是单标签
      * @return Dom
      * @author chenlong <vip_chenlong@163.com>
      * @date 2021/5/31
      */
-    public static function create(string $tag = 'div'): Dom
+    public static function create(string $tag = 'div', bool $isSingleLabel = false): Dom
     {
-        return new self($tag);
+        return (new self($tag))->setIsSingleLabel($isSingleLabel);
     }
 
     /**

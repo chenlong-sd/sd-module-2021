@@ -31,7 +31,7 @@ class Time extends UnitBase
             return $inputDiv->addContent($input);
         }
 
-        return $itemDom->addContent($inputDiv->addContent($input));
+        return $itemDom->addContent($inputDiv->addContent($input))->addContent($this->getShortTip());
     }
 
     /**

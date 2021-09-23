@@ -49,7 +49,9 @@ class Power extends BaseModel
 
         $this->startTrans();
         try {
-            $this->destroy(['role_id' => $role_id]);
+            $this->where('role_id', $role_id)->update([
+                'delete_time' => time(),
+            ]);
 
             $this->insertAll($power_data);
 

@@ -65,7 +65,7 @@ abstract class UnitBase
     /**
      * @var string
      */
-    private $boxID = '';
+    public $boxID = '';
 
 
     /**

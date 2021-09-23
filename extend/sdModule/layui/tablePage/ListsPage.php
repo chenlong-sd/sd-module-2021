@@ -373,6 +373,12 @@ class ListsPage
         return json_encode($this->config);
     }
 
+    /**
+     * 页面渲染成功后的js
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/9/18
+     */
     public function getDoneJs()
     {
         return $this->doneJs;

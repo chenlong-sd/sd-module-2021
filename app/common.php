@@ -173,7 +173,9 @@ if (!function_exists('access_control')) {
             $root = addcslashes(preg_replace('/\/+/', '/', $root), '/');
             $logo = preg_replace("/^$root\//", '', implode('/', [$pathinfo['dirname'], $pathinfo['filename']]));
         }
-        $logo     = parse_name($logo, 1);
+        $logo     = parse_name(preg_replace_callback('/\.[a-z]/', function ($v){
+            return strtoupper($v[0]);
+        }, $logo), 1);
         $all_node = cache(config('admin.route_cache')) ?: [];
         $node_id  = array_search($logo, $all_node);
         if ((!$node_id && !in_array($pathinfo['filename'], ['create', 'update', 'del']))

@@ -14,26 +14,8 @@ use think\helper\Str;
 
 class Table extends UnitBase
 {
-    /**
-     * @var array
-     */
-    private $typesetting;
-
-
-    public function setTypesetting(array $typesetting)
-    {
-        $example = [
-            'field1' => 'FIELD1',
-            'field2' => 'FIELD2',
-            'field3' => 'FIELD3',
-            'field4' => 'FIELD4',
-            'field5' => 'FIELD5',
-            'field6' => 'FIELD6',
-        ];
-        $this->typesetting = $typesetting;
-
-    }
-
+    private $unit_js = '';
+    private $unit_js_call = '';
 
     /**
      * @param array $attr
@@ -43,7 +25,7 @@ class Table extends UnitBase
      */
     public function getHtml(array $attr): Dom
     {
-        $table = Dom::create('table')->addClass('layui-table')->setId('sc-form-table-' . $this->name);
+        $table = Dom::create('table')->addClass('layui-table')->setId($this->boxID);
         $title_tr = Dom::create('tr')->addAttr([
             'style' => 'background-color:#f8f8f8'
         ]);
@@ -101,10 +83,11 @@ class Table extends UnitBase
     public function getJs(): string
     {
         return <<<JS
-        \$('#sc-form-table-$this->name').on('click', 'tr:last-child>td:last-child', function (e) {
+        \$('#{$this->boxID}').on('click', 'tr:last-child>td:last-child', function (e) {
             e.stopPropagation();
             let html = `{$this->inputTr()}`;
-            \$('#sc-form-table-$this->name').find('tr:last-child').after(html);
+            \$('#{$this->boxID}').find('tr:last-child').after(html);
+            $this->unit_js_call
             layui.form.render();
         }).on('click', 'tr:not(:last-child)>td:last-child:not(.s-title)', function (e){
             e.stopPropagation();
@@ -112,6 +95,8 @@ class Table extends UnitBase
         }).on('click', '*', function (e){
             e.stopPropagation();
         });
+
+        $this->unit_js
 JS;
     }
 
@@ -125,24 +110,24 @@ JS;
         return <<<CSS
 
 <style>
-    table#sc-form-table-$this->name {
+    table#{$this->boxID} {
         table-layout: fixed;
     }
-    table#sc-form-table-$this->name td{
+    table#{$this->boxID} td{
         padding: 0 !important;
         text-align: center;
     }
-    table#sc-form-table-$this->name input{
+    table#{$this->boxID} input{
         border: none !important;
         text-align: center;
     }
-    #sc-form-table-$this->name tr:last-child td:last-child,tr:not(:last-child)>td:last-child:not(.s-title){
+    #{$this->boxID} tr:last-child td:last-child,#{$this->boxID} tr:not(:last-child)>td:last-child:not(.s-title){
         pointer-events: none;
     }
-    #sc-form-table-$this->name tr:last-child td:last-child *,tr:not(:last-child)>td:last-child:not(.s-title) *{
+    #{$this->boxID} tr:last-child td:last-child *,#{$this->boxID} tr:not(:last-child)>td:last-child:not(.s-title) *{
         pointer-events: auto;
     }
-    #sc-form-table-$this->name tr:last-child td:last-child:after{
+    #{$this->boxID} tr:last-child td:last-child:after{
         content: '\\e624';
         position: absolute;
         right: -25px;
@@ -152,14 +137,14 @@ JS;
         font-family:layui-icon!important;
         pointer-events:auto;
     }
-    #sc-form-table-$this->name tr:last-child>td:last-child:hover:after{
+    #{$this->boxID} tr:last-child>td:last-child:hover:after{
         cursor: pointer;
         font-weight: bold;
     }
-    #sc-form-table-$this->name tr{
+    #{$this->boxID} tr{
         position: relative;
     }
-    #sc-form-table-$this->name tr:not(:last-child)>td:last-child:not(.s-title):after{
+    #{$this->boxID} tr:not(:last-child)>td:last-child:not(.s-title):after{
         content: '\\e640';
         position: absolute;
         right: -28px;
@@ -170,7 +155,7 @@ JS;
         color: rgba(255, 0, 0, 0.66);
         width: 30px;
     }
-    #sc-form-table-$this->name tr:not(:last-child)>td:last-child:not(.s-title):hover:after{
+    #{$this->boxID} tr:not(:last-child)>td:last-child:not(.s-title):hover:after{
         cursor: pointer;
         color: red;
     }
@@ -252,7 +237,7 @@ CSS;
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/8/6
      */
-    public function checkbox(UnitBase $unitBase, array $attr, array $default)
+    private function checkbox(UnitBase $unitBase, array $attr, array $default)
     {
         $inputDiv = Dom::create();
         $default = explode(',', $default[$unitBase->name] ?? '');
@@ -275,6 +260,41 @@ CSS;
                 ])->addAttr($customAttr)->addAttr($attr));
         }
         return $inputDiv;
+    }
+
+    private function time(UnitBase $unitBase, array $attr, array $default)
+    {
+        $id = $unitBase->name;
+        $range = is_bool($unitBase->config['range'])
+            ? ($unitBase->config['range'] ? 'true' : 'false')
+            : "'{$unitBase->config['range']}'";
+        $type = $unitBase->config['type'] ?? 'date';
+
+        $this->unit_js .= <<<JS
+            
+          function table_time_render_{$id}(){
+             layui.lay('.layui-form .sc-time-render-$id').each(function(){
+                  layui.laydate.render({
+                    elem: this
+                    ,trigger: 'click'
+                    ,type: '{$type}'
+                    ,range: {$range}
+                  });
+            });
+          }
+          table_time_render_{$id}();
+
+JS;
+        $this->unit_js_call .= "table_time_render_{$id}();";
+
+        return Dom::create('input')->setIsSingleLabel()
+            ->addAttr([
+                'name'         => "$unitBase->name[]",
+                'class'        => "layui-input sc-time-render-$id",
+                'autocomplete' => 'off',
+                'placeholder'  => $unitBase->placeholder,
+                'value'        => $default[$unitBase->name] ?? ''
+            ])->addAttr($attr);
     }
 }
 

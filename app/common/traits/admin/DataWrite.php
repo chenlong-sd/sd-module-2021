@@ -158,7 +158,7 @@ trait DataWrite
     {
         $data   = $this->request->post();
         $result = $this->getDb()->where('id', $data['id'])
-            ->update([$data['field'] => $data['handle_value']]);
+            ->update([$data['field'] => $data['handle_value'], 'update_time' => datetime()]);
 
         return ResponseJson::mixin($result ? '' : '操作失败');
     }

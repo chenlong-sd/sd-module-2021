@@ -37,6 +37,7 @@ class CommonModel implements Item
             'use'       => '',
             'property'  => '',
             'namespace'    => $this->CURD->getNamespace($this->CURD->config('namespace.common_model')),
+            'describe'        => $this->CURD->pageName ?: $this->CURD->tableComment
         ];
 
         $this->getSchema();

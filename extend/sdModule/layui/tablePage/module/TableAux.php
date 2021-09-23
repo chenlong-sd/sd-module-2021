@@ -121,15 +121,15 @@ class TableAux
 
     /**
      * 跳转
-     * @param $url
+     * @param string|array $url
      * @return string
      * @throws \app\common\SdException
      */
-    public static function jump(string $url): string
+    public static function jump($url): string
     {
         if (!access_control($url)) return 'false';
-
-        return "location.href = '{$url}'";
+        $url = self::pageUrlHandle($url);
+        return "location.href = {$url}";
     }
 
 

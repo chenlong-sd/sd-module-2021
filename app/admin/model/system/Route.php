@@ -93,7 +93,7 @@ class Route extends BaseModel
             $left_route = self::where([
                     ['p.role_id', 'in', explode(',', admin_session('role_id'))],
                     ['i.type', '=', self::TYPE_MENU],
-                ])->alias('i')
+                ])->alias('i')->order('weigh')
                 ->join('power p', 'p.route_id = i.id')
                 ->field('i.id,i.title,i.route,i.pid,i.icon')
                 ->select()->toArray();
@@ -146,7 +146,9 @@ class Route extends BaseModel
     {
         $route       = self::column('route', 'id');
         $cache_route = array_map(function ($value) {
-            return parse_name($value, 1);
+            return parse_name(preg_replace_callback('/\.[a-z]/', function ($v){
+                return strtoupper($v[0]);
+            }, $value), 1);
         }, $route);
 
         cache(config('admin.route_cache'), $cache_route);
