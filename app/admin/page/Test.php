@@ -8,6 +8,10 @@
 namespace app\admin\page;
 
 use app\common\BasePage;
+use sdModule\layui\Layui;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
+use sdModule\layui\lists\PageData;
 use sdModule\layui\tablePage\ListsPage;
 use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\Form;
@@ -22,35 +26,50 @@ use app\admin\model\system\Administrators;
  */
 class Test extends BasePage
 {
+    public $list_template = 'common/list_page_3_5';
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData()
     {
-        $table = ListsPage::create([
-            TableAux::column()->checkbox(),
-            TableAux::column('id', 'ID'),
-            TableAux::column('title', '标题'),
-            TableAux::column('cover', '封面')->image(),
-            TableAux::column('intro', '简介'),
-            TableAux::column('status', '状态'),
-            TableAux::column('administrators_name', '管理员'),
-            TableAux::column('parent_title', '上级'),
-            TableAux::column('create_time', '创建时间'),
-            TableAux::column('update_time', '修改时间'),
-            TableAux::column('delete_time', '删除时间'),
+        $table = PageData::create([
+            Column::checkbox(),
+            Column::normal('ID', 'id'),
+            Column::normal('标题', 'title'),
+            Column::normal('封面', 'cover')->showImage(),
+            Column::normal('简介', 'intro'),
+            Column::normal('状态', 'status_1')->showSwitch('status'),
+            Column::normal('管理员', 'administrators_name'),
+            Column::normal('上级', 'parent_title'),
+            Column::normal('创建时间', 'create_time'),
+            Column::normal('修改时间', 'update_time'),
+            Column::normal('删除时间', 'delete_time'),
         ]);
 
         $table->setHandleAttr([
             'align' => 'center',
-            'width' => 150
+            'width' => 350
         ]);
-        $table->setEventMode($table::MENU_MODE);
-        $table->addBarEvent()->setWarmBtn('dsd')->setJs(TableAux::batchAjax(url('test'),  'post'));
+
+        $table->addEvent('create')->setWarmBtn('新增ss')->setMenuGroup('tset')
+        ->setJs(EventHandle::openPage([url('update'), 'id'], '新增')->popUps());
+        $table->addEvent()->setWarmBtn('新增w')->setMenuGroup('tset')
+        ->setJs(EventHandle::openPage([url('update'), 'id', 'intro'], '新增')->popUps());
+        $table->addEvent()->setWarmBtn('新增w')->setMenuGroup('ss')
+        ->setJs(EventHandle::openPage([url('update'), 'id', 'intro'], '新增')->popUps());
+        $table->addBarEvent('create')->setWarmBtn('dsd')->setMenuGroup('tssset')
+        ->setJs(EventHandle::openPage(url('create'), '新增')->popUps());
+        $table->addBarEvent()->setWarmBtn('sss')->setMenuGroup('tssset')
+        ->setJs(EventHandle::openPage(url('create'), '新增')->popUps());
+        $table->addBarEvent()->setWarmBtn('sss')->setMenuGroup('ss')
+        ->setJs(EventHandle::openPage(url('create'), '新增')->popUps());
 
 
+        $table->setMenuGroup('ss', Layui::button('奇妙之旅', 'read')->primary('sm'));
+        $table->setMenuGroup('tssset', Layui::button('万事大吉', 'read')->primary('sm'));
 
+//        halt($table->render()->getColumnConfigure());
         return $table;
     }
 
