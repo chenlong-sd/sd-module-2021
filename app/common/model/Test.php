@@ -3,7 +3,7 @@
  *
  * Test.php
  * User: ChenLong
- * DateTime: 2021-06-17 16:27:13
+ * DateTime: 2021-09-24 18:04:21
  */
 
 
@@ -13,6 +13,7 @@ use app\common\BaseModel;
 use sdModule\layui\Layui;
 
 /**
+ * 测试表 模型
  * Class Test
  * @property $id
  * @property $title
@@ -55,12 +56,12 @@ class Test extends BaseModel
      * @param bool $tag
      * @return array
      */   
-    public static function getStatusSc($tag = true)
+    public static function getStatusSc(bool $tag = true): array
     {
         return $tag === true 
             ? [
-                '1' => Layui::tag()->black('正常'),
-                '2' => Layui::tag()->green('冻结'),
+                '1' => Layui::tag()->green('正常'),
+                '2' => Layui::tag()->rim('冻结'),
                 
             ]
             : [

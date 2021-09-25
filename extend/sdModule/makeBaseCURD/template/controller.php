@@ -6,7 +6,7 @@
 
 namespace //=={namespace}==//;
 
-use \app\common\controller\Admin;
+use app\common\controller\Admin;
 use app\common\service\BackstageListsService;
 //=={use}==//
 

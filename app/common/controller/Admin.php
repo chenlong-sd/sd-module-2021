@@ -23,8 +23,8 @@ use think\response\View;
 
 /**
  * Class Admin
- * @method ResponseJson customAdd($data)     自定义添加
- * @method ResponseJson customEdit($data)    自定义修改
+ * @method Json customAdd($data)     自定义添加
+ * @method Json customEdit($data)    自定义修改
  * @method void        delete($id)          自定义删除
  * @method View        edit()               数据更新页面
  * @package app\common\controller

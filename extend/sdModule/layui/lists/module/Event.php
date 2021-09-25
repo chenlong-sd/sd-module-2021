@@ -100,7 +100,7 @@ class Event
         $btn_type  = strtolower($match[1]);
         $btn_title = $arguments[0];
         $btn_icon  = $arguments[1] ?? '';
-        $btn_size  = $arguments[2] ?? '';
+        $btn_size  = $arguments[2] ?? 'xs';
 
         $this->setBtn($btn_title, $btn_type, $btn_icon, $btn_size);
         return $this->resetEvent();

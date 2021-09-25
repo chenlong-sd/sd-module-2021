@@ -255,7 +255,7 @@ class Table
                 $content_attr  = $this->field_content_attr[$field] ?? '';
                 $content_attr .= $this->field_content_attr['-'] ?? '';
                 $field_attr = '';
-                $content = $row[$field] ?: '——';
+                $content = ($row[$field] || $row[$field] == 0) ? $row[$field] : '——';
                 if (!empty($row[$field]) && in_array($field, $this->image_field)){
                     $img_html = '';
                     foreach (explode(',', strtr($row[$field], ['，' => ','])) as $image){

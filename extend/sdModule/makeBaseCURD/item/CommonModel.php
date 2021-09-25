@@ -72,7 +72,7 @@ class CommonModel implements Item
      * 替换字符串处理
      * @return array
      */
-    private function replaceHandle()
+    private function replaceHandle(): array
     {
         $replace = [];
         foreach ($this->replace as $key => $value) {
@@ -116,7 +116,7 @@ class CommonModel implements Item
      * @param bool \$tag
      * @return array
      */   
-    public static function get{$field}Sc(\$tag = true)
+    public static function get{$field}Sc(bool \$tag = true): array
     {
         return \$tag === true 
             ? [

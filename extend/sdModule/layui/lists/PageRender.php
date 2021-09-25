@@ -218,7 +218,7 @@ class PageRender
     {
         $columns = $this->getPageData('column', []);
         if ($this->getPageData('event')) {
-            $handle_attr = array_merge(['templet' => "#table_line"], $this->getPageData('handleAttr', []));
+            $handle_attr = array_merge(['templet' => "#table_line", 'width' => 150, 'align' => 'center'], $this->getPageData('handleAttr', []));
             $columns[] = Column::space('操作')->moreConfiguration($handle_attr);
         }
 

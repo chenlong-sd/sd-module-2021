@@ -13,43 +13,41 @@ use app\admin\model\system\Role;
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
-use sdModule\layui\Layui;
-use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\ListsPage;
-use sdModule\layui\tablePage\module\TableAux;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
+use sdModule\layui\lists\PageData;
 use think\facade\Db;
 
 class Administrators extends BasePage
 {
-
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return PageData
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
         $field_data = [
-            TableAux::column()->checkbox(),
-            TableAux::column('id', '唯一ID'),
-            TableAux::column('name', '用户名'),
-            TableAux::column('account', '账号'),
-            TableAux::column('error_number', '密码错误次数'),
-            TableAux::column('lately_time', '最近登录'),
-            TableAux::column('error_date', '错误日期'),
-            TableAux::column('role', '角色'),
-            TableAux::column('status', '状态'),
-            TableAux::column('create_time', '创建时间'),
+            Column::checkbox(),
+            Column::normal('唯一ID', 'id'),
+            Column::normal('用户名', 'name'),
+            Column::normal('账号', 'account'),
+            Column::normal('密码错误次数', 'error_number'),
+            Column::normal('最近登录', 'lately_time'),
+            Column::normal('错误日期', 'error_date'),
+            Column::normal('角色', 'role'),
+            Column::normal('状态', 'status'),
+            Column::normal('创建时间', 'create_time'),
         ];
 
-        $table = ListsPage::create($field_data);
+        $table = PageData::create($field_data);
         $table->addBarEvent('directly_under')
             ->setNormalBtn('直属','username', 'sm')
-            ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
+            ->setJs(EventHandle::addSearch(['mode' => 'directly_under']));
 
         $table->addBarEvent('all')
             ->setNormalBtn('全部','username', 'sm')
-            ->setJs(TableAux::searchWhere(['mode' => 'all']));
+            ->setJs(EventHandle::addSearch(['mode' => 'all']));
         return $table;
     }
 

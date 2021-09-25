@@ -9,8 +9,7 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\lists\PageData;
 use sdModule\layui\tablePage\module\TableAux;
 
 /**
@@ -21,11 +20,11 @@ class QueryParams extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return PageData
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
-        $table = ListsPage::create([
+        $table = PageData::create([
             TableAux::column()->checkbox(),
             TableAux::column('id', ''),
             TableAux::column('method', '请求参数类型'),

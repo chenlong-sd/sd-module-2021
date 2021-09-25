@@ -3,7 +3,7 @@
  *
  * Test.php
  * User: ChenLong
- * DateTime: 2021-06-17 16:27:13
+ * DateTime: 2021-09-24 18:04:21
  */
 
 namespace app\admin\model;
@@ -12,6 +12,7 @@ use app\common\model\Test as commonTest;
 
 
 /**
+ * 测试表 模型
  * Class Test
  * @package app\admin\model\Test
  * @author chenlong <vip_chenlong@163.com>

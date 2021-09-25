@@ -9,6 +9,9 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
+use sdModule\layui\lists\PageData;
 use sdModule\layui\tablePage\ListsPage;
 use sdModule\layui\tablePage\module\TableAux;
 use sdModule\layui\form\Form;
@@ -24,26 +27,25 @@ class Dictionary extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return PageData
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
-        $table = ListsPage::create([
-            TableAux::column()->checkbox(),
-            TableAux::column('sign', '字典标识'),
-            TableAux::column('name', '标识名称'),
-            TableAux::column('status', '状态'),
-            TableAux::column('update_time', '修改时间'),
+        $table = PageData::create([
+            Column::checkbox(),
+            Column::normal('字典标识', 'sign'),
+            Column::normal('标识名称', 'name'),
+            Column::normal('状态', 'status'),
+            Column::normal('修改时间', 'update_time'),
         ]);
 
         $table->setHandleAttr([
-            'align' => 'center',
             'width' => 220
         ]);
 
         $table->addEvent('dictionary')->setPrimaryBtn('字典配置', 'template-1', 'xs')
-            ->setJs(TableAux::openPage([url('system.dictionary/dictionary')], '【{name}】字典配置'));
+            ->setJs(EventHandle::openPage([url('system.dictionary/dictionary'), 'id'], '【{name}】字典配置')->tabs());
 
         return $table;
     }

@@ -3,7 +3,7 @@
  *
  * Test.php
  * User: ChenLong
- * DateTime: 2021-06-17 16:27:13
+ * DateTime: 2021-09-24 18:04:21
  */
 
 namespace app\common\validate;
@@ -11,6 +11,7 @@ namespace app\common\validate;
 use app\common\BaseValidate;
 
 /**
+ * 测试表 验证器
  * Class Test
  * @package app\common\validate\Test
  * @author chenlong <vip_chenlong@163.com>

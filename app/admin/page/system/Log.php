@@ -10,9 +10,8 @@ namespace app\admin\page\system;
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
-use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\ListsPage;
-use sdModule\layui\tablePage\module\TableAux;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\PageData;
 
 class Log extends BasePage
 {
@@ -23,18 +22,18 @@ class Log extends BasePage
 
     /**
      * 获取创建列表table的数据
-     * @return TablePage
+     * @return PageData
+     * @throws \app\common\SdException
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
-        $table = ListsPage::create([
-            TableAux::column()->checkbox(),
-            TableAux::column('method', '请求方式'),
-            TableAux::column('route_title', '权限节点名'),
-            TableAux::column('administrators_name', '操作管理员'),
-            TableAux::column('param', '请求参数'),
-            TableAux::column('route', '节点地址'),
-            TableAux::column('create_time', '创建时间'),
+        $table = PageData::create([
+            Column::normal('请求方式', 'method'),
+            Column::normal('权限节点名', 'route_title'),
+            Column::normal('操作管理员', 'administrators_name'),
+            Column::normal('请求参数', 'param'),
+            Column::normal('节点地址', 'route'),
+            Column::normal('创建时间', 'create_time'),
         ]);
 
         $table->removeEvent(['update', 'delete']);

@@ -11,29 +11,27 @@ use app\admin\model\system\DataAuth;
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
-use sdModule\layui\Layui;
-use sdModule\layui\TablePage;
-use sdModule\layui\tablePage\ListsPage;
-use sdModule\layui\tablePage\module\TableAux;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
+use sdModule\layui\lists\PageData;
 use think\facade\Config;
 
 class Role extends BasePage
 {
-
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return PageData
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
-        $table = ListsPage::create([
-            TableAux::column()->checkbox(),
-            TableAux::column('id', 'ID'),
-            TableAux::column('role', '角色名'),
-            TableAux::column('assign_table', '角色类型'),
-            TableAux::column('parent_role', '父级角色'),
-            TableAux::column('create_time', '创建时间'),
+        $table = PageData::create([
+            Column::checkbox(),
+            Column::normal('ID', 'id'),
+            Column::normal('角色名', 'role'),
+            Column::normal('角色类型', 'assign_table'),
+            Column::normal('父级角色', 'parent_role'),
+            Column::normal('创建时间', 'create_time'),
         ]);
 
         $table->setHandleAttr([
@@ -41,13 +39,13 @@ class Role extends BasePage
         ]);
 
         $table->addBarEvent('directly_under')->setNormalBtn('直属', 'username', 'sm')
-            ->setJs(TableAux::searchWhere(['mode' => 'directly_under']));
+            ->setJs(EventHandle::addSearch(['mode' => 'directly_under']));
 
         $table->addBarEvent('all')->setNormalBtn('全部', 'group', 'sm')
-            ->setJs(TableAux::searchWhere(['mode' => 'all']));
+            ->setJs(EventHandle::addSearch(['mode' => 'all']));
 
         $table->addEvent('power')->setNormalBtn('权限设置', 'auz')
-            ->setJs(TableAux::openPage([url('system.Power/power'), 'role_id'], '权限设置'));
+            ->setJs(EventHandle::openPage([url('system.Power/power'), 'role_id'], '权限设置')->popUps());
 
         return $table;
     }

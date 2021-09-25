@@ -122,7 +122,7 @@ class PageData
      */
     public function setConfig(array $config): PageData
     {
-        $this->data['config'] = array_merge($this->data['config'], $config);
+        $this->data['config'] = $config;
         return $this;
     }
 

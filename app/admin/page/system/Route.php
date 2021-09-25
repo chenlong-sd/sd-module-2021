@@ -9,7 +9,7 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\lists\PageData;
 
 class Route extends BasePage
 {
@@ -17,12 +17,12 @@ class Route extends BasePage
 
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return PageData
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
-        return ListsPage::create([]);
+        return PageData::create([]);
     }
 
     /**

@@ -8,7 +8,7 @@ namespace app\common;
 
 use app\common\traits\Lang;
 use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\tablePage\ListsPage;
+use sdModule\layui\lists\PageData;
 
 /**
  * Class BasePage
@@ -21,7 +21,7 @@ abstract class BasePage
     /**
      * @var string 列表数据页面模板
      */
-    public $list_template = 'common/list_page';
+    public $list_template = 'common/list_page_3_5';
 
     /**
      * @var string 表单页面模板
@@ -31,9 +31,9 @@ abstract class BasePage
 
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return PageData
      */
-    abstract public function getTablePageData();
+    abstract public function getTablePageData():PageData;
 
     /**
      * 生成表单的数据

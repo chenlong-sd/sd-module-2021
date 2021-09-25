@@ -7,8 +7,9 @@
 namespace //=={namespace}==//;
 
 use app\common\BasePage;
-use sdModule\layui\tablePage\ListsPage;
-use sdModule\layui\tablePage\module\TableAux;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
+use sdModule\layui\lists\PageData;
 use sdModule\layui\form\Form;
 //=={use}==//
 
@@ -22,18 +23,15 @@ class //=={Table}==// extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return PageData
+     * @throws \app\common\SdException
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
-        $table = ListsPage::create([
+        $table = PageData::create([
             //=={table_page}==//
         ]);
 
-        $table->setHandleAttr([
-            'align' => 'center',
-            'width' => 150
-        ]);
         return $table;
     }
 

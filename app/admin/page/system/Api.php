@@ -9,8 +9,9 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\tablePage\ListsPage;
-use sdModule\layui\tablePage\module\TableAux;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
+use sdModule\layui\lists\PageData;
 use sdModule\layui\form\FormUnit;
 
 
@@ -22,34 +23,38 @@ class Api extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return ListsPage
+     * @return PageData
+     * @throws \app\common\SdException
      */
-    public function getTablePageData(): ListsPage
+    public function getTablePageData(): PageData
     {
-        $table = ListsPage::create([
-            TableAux::column()->checkbox(),
-            TableAux::column('method', '接口名')->mergeField('api_name', ' '),
-            TableAux::column('path', '路径'),
-            TableAux::column('status', '对接状态')
+        $table = PageData::create([
+            Column::checkbox(),
+            Column::normal('接口名', 'method')->setFormat('{method} {api_name}'),
+            Column::normal('路径', 'path'),
+            Column::normal('对接状态', 'status')
                 ->setTemplate("return obj.status_1 == 1 ? obj.status + ' <span style=\"color: #FFB800\">对接完请改变状态</span>' : obj.status"),
-            TableAux::column('update_time', '修改时间'),
+            Column::normal('修改时间', 'update_time'),
         ]);
 
         $table->setConfig([
             'where' => ['search' => ['api_module_id' => request()->get('id')]],
-            'page' => false,
-            'widht' => 210
+            'page' => false
         ]);
+        $table->setHandleAttr([
+            'width' => 210,
+        ]);
+
         $table->removeBarEvent(['create','delete']);
 
         $table->addEvent('see')
             ->setNormalBtn('查看','read','xs')
-            ->setJs(TableAux::openPage([url('update?see=1')], '查看', ['area' => ['90%', "90%"]]));
+            ->setJs(EventHandle::openPage([url('update?see=1'), 'id'], '查看')->popUps(['area' => ['90%', "90%"]]));
         $table->addEvent('docking')->setWhere('d.status_1 == 1')
             ->setWarmBtn('已对接','','xs')
-            ->setJs(TableAux::ajax(url('docking'), '确认已对接？'));
+            ->setJs(EventHandle::ajax(url('docking'), '确认已对接？'));
         $table->addBarEvent('createii')->setDefaultBtn('新增','add-1','sm')
-            ->setJs(TableAux::openPage(url(sprintf('system.api/create?api_module_id=%s', request()->get('id'))), '创建', ['area' => ['90%', '90%']]));
+            ->setJs(EventHandle::openPage(url(sprintf('system.api/create?api_module_id=%s', request()->get('id'))), '创建')->popUps(['area' => ['90%', '90%']]));
 
         $table->addJs("setInterval(()=>table.reload('sc'), 60000)");
 

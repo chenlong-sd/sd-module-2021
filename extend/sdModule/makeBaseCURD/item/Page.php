@@ -145,7 +145,7 @@ class Page implements Item
      */
     private function tablePage()
     {
-        $this->replace['table_page'][] = "TableAux::column()->checkbox(),";
+        $this->replace['table_page'][] = "Column::checkbox(),";
         foreach ($this->CURD->data as $field => $item) {
             if (empty($item['show_type'])) {
                 continue;
@@ -157,8 +157,8 @@ class Page implements Item
                 list($value, $title)    = explode('=', $joinData);
                 $field                  = ($table ?: 'parent') . '_' . $title;
             }
-            $image = $item['show_type'] === 'image' ? "->image()" : '';
-            $this->replace['table_page'][] = "TableAux::column('{$field}', '{$item['label']}'){$image},";
+            $image = $item['show_type'] === 'image' ? "->showImage()" : '';
+            $this->replace['table_page'][] = "Column::normal('{$item['label']}', '$field')$image,";
         }
     }
 
