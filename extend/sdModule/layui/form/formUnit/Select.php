@@ -68,6 +68,9 @@ class Select extends UnitBase
      */
     private function getCheck($value): bool
     {
+        if ($this->default === '' || $this->default === null) {
+            return false;
+        }
         return $value == $this->default;
     }
 

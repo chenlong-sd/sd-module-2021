@@ -88,7 +88,7 @@ class Ajax
      */
     public function setTip(string $tip): Ajax
     {
-        $this->confirm['tip'] = self::title($tip);
+        $this->confirm['tip'] = self::paramReplace($tip);
         return $this;
     }
 

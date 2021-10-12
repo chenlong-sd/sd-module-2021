@@ -463,7 +463,7 @@ class Form
      */
     private function closePageJs(): string
     {
-        $close = request()->get('__sc_tab__') ? "custom.closeTabsPage()" : "parent.layer.closeAll()";
+        $close = request()->get('__sc_tab__') ? "custom.closeTabsPage()" : "parent.layer.close(window.closeLayerIndex);";
         return <<<JS
     $('#close').click(function () {
         {$close};
@@ -510,13 +510,23 @@ SUC;
 
     layui.form.on('submit(sc-form)', function (data) {
         if(window.submit_sc) return  false;
+        let form_data = new FormData();
+        for (let field in data.field){
+           form_data.append(field, data.field[field]);
+        }
+        $('.sc-file-upload').each(function (index, file){
+             form_data.delete(file.name);
+             if(file.files.length > 0) form_data.append(file.name, file.files[0]);
+        });
         let load = custom.loading();
         $.ajax({
             type: 'post'
             , headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-            , data: data.field
+            , data: form_data
+            , contentType: false
+            , processData: false
             , success: function (res) {
                 layer.close(load);
                 if (res.code === 200) {

@@ -8,6 +8,8 @@
 namespace app\admin\page;
 
 use app\common\BasePage;
+use sdModule\layui\Dom;
+use sdModule\layui\Layui;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
@@ -41,11 +43,15 @@ class Test extends BasePage
             Column::normal('管理员', 'administrators_name'),
             Column::normal('上级', 'parent_title'),
             Column::normal('创建时间', 'create_time'),
-            Column::normal('修改时间', 'update_time')->showImage(),
+            Column::normal('修改时间', 'update_time'),
         ]);
 
         $table->addBarEvent()->setPrimaryBtn('测试下拉', 'more')->setMenuGroup('test1')
             ->setJs(EventHandle::openPage(url('create'), '测试新增')->popUps(['area' => ['90%', '90%']]));
+
+
+        $table->setMenuGroup('test1', Layui::button('测试下拉', 'down')->normal('sm'));
+
         return $table;
     }
 
@@ -62,7 +68,15 @@ class Test extends BasePage
         $unit = [
             FormUnit::hidden('id'),
             FormUnit::text('title', '标题'),
-            FormUnit::image('cover', '封面'),
+//            FormUnit::custom()->customHtml(
+//                Dom::create()->addClass('layui-form-item')->addContent(
+//                    Dom::create('label')->addClass('layui-form-label')->addContent('封面')
+//                )->addContent(
+//                    Dom::create('button')->addAttr('type', 'button')
+//                        ->addClass('layui-btn')->addContent('上传')
+//                    ->addContent(Dom::create('input', true)->addAttr(['type' => 'file', 'name' => 'test', 'class' => 'sc-file-upload']))
+//                )
+//            ),
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false)),

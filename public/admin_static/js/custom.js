@@ -130,7 +130,6 @@ custom = {
      */
     , closeTabsPage() {
         let url = window.location.href.replace(location.origin, '');
-        console.log(url);
         top.layui.jquery('#LAY_app_tabsheader').find("li[lay-id='" + url + "']>i").click();
     }
     /**

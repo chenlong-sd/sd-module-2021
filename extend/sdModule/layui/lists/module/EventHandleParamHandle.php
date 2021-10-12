@@ -45,15 +45,14 @@ trait EventHandleParamHandle
 
 
     /**
-     * 打开page页面的参数的标题变量替换
-     * @param string $title
+     * 变量替换
+     * @param string $string
      * @return string|string[]|null
      */
-    protected static function title(string $title)
+    protected static function paramReplace(string $string)
     {
-        return preg_replace_callback('/\{\w+\}/', function ($v) {
-            $var = strtr(current($v), ['{' => '', '}' => '']);
-            return "'+ obj.{$var} +'";
-        }, $title);
+        return preg_replace_callback('/\{(\w+)\}/', function ($v) {
+            return "'+ obj.{$v[1]} +'";
+        }, $string);
     }
 }

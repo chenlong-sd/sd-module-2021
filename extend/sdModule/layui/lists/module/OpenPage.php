@@ -52,7 +52,7 @@ class OpenPage
      */
     public function __construct($url, string $title)
     {
-        $this->title = self::title($title);
+        $this->title = self::paramReplace($title);
         $this->url   = self::url($url);
         $this->power = access_control(is_array($url) ? current($url) : $url) ? 'normal' : 'false';
     }
@@ -97,7 +97,7 @@ class OpenPage
     public function setConfirm(string $tip, array $config = []): OpenPage
     {
         $configStr = $config ? json_encode($config, JSON_UNESCAPED_UNICODE) . ',' : '';
-        $tip       = self::title($tip);
+        $tip       = self::paramReplace($tip);
 
         $this->confirm = "layer.confirm('{$tip}', {$configStr} function(index){ %s layer.close(index);});";
         return $this;

@@ -27,52 +27,65 @@
     #field_remark .field_name_show{
         min-width: 200px;
     }
+    .float{
+        border: none;
+    }
 </style>
 <div class="layui-row">
     <form action="" class="layui-form" lay-filter="formTest">
-        <div class="layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header"><b>数据表</b></div>
-                <div class="layui-card-body">
-                    <div class="layui-input-inline">
-                        <input type="text" name="table_input" placeholder="请输入表名或注释" autocomplete="off" class="layui-input">
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header"><b>数据表</b></div>
+            <div class="layui-card-body">
+                <div class="layui-input-inline">
+                    <input type="text" name="table_input" placeholder="请输入表名或注释" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn" type="button" id="reset">重置</button>
+                <div id="table--list"></div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header"><b>数据表详细信息</b></div>
+            <div class="layui-card-body">
+                <blockquote class="layui-elem-quote layui-quote-nm">
+                    <div id="field-show" class="layui-word-aux"></div>
+                    <div class="layui-word-aux"><button id="copy" type="button" class="layui-btn layui-btn-primary layui-btn-xs">复制</button></div>
+                </blockquote>
+                <div class="layui-input-inline">
+                    <input type="text" name="table_alias" placeholder="请输入表别名" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-input-inline" pane>
+                    <input type="radio" name="field_show_type" lay-filter="show_type" value="1" title="字串" checked>
+                    <input type="radio" name="field_show_type"  lay-filter="show_type" value="2" title="数组">
+                </div>
+                <button class="layui-btn" type="button" id="reset1">重置</button>
+
+
+                <div class="layui-collapse" id="field-info">
+                    <div class="layui-colla-item">
+                        <h2 class="layui-colla-title">表字段注释
+                            <button class="layui-btn layui-btn-primary layui-border-blue float" type="button">
+                                浮动信息<i class="layui-icon layui-icon-upload-drag"></i>
+                            </button></h2>
+                        <div class="layui-colla-content float-content">
+                            <div id="field_remark" class="layui-form"></div>
+                        </div>
                     </div>
-                    <button class="layui-btn" type="button" id="reset">重置</button>
-                    <div id="table--list"></div>
+                    <div class="layui-colla-item">
+                        <h2 class="layui-colla-title">表结构详情
+                            <button class="layui-btn layui-btn-primary layui-border-blue float" type="button">
+                                浮动信息<i class="layui-icon layui-icon-upload-drag"></i>
+                            </button></h2>
+                        <div class="layui-colla-content float-content">
+                            <div id="sql"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="layui-col-md9">
-            <div class="layui-card">
-                <div class="layui-card-header"><b>数据表详细信息</b></div>
-                <div class="layui-card-body">
-                    <blockquote class="layui-elem-quote layui-quote-nm">
-                        <div id="field-show" class="layui-word-aux"></div>
-                        <div class="layui-word-aux"><button id="copy" type="button" class="layui-btn layui-btn-primary layui-btn-xs">复制</button></div>
-                    </blockquote>
-                    <div class="layui-input-inline">
-                        <input type="text" name="table_alias" placeholder="请输入表别名" autocomplete="off" class="layui-input">
-                    </div>
-                    <div class="layui-input-inline" pane>
-                        <input type="radio" name="field_show_type" lay-filter="show_type" value="1" title="字串" checked>
-                        <input type="radio" name="field_show_type"  lay-filter="show_type" value="2" title="数组">
-                    </div>
-                    <button class="layui-btn" type="button" id="reset1">重置</button>
-                    <div class="layui-collapse">
-                        <div class="layui-colla-item">
-                            <h2 class="layui-colla-title">表字段注释</h2>
-                            <div class="layui-colla-content">
-                                <div id="field_remark" class="layui-form"></div>
-                            </div>
-                        </div>
-                        <div class="layui-colla-item">
-                            <h2 class="layui-colla-title">表结构详情</h2>
-                            <div id="sql" class="layui-colla-content"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
     </form>
 </div>
 
@@ -99,10 +112,10 @@ $table_data_ = array_map(function ($v){
 <script>
     let $ = layui.jquery;
     let table_ = <?= json_encode($table_data_, JSON_UNESCAPED_UNICODE) ?>;
-    $('#table--list').css('height', $(window).height() - 135 + 'px');
+    $('#table--list').css('height', $(window).height() - 120 + 'px')
 
     // 字段相关变量
-    let field_ = [], alias_ = '', show_type = 1;
+    let field_ = [], alias_ = '', show_type = 1,current_table = '';
 
     tableList(table_);
 
@@ -127,6 +140,26 @@ $table_data_ = array_map(function ($v){
         fieldShow(field_, alias_, show_type);
     });
 
+    $('.float').on('click', function (e) {
+        e.stopPropagation();
+        let html = $(this).parents('.layui-colla-item').find('.float-content').html().trim();
+        if (html === '<div id="sql" class="layui-colla-content"></div>' || html === '<div id="field_remark" class="layui-form"></div>') return notice.warning('无信息可浮动');
+        layer.open({
+            type: 1,
+            title:`${current_table}`,
+            shade: 0,
+            moveOut: true,
+            content: `<div class="float-win" style="margin: 10px">${html}</div>`, //这里content是一个普通的String
+            area: ['500px','auto'],
+            success: function(layero, index){
+                layui.jquery(layero).on('click', function (){
+                    layero.css('z-Index', ++layer.zIndex);
+                });
+                layer.setTop(layero); //重点2
+            }
+        });
+    });
+
     // 复制
     $('#copy').on('click', function () {
         copyToClip($('#field-show').html())
@@ -135,6 +168,7 @@ $table_data_ = array_map(function ($v){
     // 表选择
     layui.form.on('radio(table)', function(data){
         let table = data.value.substr(0, data.value.indexOf('（'));
+        current_table = data.value;
         let load = custom.loading('数据加载中，请稍后...');
         $.ajax({
             url:"<?= admin_url('field-query')?>"

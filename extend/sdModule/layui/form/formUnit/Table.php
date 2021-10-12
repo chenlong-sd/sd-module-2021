@@ -185,7 +185,7 @@ CSS;
                 'class'        => 'layui-input',
                 'autocomplete' => 'off',
                 'placeholder'  => $unitBase->placeholder,
-                'value'        => $default[$unitBase->name] ?? ''
+                'value'        => $default[$unitBase->name] ?? $unitBase->default
             ])->addAttr($attr);
     }
 
@@ -209,6 +209,8 @@ CSS;
                     $option = Dom::create('option')->addContent($label_children)->addAttr('value', $value_children);
                     if (!empty($default[$unitBase->name])){
                         $value_children == $default[$unitBase->name] and $option->addAttr('selected', '');
+                    }else{
+                        $value_children == $unitBase->default and $option->addAttr('selected', '');
                     }
                     $optgroup->addContent($option);
                 }
@@ -217,6 +219,8 @@ CSS;
                 $option = Dom::create('option')->addContent($label)->addAttr('value', $value);
                 if (!empty($default[$unitBase->name])){
                     $value == $default[$unitBase->name] and $option->addAttr('selected', '');
+                }else{
+                    $value == $unitBase->default and $option->addAttr('selected', '');
                 }
                 $options[] = $option;
             }
@@ -240,7 +244,7 @@ CSS;
     private function checkbox(UnitBase $unitBase, array $attr, array $default)
     {
         $inputDiv = Dom::create();
-        $default = explode(',', $default[$unitBase->name] ?? '');
+        $default = isset($default[$unitBase->name]) ? explode(',', $default[$unitBase->name] ?: '') : ($unitBase->default ?: []);
 
         foreach ($unitBase->options as $value => $label) {
             $customAttr = [
@@ -293,7 +297,7 @@ JS;
                 'class'        => "layui-input sc-time-render-$id",
                 'autocomplete' => 'off',
                 'placeholder'  => $unitBase->placeholder,
-                'value'        => $default[$unitBase->name] ?? ''
+                'value'        => $default[$unitBase->name] ?? $unitBase->default
             ])->addAttr($attr);
     }
 }
