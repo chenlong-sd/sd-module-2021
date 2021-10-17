@@ -117,12 +117,26 @@ class System extends Admin
      */
     public function backUp()
     {
-        $backup = $this->dataBackUpConnect();
-        if (!$table = $this->request->get('name')) {
-            $backup->backup(Backup::ALL);
-        }else{
-            $backup->backupTable($table, Backup::ALL);
+        if ($this->request->isAjax()) {
+            if ($this->request->isPost()) {
+                Backup::outputTip(">>>>>>>>>>>>>>>>>>>");
+                $backup = $this->dataBackUpConnect();
+                if (!$table = $this->request->post('name')) {
+                    $backup->backup(Backup::ALL);
+                }else{
+                    $backup->backupTable($table, Backup::ALL);
+                }
+                return ResponseJson::success();
+            }
+
+            return ResponseJson::success(Backup::getTip());
         }
+
+        if (Backup::getTip()) {
+            return '当前有备份文件正在备份中....';
+        }
+
+        return $this->fetch();
     }
 
     /**
@@ -180,9 +194,23 @@ class System extends Admin
      */
     public function dataRecover(string $table = '', string $filename = '')
     {
-        $path   = $this->dataFileCheck($table, $filename);
-        $backup = $this->dataBackUpConnect();
-        $backup->dataRecovery($filename, $table);
+        if ($this->request->isAjax()) {
+            if ($this->request->isPost()){
+                Backup::outputTip(">>>>>>>>>>>>>>>>>>>");
+                $path   = $this->dataFileCheck($table, $filename);
+                $backup = $this->dataBackUpConnect();
+                $backup->dataRecovery($filename, $table);
+                return ResponseJson::success();
+            }
+
+            return ResponseJson::success(Backup::getTip());
+        }
+
+        if (Backup::getTip()) {
+            return '当前有备份文件正在备份中....';
+        }
+
+        return $this->fetch();
     }
 
     /**

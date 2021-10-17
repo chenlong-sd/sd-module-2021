@@ -53,12 +53,15 @@ class Mysql implements Driver
     {
         $time = date('Y-m-d H:i:s');
         Backup::backupFileWrite("/** 数据备份时间  {$time} */\r\n\r\n");
+        if (!$table) {
+            Backup::outputTip('本次备份数据表数量：' . count($this->tables));
+        }
         Backup::outputTip('开始备份..');
         Backup::outputTip("内存消耗：" . ($start = memory_get_usage() / 8192) . '.开始备份..');
 
         $start_time = microtime(true);
         Backup::backupFileWrite("SET NAMES utf8mb4;\r\nSET FOREIGN_KEY_CHECKS = 0;\r\n\r\n");
-        foreach ($this->tables as $table_b) {
+        foreach ($this->tables as $index => $table_b) {
             if ($table && $table != $table_b){
                 continue;
             }
@@ -67,6 +70,9 @@ class Mysql implements Driver
             }
             if ($this->type & Backup::DATA) {
                 $this->backupData($table_b);
+            }
+            if (!$table) {
+                Backup::outputTip('当前已完成备份数据表数量：' . ($index + 1) . "\r\n");
             }
         }
         Backup::backupFileWrite("SET FOREIGN_KEY_CHECKS = 0;\r\n");
@@ -103,31 +109,39 @@ class Mysql implements Driver
         }
 
         $start_time = microtime(true);
-        $sql = $this->PDO->prepare("SELECT * FROM `{$table}`", [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
-        $sql->execute();
-        $fd = fopen(Backup::$filename, 'a');
-        $value = [];
-        $length = $i = 0;
-        while ($row = $sql->fetch(\PDO::FETCH_NUM)) {
-            $row = array_map(function ($v){
-                return is_null($v) ? "null" : "\"" . addslashes($v) . "\"";
-            }, $row);
-            $value[] = '(' . implode(',', $row) . ')';
-            if (!$length) {
-                $length = strlen(current($value));
-            }
-            $i++;
-            if (($length <= 8192 && $i <= 500) || ($length >= 8192 && $i <= 100)) {
-                continue;
-            }
-            fwrite($fd, sprintf(self::INSERT, $table, implode(',', $value)));
+        // 获取最大的id
+        $max_id = $this->PDO->query("SELECT max(id) max_id FROM `{$table}`")->fetch(\PDO::FETCH_ASSOC)['max_id'];
+        $start = 0;
+        while (true){
+            $i = $data_length = 0;
             $value = [];
-            $i = 0;
+
+            $sql = $this->PDO->prepare("SELECT * FROM `{$table}` WHERE id > $start  LIMIT 1000", [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
+            $sql->execute();
+
+            while ($row = $sql->fetch(\PDO::FETCH_ASSOC)) {
+                $start = $row['id'];
+                $data_length++;
+                $i++;
+                $row = array_map(function ($v){
+                    return is_null($v) ? "null" : "\"" . addslashes($v) . "\"";
+                }, $row);
+                $value[] = '(' . implode(',', $row) . ')';
+
+                if ($i < 500) continue;
+
+                Backup::backupFileWrite(sprintf(self::INSERT, $table, implode(',', $value)));
+                Backup::outputTip("数据已备份至：$start/$max_id");
+                $value = [];
+                $i = 0;
+            }
+            if ($value) {
+                Backup::backupFileWrite(sprintf(self::INSERT, $table, implode(',', $value)));
+                Backup::outputTip("数据已备份至：$start/$max_id");
+            }
+            if ($data_length < 1000) break;
         }
-        if ($value) {
-            fwrite($fd, sprintf(self::INSERT, $table, implode(',', $value)));
-        }
-        fclose($fd);
+
         Backup::outputTip("{$table} 数据备份完成。耗时" . (microtime(true) - $start_time) . "秒");
     }
 }

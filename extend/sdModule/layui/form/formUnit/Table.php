@@ -67,7 +67,7 @@ class Table extends UnitBase
             $type = explode('\\', get_class($children));
             $type = Str::camel(end($type));
             if (!method_exists($this, $type)) {
-                throw new \Exception("table包含表单支持项：text, select, checkbox, 你使用了【{$type}】类型" );
+                throw new \Exception("table包含表单支持项：text, select, checkbox, time, 你使用了【{$type}】类型" );
             }
 
             $form_tr->addContent(Dom::create('td')->addContent(call_user_func([$this, $type], $children, $attr, $default)));
@@ -179,7 +179,8 @@ CSS;
      */
     private function text(UnitBase $unitBase, array $attr, array $default)
     {
-        return Dom::create('input')->setIsSingleLabel()
+        $inputDiv = Dom::create();
+        $input = Dom::create('input')->setIsSingleLabel()
             ->addAttr([
                 'name'         => "$unitBase->name[]",
                 'class'        => 'layui-input',
@@ -187,6 +188,18 @@ CSS;
                 'placeholder'  => $unitBase->placeholder,
                 'value'        => $default[$unitBase->name] ?? $unitBase->default
             ])->addAttr($attr);
+
+        if ($unitBase->options) {
+            $input->addAttr('list', 'datalist-' . $unitBase->name);
+            $datalist = Dom::create('datalist')->setId('datalist-' . $unitBase->name);
+            foreach ($unitBase->options as $value){
+                $datalist->addContent(Dom::create('option')->addAttr('value', $value));
+            }
+            $inputDiv->addContent($datalist);
+        }
+        $inputDiv->addContent($input);
+
+        return $inputDiv;
     }
 
     /**
