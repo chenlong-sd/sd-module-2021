@@ -194,118 +194,82 @@ custom = {
      * @param {jQuery} $
      * @param {string} name name值，事件元素对象的id值为name，展示图片的id值为name 加上 -show
      * @param {Object} upload   layui上传对象
-     * @returns {{preview: preview, uploadFile: Array, init: (function(*, *): custom), upload: upload, del: del, done: (function(*): Array)}}
+     * @returns {{init: init, push: push}}
      */
     , moreUpload: function ($, name, upload) {
-        let show_id = '#' + name.replace(/\[/, '-').replace(/\]/, '') + '-show';
-        let event_id = '#' + name.replace(/\[/, '-').replace(/\]/, '');
-        let className = event_id.substr(1);
+        let show_id     = '#' + name.replace(/\[/, '-').replace(/\]/, '') + '-show';
+        let event_id    = '#' + name.replace(/\[/, '-').replace(/\]/, '');
+        let className   = event_id.substr(1);
+        let upload_file = {};
+        let url_prefix  = ROOT;
+        let current_v   = 1;
 
-        let moreUpload = {
-            /**
-             * 上传的所有文件
-             */
-            uploadFile: []
-            /**
-             * 初始化
-             * @param {Array} value 包含路径的数组
-             * @param {string} urlPrefix 路径前缀
-             * @returns {custom}
-             */
-            , init: function (value, urlPrefix) {
-                this.uploadFile = value ? value.filter((v) => {
-                    return Boolean(v);
-                }) : [];
-                this.del();
-                let html = '';
-                urlPrefix = urlPrefix ? urlPrefix : ROOT;
-                for (let item in this.uploadFile) {
-                    let $url = /^http.*$/.test(value[item]) ? value[item] : urlPrefix + '/' + value[item];
-                    html += this.item_html($url, '');
-                }
-                drag($(show_id).html(html));
+        /**
+         * 初始化内容
+         * @param {Array}  file_url 文件路径
+         * @param {string} prefix
+         */
+        function init(file_url, prefix) {
+            let file_arr = file_url ? file_url.filter((v) => Boolean(v)) : [];
+            for (let i = 0; i < file_arr.length; i++) {
+                upload_file[current_v++] = file_arr[i];
+            }
+            url_prefix = prefix ? prefix : url_prefix;
+            render();
+        }
 
-                return this;
-            },
-            /**
-             * 追加值
-             * @param value
-             * @param urlPrefix
-             * @returns {moreUpload|*}
-             */
-            push: function (value, urlPrefix) {
-                if (value && typeof value === "object") {
-                    $('input[name="' + name + '"]').val(this.uploadFile.concat(value));
-                    return this.init(this.uploadFile.concat(value), urlPrefix);
-                }
-                return this;
-            }
-            /**
-             * 批量上传预览
-             * @param obj
-             */
-            , preview: function (obj) {
-                let that = this;
-                obj.preview(function (index, file, result) {
-                    $(show_id).append(that.item_html(result, file.name));
-                });
-            }
-            /**
-             * 上传成功的回调，返回新的数据
-             * @param res
-             * @returns {*}
-             */
-            , done: function (res) {
-                this.uploadFile.push(res.data);
-                return this.uploadFile;
-            }
-            /**
-             * 删除操作
-             */
-            , del: function () {
-                let that = this;
-                $(document).off('click', 'button.sc-del' + className).on('click', 'button.sc-del' + className, function () {
-                    let index = $('button.sc-del' + className).index(this);
-                    that.uploadFile.splice(index, 1);
-                    if (name) {
-                        $('input[name="' + name + '"]').val(that.uploadFile);
-                    }
-                    $(this).parents('.sc-item').remove();
-                })
-            }
-            , item_html(url, alt) {
+        /**
+         * 设置表单值
+         */
+        function setVal() {
+            let v = [];
+            $(show_id).find('.sc-item').each(function (i, e) {
+                v.push(upload_file[e.getAttribute('data-current')]);
+            });
 
-                return '<div class="sc-item" draggable="true" style="width: 200px;border-radius: 5px;overflow: hidden;border: 1px solid grey;padding: 5px;margin-right: 10px;display: inline-block">\n' +
-                    '      <img src="' + this.thumbnailUrl(url) + '" alt="' + alt + '" onerror="'+ url +'" width="100%" class="layui-upload-img">\n' +
-                    '      <div style="margin-top: 2px">\n' +
-                    '          <button type="button" class="sc-del' + className + ' layui-btn layui-btn-fluid layui-btn-danger layui-btn-sm">\n' +
-                    '              <i class="layui-icon layui-icon-delete"></i>\n' +
-                    '          </button>\n' +
-                    '      </div>\n' +
-                    '   </div>';
-            },
-            /**
-             * 缩略图处理
-             * @param path
-             * @returns {string}
-             */
-            thumbnailUrl(path) {
-                if (!Thumbnail || path.length > 255) return path;
+            $('input[name="' + name + '"]').val(v.join(','));
+        }
 
-                let arr = path.split('.');
-                let suffix = arr.pop();
-                arr.join('.')
-                return arr.join('.') + '_thumbnail.' + suffix;
+        /**
+         * 渲染页面html
+         */
+        function render() {
+            let html = '';
+            for (let item in upload_file) {
+                let url = /^http.*$/.test(upload_file[item]) ? upload_file[item] : url_prefix + '/' + upload_file[item];
+                html += `<div class="sc-item" data-current="${item}" draggable="true" style="width: 200px;border-radius: 5px;overflow: hidden;border: 1px solid grey;padding: 5px;margin-right: 10px;display: inline-block">` +
+                    `      <img src="${custom.thumbnailUrl(url)}" alt="" onerror="${url}" width="100%" class="layui-upload-img">` +
+                    `      <div style="margin-top: 2px">` +
+                    `          <button type="button" class="sc-del${className} layui-btn layui-btn-fluid layui-btn-danger layui-btn-sm">` +
+                    `              <i class="layui-icon layui-icon-delete"></i>` +
+                    `          </button>` +
+                    `      </div>` +
+                    `   </div>`;
             }
-        };
+            $(show_id).html(html);
+        }
 
+        /**
+         * 追加路径
+         * @param {string} url
+         */
+        function push(url) {
+            upload_file[current_v++] = url;
+            render();
+            setVal();
+        }
+
+        /**
+         * 拖放事件处理
+         * @param {Object} elem
+         */
         function drag(elem) {
             let tmp_over;
             elem.on('dragend', function (e) {
-                tmp_over.before(e.target);
-                elem.find('.sc-item').each(function (e, v){
-                    console.log(e, v)
-                })
+                if ($(e.target).hasClass('sc-item')) {
+                    tmp_over.before(e.target);
+                    setVal();
+                }
             }).on('dragover', function (e) {
                 if ($(e.target).hasClass('sc-item')) {
                     tmp_over = $(e.target);
@@ -315,6 +279,21 @@ custom = {
             })
         }
 
+        /**
+         * 删除处理
+         */
+        function del() {
+            $(document).off('click', 'button.sc-del' + className).on('click', 'button.sc-del' + className, function () {
+                let current = $(this).parents('.sc-item').data('current');
+                delete upload_file[current];
+                $(this).parents('.sc-item').remove();
+                console.log(upload_file, current)
+                setVal();
+            });
+        }
+
+        drag($(show_id));
+        del();
 
         $('#' + name + '-select').on('click', function () {
             custom.frame(RESOURCE_URL + '?type=checkbox&vars=' + name, '资源选择');
@@ -327,21 +306,20 @@ custom = {
             , field: 'limit_images'
             , before: function (obj) {
                 load = custom.loading('图片上传中...');
-                moreUpload.preview(obj);
             }
             , done: function (res) {
                 layer.close(load);
                 if (res.code === 202) {
                     return layNotice.warning(res.msg);
                 } else {
-                    $('input[name="' + name + '"]').val(moreUpload.done(res));
+                    push(res.data);
                 }
             },error(){
                 layer.close(load);
             }
         });
 
-        return moreUpload;
+        return {init,push};
     }
 
     /**
@@ -383,6 +361,20 @@ custom = {
      */
     imageError: function (e, src) {
         if (/^http.*$/.test(src)) e.src = src
+    },
+
+    /**
+     * 缩略图处理
+     * @param {string} path 图片路径
+     * @returns {string|*}
+     */
+    thumbnailUrl(path) {
+        if (!Thumbnail || path.length > 255) return path;
+
+        let arr = path.split('.');
+        let suffix = arr.pop();
+        arr.join('.')
+        return arr.join('.') + '_thumbnail.' + suffix;
     },
     /**
      * 表格图片展示
