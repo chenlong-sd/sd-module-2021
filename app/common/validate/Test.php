@@ -31,7 +31,7 @@ class Test extends BaseValidate
     ];
 
     protected $scene = [
-        'add' => ['title', 'cover', 'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
-        'edit' => ['id', 'title', 'cover', 'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
+        'add' => ['title', 'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
+        'edit' => ['id', 'title',  'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
     ];
 }

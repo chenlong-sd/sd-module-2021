@@ -46,12 +46,14 @@ class UEditor extends UnitBase
     public function getJs(): string
     {
         $content = html_entity_decode($this->default);
+        $config  = json_encode($this->config);
+
         return <<<JS
-    let ue_{$this->name} = custom.editorRender(UE, "{$this->name}-ue");
+    let ue_{$this->name} = custom.editorRender(UE, "{$this->name}-ue", $config);
     ue_{$this->name}.ready(()=>{
           ue_{$this->name}.setContent('{$content}');
     });
-JS;
+JS;;
 
     }
 }

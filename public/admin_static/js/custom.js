@@ -221,9 +221,10 @@ custom = {
                 urlPrefix = urlPrefix ? urlPrefix : ROOT;
                 for (let item in this.uploadFile) {
                     let $url = /^http.*$/.test(value[item]) ? value[item] : urlPrefix + '/' + value[item];
-                    html += this.item_html(this.thumbnailUrl($url), '');
+                    html += this.item_html($url, '');
                 }
-                $(show_id).html(html);
+                drag($(show_id).html(html));
+
                 return this;
             },
             /**
@@ -273,14 +274,15 @@ custom = {
                 })
             }
             , item_html(url, alt) {
-                return '<div class="sc-item" style="width: 200px;border-radius: 5px;overflow: hidden;border: 1px solid grey;padding: 5px;margin-right: 10px;display: inline-block">\n' +
-                    '                                        <img src="' + url + '" alt="' + alt + '" width="100%" class="layui-upload-img">\n' +
-                    '                                        <div style="margin-top: 2px">\n' +
-                    '                                            <button type="button" class="sc-del' + className + ' layui-btn layui-btn-fluid layui-btn-danger layui-btn-sm">\n' +
-                    '                                                <i class="layui-icon layui-icon-delete"></i>\n' +
-                    '                                            </button>\n' +
-                    '                                        </div>\n' +
-                    '                                    </div>';
+
+                return '<div class="sc-item" draggable="true" style="width: 200px;border-radius: 5px;overflow: hidden;border: 1px solid grey;padding: 5px;margin-right: 10px;display: inline-block">\n' +
+                    '      <img src="' + this.thumbnailUrl(url) + '" alt="' + alt + '" onerror="'+ url +'" width="100%" class="layui-upload-img">\n' +
+                    '      <div style="margin-top: 2px">\n' +
+                    '          <button type="button" class="sc-del' + className + ' layui-btn layui-btn-fluid layui-btn-danger layui-btn-sm">\n' +
+                    '              <i class="layui-icon layui-icon-delete"></i>\n' +
+                    '          </button>\n' +
+                    '      </div>\n' +
+                    '   </div>';
             },
             /**
              * 缩略图处理
@@ -288,7 +290,7 @@ custom = {
              * @returns {string}
              */
             thumbnailUrl(path) {
-                if (!Thumbnail) return path;
+                if (!Thumbnail || path.length > 255) return path;
 
                 let arr = path.split('.');
                 let suffix = arr.pop();
@@ -296,6 +298,23 @@ custom = {
                 return arr.join('.') + '_thumbnail.' + suffix;
             }
         };
+
+        function drag(elem) {
+            let tmp_over;
+            elem.on('dragend', function (e) {
+                tmp_over.before(e.target);
+                elem.find('.sc-item').each(function (e, v){
+                    console.log(e, v)
+                })
+            }).on('dragover', function (e) {
+                if ($(e.target).hasClass('sc-item')) {
+                    tmp_over = $(e.target);
+                } else if($(e.target).parents('.sc-item')){
+                    tmp_over = $(e.target).parents('.sc-item');
+                }
+            })
+        }
+
 
         $('#' + name + '-select').on('click', function () {
             custom.frame(RESOURCE_URL + '?type=checkbox&vars=' + name, '资源选择');
