@@ -7,6 +7,11 @@
 
 namespace app\admin\controller\system;
 
+use app\admin\AdminBaseService;
+use app\admin\model\system\ApiModule as ApiModuleModel;
+use app\admin\page\system\ApiModule as ApiModulePage;
+use app\admin\service\system\ApiService;
+use app\admin\validate\system\ApiModule as ApiModuleValidate;
 use \app\common\controller\Admin;
 use app\common\service\BackstageListsService;
 
@@ -19,20 +24,67 @@ use app\common\service\BackstageListsService;
 class ApiModule extends Admin
 {
     /**
-     * 列表数据接口
-     * @param BackstageListsService $service
-     * @return mixed|string|\think\Collection|\think\response\Json
+     * @title('api模块列表')
+     * @param ApiService $service
+     * @param ApiModulePage $page
+     * @return \think\response\Json|\think\response\View
+     * @throws \ReflectionException
      * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
      */
-    public function listData(BackstageListsService $service)
+    public function index(ApiService $service, ApiModulePage $page)
     {
-        $model = \app\admin\model\system\ApiModule::field('i.id,i.item_name,url_prefix,i.update_time,count(a.id) api_number')
-            ->join('api a', 'a.api_module_id = i.id', 'left')
-            ->group('i.id')
-            ->with('api');
-        return $service->setModel($model)->setEach(function ($v) {
-            $v->url_prefix = implode(', ', explode('|-|', $v->url_prefix));
-        })->getListsData();
+        if ($this->request->isAjax()) {
+            return $service->apiModuleListData(new BackstageListsService());
+        }
+
+        return view($page->list_template, $page->listPageData());
     }
 
+    /**
+     * @title('新增api模块')
+     * @param ApiService $service
+     * @param ApiModuleModel $model
+     * @param ApiModulePage $page
+     * @return \think\response\Json|\think\response\View
+     * @throws \ReflectionException
+     * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function create(AdminBaseService $service, ApiModuleModel $model, ApiModulePage $page)
+    {
+        return parent::create_($service, $model, $page, ApiModuleValidate::class);
+    }
+
+    /**
+     * @title('修改api模块')
+     * @param AdminBaseService $service
+     * @param ApiModuleModel $model
+     * @param ApiModulePage $page
+     * @return \think\response\Json|\think\response\View
+     * @throws \ReflectionException
+     * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function update(AdminBaseService $service, ApiModuleModel $model, ApiModulePage $page)
+    {
+        return parent::update_($service, $model, $page, ApiModuleValidate::class);
+    }
+
+    /**
+     * @title('删除api模块')
+     * @param AdminBaseService $service
+     * @param ApiModuleModel $model
+     * @return \think\response\Json
+     * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function delete(AdminBaseService $service, ApiModuleModel $model): \think\response\Json
+    {
+        return parent::delete_($service, $model);
+    }
 }

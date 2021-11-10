@@ -47,7 +47,7 @@ class Route extends BaseModel
      * @param $value
      * @return string
      */
-    public function getTypeAttr($value)
+    public function getTypeAttr($value): string
     {
         $field = self::getType();
 
@@ -58,7 +58,7 @@ class Route extends BaseModel
      * 获取指定属性的值
      * @return array
      */
-    public static function getType()
+    public static function getType(): array
     {
         return [
             self::TYPE_MENU   => Layui::tag()->black(lang('route.menu')),
@@ -69,11 +69,9 @@ class Route extends BaseModel
     /**
      * 获取菜单
      * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws SdException
      */
-    public function getMenu()
+    public function getMenu(): array
     {
         return Sc::infinite($this->getMenuRoute())->handle();
     }
@@ -81,22 +79,25 @@ class Route extends BaseModel
     /**
      * 获取菜单路由
      * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws SdException
      */
-    public function getMenuRoute()
+    public function getMenuRoute(): array
     {
-        if (admin_session('is_admin') && admin_session('id') == Config::get('admin.super', 1)) {
-            $left_route = $this->routeFromType(self::TYPE_MENU, 'id,title,route,pid,icon');
-        }else{
-            $left_route = self::where([
+        try {
+            if (admin_session('is_admin') && admin_session('id') == Config::get('admin.super', 1)) {
+                $left_route = $this->routeFromType(self::TYPE_MENU, 'id,title,route,pid,icon');
+            }else{
+                $left_route = self::where([
                     ['p.role_id', 'in', explode(',', admin_session('role_id'))],
                     ['i.type', '=', self::TYPE_MENU],
                 ])->alias('i')->order('weigh')
-                ->join('power p', 'p.route_id = i.id')
-                ->field('i.id,i.title,i.route,i.pid,i.icon')
-                ->select()->toArray();
+                    ->join('power p', 'p.route_id = i.id')
+                    ->field('i.id,i.title,i.route,i.pid,i.icon')
+                    ->select()->toArray();
+            }
+
+        } catch (\Throwable $exception) {
+            throw new SdException($exception->getMessage());
         }
         return $left_route;
     }

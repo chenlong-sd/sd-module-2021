@@ -27,10 +27,13 @@ class Dictionary extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return PageData
+     * @return array
+     * @throws \ReflectionException
      * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/8
      */
-    public function getTablePageData(): PageData
+    public function listPageData():array
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -47,21 +50,24 @@ class Dictionary extends BasePage
         $table->addEvent('dictionary')->setPrimaryBtn('字典配置', 'template-1', 'xs')
             ->setJs(EventHandle::openPage([url('system.dictionary/dictionary'), 'id'], '【{name}】字典配置')->tabs());
 
-        return $table;
+        return array_merge(parent::listPageData(), ['table' => $table]);
     }
 
     /**
-     * @return ListsPage
+     * 字典值页面数据
+     * @return PageData
      * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/8
      */
     public function getDictionaryPageData()
     {
-        $table = ListsPage::create([
-            TableAux::column()->checkbox(),
-            TableAux::column('dictionary_value', '字典值'),
-            TableAux::column('dictionary_name', '字典名字'),
-            TableAux::column('status_1', '状态')->switch('status', MyModel::getStatusSc(false)),
-            TableAux::column('update_time', '修改时间'),
+        $table = PageData::create([
+            Column::checkbox(),
+            Column::normal('字典值', 'dictionary_value'),
+            Column::normal('字典名字', 'dictionary_name'),
+            Column::normal('状态', 'status_1')->showSwitch('status', MyModel::getStatusSc(false)),
+            Column::normal('修改时间', 'update_time'),
         ]);
 
         $table->setHandleAttr([
@@ -94,15 +100,15 @@ class Dictionary extends BasePage
     * @throws \ReflectionException
     * @throws \app\common\SdException
     */
-    public function formData(string $scene, array $default_data = []): Form
+    public function formPageData(string $scene, array $default_data = []): Form
     {
         $unit = [
             FormUnit::hidden('id'),
             FormUnit::text('sign', '标识')->removeScene(['value_add', 'value_edit'])->placeholder('例：ball')->required(),
-            FormUnit::hidden('pid', '标识ID')->removeScene(['add', 'edit'])->defaultValue(request()->get('id', 0)),
+            FormUnit::hidden('pid', '标识ID')->removeScene(['create', 'update'])->defaultValue(request()->get('id', 0)),
             FormUnit::text('name', '标识名称')->removeScene(['value_add', 'value_edit'])->placeholder('例：球类'),
-            FormUnit::text('dictionary_value', '字典值')->removeScene(['add', 'edit'])->placeholder('例：basketball'),
-            FormUnit::text('dictionary_name', '字典名字')->removeScene(['add', 'edit'])->placeholder('例：篮球，不填则默认为字典值，如basketball'),
+            FormUnit::text('dictionary_value', '字典值')->removeScene(['create', 'update'])->placeholder('例：basketball'),
+            FormUnit::text('dictionary_name', '字典名字')->removeScene(['create', 'update'])->placeholder('例：篮球，不填则默认为字典值，如basketball'),
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false))->defaultValue(1),
         ];
 
@@ -116,19 +122,6 @@ class Dictionary extends BasePage
         return $form->complete();
     }
 
-
-    /**
-     * 创建搜索表单的数据
-     * @return Form
-     * @throws \ReflectionException
-     * @throws \app\common\SdException
-     */
-    public function searchFormData(): Form
-    {
-        $form_data = [];
-        return Form::create($form_data)->setSubmitHtml()->complete();
-    }
-
     /**
      * 字典搜索
      * @return Form
@@ -137,13 +130,7 @@ class Dictionary extends BasePage
      */
     public function dictionarySearchFormData(): DefaultForm
     {
-        $form = [
-//            FormUnit::build(
-//                FormUnit::text('dictionary_value')->placeholder('字典值'),
-//                FormUnit::text('dictionary_name')->placeholder('字典名'),
-//                FormUnit::custom()->customHtml(Form::searchSubmit())
-//            )
-        ];
+        $form = [];
 
         return DefaultForm::create($form)->setSubmitHtml()->complete();
     }

@@ -10,16 +10,13 @@
 namespace app\admin\controller\system;
 
 
-use app\admin\model\system\AdministratorsRole;
-use app\admin\model\system\Role as RoleModel;
-use app\common\BaseQuery;
+use app\admin\page\system\Administrators as MyPage;
+use app\admin\service\system\AdministratorsService as MyService;
+use app\admin\validate\system\Administrators as MyValidate;
 use app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
-use app\common\service\BackstageListsService;
-use sdModule\common\Sc;
 use app\admin\model\system\Administrators as MyModel;
-use think\facade\Db;
 
 /**
  * Class Administrators
@@ -28,124 +25,104 @@ use think\facade\Db;
  */
 class Administrators extends Admin
 {
-    private const LOGIN_SESSION_KEY = 'Administrators__Sd__';
-
     /**
-     * @param BackstageListsService $service
-     * @return mixed|string|\think\Collection|\think\response\Json
+     * @title("列表数据")
+     * @param MyService $service
+     * @param MyModel $model
+     * @param MyPage $page
+     * @return \think\response\Json|\think\response\View
      * @throws SdException
+     * @throws \ReflectionException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
      */
-    public function listData(BackstageListsService $service)
+    public function index(MyService $service, MyModel $model, MyPage $page)
     {
-        $model = $this->getModel()
-            ->join('administrators_role ar', 'ar.administrators_id = i.id')
-            ->join('role r', 'r.id = ar.role_id')
-            ->field('i.id,i.name,i.account,i.status, i.status status_sc,GROUP_CONCAT(r.role) role,i.lately_time,i.create_time')
-            ->group('i.id');
-
-        return $service->setModel($model)->setCustomSearch([$this, 'listSearchParamHandle'])->getListsData();
+        return parent::index_($service, $model, $page);
     }
 
+    /**
+     * @title("数据创建")
+     * @param MyService $service
+     * @param MyModel $model
+     * @param MyPage $page
+     * @return \think\response\Json|\think\response\View
+     * @throws SdException
+     * @throws \ReflectionException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
+     */
+    public function create(MyService $service, MyModel $model, MyPage $page)
+    {
+        return parent::create_($service, $model, $page, MyValidate::class);
+    }
 
     /**
-     * 修改密码
+     * @title("数据更新")
+     * @param MyService $service
+     * @param MyModel $model
+     * @param MyPage $page
      * @return \think\response\Json|\think\response\View
+     * @throws SdException
+     * @throws \ReflectionException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
+     */
+    public function update(MyService $service, MyModel $model, MyPage $page)
+    {
+        return parent::update_($service, $model, $page, MyValidate::class);
+    }
+
+    /**
+     * @title("数据删除")
+     * @param MyService $service
+     * @param MyModel $model
+     * @return \think\response\Json
+     * @throws SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
+     */
+    public function delete(MyService $service, MyModel $model): \think\response\Json
+    {
+        return parent::delete_($service, $model);
+    }
+
+    /**
+     * @title("状态更新")
+     * @param MyService $service
+     * @param MyModel $model
+     * @return \think\response\Json
+     * @throws SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
+     */
+    public function switchHandle(MyService $service, MyModel $model): \think\response\Json
+    {
+        return parent::switchHandle_($service, $model);
+    }
+
+    /**
+     * @title("修改密码")
+     * @param MyService $administrators
+     * @return \think\response\Json|\think\response\View
+     * @throws SdException
      * @throws \think\db\exception\DbException
      * @author chenlong<vip_chenlong@163.com>
-     * @date 2021/7/26
+     * @date 2021/11/5
      */
-    public function passwordUpdate()
+    public function passwordUpdate(MyService $administrators)
     {
         if ($this->request->isPost()) {
-            $data = $this->verify('password');
-            $table = admin_session('is_admin') ? 'administrators' : admin_session('table');
-            $password = Db::name($table)->where(['id' => admin_session('id')])->value('password');
-
-            if (!Sc::password()->verify($data['password_old'], $password)){
-                return ResponseJson::fail(lang('administrator.old password error'));
-            }
-            if (Sc::password()->verify($data['password'], $password)) {
-                return ResponseJson::fail(lang('administrator.password Unanimous'));
-            }
-
-            $result = Db::name($table)->where(['id' => admin_session('id')])->update([
-                'password' => Sc::password()->encryption($data['password']),
-                'update_time' => date('Y-m-d H:i:s')
-            ]);
-
+            // 密码数据基本验证
+            $data = data_filter($this->request->post());
+            $this->validate($data, MyValidate::class . '.password');
+            // 执行修改密码
+            $result = $administrators->changePassword($data['password'], $data['password_old']);
             return $result ? ResponseJson::success() : ResponseJson::fail(lang('fail'));
         }
 
-        return $this->fetch('password_edit');
+        return view('password_edit');
     }
 
-
-    protected function beforeWrite(array &$data)
-    {
-        $data = data_only($data, ['account', 'password', 'name', 'role_id', 'status', 'id']);
-        !empty($data['password']) and $data['password'] = Sc::password()->encryption($data['password']);
-    }
-
-    protected function afterWrite($id, array $data)
-    {
-        if (env('APP.DATA_AUTH')){
-            MyModel::dataAuthSet($id, $this->request->post());
-        }
-
-        $role_id = explode(',', $data['role_id']);
-        $administrators_role    = AdministratorsRole::where(['administrators_id' => $id])->select()->toArray();
-        $administrators_role_id = array_column($administrators_role, 'role_id');
-        $delete_role = array_diff($administrators_role_id, $role_id);
-        $add_role    = array_diff($role_id, $administrators_role_id);
-
-        $add_data = [];
-        foreach ($add_role as $value) {
-            $add_data[] = [
-                'administrators_id' => $id,
-                'role_id'           => $value,
-                'create_time'       => datetime(),
-                'update_time'       => datetime(),
-            ];
-        }
-        if ($add_data && !AdministratorsRole::insertAll($add_data)){
-            throw new SdException('administrators.failed to assign role');
-        }
-
-        AdministratorsRole::update(['delete_time' => 0], ['administrators_id' => $id]);
-        AdministratorsRole::update(['delete_time' => time()], ['role_id' => $delete_role, 'administrators_id' => $id]);
-    }
-
-    /**
-     * 判断登录
-     * @return mixed
-     */
-    public static function LoginCheck()
-    {
-        return session('?' . self::LOGIN_SESSION_KEY);
-    }
-
-    /**
-     * @param array $search
-     * @param BaseQuery $model
-     * @return mixed
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @author chenlong<vip_chenlong@163.com>
-     * @date 2021/6/23
-     */
-    public function listSearchParamHandle(array $search, BaseQuery $model)
-    {
-        if (isset($search['mode']) && $search['mode'] === 'all'){
-            $all_role = RoleModel::field('id,pid,role,administrators_id')->select()->toArray();
-            $mySubordinate = Sc::infinite($all_role)->handle(['administrators_id' => admin_session('id')], true);
-
-            $model->whereIn('r.id', array_column($mySubordinate, 'id'));
-        }else{
-            $model->where('r.administrators_id', admin_session('id'));
-        }
-
-        return ['mode'];
-    }
 }
 

@@ -15,17 +15,13 @@ use sdModule\layui\lists\PageData;
 
 class Log extends BasePage
 {
-    public function formData(string $scene, array $default_data = []): DefaultForm
-    {
-        // TODO: Implement formData() method.
-    }
-
     /**
      * 获取创建列表table的数据
-     * @return PageData
+     * @return array
+     * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): PageData
+    public function listPageData(): array
     {
         $table = PageData::create([
             Column::normal('请求方式', 'method'),
@@ -36,12 +32,20 @@ class Log extends BasePage
             Column::normal('创建时间', 'create_time'),
         ]);
 
-        $table->removeEvent(['update', 'delete']);
-        $table->removeBarEvent(['create', 'delete']);
-        return $table;
+        $table->removeEvent();
+        $table->removeBarEvent();
+
+        $search = $this->searchFormData();
+
+        return array_merge(compact('table', 'search'));
     }
 
-
+    /**
+     * @return DefaultForm
+     * @throws \ReflectionException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
     public function searchFormData():DefaultForm
     {
         $form_data = [

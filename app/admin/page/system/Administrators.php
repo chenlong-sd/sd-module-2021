@@ -7,6 +7,7 @@
 namespace app\admin\page\system;
 
 
+use app\admin\enum\AdministratorsEnumStatus;
 use app\admin\model\system\Administrators as AdministratorsM;
 use app\admin\model\system\DataAuth;
 use app\admin\model\system\Role;
@@ -22,10 +23,13 @@ class Administrators extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return PageData
+     * @return array
+     * @throws \ReflectionException
      * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/6
      */
-    public function getTablePageData(): PageData
+    public function listPageData(): array
     {
         $field_data = [
             Column::checkbox(),
@@ -36,7 +40,7 @@ class Administrators extends BasePage
             Column::normal('最近登录', 'lately_time'),
             Column::normal('错误日期', 'error_date'),
             Column::normal('角色', 'role'),
-            Column::normal('状态', 'status'),
+            Column::normal('状态', 'status_sc')->showSwitch('status', AdministratorsEnumStatus::getAllDescriptionMap()),
             Column::normal('创建时间', 'create_time'),
         ];
 
@@ -48,7 +52,10 @@ class Administrators extends BasePage
         $table->addBarEvent('all')
             ->setNormalBtn('全部','username', 'sm')
             ->setJs(EventHandle::addSearch(['mode' => 'all']));
-        return $table;
+
+        $search = $this->searchFormData();
+
+        return array_merge(parent::listPageData(), compact('table', 'search'));
     }
 
     /**
@@ -59,7 +66,7 @@ class Administrators extends BasePage
      * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function formData(string $scene, array $default_data = []): DefaultForm
+    public function formPageData(string $scene, array $default_data = []): DefaultForm
     {
         $form_data = [
             FormUnit::hidden('id'),
@@ -67,8 +74,8 @@ class Administrators extends BasePage
             FormUnit::text('account', lang('administrator.account')),
             FormUnit::password('password', lang('administrator.password')),
             FormUnit::password('password_confirm', lang('administrator.password confirm')),
-            FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => AdministratorsM::getSession('id')])->column('role', 'id')),
-            FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsM::getStatusSc())->defaultValue(AdministratorsM::STATUS_NORMAL),
+            FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => admin_session('id')])->column('role', 'id')),
+            FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsM::getStatusSc())->defaultValue(AdministratorsEnumStatus::AVAILABLE),
         ];
         if (env('APP.DATA_AUTH', false)){
             $default = DataAuth::where(['delete_time' => 0])->where(['administrators_id' => request()->get('id')])
@@ -80,9 +87,7 @@ class Administrators extends BasePage
             }
         }
 
-        if ($scene === 'edit' && $default_data){
-            $default_data = data_only($default_data, ['id', 'account', 'name', 'status', 'role_id']);
-        }
+        unset($default_data['password']);
 
         $form = DefaultForm::create($form_data)->setDefaultData($default_data);
         $form->setShortForm($this->shortInput());
@@ -122,8 +127,8 @@ class Administrators extends BasePage
                 FormUnit::text('name%%')->placeholder(lang('administrator.administrator')),
                 FormUnit::text('r.role%%')->placeholder(lang('administrator.role')),
                 FormUnit::select('i.status%%')->options([
-                    AdministratorsM::STATUS_NORMAL => lang('normal'),
-                    AdministratorsM::STATUS_FROZEN => lang('disable'),
+                    AdministratorsEnumStatus::AVAILABLE => lang('normal'),
+                    AdministratorsEnumStatus::DISABLE   => lang('disable'),
                 ])->placeholder(lang('administrator.status')),
                 FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             ),

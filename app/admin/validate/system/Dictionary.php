@@ -28,8 +28,8 @@ class Dictionary extends BaseValidate
     ];
 
     protected $scene = [
-        'add' => ['sign',  'name', 'status'],
-        'edit' => ['id', 'sign',  'name', 'status'],
+        'create' => ['sign',  'name', 'status'],
+        'update' => ['id', 'sign',  'name', 'status'],
         'value_add' => ['pid', 'dictionary_value', 'status'],
         'value_edit' => ['id', 'dictionary_value', 'status'],
     ];

@@ -93,7 +93,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($param[1] ?? [] as $item){ ?>
+                    <?php foreach ($param[\app\admin\enum\ApiEnumParamType::GET] ?? [] as $item){ ?>
                         <tr>
                             <td>
                                 <select name="param_type">
@@ -148,7 +148,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($param[2] ?? [] as $item){ ?>
+                    <?php foreach ($param[\app\admin\enum\ApiEnumParamType::POST] ?? [] as $item){ ?>
                         <tr>
                             <td>
                                 <select name="param_type">
@@ -203,7 +203,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($param[3] ?? [] as $item){ ?>
+                    <?php foreach ($param[\app\admin\enum\ApiEnumParamType::HEADER] ?? [] as $item){ ?>
                         <tr>
                             <td>
                                 <select name="param_type">

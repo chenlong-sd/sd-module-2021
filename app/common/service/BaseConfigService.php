@@ -62,18 +62,22 @@ class BaseConfigService
     }
 
     /**
-     * 获取DEBUG模式下的参数信息
-     * @param string $group
-     * @param string $key
-     * @param int $sort
+     * DEBUG模式下的显示参数信息
+     * @param string $group 所属组
+     * @param string $key   该表单的键
+     * @param int $sort     该表单的排序值
      * @return Dom|string
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/6/20
      */
-    public static function getDebugParamInfo(string $group,string $key, int $sort)
+    public static function getDebugParamInfo(string $group, string $key, int $sort)
     {
-        return env('APP_DEBUG') ? Dom::create('span')
-            ->addAttr('style', 'display:none;position: absolute;left: 0;top: 0;line-height: 35px;padding: 0 5px;background: rgba(0,0,0,.7);color: white;min-width: 100px;z-index: 9999;')
-            ->addClass('sc-key')->addContent("key:$group.$key,sort:$sort") : '';
+        if (env('APP_DEBUG')) {
+            return Dom::create('span')
+                ->addAttr('style', 'display:none;position: absolute;left: 0;top: 0;line-height: 35px;padding: 0 5px;background: rgba(0,0,0,.7);color: white;min-width: 100px;z-index: 9999;')
+                ->addClass('sc-key')->addContent("key:$group.$key,sort:$sort");
+        }
+
+        return '';
     }
 }

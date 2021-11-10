@@ -10,7 +10,7 @@
 namespace app\common\middleware\admin;
 
 
-use app\admin\controller\system\Administrators;
+use app\admin\service\system\AdministratorsService;
 use think\facade\Cookie;
 use think\Request;
 use think\Response;
@@ -38,7 +38,7 @@ class LoginMiddleware
     {
         $request = $this->requestAction($request);
         // TODO 路径加密 ---
-        if (!Administrators::LoginCheck() && !in_array($request->middleware('route_path'), self::EXCEPT_PATH)) {
+        if (!AdministratorsService::LoginCheck() && !in_array($request->middleware('route_path'), self::EXCEPT_PATH)) {
             $route = 'login';
             ($open_table = Cookie::get(self::USER_TYPE_KEY, '')) and $route .= "/$open_table";
             return redirect(admin_url($route));
@@ -63,8 +63,4 @@ class LoginMiddleware
         return $request;
     }
 
-    private function verifySecret()
-    {
-
-    }
 }

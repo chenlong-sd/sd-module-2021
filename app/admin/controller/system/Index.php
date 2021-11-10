@@ -12,6 +12,7 @@ namespace app\admin\controller\system;
 
 use app\admin\model\system\Administrators as AdministratorsModel;
 use app\admin\model\system\Route;
+use app\admin\service\system\AdministratorsService as AdministratorsService;
 use app\admin\validate\system\Administrators as AdministratorsValidate;
 use app\common\controller\Admin;
 use app\common\middleware\admin\PowerAuth;
@@ -27,40 +28,54 @@ use think\facade\Db;
  */
 class Index extends Admin
 {
-
-    public function exceptMiddleware()
+    /**
+     * 初始化配置
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
+     */
+    protected function initialize()
     {
-        return [PowerAuth::class];
+        parent::initialize();
+        $this->middleware = array_diff($this->middleware, [PowerAuth::class]);
     }
 
     /**
      * 登录
-     * @param AdministratorsModel $administrators
+     * @param AdministratorsService $administrators
      * @return \think\response\Json|\think\response\View
-     * @throws \Exception
+     * @throws SdException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
      */
-    public function login(AdministratorsModel $administrators)
+    public function login(AdministratorsService $administrators)
     {
         if($this->request->isPost()){
             $data = $this->request->post();
 
+            // 数据验证
             $this->validate($data, AdministratorsValidate::class . '.login');
 
-            return ResponseJson::mixin($administrators->login(data_only($data, ['account', 'password'])));
+            // 登录数据操作
+            $administrators->login(data_only($data, ['account', 'password']));
+
+            return ResponseJson::success();
         }
 
-        return $this->fetch('login1');
+        return view('login1');
     }
 
     /**
      * 开放登录
-     * @param AdministratorsModel $administrators
+     * @param AdministratorsService $administrators
      * @return \think\response\Json|\think\response\View
      * @throws SdException
-     * @author chenlong <vip_chenlong@163.com>
-     * @date 2021/6/10
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/5
      */
-    public function openLogin(AdministratorsModel $administrators)
+    public function openLogin(AdministratorsService $administrators)
     {
         if ($this->request->isPost()) {
             $table      = $this->request->param('name');
@@ -79,18 +94,16 @@ class Index extends Admin
             return ResponseJson::success();
         }
 
-        return $this->fetch('login');
+        return view('login');
     }
 
     /**
      * 框架主体
      * @param Route $route
      * @return \think\response\View
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws SdException
      */
-    public function main(Route $route)
+    public function main(Route $route): \think\response\View
     {
         return view('index_1', [
             'menu' => $route->getMenu(),
@@ -102,15 +115,19 @@ class Index extends Admin
      * 主页
      * @param Route $route
      * @return \think\response\View
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws SdException
      */
     public function home(Route $route): \think\response\View
     {
         $route_data = array_filter($route->getMenuRoute(), function ($v) {
             return ($v['pid'] != 0);
         });
+
+        $data = \app\admin\model\system\Administrators::alias('i')
+            ->join('role r', 'r.id = i.role_id', 'left')->select();
+
+        halt("左右滑动的页面");
+
         return view('', compact('route_data'));
     }
 
@@ -118,7 +135,7 @@ class Index extends Admin
      * @param string $table
      * @return \think\response\Json
      */
-    public function dataAuth(string $table = '')
+    public function dataAuth(string $table = ''): \think\response\Json
     {
         $data_auth = array_column(config('admin.data_auth'), null, 'table');
         if (empty($data_auth[$table])){

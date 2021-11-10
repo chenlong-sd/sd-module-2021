@@ -8,6 +8,7 @@
 
 namespace app\admin\model\system;
 
+use app\admin\enum\DictionaryEnumStatus;
 use app\common\BaseModel;
 use sdModule\layui\Layui;
 
@@ -43,39 +44,15 @@ class Dictionary extends BaseModel
 
     ];
 
-
-
-    /**
-     * 状态返回值处理
-     * @param bool $tag
-     * @return array
-     */
-    public static function getStatusSc($tag = true)
-    {
-        return $tag === true
-            ? [
-                '1' => Layui::tag()->blue('正常'),
-                '2' => Layui::tag()->cyan('停用'),
-
-            ]
-            : [
-                '1' => '正常',
-                '2' => '停用',
-
-            ];
-    }
-
-    
     /**
      * 展示处理
      * @param $value
      * @return string
-     */   
-    public function getStatusAttr($value)
+     * @throws \Exception
+     */
+    public function getStatusAttr($value): string
     {
-        $field = self::getStatusSc();
-        
-        return $field[$value] ?? $value;
+        return DictionaryEnumStatus::create($value)->getDescription();
     }
 
 

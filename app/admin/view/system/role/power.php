@@ -26,7 +26,7 @@
 
         let load = custom.loading('数据渲染中...');
         $.ajax({
-            url: '{:url("tree")}?role_id={$Request.get.role_id ?: 0}'
+            url: '{:url("getPowerTreeData")}?role_id={$Request.get.role_id ?: 0}'
             , success:function (res) {
                 if (res.code === 200) {
                     tree.render({
@@ -54,7 +54,7 @@
                     layer.close(index);
                     let load = custom.loading();
                     $.ajax({
-                        url: '{:url("set")}'
+                        url: '{:url("")}'
                         , type: 'post'
                         ,headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

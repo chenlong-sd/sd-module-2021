@@ -39,7 +39,7 @@ class Route extends BaseValidate
     ];
     
     protected $scene = [
-        'add'  => ['title', 'type', 'weigh', ],
-        'edit' => ['title', 'type', 'weigh', 'id',],
+        'create' => ['title', 'type', 'weigh', ],
+        'update' => ['title', 'type', 'weigh', 'id',],
     ];
 }

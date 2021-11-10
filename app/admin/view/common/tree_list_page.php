@@ -1,7 +1,8 @@
 {extend name="frame"}
-<?php /** @var \sdModule\layui\tablePage\ListsPage $table */ ?>
+<?php /** @var \sdModule\layui\lists\PageData $table */ ?>
 <?php /** @var  \sdModule\layui\form\Form $search */?>
 {block name="head"}
+<?php $table = $table->render(); ?>
 <style>
     .layui-form-label {
         padding: 5px 15px;
@@ -13,6 +14,7 @@
     .layui-form-select dl dd, .layui-form-select dl dt {
         line-height: 30px;
     }
+    <?= $table->getCss() ?>
 </style>
 
 {/block}
@@ -60,7 +62,7 @@
             treeGrid = layui.treetable,table = layui.table;// 很重要
         // 代码地址 https://gitee.com/whvse/treetable-lay
         // 演示地址 https://whvse.gitee.io/treetable-lay/index.html
-        function tableRender(){
+        window.tableRender = () => {
             let table_render_data = {
                 elem: '#sc'
                 ,toolbar: '#tableHead'
@@ -71,11 +73,19 @@
                 ,treePidName:'pid'//树形父id字段名称
                 ,treeShowName:'title'//以树形式显示的字段
                 ,treeDefaultClose:true
-                ,cols: [<?= $table->getFiledConfig() ?>],
+                ,cols: [<?= $table->getColumnConfigure() ?>],
                 done:function (res) {
                     custom.enlarge(layer, $, '.layer-photos-demo');
-                    dropdownMenu(res.data);
                     <?= $table->getDoneJs() ?>
+                    // 下拉菜单
+                    <?php foreach ($table->getRowDropDownMenu() as $row_menu_class => $row_menu_data){ ?>
+                    rowDropdownMenu(res.data, <?= json_encode($row_menu_data, JSON_UNESCAPED_UNICODE) ?>, '<?= $row_menu_class ?>');
+                    <?php }?>
+
+                    // 头部的下拉菜单
+                    <?php foreach ($table->getHeaderDropDownMenu() as $header_menu_class => $header_menu_data){ ?>
+                    headerDropdownMenu(<?= json_encode($header_menu_data, JSON_UNESCAPED_UNICODE) ?>, '<?= $header_menu_class ?>');
+                    <?php }?>
                 }
             };
             /** @var {object} */
@@ -117,7 +127,6 @@
         /**
          * tool 事件
          */
-        <?php if ($table->getEventMode() === $table::BUTTON_MODE){ ?>
         table.on('tool(sc)', function (obj) {
             try {
                 table_page.tool_event[obj.event](obj.data);
@@ -125,7 +134,6 @@
                 notice.error('<?= lang("Operation is undefined") ?>');
             }
         });
-        <?php } ?>
 
         form.on('submit(demo1)', function (obj) {
             var keyword = obj.field.title;
@@ -152,70 +160,63 @@
         })
 
 
-    /**
-     * 菜单
-     * @param data
-     */
-    function dropdownMenu(data){
-        let  line_data = {},d = {};
-        layui.dropdown.render({
-            elem: '.menu-down-sc'
-            ,data: <?= $table->getMenuModeEventData() ?>
-            ,click: function(data, othis){
-                if (othis.hasClass('layui-disabled')){
-                    return false;
-                }
-                try {
-                    table_page.tool_event[data.id](line_data);
-                }catch (e) {
-                    notice.error('<?= lang("Operation is undefined") ?>');
-                }
-            }
-            ,ready: function(elemPanel, elem){
-                line_data = d = data[$('.menu-down-sc').index(elem)];
-                for (let i = 0; i < this.data.length; i++){
-                    if (!this.data[i].hasOwnProperty('where')){
-                        continue;
+        /**
+         * 行事件菜单
+         * @param data 数据
+         * @param menu_data 组件菜单的数据
+         * @param menu_class 渲染的元素
+         */
+        function rowDropdownMenu(data, menu_data, menu_class){
+            let  line_data = {},d = {};
+            layui.dropdown.render({
+                elem: `.${menu_class}`
+                ,data: menu_data
+                ,click: function(data, othis){
+                    if (othis.hasClass('layui-disabled')){
+                        return false;
                     }
-                    if (this.data[i].where && !eval(this.data[i].where)) {
-                        elemPanel.find('li').eq(i).addClass('layui-disabled');
+                    try {
+                        table_page.tool_event[data.id](line_data);
+                    }catch (e) {
+                        notice.error('<?= lang("Operation is undefined") ?>');
                     }
                 }
-            }
-        });
-    }
-
-    /**
-     * 删除数据
-     * @param id
-     */
-    function del(id) {
-        layer.confirm('<?=lang("confirm delete")?>？', {
-            icon: 3,
-            title: '<?=lang("warning")?>',
-            btn: ['<?=lang("confirm")?>', '<?=lang("cancel")?>']
-        }, function (index) {
-            let load = custom.loading();
-            $.ajax({
-                url: '<?=url("del")?>'
-                , type: 'post'
-                , data: {id: id}
-                , success: function (res) {
-                    layer.close(load);
-                    if (res.code === 200) {
-                        layNotice.success('<?=lang("success")?>');
-                        tableRender();
-                    } else {
-                        layNotice.warning(res.msg);
+                ,ready: function(elemPanel, elem){
+                    line_data = d = data[$(elem).parents('tr').data('index')];
+                    for (let i = 0; i < this.data.length; i++){
+                        if (!this.data[i].hasOwnProperty('where')){
+                            continue;
+                        }
+                        if (this.data[i].where && !eval(this.data[i].where)) {
+                            elemPanel.find('li').eq(i).addClass('layui-disabled');
+                        }
                     }
-                }
-                , error: function (err) {
-                    console.log(err);
                 }
             });
-        })
-    }
+        }
 
+        /**
+         * 头部事件下拉菜单
+         * @param menu_data
+         * @param menu_class
+         */
+        function headerDropdownMenu(menu_data, menu_class) {
+            layui.dropdown.render({
+                elem: `.${menu_class}`
+                ,data: menu_data
+                ,click: function(data, othis){
+                    console.log(data.id)
+                    if (othis.hasClass('layui-disabled')){
+                        return false;
+                    }
+                    try {
+                        table_page.toolbar_event[data.id]();
+                    }catch (e) {
+                        notice.error('<?= lang("Operation is undefined" ) ?>');
+                    }
+                }
+            });
+        }
 
     <?= $search->getUnitJs();?>
     <?= $table->getJs();?>

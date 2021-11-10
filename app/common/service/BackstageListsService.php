@@ -15,6 +15,7 @@ use think\facade\Log;
 use think\helper\Arr;
 use think\helper\Str;
 use think\Paginator;
+use think\response\Json;
 
 class BackstageListsService
 {
@@ -216,10 +217,10 @@ class BackstageListsService
     /**
      * 获取列表数据
      * @param bool $viewSql 是否查看sql
-     * @return false|mixed|\think\response\Json
+     * @return Json
      * @throws SdException
      */
-    public function getListsData(bool $viewSql = false)
+    public function getListsData(bool $viewSql = false): Json
     {
         try {
             $this->getNewModel();
@@ -303,7 +304,7 @@ class BackstageListsService
      * 返回数据处理
      * @param $data
      * @param array $totalRow
-     * @return false|mixed|\think\response\Json
+     * @return Json
      */
     private function returnHandle($data, array $totalRow = [])
     {

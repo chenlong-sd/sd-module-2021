@@ -3,7 +3,7 @@
 
 namespace app\common\middleware;
 
-use app\admin\controller\system\Administrators;
+use app\admin\service\system\AdministratorsService;
 use app\common\ResponseJson;
 use think\Response;
 use think\Request;
@@ -49,7 +49,7 @@ class MaintainMiddleware
      */
     private function adminApp(Request $request, \Closure $closure)
     {
-        if (!Administrators::LoginCheck() || admin_session('maintain') === true) {
+        if (!AdministratorsService::LoginCheck() || admin_session('maintain') === true) {
             return $closure($request);
         }
 

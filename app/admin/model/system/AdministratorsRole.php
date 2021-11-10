@@ -9,6 +9,7 @@
 namespace app\admin\model\system;
 
 use app\common\BaseModel;
+use app\common\SdException;
 
 class AdministratorsRole extends BaseModel
 {
@@ -22,5 +23,6 @@ class AdministratorsRole extends BaseModel
         'delete_time' => 'int',
 
     ];
+
 
 }

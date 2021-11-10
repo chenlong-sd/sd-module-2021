@@ -20,11 +20,12 @@ use app\common\BaseModel;
  * @property $key_id
  * @property $key_name
  * @property $form_type
- * @property $options
- * @property $key_value
  * @property $placeholder
  * @property $short_tip
+ * @property $sort
  * @property $required
+ * @property $options
+ * @property $key_value
  * @property $create_time
  * @property $update_time
  * @property $delete_time

@@ -8,12 +8,25 @@
 
 namespace app\admin\model\system;
 
+use app\admin\enum\ApiEnumStatus;
 use app\common\BaseModel;
 use sdModule\layui\Layui;
 
 
 /**
  * Class Api
+ * @property $id
+ * @property $api_module_id
+ * @property $api_name
+ * @property $method
+ * @property $path
+ * @property $token
+ * @property $describe
+ * @property $response
+ * @property $status
+ * @property $create_time
+ * @property $update_time
+ * @property $delete_time
  * @package app\admin\controller\Api
  * @author chenlong <vip_chenlong@163.com>
  */
@@ -37,64 +50,14 @@ class Api extends BaseModel
     ];
 
     /**
-     * 请求参数类型返回值处理
-     * @param bool $tag
-     * @return array
-     */
-    public static function getMethodSc($tag = true)
-    {
-        return $tag === true
-            ? [
-                'get' => Layui::tag()->orange('GET'),
-                'post' => Layui::tag()->red('POST'),
-
-            ]
-            : [
-                'get' => 'GET',
-                'post' => 'POST',
-            ];
-    }
-
-    /**
-     * 请求参数类型返回值处理
-     * @param bool $tag
-     * @return array
-     */
-    public static function getStatusSc($tag = true)
-    {
-        return $tag === true
-            ? [
-                '1' => Layui::tag()->red('未对接'),
-                '2' => Layui::tag()->green('已对接'),
-            ]
-            : [
-                '1' => '未对接',
-                '2' => '已对接',
-            ];
-    }
-
-    /**
      * 展示处理
      * @param $value
      * @return string
+     * @throws \Exception
      */
-    public function getMethodAttr($value)
+    public function getStatusAttr($value): string
     {
-        $field = self::getMethodSc();
-
-        return $field[$value] ?? $value;
-    }
-
-    /**
-     * 展示处理
-     * @param $value
-     * @return string
-     */
-    public function getStatusAttr($value)
-    {
-        $field = self::getStatusSc();
-
-        return $field[$value] ?? $value;
+        return ApiEnumStatus::create($value)->getDescription();
     }
 
 

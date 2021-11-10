@@ -15,6 +15,17 @@ use app\common\SdException;
 
 /**
  * Class Role
+ * @property $id
+ * @property $role
+ * @property $pid
+ * @property $describe
+ * @property $administrators_id
+ * @property $assign_table
+ * @property $open_table
+ * @property $open_id
+ * @property $create_time
+ * @property $update_time
+ * @property $delete_time
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */

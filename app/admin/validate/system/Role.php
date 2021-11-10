@@ -33,7 +33,7 @@ class Role extends BaseValidate
     ];
     
     protected $scene = [
-        'add'  => ['role', 'describe',],
-        'edit' => ['role', 'describe', 'id',],
+        'create'  => ['role', 'describe',],
+        'update'  => ['role', 'describe', 'id',],
     ];
 }

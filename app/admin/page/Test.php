@@ -31,7 +31,7 @@ class Test extends BasePage
      * @return PageData
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): PageData
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -63,7 +63,7 @@ class Test extends BasePage
     * @throws \ReflectionException
     * @throws \app\common\SdException
     */
-    public function formData(string $scene, array $default_data = []): Form
+    public function formPageData(string $scene, array $default_data = []): Form
     {
         $unit = [
             FormUnit::hidden('id'),
@@ -78,7 +78,7 @@ class Test extends BasePage
 //                )
 //            ),
             FormUnit::images('show_images', '展示图'),
-            FormUnit::text('intro', '简介'),
+            FormUnit::upload('intro', '简介')->uploadType('all'),
             FormUnit::radio('status', '状态')->options(MyModel::getStatusSc(false)),
             FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
             FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),

@@ -100,7 +100,7 @@ if (!function_exists('admin_session')) {
      */
     function admin_session($key = null, $default = null)
     {
-        return \app\admin\model\system\Administrators::getSession($key) ?? $default;
+        return \app\admin\service\system\AdministratorsService::getSession($key) ?? $default;
     }
 }
 

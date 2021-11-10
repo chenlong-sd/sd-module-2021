@@ -26,7 +26,7 @@ class Api extends BaseValidate
     ];
 
     protected $scene = [
-        'add' => ['api_name', 'path'],
-        'edit' => ['id', 'api_name', 'path', 'response'],
+        'create' => ['api_name', 'path'],
+        'update' => ['id', 'api_name', 'path', 'response'],
     ];
 }

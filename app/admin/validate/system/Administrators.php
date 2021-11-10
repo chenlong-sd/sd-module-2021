@@ -47,12 +47,12 @@ class Administrators extends BaseValidate
 
     protected $scene = [
         'login' => ['account', 'password', 'captcha'],
-        'add' => ['account', 'password', 'password_confirm', 'name', 'role_id', 'status'],
-        'edit' => ['account', 'password', 'password_confirm', 'name', 'role_id', 'status', 'id'],
+        'create' => ['account', 'password', 'password_confirm', 'name', 'role_id', 'status'],
+        'update' => ['account', 'password', 'password_confirm', 'name', 'role_id', 'status', 'id'],
         'password' => ['password_old', 'password', 'password_confirm']
     ];
 
-    public function sceneEdit()
+    public function sceneUpdate()
     {
         return $this->only(['account', 'password', 'password_confirm.confirm', 'name', 'role_id', 'status', 'id'])
             ->remove('password', 'require');

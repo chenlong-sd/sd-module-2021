@@ -24,7 +24,7 @@ class ApiModule extends BaseValidate
     ];
 
     protected $scene = [
-        'add' => ['item_name', 'describe'],
-        'edit' => ['id', 'item_name', 'describe'],
+        'create' => ['item_name', 'describe'],
+        'update' => ['id', 'item_name', 'describe'],
     ];
 }

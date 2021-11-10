@@ -172,7 +172,7 @@
                         if (res.code === 200) {
                             parent.layer.closeAll();
                             window.parent.layNotice.success('{:lang("success")}');
-                            window.parent.tables();
+                            window.parent.tableRender();
                         } else {
                             layNotice.warning(res.msg);
                         }

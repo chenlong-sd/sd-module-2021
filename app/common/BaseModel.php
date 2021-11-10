@@ -23,11 +23,17 @@ use think\model\concern\SoftDelete;
  * @method Query primevalJoin($join, string $condition = null, string $type = 'INNER', array $bind = [])
  * @package app\common
  */
-class BaseModel extends Model
+abstract class BaseModel extends Model
 {
     use Lang, SoftDelete;
 
     protected $defaultSoftDelete = 0;
+
+    protected static function onBeforeWrite(Model $model)
+    {
+        $model[$model->getPk()] or $model->setAttr('create_time', datetime());
+        $model->setAttr('update_time', datetime());
+    }
 
     /**
      * 数据权限的条件数据

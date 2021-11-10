@@ -9,20 +9,45 @@ namespace app\admin\page\system;
 
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
 
 class Route extends BasePage
 {
-    public $list_template = 'lists';
+    public $list_template = 'common/tree_list_page';
 
     /**
      * 获取创建列表table的数据
-     * @return PageData
+     * @return array
+     * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): PageData
+    public function listPageData(): array
     {
-        return PageData::create([]);
+        $table = PageData::create([
+            Column::checkbox(),
+            Column::normal('ID', 'id')->moreConfiguration('width', 100),
+            Column::normal('标题', 'title'),
+            Column::normal('类型', 'type'),
+            Column::normal('路由地址', 'route'),
+            Column::normal('排序权重', 'weigh'),
+        ]);
+
+        $table->setHandleAttr([
+            'width' => 150,
+        ]);
+        $table->setConfig([
+            'treeColIndex' => 2
+        ]);
+
+        $table->removeBarEvent(['delete']);
+
+        $table->addEvent('delete')->setDangerBtn('删除', 'delete', 'xs')
+            ->setJs(EventHandle::ajax(url('delete'), '节点删除会同时删除对应的所有子节点，确认删除吗？')
+                ->setConfig(['icon' => 3])->successCallback('tableRender();'));
+
+        return array_merge(parent::listPageData(), compact('table'));
     }
 
     /**
@@ -31,7 +56,7 @@ class Route extends BasePage
      * @param array $default_data
      * @return DefaultForm
      */
-    public function formData(string $scene, array $default_data = []): DefaultForm
+    public function formPageData(string $scene, array $default_data = []): DefaultForm
     {
         return DefaultForm::create([]);
     }

@@ -7,7 +7,7 @@
 namespace app\common;
 
 use app\common\traits\Lang;
-use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\form\Form;
 use sdModule\layui\lists\PageData;
 
 /**
@@ -30,29 +30,30 @@ abstract class BasePage
 
 
     /**
-     * 获取创建列表table的数据
-     * @return PageData
+     * @return array
+     * @throws SdException
+     * @throws \ReflectionException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/6
      */
-    abstract public function getTablePageData():PageData;
+    public function listPageData(): array
+    {
+        return [
+            'table'  => PageData::create([]),
+            'search' => Form::create([])->setSubmitHtml()->complete(),
+        ];
+    }
 
     /**
      * 生成表单的数据
      * @param string $scene 场景值
      * @param array $default_data 默认值
-     * @return DefaultForm
-     */
-    abstract public function formData(string $scene, array $default_data = []): DefaultForm;
-
-    /**
-     * 创建搜索表单的数据
-     * @return DefaultForm
+     * @return Form
      * @throws \ReflectionException
-     * @author chenlong <vip_chenlong@163.com>
-     * @date 2021/6/2
      */
-    public function searchFormData(): DefaultForm
+    public function formPageData(string $scene, array $default_data = []): Form
     {
-        return DefaultForm::create([])->setSubmitHtml()->complete();
+        return Form::create([])->complete();
     }
 
 }

@@ -8,6 +8,7 @@
 
 namespace app\admin\model\system;
 
+use app\admin\enum\LogEnumMethod;
 use app\common\BaseModel;
 use sdModule\layui\Layui;
 
@@ -18,7 +19,6 @@ use sdModule\layui\Layui;
  */
 class Log extends BaseModel
 {
-
     protected $schema = [
         'id' => 'int',
         'method' => 'tinyint',
@@ -31,34 +31,14 @@ class Log extends BaseModel
         'delete_time' => 'int',
     ];
 
-
-    /**
-     * 分类值处理
-     * @param bool $tag
-     * @return array
-     */
-    public static function getMethodSc($tag = true)
-    {
-        return $tag === true
-            ? [
-                '1' => Layui::tag()->orange('GET'),
-                '2' => Layui::tag()->green('POST'),
-            ]
-            : [
-                '1' => 'GET',
-                '2' => 'POST',
-            ];
-    }
-
     /**
      * 分类值展示处理
      * @param $value
      * @return string
-     */   
-    public function getMethodAttr($value)
+     * @throws \Exception
+     */
+    public function getMethodAttr($value): string
     {
-        $field = self::getMethodSc();
-        
-        return $field[$value] ?? $value;
+        return LogEnumMethod::create($value)->getDescription();
     }
 }

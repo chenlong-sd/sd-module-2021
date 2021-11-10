@@ -9,95 +9,114 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\system\Role as RoleModel;
-use app\common\BaseQuery;
-use app\common\service\BackstageListsService;
-use sdModule\common\Sc;
-use think\facade\Config;
+use app\admin\page\system\Role as RolePage;
+use app\admin\service\system\RoleService;
+use app\common\controller\Admin;
+use app\common\ResponseJson;
+use app\common\SdException;
+use ReflectionException;
+use think\response\Json;
+use think\response\View;
 
 /**
  * Class Role
  * @package app\admin\controller\system
  * @author chenlong <vip_chenlong@163.com>
  */
-class Role extends \app\common\controller\Admin
+class Role extends Admin
 {
-
     /**
-     * @return array|\Closure|mixed|string|\think\Collection|\think\response\Json
-     * @throws \app\common\SdException
-     */
-    public function listData(BackstageListsService $service)
-    {
-        $model = RoleModel::join('administrators', 'i.administrators_id = administrators.id', 'left')
-            ->join('role ip', 'i.pid = ip.id', 'left')
-            ->field('i.assign_table,i.id,i.id role_id,i.role,i.pid,administrators.name administrators_id,i.create_time,ip.role parent_role');
-
-        $open_table = Config::get('admin.open_login_table', []);
-        return $service->setModel($model)->setCustomSearch([$this, 'listSearchParamHandle'])
-            ->setEach(function ($v) use ($open_table){
-                $v->assign_table = $v->assign_table ? ($open_table[$v->assign_table]['name'] ?? '未知') : '系统账号';
-            })->getListsData();
-    }
-
-    /**
-     * @param array $data
-     * @return false|void
-     * @author chenlong <vip_chenlong@163.com>
-     * @date 2021/6/10
-     */
-    protected function beforeWrite(array &$data)
-    {
-        if (!empty($data['id'])) return false;
-
-        if (admin_session('is_admin')) {
-            $data['administrators_id'] = admin_session('id');
-        }else{
-            $data['open_table'] = admin_session('table');
-            $data['open_id']    = admin_session('id');
-        }
-        $data['pid'] = admin_session('role_id', 0);
-    }
-
-
-    protected function afterWrite($id, $data)
-    {
-        if (env('APP.DATA_AUTH')){
-            RoleModel::dataAuthSet($id, $this->request->post());
-        }
-    }
-
-    /**
-     * @param array $search
-     * @param BaseQuery $model
-     * @return string[]
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @title('所有角色列表')
+     * @param RoleService $service
+     * @param RoleModel $model
+     * @param RolePage $page
+     * @return Json|View
+     * @throws ReflectionException
+     * @throws SdException
      * @author chenlong<vip_chenlong@163.com>
-     * @date 2021/6/23
+     * @date 2021/11/8
      */
-    public function listSearchParamHandle(array $search, BaseQuery $model): array
+    public function index(RoleService $service, RoleModel $model, RolePage $page)
     {
-        if (isset($search['mode']) && $search['mode'] === 'all'){
-            if (admin_session('is_admin')) {
-                $all_role = RoleModel::field('id,pid,role,administrators_id')->select()->toArray();
-            }else{
-                $all_role = RoleModel::field('id,pid,role,open_id administrators_id')
-                    ->where('open_table', admin_session('table'))->select()->toArray();
-            }
-            $mySubordinate = Sc::infinite($all_role)->handle(['administrators_id' => admin_session('id')], true);
+        return parent::index_($service, $model, $page);
+    }
 
-            $model->whereIn('i.id', array_column($mySubordinate, 'id'));
-        }else{
-            if (admin_session('is_admin')) {
-                $model->where('i.administrators_id', admin_session('id'));
-            } else {
-                $model->where([
-                    'i.open_table' => admin_session('table'),
-                    'i.open_id'    => admin_session('id')
-                ]);
-            }
+    /**
+     * @title("新增角色")
+     * @param RoleService $service
+     * @param RoleModel $model
+     * @param RolePage $page
+     * @return Json|View
+     * @throws ReflectionException
+     * @throws SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/8
+     */
+    public function create(RoleService $service, RoleModel $model, RolePage $page)
+    {
+        return parent::create_($service, $model, $page, \app\admin\validate\system\Role::class);
+    }
+
+    /**
+     * @title('修改角色')
+     * @param RoleService $service
+     * @param RoleModel $model
+     * @param RolePage $page
+     * @return Json|View
+     * @throws ReflectionException
+     * @throws SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/8
+     */
+    public function update(RoleService $service, RoleModel $model, RolePage $page)
+    {
+        return parent::update_($service, $model, $page, \app\admin\validate\system\Role::class);
+    }
+
+    /**
+     * @title('删除角色')
+     * @param RoleService $service
+     * @param RoleModel $model
+     * @return Json
+     * @throws SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function delete(RoleService $service, RoleModel $model): Json
+    {
+        return parent::delete_($service, $model);
+    }
+
+    /**
+     * @title('权限设置')
+     * @param RoleService $service
+     * @return Json|View
+     * @throws SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function powerSet(RoleService $service)
+    {
+        if ($this->request->isPost()) {
+
+            $service->powerSet($this->request->post('role_id'), $this->request->post('set', []));
+
+            return ResponseJson::success();
         }
-        return ['mode'];
+
+        return \view('power');
+    }
+
+    /**
+     * 获取角色权限数据
+     * @param RoleService $service
+     * @param int $role_id
+     * @return Json
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function getPowerTreeData(RoleService $service, int $role_id = 0): Json
+    {
+        return ResponseJson::success($service->powerTreeData($role_id));
     }
 }

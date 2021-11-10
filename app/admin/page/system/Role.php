@@ -20,10 +20,11 @@ class Role extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return PageData
+     * @return array
+     * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): PageData
+    public function listPageData(): array
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -45,9 +46,9 @@ class Role extends BasePage
             ->setJs(EventHandle::addSearch(['mode' => 'all']));
 
         $table->addEvent('power')->setNormalBtn('权限设置', 'auz')
-            ->setJs(EventHandle::openPage([url('system.Power/power'), 'role_id'], '权限设置')->popUps());
+            ->setJs(EventHandle::openPage([url('powerSet'), 'role_id'], '权限设置')->popUps());
 
-        return $table;
+        return ['table' => $table, 'search' => $this->searchFormData()];
     }
 
     /**
@@ -56,9 +57,8 @@ class Role extends BasePage
      * @param array $default_data
      * @return DefaultForm
      * @throws \ReflectionException
-     * @throws \app\common\SdException
      */
-    public function formData(string $scene, array $default_data = []): DefaultForm
+    public function formPageData(string $scene, array $default_data = []): DefaultForm
     {
         $form_data = [
             FormUnit::hidden('id'),
@@ -92,8 +92,10 @@ class Role extends BasePage
     }
 
     /**
-     * @inheritDoc
-     * @return string
+     * @return DefaultForm
+     * @throws \ReflectionException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
      */
     public function searchFormData():DefaultForm
     {

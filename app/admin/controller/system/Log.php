@@ -8,29 +8,33 @@
 
 namespace app\admin\controller\system;
 
-use app\common\service\BackstageListsService;
+use app\admin\model\system\Log as LogModel;
+use app\admin\page\system\Log as LogPage;
+use app\admin\service\system\LogService;
+use app\common\controller\Admin;
 
 /**
  * Class Log
  * @package app\admin\controller\system
  * @author chenlong <vip_chenlong@163.com>
  */
-class Log extends \app\common\controller\Admin
+class Log extends Admin
 {
-
     /**
-     * 列表数据接口
-     * @param BackstageListsService $service
-     * @return array|\Closure|mixed|string|\think\Collection|\think\response\Json
+     * @title('日志列表')
+     * @param LogService $service
+     * @param LogModel $model
+     * @param LogPage $page
+     * @return \think\response\Json|\think\response\View
+     * @throws \ReflectionException
      * @throws \app\common\SdException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
      */
-    public function listData(BackstageListsService $service)
+    public function index(LogService $service, LogModel $model, LogPage $page)
     {
-        $model = \app\admin\model\system\Log::join('route', 'i.route_id = route.id ', 'left')
-            ->join('administrators', 'i.administrators_id = administrators.id ', 'left')
-            ->field('i.id,i.method,route.title route_title,route.id route_id,administrators.name administrators_name,i.param,i.route,i.create_time');
-
-        return $service->setModel($model)->getListsData();
+        return parent::index_($service, $model, $page);
     }
-   
+
+
 }

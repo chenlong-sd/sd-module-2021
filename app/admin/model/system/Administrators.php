@@ -9,31 +9,32 @@
 
 namespace app\admin\model\system;
 
+use app\admin\enum\AdministratorsEnumStatus;
 use app\common\BaseModel;
-use app\common\middleware\admin\LoginMiddleware;
+use app\common\Enum;
 use app\common\SdException;
-use app\common\middleware\admin\SinglePoint;
-use sdModule\common\Sc;
 use sdModule\layui\Layui;
-use think\facade\Cookie;
-use think\facade\Db;
-use think\facade\Env;
-use think\helper\Str;
 
 /**
  * Class Administrators
+ * @property $id
+ * @property $name
+ * @property $account
+ * @property $password
+ * @property $error_number
+ * @property $lately_time
+ * @property $error_date
+ * @property $role_id
+ * @property $status
+ * @property $create_id
+ * @property $create_time
+ * @property $update_time
+ * @property $delete_time
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */
 class Administrators extends BaseModel
 {
-
-    protected $defaultSoftDelete = 0;
-
-    private const LOGIN_SESSION_KEY = 'Administrators__Sd__';
-
-    const STATUS_NORMAL = 1;    // 正常
-    const STATUS_FROZEN = 2;    // 冻结
 
     protected $schema = [
         'id' => 'int',
@@ -43,7 +44,7 @@ class Administrators extends BaseModel
         'error_number' => 'tinyint',
         'lately_time' => 'datetime',
         'error_date' => 'date',
-        'role_id' => 'int',
+        'role_id' => 'varchar',
         'status' => 'tinyint',
         'create_id' => 'int',
         'create_time' => 'datetime',
@@ -51,140 +52,16 @@ class Administrators extends BaseModel
         'delete_time' => 'int',
     ];
 
-    /**
-     * @var bool 维护模式
-     */
-    private $maintain = false;
 
     /**
      * 分类值展示处理
      * @param $value
      * @return string
+     * @throws \Exception
      */
-    public function getStatusAttr($value)
+    public function getStatusAttr($value): string
     {
-        $field = [
-            self::STATUS_NORMAL => Layui::tag()->black('normal'),
-            self::STATUS_FROZEN => Layui::tag()->red('disable'),
-        ];
-
-        return $field[$value] ?? $value;
-    }
-
-    /**
-     * 获取状态信息
-     * @return array
-     */
-    public static function getStatusSc()
-    {
-        return [
-            self::STATUS_NORMAL => lang('normal'),
-            self::STATUS_FROZEN => lang('disable'),
-        ];
-    }
-
-    /**
-     * 设置管理session员信息
-     * @param $data
-     * @return mixed
-     */
-    private static function setSession($data)
-    {
-        return session(self::LOGIN_SESSION_KEY, $data);
-    }
-
-    /**
-     * 获取管理员session信息
-     * @param null $key 指定键值
-     * @return mixed
-     */
-    public static function getSession($key = null)
-    {
-        return $key === null
-            ? session(self::LOGIN_SESSION_KEY)
-            : session(self::LOGIN_SESSION_KEY . '.' . $key);
-    }
-
-    /**
-     * 登录
-     * @param $data
-     * @return bool
-     * @throws SdException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function login($data)
-    {
-        if (Env::get('MAINTAIN')) {
-            $data = $this->maintainLoginDataHandle($data);
-        }
-
-        $administrators = $this->where(['account' => $data['account']])->allowEmpty(true)->find();
-
-        if ($administrators->isEmpty()) {
-            throw new SdException('administrator.password error');
-        }
-
-        if ($administrators['error_number'] >= config('admin.max_error_password_number')
-            && $administrators['error_date'] === date('Y-m-d')) {
-            throw new SdException('administrator.password error max');
-        }
-
-        if (!Sc::password()->verify($data['password'], $administrators['password'])) {
-            $this->passwordError($administrators);
-            throw new SdException('administrator.password error');
-        }
-
-        if($administrators->getData('status') === self::STATUS_FROZEN){
-            throw new SdException('administrator.account disable');
-        }
-
-        if ($this->update(['error_number' => 0, 'lately_time' => date('Y-m-d H:i:s')],
-            ['id' => $administrators['id']])) {
-
-            $administrators->set('maintain', $this->maintain);
-            $administrators->set('is_admin', true);// 是否是管理员账号登录
-            $administrators->set('route', Power::where(['role_id' => explode(',', $administrators['role_id'])])->column('route_id'));
-
-            self::setSession(data_only($administrators->toArray(),
-                ['id', 'name', 'account', 'maintain', 'role_id', 'route', 'is_admin']));
-            Route::cacheAllRoute();
-            SinglePoint::setSinglePoint();
-
-            return true;
-        }
-
-        throw new SdException('administrator.login fail');
-    }
-
-    /**
-     * 维护时的登录处理
-     * @param $data
-     * @return mixed
-     * @throws SdException
-     */
-    private function maintainLoginDataHandle($data)
-    {
-        $account  = config('admin.maintain_admin_rule.account', '/__mt$/');
-        $password = config('admin.maintain_admin_rule.password', '/^__mt/');
-        if (!preg_match($account, $data['account']) || !preg_match($password, $data['password'])){
-            throw new SdException('administrator.maintain');
-        }
-
-        $this->maintain   = true;
-        $data['account']  = preg_replace($account, '', $data['account']);
-        $data['password'] = preg_replace($password, '', $data['password']);
-        return $data;
-    }
-
-    /**
-     * @param $administrators
-     */
-    private function passwordError($administrators)
-    {
-        $this->where(['id' => $administrators['id']])->inc('error_number')
-            ->update(['error_date' => date('Y-m-d')]);
+        return AdministratorsEnumStatus::create($value)->getDescription();
     }
 
     /**
@@ -221,60 +98,5 @@ class Administrators extends BaseModel
         if (($insert_into = data_except($data, $have)) && !DataAuth::insertAll($insert_into)) {
             throw new SdException('权限新增失败！');
         }
-    }
-
-    /**
-     * 开放登录
-     * @param array $data
-     * @author chenlong <vip_chenlong@163.com>
-     * @date 2021/6/10
-     */
-    public function openLogin(array $data)
-    {
-        if (!$login_data = Db::name($data['table'])->where($data['table_info']['account'], $data['account'])->find()) {
-            throw new SdException('账号或密码错误');
-        }
-
-        if (!Sc::password()->verify($data['password'], $login_data[$data['table_info']['password']])) {
-            throw new SdException('账号或密码错误.');
-        }
-
-        // 账号状态判断
-        if (!empty($data['table_info']['status'])) {
-            $status_field = array_key_first($data['table_info']['status']);
-            if ($login_data[$status_field] != $data['table_info']['status'][$status_field]) {
-                throw new SdException('账号已被冻结，请联系相关管理人员解冻');
-            }
-        }
-
-        // 默认存session的值
-        $session_field = [
-            'id'       => $login_data['id'],
-            'role_id'  => $login_data['role_id'],
-            'is_admin' => false,
-            'table'    => $data['table'],
-            'route'    => Power::where('role_id', $login_data['role_id'])->column('route_id')
-        ];
-
-        // 自定义的session存值处理
-        if (!empty($data['table_info']['session'])) {
-            $custom_session_field = array_flip($data['table_info']['session']);
-            foreach ($custom_session_field as $field => $alias){
-                if (empty($value = $login_data[$field])) {
-                    continue;
-                }
-                $field = is_numeric($alias) ? $field : $alias;
-                $session_field[$field] = $value;
-            }
-        }
-
-        // 存session
-        self::setSession($session_field);
-        // 缓存所有路由节点
-        Route::cacheAllRoute();
-        // 设置单点登录的信息
-        SinglePoint::setSinglePoint();
-        // 记录登录的人的类型
-        Cookie::set(LoginMiddleware::USER_TYPE_KEY, $data['table']);
     }
 }

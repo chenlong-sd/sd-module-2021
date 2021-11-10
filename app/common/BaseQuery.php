@@ -31,6 +31,7 @@ class BaseQuery extends Query
         $this->options['join'][] = $joinOptions;
         return $this;
     }
+
     /**
      * 原生join 不加 delete_time
      * @param $join
@@ -43,4 +44,6 @@ class BaseQuery extends Query
     {
         return parent::join($join, $condition, $type, $bind);
     }
+
+
 }

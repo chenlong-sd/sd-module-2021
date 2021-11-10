@@ -9,6 +9,6 @@
     const UPLOAD_FILE_URL = '<?=admin_url("file-upload")?>';
     const RESOURCE_URL = '<?=url("system.system/resource")?>';
 
-    let confirm_tip = {icon:3,title:'{:lang("warning")}',btn:['{:lang("confirm")}', '{:lang("cancel")}']}
+    let confirm_tip = {icon: 3, title: '{:lang("warning")}', btn: ['{:lang("confirm")}', '{:lang("cancel")}']}
 
 </script>
