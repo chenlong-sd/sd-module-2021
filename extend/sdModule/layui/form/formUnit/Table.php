@@ -180,7 +180,7 @@ CSS;
     private function text(UnitBase $unitBase, array $attr, array $default)
     {
         $inputDiv = Dom::create();
-        $input = Dom::create('input')->setIsSingleLabel()
+        $input = Dom::create('input')->setSingleLabel()
             ->addAttr([
                 'name'         => "$unitBase->name[]",
                 'class'        => 'layui-input',
@@ -269,7 +269,7 @@ CSS;
             ];
 
             in_array($value, $default) and $customAttr['checked'] = '';
-            $inputDiv->addContent(Dom::create('input')->setIsSingleLabel()
+            $inputDiv->addContent(Dom::create('input')->setSingleLabel()
                 ->addAttr([
                     'class'        => 'layui-input',
                     'autocomplete' => 'off',
@@ -304,7 +304,7 @@ CSS;
 JS;
         $this->unit_js_call .= "table_time_render_{$id}();";
 
-        return Dom::create('input')->setIsSingleLabel()
+        return Dom::create('input')->setSingleLabel()
             ->addAttr([
                 'name'         => "$unitBase->name[]",
                 'class'        => "layui-input sc-time-render-$id",

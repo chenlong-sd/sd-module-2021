@@ -98,7 +98,9 @@ class UnitData
      */
     public function options(array $options): UnitData
     {
-        $this->unitConfig['options'] = $options;
+        $this->unitConfig['options'] = array_map(function ($v){
+            return $v instanceof Dom ? current($v->getContent()) : $v;
+        }, $options);
         return $this;
     }
 

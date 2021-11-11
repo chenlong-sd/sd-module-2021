@@ -29,7 +29,7 @@ class Administrators extends BasePage
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/6
      */
-    public function listPageData(): array
+    public function listPageData(): PageData
     {
         $field_data = [
             Column::checkbox(),
@@ -40,7 +40,7 @@ class Administrators extends BasePage
             Column::normal('最近登录', 'lately_time'),
             Column::normal('错误日期', 'error_date'),
             Column::normal('角色', 'role'),
-            Column::normal('状态', 'status_sc')->showSwitch('status', AdministratorsEnumStatus::getAllDescriptionMap()),
+            Column::normal('状态', 'status_sc')->showSwitch('status', AdministratorsEnumStatus::getAllMap()),
             Column::normal('创建时间', 'create_time'),
         ];
 
@@ -53,9 +53,7 @@ class Administrators extends BasePage
             ->setNormalBtn('全部','username', 'sm')
             ->setJs(EventHandle::addSearch(['mode' => 'all']));
 
-        $search = $this->searchFormData();
-
-        return array_merge(parent::listPageData(), compact('table', 'search'));
+        return $table;
     }
 
     /**
@@ -117,9 +115,8 @@ class Administrators extends BasePage
     /**
      * @return DefaultForm
      * @throws \ReflectionException
-     * @throws \app\common\SdException
      */
-    public function searchFormData():DefaultForm
+    public function listSearchFormData():DefaultForm
     {
         $form_data = [
             FormUnit::build(

@@ -271,7 +271,7 @@ JS;
      */
     protected function getInput(): Dom
     {
-        return Dom::create('input')->setIsSingleLabel()
+        return Dom::create('input')->setSingleLabel()
             ->addClass('layui-input')
             ->addAttr([
                 'name' => $this->name,

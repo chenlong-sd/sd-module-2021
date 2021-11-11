@@ -39,6 +39,6 @@ class Log extends BaseModel
      */
     public function getMethodAttr($value): string
     {
-        return LogEnumMethod::create($value)->getDescription();
+        return LogEnumMethod::create($value)->getDes();
     }
 }

@@ -208,7 +208,7 @@ class PageData
             ->setJs(EventHandle::openPage(url('create'), '新增')->popUps());
 
         $this->addBarEvent('delete')->setDangerBtn('批量删除', 'delete', 'sm')
-            ->setJs(EventHandle::ajax(url('del'), '确认删除吗？', 'post')->setBatch());
+            ->setJs(EventHandle::ajax(url('delete'), '确认删除吗？', 'post')->setBatch());
     }
 
 }

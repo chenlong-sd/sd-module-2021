@@ -24,7 +24,7 @@ class Role extends BasePage
      * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function listPageData(): array
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -48,7 +48,7 @@ class Role extends BasePage
         $table->addEvent('power')->setNormalBtn('权限设置', 'auz')
             ->setJs(EventHandle::openPage([url('powerSet'), 'role_id'], '权限设置')->popUps());
 
-        return ['table' => $table, 'search' => $this->searchFormData()];
+        return $table;
     }
 
     /**
@@ -97,7 +97,7 @@ class Role extends BasePage
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    public function searchFormData():DefaultForm
+    public function listSearchFormData():DefaultForm
     {
         $form_data = [
             FormUnit::inline('')->setChildrenItem(

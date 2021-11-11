@@ -24,11 +24,11 @@ class Tag extends UnitBase
         $inputDiv = Dom::create();
         $tagDiv   = Dom::create()->addClass('tags sc-input-tags');
         $tagDiv->addContent(
-            Dom::create('input')->setIsSingleLabel()->addAttr('name', $this->name)
+            Dom::create('input')->setSingleLabel()->addAttr('name', $this->name)
             ->addAttr('value', '')->addAttr('type', 'hidden')
         );
         $tagDiv->addContent(
-            Dom::create('input')->setIsSingleLabel()
+            Dom::create('input')->setSingleLabel()
             ->addAttr([
                 'type' => 'text',
                 'placeholder' => $this->placeholder ?: $this->lang('press enter after typing'),

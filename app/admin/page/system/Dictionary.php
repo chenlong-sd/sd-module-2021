@@ -33,7 +33,7 @@ class Dictionary extends BasePage
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/8
      */
-    public function listPageData():array
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -50,7 +50,7 @@ class Dictionary extends BasePage
         $table->addEvent('dictionary')->setPrimaryBtn('字典配置', 'template-1', 'xs')
             ->setJs(EventHandle::openPage([url('system.dictionary/dictionary'), 'id'], '【{name}】字典配置')->tabs());
 
-        return array_merge(parent::listPageData(), ['table' => $table]);
+        return $table;
     }
 
     /**

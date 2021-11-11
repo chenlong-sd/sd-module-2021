@@ -26,7 +26,7 @@ class Api extends BasePage
      * @return PageData
      * @throws \app\common\SdException
      */
-    public function listPageData(): array
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -58,10 +58,7 @@ class Api extends BasePage
 
         $table->addJs("setInterval(()=>table.reload('sc'), 60000)");
 
-        return [
-            'table'  => $table,
-            'search' => $this->searchFormData()
-        ];
+        return $table;
     }
 
     /**
@@ -92,9 +89,8 @@ class Api extends BasePage
      * DefaultForm
      * @return DefaultForm
      * @throws \ReflectionException
-     * @throws \app\common\SdException
      */
-    public function searchFormData():DefaultForm
+    public function listSearchFormData():DefaultForm
     {
         $form_data = [
             FormUnit::build(

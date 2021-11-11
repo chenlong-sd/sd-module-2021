@@ -57,7 +57,7 @@ class Api extends BaseModel
      */
     public function getStatusAttr($value): string
     {
-        return ApiEnumStatus::create($value)->getDescription();
+        return ApiEnumStatus::create($value)->getDes();
     }
 
 

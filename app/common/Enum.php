@@ -51,7 +51,7 @@ abstract class Enum extends MultipleCases
     protected function init(string $tag)
     {
         $this->enumValue      = $tag;
-        $this->descriptionMap = $this->setDescriptionMap();
+        $this->descriptionMap = $this->setMap();
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class Enum extends MultipleCases
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    abstract protected static function setDescriptionMap(): array;
+    abstract protected static function setMap(): array;
 
     /**
      * 获取可用的枚举值
@@ -80,7 +80,7 @@ abstract class Enum extends MultipleCases
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    final public function getDescription()
+    final public function getDes()
     {
         return $this->descriptionMap[$this->enumValue] ?? $this->enumValue;
     }
@@ -110,9 +110,9 @@ abstract class Enum extends MultipleCases
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    final public static function getAllDescriptionMap(): array
+    final public static function getAllMap(): array
     {
-        return static::setDescriptionMap();
+        return static::setMap();
     }
 
     /**

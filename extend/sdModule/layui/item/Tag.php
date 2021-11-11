@@ -7,13 +7,13 @@ use sdModule\layui\Dom;
 
 /**
  * Class Tag
- * @method string orange($value = '') 橙
- * @method string green($value = '') 绿
- * @method string cyan($value = '') 青
- * @method string blue($value = '') 蓝
- * @method string black($value = '') 黑
- * @method string gray($value = '') 灰
- * @method string red($value = '') 灰
+ * @method Dom orange($value = '') 橙
+ * @method Dom green($value = '') 绿
+ * @method Dom cyan($value = '') 青
+ * @method Dom blue($value = '') 蓝
+ * @method Dom black($value = '') 黑
+ * @method Dom gray($value = '') 灰
+ * @method Dom red($value = '') 灰
  * @package sdModule\layui
  */
 class Tag
@@ -22,39 +22,47 @@ class Tag
     /**
      * 边框类型
      * @param string $value
-     * @return string
+     * @return Dom
      */
-    public function rim(string $value): string
+    public function rim(string $value): Dom
     {
-        $dom = Dom::create('span')->addClass('layui-badge-rim')->addContent($this->lang($value));
-        return strtr($dom, ['"' => '\'']);
+        return Dom::create('span')->addClass('layui-badge-rim')->addContent($this->lang($value));
+    }
+
+    /**
+     * 自定义颜色的标签
+     * @param string $color
+     * @param string $value
+     * @return Dom
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/6
+     */
+    public function customColor(string $color, string $value = ''): Dom
+    {
+        $dot = $value ? "" : "-dot";
+        return Dom::create('span')->addClass("layui-badge{$dot}")
+            ->addAttr('style', "background-color: {$color}")
+            ->addContent($this->lang($value));
     }
 
     /**
      * 生成标签
      * @param string $value
      * @param string $color
-     * @return string
+     * @return Dom
      */
-    private function generate(string $value, string $color): string
+    private function generate(string $value, string $color): Dom
     {
         $dot = $value ? "" : "-dot";
-        if (in_array($color, ['orange', 'green', 'cyan', 'blue', 'black', 'gray', 'red',])) {
-            $dom = Dom::create('span')->addClass("layui-badge{$dot} layui-bg-{$color}")->addContent($this->lang($value));
-        }else{
-            $color = ltrim($color, 'customColor');
-            $color = "#{$color}";
-            $dom = Dom::create('span')->addClass("layui-badge{$dot}")
-                ->addAttr('style', "background-color: {$color}")
-                ->addContent($this->lang($value));
-        }
-        return strtr($dom, ['"' => '\'']);
+        return Dom::create('span')->addClass("layui-badge{$dot} layui-bg-{$color}")->addContent($this->lang($value));
     }
 
     /**
      * 多语言的处理
-     * @param $value
-     * @return mixed|string
+     * @param string $value
+     * @return string|null
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/6
      */
     private function lang(string $value): ?string
     {
@@ -64,9 +72,9 @@ class Tag
     /**
      * @param $method
      * @param $args
-     * @return string
+     * @return Dom
      */
-    public function __call($method, $args): string
+    public function __call($method, $args): Dom
     {
         return $this->generate(current($args) ?: '', $method);
     }

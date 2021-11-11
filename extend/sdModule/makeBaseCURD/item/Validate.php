@@ -9,22 +9,12 @@ namespace sdModule\makeBaseCURD\item;
 
 use sdModule\makeBaseCURD\CURD;
 
-class Validate implements Item
+class Validate extends Item
 {
-    /**
-     * @var array
-     */
-    private $replace = [];
-
     /**
      * @var string
      */
     private $primary_key;
-
-    /**
-     * @var CURD
-     */
-    private $CURD;
 
     public function __construct(CURD $CURD)
     {
@@ -39,8 +29,8 @@ class Validate implements Item
                 "'{$this->primary_key}|{$this->CURD->tableComment}' => 'require|number',"
             ],
             'scene' => [
-                'add'  => [],
-                'edit' => [$this->primary_key]
+                'create'  => [],
+                'update' => [$this->primary_key]
             ],
             'namespace' => $this->CURD->getNamespace($this->CURD->config('namespace.validate')),
             'describe'  => $this->CURD->pageName ?: $this->CURD->tableComment
@@ -59,8 +49,8 @@ class Validate implements Item
     {
         $file_content = file_get_contents($this->CURD->config('template.validate'));
 
-        $this->replace['scene']['add']  = "'add' => ['" . implode('\', \'', $this->replace['scene']['add']) . "'],";
-        $this->replace['scene']['edit'] = "'edit' => ['" . implode('\', \'', $this->replace['scene']['edit']) . "'],";
+        $this->replace['scene']['create']  = "'create' => ['" . implode('\', \'', $this->replace['scene']['create']) . "'],";
+        $this->replace['scene']['update'] = "'update' => ['" . implode('\', \'', $this->replace['scene']['update']) . "'],";
 
         return "<?php\r\n" . strtr($file_content, $this->replaceHandle());
     }
@@ -88,8 +78,8 @@ class Validate implements Item
             if ($makeDatum['join'] && is_array($makeDatum['join'])) {
                 $verifyRule .= '|in:' . implode(',', array_keys($makeDatum['join']));
             }
-            $this->replace['scene']['add'][] = $field;
-            $this->replace['scene']['edit'][] = $field;
+            $this->replace['scene']['create'][] = $field;
+            $this->replace['scene']['update'][] = $field;
             $this->replace['rule']["{$field}|{$title}"] = "'{$field}|{$title}' => '$verifyRule',";
         }
     }
@@ -99,7 +89,7 @@ class Validate implements Item
      * 替换字符串处理
      * @return array
      */
-    private function replaceHandle(): array
+    protected function replaceHandle(): array
     {
         $replace = [];
         foreach ($this->replace as $key => $value) {

@@ -7,6 +7,7 @@
 namespace sdModule\layui\lists\module;
 
 
+use sdModule\layui\Dom;
 use sdModule\layui\lists\error\ColumnTypeIsNotSupportedException;
 use sdModule\layui\tablePage\module\Ajax;
 use think\helper\Str;
@@ -83,6 +84,9 @@ class Column implements \ArrayAccess
         }
         // 解析开关对应的 打开值 和 关闭值
         list($open_value, $close_value) = array_keys($valueMapping);
+        $valueMapping = array_map(function ($v) {
+            return $v instanceof Dom ? current($v->getContent()) : $v;
+        }, $valueMapping);
         // 构建开关的展示值和js
         $title       = implode('|', $valueMapping);
         $js_code     = $js_code instanceof Ajax ? $js_code : new Ajax(url('switchHandle'));

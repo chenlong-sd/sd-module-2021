@@ -17,37 +17,37 @@ class Dom
     /**
      * @var string 元素标签
      */
-    public $tag = 'div';
+    private $tag = 'div';
 
     /**
      * @var array 元素标签属性
      */
-    public $attr = [];
+    private $attr = [];
 
     /**
      * @var string  元素标签ID属性
      */
-    public $id = '';
+    private $id = '';
 
     /**
      * @var array 元素标签class属性
      */
-    public $class = [];
+    private $class = [];
 
     /**
      * @var array 元素标签data-*属性
      */
-    public $data = [];
+    private $data = [];
 
     /**
      * @var array|Dom[] 内容
      */
-    public $content = [];
+    private $content = [];
 
     /**
      * @var bool 是否是单标签
      */
-    public $isSingleLabel = false;
+    private $isSingleLabel = false;
 
     /**
      * Dom constructor.
@@ -68,7 +68,7 @@ class Dom
      */
     public static function create(string $tag = 'div', bool $isSingleLabel = false): Dom
     {
-        return (new self($tag))->setIsSingleLabel($isSingleLabel);
+        return (new self($tag))->setSingleLabel($isSingleLabel);
     }
 
     /**
@@ -171,10 +171,64 @@ class Dom
      * @param bool $isSingleLabel
      * @return Dom
      */
-    public function setIsSingleLabel(bool $isSingleLabel = true): Dom
+    public function setSingleLabel(bool $isSingleLabel = true): Dom
     {
         $this->isSingleLabel = $isSingleLabel;
         return $this;
+    }
+
+    /**
+     * @param string|null $attr
+     * @return array|mixed|null
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function getAttr(string $attr = null)
+    {
+        return $attr ? ($this->attr[$attr] ?? null) : $this->attr;
+    }
+
+    /**
+     * @return array
+     */
+    public function getClass(): array
+    {
+        return $this->class;
+    }
+
+    /**
+     * @return array|Dom[]
+     */
+    public function getContent(): array
+    {
+        return $this->content;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $data
+     * @return mixed|null
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/9
+     */
+    public function getData(string $data)
+    {
+        return $data ? ($this->data[$data] ?? null) : $this->$data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTag(): string
+    {
+        return $this->tag;
     }
 
     /**

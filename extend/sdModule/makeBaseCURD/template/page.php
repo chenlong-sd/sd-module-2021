@@ -1,7 +1,6 @@
 /**
  * //=={Table}==//.php
  * Date: //=={date}==//
- * User: chenlong <vip_chenlong@163.com>
  */
 
 namespace //=={namespace}==//;
@@ -16,21 +15,23 @@ use sdModule\layui\form\Form;
 
 /**
  * //=={describe}==//
- * Class //=={Table}==//
- * @package //=={namespace}==//\//=={Table}==//
+ * Class //=={Table}==//Page
+ * @package //=={namespace}==//\//=={Table}==//Page
  */
-class //=={Table}==// extends BasePage
+class //=={Table}==//Page extends BasePage
 {
     /**
      * 获取创建列表table的数据
      * @return PageData
      * @throws \app\common\SdException
      */
-    public function getTablePageData(): PageData
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             //=={table_page}==//
         ]);
+
+        // 更多处理事件及其他设置，$table->setHandleAttr() 可设置操作栏的属性
 
         return $table;
     }
@@ -43,7 +44,7 @@ class //=={Table}==// extends BasePage
     * @throws \ReflectionException
     * @throws \app\common\SdException
     */
-    public function formData(string $scene, array $default_data = []): Form
+    public function formPageData(string $scene, array $default_data = []): Form
     {
         $unit = [
             //=={form_data}==//
@@ -55,16 +56,6 @@ class //=={Table}==// extends BasePage
     }
 
 
-    /**
-     * 创建搜索表单的数据
-     * @return Form
-     * @throws \ReflectionException
-     * @throws \app\common\SdException
-     */
-    public function searchFormData(): Form
-    {
-        $form_data = [//=={search_form}==//];
-        return Form::create($form_data)->setSubmitHtml()->complete();
-    }
+//=={search_form}==//
 
 }

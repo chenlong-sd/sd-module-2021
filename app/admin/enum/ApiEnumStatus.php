@@ -26,7 +26,7 @@ class ApiEnumStatus extends Enum
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    protected static function setDescriptionMap(): array
+    protected static function setMap(): array
     {
         return [
             self::WAIT    => Layui::tag()->red('未对接'),

@@ -13,17 +13,8 @@ use sdModule\makeBaseCURD\CURD;
  * Class Model
  * @package sdModule\makeBaseCURD\item
  */
-class Model implements Item
+class Model extends Item
 {
-    /**
-     * @var CURD
-     */
-    private $CURD;
-
-    /**
-     * @var array 替换值
-     */
-    private $replace;
 
     public function __construct(CURD $CURD)
     {
@@ -67,48 +58,23 @@ class Model implements Item
             }
             $label = $item[$field]['label'] ?? '';
             $field = parse_name($field, 1);
+
+            $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.enum')) . "\\{$this->replace['Table']}Enum$field");
+
             $this->replace['attr'] .= <<<CODE
 
     /**
      * {$label}展示处理
      * @param \$value
      * @return string
+     * @throws \Exception
      */   
-    public function get{$field}Attr(\$value)
+    public function get{$field}Attr(\$value): string
     {
-        \$field = self::get{$field}Sc();
-        
-        return \$field[\$value] ?? \$value;
+        return {$this->replace['Table']}Enum$field::create(\$value)->getDes();
     }
 
 CODE;
         }
-    }
-
-
-    /**
-     * 替换字符串处理
-     * @return array
-     */
-    private function replaceHandle(): array
-    {
-        $replace = [];
-        foreach ($this->replace as $key => $value) {
-            $replace["//=={{$key}}==//"] = is_array($value)
-                ? implode($key  === "use" ? "\r\n" : $this->CURD->indentation(3), $value)
-                : $value;
-        }
-        return $replace;
-    }
-
-    /**
-     * 加载类
-     * @param $useClass
-     */
-    private function useAdd($useClass)
-    {
-        $use = "use {$useClass};";
-        $this->replace['use'] = $this->replace['use'] ?: [];
-        in_array($use, $this->replace['use'] ?? []) or $this->replace['use'][] = $use;
     }
 }

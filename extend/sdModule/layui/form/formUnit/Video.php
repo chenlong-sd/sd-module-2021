@@ -24,7 +24,7 @@ class Video extends UnitBase
         $inputDiv = Dom::create()->addClass('layui-input-block');
 
         $uploadBox = Dom::create()->addClass('layui-upload')
-            ->addContent(Dom::create('input')->setIsSingleLabel()->addAttr('name', $this->name)
+            ->addContent(Dom::create('input')->setSingleLabel()->addAttr('name', $this->name)
                 ->addAttr('type', 'hidden')->addAttr('value', ''))
             ->addContent(Dom::create()->addClass('layui-btn-group')->addContent(
                 Dom::create('button')->addAttr([

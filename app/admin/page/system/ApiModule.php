@@ -23,11 +23,10 @@ class ApiModule extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return array
-     * @throws \ReflectionException
+     * @return PageData
      * @throws \app\common\SdException
      */
-    public function listPageData(): array
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -43,10 +42,7 @@ class ApiModule extends BasePage
         ]);
         $table->addEvent('api')->setNormalBtn('接口','release')
             ->setJs(EventHandle::openPage([url('system.Api/index'), 'url_prefix', 'api_module_id', 'id'], '【{item_name}】接口维护')->tabs());
-        return [
-            'table'  => $table,
-            'search' => $this->searchFormData()
-        ];
+        return $table;
     }
 
     /**
@@ -80,7 +76,7 @@ class ApiModule extends BasePage
      * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function searchFormData():DefaultForm
+    public function listSearchFormData():DefaultForm
     {
         $form_data = [
             FormUnit::build(

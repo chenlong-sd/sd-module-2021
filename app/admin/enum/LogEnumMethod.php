@@ -24,7 +24,7 @@ class LogEnumMethod extends Enum
     /**
      * @inheritDoc
      */
-    protected static function setDescriptionMap(): array
+    protected static function setMap(): array
     {
         return [
             self::GET  => Layui::tag()->orange('GET'),

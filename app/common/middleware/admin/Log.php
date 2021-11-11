@@ -10,6 +10,7 @@
 namespace app\common\middleware\admin;
 
 
+use app\admin\enum\LogEnumMethod;
 use think\Request;
 
 /**
@@ -41,10 +42,10 @@ class Log
      * @return array
      * @throws \Exception
      */
-    private function logDataMake(Request $request)
+    private function logDataMake(Request $request): array
     {
         return [
-            'method'            => array_search($request->method(), \app\admin\model\system\Log::getMethodSc(false)) ?: 1,
+            'method'            => array_search($request->method(), array_map(function ($v){ return current($v->getContent()); },LogEnumMethod::getAllMap())) ?: 1,
             'route_id'          => array_search($request->middleware('route_path'), cache(config('admin.route_cache')) ?: []) ?: 0,
             'administrators_id' => admin_session('is_admin') ? admin_session('id', 0) : 0,
             'open_table'        => admin_session('is_admin') ? "" : admin_session('table', ""),
@@ -57,10 +58,10 @@ class Log
     }
 
     /**
-     * @param null $params
+     * @param null|array $params
      * @return array
      */
-    private function param($params = null)
+    private function param(array $params = null): array
     {
         $param = [];
         $params = $params === null ? \request()->param() : $params;

@@ -10,15 +10,8 @@ namespace sdModule\makeBaseCURD\item;
 use sdModule\layui\form\FormUnit;
 use sdModule\makeBaseCURD\CURD;
 
-class Page implements Item
+class Page extends Item
 {
-    /**
-     * @var CURD
-     */
-    private $CURD;
-
-    private $replace;
-
     /**
      * 初始化
      * Item constructor.
@@ -45,6 +38,7 @@ class Page implements Item
 
         if ($this->replace['search_form']) {
             $this->replace['search_form'][] = "FormUnit::custom()->customHtml(Form::searchSubmit()),";
+            $this->listSearchFormDataMethodCode();
         }
     }
 
@@ -62,34 +56,31 @@ class Page implements Item
     }
 
     /**
-     * 替换字符串处理
-     * @return array
+     * 列表搜索表单函数的代码
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/11
      */
-    private function replaceHandle(): array
+    private function listSearchFormDataMethodCode()
     {
-        $replace = [];
-        foreach ($this->replace as $key => $value) {
-            if ($key === 'search_form') {
-                $replace["//=={{$key}}==//"] = $value ? sprintf('%sFormUnit::build(%s%s%1$s)%s',
-                    $this->CURD->indentation(3), $this->CURD->indentation(4), implode($this->CURD->indentation(4), $value), $this->CURD->indentation(2)) : '';
-                continue;
-            }
-            $replace["//=={{$key}}==//"] = is_array($value)
-                ? implode($key  === "use" ? "\r\n" : $this->CURD->indentation(3), $value)
-                : $value;
-        }
-        return $replace;
+        $form = implode($this->CURD->indentation(4), $this->replace['search_form']);
+        $this->replace['search_form'] = <<<CODE
+    /**
+     * 创建列表搜索表单的数据
+     * @return Form
+     * @throws \\ReflectionException
+     */
+    public function listSearchFormData(): Form
+    {
+        \$form_data = [
+            FormUnit::build(
+                $form
+            ),
+        ];
+        
+        return Form::create(\$form_data)->setSubmitHtml()->complete();
     }
 
-    /**
-     * 加载类文件
-     * @param $useClass
-     */
-    private function useAdd($useClass)
-    {
-        $use = "use {$useClass};";
-        $this->replace['use'] = $this->replace['use'] ?: [];
-        in_array($use, $this->replace['use'] ?? []) or $this->replace['use'][] = $use;
+CODE;
     }
 
     /**
@@ -114,8 +105,8 @@ class Page implements Item
             $select_data = '';
             if ($item['join'] && is_array($item['join'])){
                 $field       = parse_name($field, 1);
-                $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');
-                $select_data = "->options(MyModel::get{$field}Sc(false))";
+                $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.enum')) . "\\{$this->replace['Table']}Enum$field");
+                $select_data = "->options({$this->replace['Table']}Enum$field::getAllMap())";
             }elseif (in_array($type, ['date', 'time', 'month', 'range'])){
                 $select_data = $type === 'range' ? "->setTime('date', '~')" : "->setTime('{$type}')";
                 $type        = 'time';
@@ -127,16 +118,21 @@ class Page implements Item
 
                 $table = parse_name($table ?: $this->CURD->table, 1);
                 if ($table != parse_name($this->CURD->table, 1)){
-                    $system = in_array($table, ['Administrators', 'Role']) ? 'system\\' : '';
-                    $this->useAdd($this->CURD->config('namespace.model') . '\\' . $system . $table);
+                    if (in_array($table, ['Administrators', 'Role'])) {
+                        $this->useAdd($this->CURD->config('namespace.model') . '\\system\\' . $table);
+                    }else{
+                        class_exists($this->CURD->config('namespace.model') . '\\' . $table)
+                            ? $this->useAdd($this->CURD->config('namespace.model') . '\\' . $table)
+                            : $this->useAdd($this->CURD->config('namespace.common_model') . '\\' . $table);
+                    }
                 }else{
-                    $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\' .  $this->replace['Table'] . ' as MyModel');
+                    $this->useModel();
                     $table = 'MyModel';
                 }
                 $select_data = "->options({$table}::column('{$title}', '{$value}'))";
             }
             $field = parse_name($field);
-            $this->replace['form_data'][] = "FormUnit::{$type}('{$field}', '{$item['label']}'){$select_data},";
+            $this->replace['form_data'][] = "FormUnit::$type('$field', '{$item['label']}'){$select_data},";
         }
     }
 
@@ -264,8 +260,8 @@ class Page implements Item
     private function attrFieldGet(string $field): string
     {
         $field = parse_name($field, 1);
-        $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.model')) . '\\'  . $this->replace['Table'] . ' as MyModel');
-        return "MyModel::get{$field}Sc(false)";
+        $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.enum')) . '\\'  . $this->replace['Table'] . 'Enum' .parse_name($field, 1));
+        return $this->replace['Table'] . 'Enum' .parse_name($field, 1) . "::getAllMap()";
     }
 
 }

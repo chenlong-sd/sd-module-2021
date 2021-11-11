@@ -1,7 +1,6 @@
 /**
  *
  * //=={Table}==//.php
- * User: ChenLong
  * DateTime: //=={date}==//
  */
 
@@ -13,7 +12,6 @@ use app\common\BaseValidate;
  * //=={describe}==// 验证器
  * Class //=={Table}==//
  * @package //=={namespace}==//\//=={Table}==//
- * @author chenlong <vip_chenlong@163.com>
  */
 class //=={Table}==// extends BaseValidate
 {

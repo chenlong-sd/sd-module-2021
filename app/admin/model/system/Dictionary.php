@@ -52,7 +52,7 @@ class Dictionary extends BaseModel
      */
     public function getStatusAttr($value): string
     {
-        return DictionaryEnumStatus::create($value)->getDescription();
+        return DictionaryEnumStatus::create($value)->getDes();
     }
 
 

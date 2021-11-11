@@ -6,24 +6,8 @@ namespace sdModule\makeBaseCURD\item;
 
 use sdModule\makeBaseCURD\CURD;
 
-class Controller implements Item
+class Controller extends Item
 {
-    /***
-     * @var array 替换数据
-     */
-    private $replace;
-
-    /**
-     * @var array 字段详情信息
-     */
-    private $field_info;
-
-
-    /**
-     * @var CURD
-     */
-    private $CURD;
-
     /**
      * 模块文件创建
      * Controller constructor.
@@ -32,19 +16,17 @@ class Controller implements Item
     public function __construct(CURD $CURD)
     {
         $this->CURD       = $CURD;
-        $this->field_info = $this->CURD->fieldInfo;
         $this->replace    = [
             'table_name'   => $this->CURD->table,
             'page_name'    => $this->CURD->pageName ?: $this->CURD->tableComment,
             'Table'        => parse_name($this->CURD->table, 1),
             'date'         => date('Y-m-d H:i:s'),
-            'search_form'  => [],
-            'list_join'    => [],
-            'use'          => '',
-            'quick_search' => [],
+            'use'          => [],
             'namespace'    => $this->CURD->getNamespace($this->CURD->config('namespace.controller')),
             'describe'     => $this->CURD->pageName ?: $this->CURD->tableComment
         ];
+
+        $this->methodCode();
     }
 
     /**
@@ -53,114 +35,168 @@ class Controller implements Item
     public function make()
     {
         $file_content = file_get_contents($this->CURD->config('template.controller'));
-        $this->fieldHandle();
 
         return "<?php\r\n" . strtr($file_content, $this->replaceHandle());
     }
 
     /**
-     * 字段处理
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/10
      */
-    private function fieldHandle()
+    private function methodCode()
     {
-        foreach ($this->CURD->data as $field => $datum) {
-            if (empty($datum['show_type'])) {
-                continue;
+        foreach ($this->CURD->accessible as $methodIndex) {
+            switch ($methodIndex) {
+                case '1':
+                    $this->replace['method'][] = $this->indexMethod();
+                    break;
+                case '2':
+                    $this->replace['method'][] = $this->createMethod();
+                    break;
+                case '3':
+                    $this->replace['method'][] = $this->updateMethod();
+                    break;
+                case '4':
+                    $this->replace['method'][] = $this->deleteMethod();
+                    break;
+                case '5':
+                    $this->replace['method'][] = $this->switchMethod();
+                    break;
             }
-            $this->selectFieldHandle($field, $datum);
         }
     }
 
-    /**
-     * 替换字符串处理
-     * @return array
-     */
-    private function replaceHandle(): array
+    private function indexMethod()
     {
-        $replace = [];
+        $this->useService();
+        $this->useModel();
+        $this->usePage();
 
-        foreach ($this->replace as $key => $value) {
-            $replace["//=={{$key}}==//"] = '';
-            if ($key === 'list_join' && $value) {
-                foreach ($value as $v) {
-                    $replace["//=={{$key}}==//"] .= "{$this->CURD->indentation(3)}->join($v)";
-                }
-            }else{
-                $replace["//=={{$key}}==//"] = is_array($value) ? implode($this->warp($key), $value) : $value;
-            }
-        }
-        return $replace;
+        return <<<CODE
+
+    /**
+     * @title("列表数据")
+     * @param MyService \$service
+     * @param MyModel \$model
+     * @param MyPage \$page
+     * @return \\think\\response\\Json|\\think\\response\\View
+     * @throws SdException
+     * @throws \\ReflectionException
+     */
+    public function index(MyService \$service, MyModel \$model, MyPage \$page)
+    {
+        return parent::index_(\$service, \$model, \$page);
+    }
+    
+CODE;
+    }
+
+
+    private function createMethod()
+    {
+        $this->useService();
+        $this->useModel();
+        $this->usePage();
+        $this->useValidate();
+
+        return <<<CODE
+
+    /**
+     * @title("数据创建")
+     * @param MyService \$service
+     * @param MyModel \$model
+     * @param MyPage \$page
+     * @return \\think\\response\\Json|\\think\\response\\View
+     * @throws SdException
+     * @throws \\ReflectionException
+     */
+    public function create(MyService \$service, MyModel \$model, MyPage \$page)
+    {
+        return parent::create_(\$service, \$model, \$page, MyValidate::class);
+    }
+
+CODE;
+    }
+
+
+
+    private function updateMethod()
+    {
+        $this->useService();
+        $this->useModel();
+        $this->usePage();
+        $this->useValidate();
+
+        return <<<CODE
+
+    /**
+     * @title("数据更新")
+     * @param MyService \$service
+     * @param MyModel \$model
+     * @param MyPage \$page
+     * @return \\think\\response\\Json|\\think\\response\\View
+     * @throws SdException
+     * @throws \\ReflectionException
+     */
+    public function update(MyService \$service, MyModel \$model, MyPage \$page)
+    {
+        return parent::update_(\$service, \$model, \$page, MyValidate::class);
+    }
+
+CODE;
     }
 
     /**
-     * 缩进补齐单位
-     * @param $type
+     * 删除方法
      * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/10
      */
-    private function warp($type): string
+    private function deleteMethod()
     {
-        $warp = [
-            'use'        => "\r\n",
-            'list_field' => ",",
-            'list_join'  => $this->CURD->indentation(4),
-        ];
+        $this->useService();
+        $this->useModel();
 
-        return $warp[$type] ?? $this->CURD->indentation(3);
-    }
+        return <<<CODE
 
     /**
-     * 加载类
-     * @param $useClass
+     * @title("数据删除")
+     * @param MyService \$service
+     * @param MyModel \$model
+     * @return \\think\\response\\Json
+     * @throws SdException
      */
-    private function useAdd($useClass)
+    public function delete(MyService \$service, MyModel \$model): \\think\\response\\Json
     {
-        $use = "use {$useClass};";
-        $this->replace['use'] = $this->replace['use'] ?: [];
-        in_array($use, $this->replace['use'] ?? []) or $this->replace['use'][] = $use;
+        return parent::delete_(\$service, \$model);
     }
+CODE;
+
+    }
+
+    private function switchMethod()
+    {
+        $this->useService();
+        $this->useModel();
+
+        return <<<CODE
 
     /**
-     * 查询字段处理
-     * @param string $field
-     * @param array $datum
+     * @title("状态更新")
+     * @param MyService \$service
+     * @param MyModel \$model
+     * @return \\think\\response\\Json
+     * @throws SdException
      */
-    private function selectFieldHandle(string $field, array $datum)
+    public function switchHandle(MyService \$service, MyModel \$model): \\think\\response\\Json
     {
-        if (empty($datum['show_type'])) {
-            return;
-        }
-
-        if (is_array($datum['join']) || empty($datum['join'])) {
-            $this->replace['list_field'][$field] = "i.{$field}";
-        }else if(strpos($datum['join'], ':') !== false
-            && strpos($datum['join'], '=') !== false){
-
-            list($table, $joinData) = explode(':', $datum['join']);
-            list($value, $title)    = explode('=', $joinData);
-
-            $table = $table ?: $this->CURD->table;
-            $this->joinTable($table, $field, $value, $table === $this->CURD->table);
-
-            $table_pre = $table === $this->CURD->table ? 'parent' : $table;
-            $this->replace['list_field'][$field] = "{$table}.{$title} {$table_pre}_{$title},i.{$field}";
-        }
+        return parent::switchHandle_(\$service, \$model);
     }
 
-    /**
-     * 数据查询关联表处理
-     * @param string $table join 表
-     * @param string $field 字段
-     * @param string $join_field 关联字段
-     * @param bool $isParent
-     */
-    private function joinTable(string $table, string $field, string $join_field, bool $isParent)
-    {
-        $where = '';
-        $joinStr = $isParent === true
-            ? sprintf('i.pid = %s.%s %s', $table, $join_field, $where)
-            : sprintf('i.%s = %s.%s %s', $field, $table, $join_field, $where);
+CODE;
 
-        $this->replace['list_join'][$table . '-' .$field] = "'{$table}', '{$joinStr}', 'left'";
     }
+
+
 }
 

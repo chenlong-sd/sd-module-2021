@@ -45,7 +45,10 @@ trait RequestMerge
                 : $BackstageListsService->setModel($model)->getListsData();
         }
 
-        return view($page->list_template, $page->listPageData());
+        return view($page->list_template, [
+            'table'  => $page->listPageData(),
+            'search' => $page->listSearchFormData()
+        ]);
     }
 
 

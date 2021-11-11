@@ -7,6 +7,7 @@
 namespace app\admin\page\system;
 
 
+use app\admin\enum\LogEnumMethod;
 use app\common\BasePage;
 use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\form\FormUnit;
@@ -21,7 +22,7 @@ class Log extends BasePage
      * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function listPageData(): array
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             Column::normal('请求方式', 'method'),
@@ -35,9 +36,7 @@ class Log extends BasePage
         $table->removeEvent();
         $table->removeBarEvent();
 
-        $search = $this->searchFormData();
-
-        return array_merge(compact('table', 'search'));
+        return $table;
     }
 
     /**
@@ -46,12 +45,12 @@ class Log extends BasePage
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    public function searchFormData():DefaultForm
+    public function listSearchFormData():DefaultForm
     {
         $form_data = [
             FormUnit::build(
                 FormUnit::text('route.title%%')->placeholder('节点名'),
-                FormUnit::select('i.method')->placeholder("请求方式")->options( \app\admin\model\system\Log::getMethodSc(false)),
+                FormUnit::select('i.method')->placeholder("请求方式")->options(LogEnumMethod::getAllMap()),
                 FormUnit::text('i.route%%')->placeholder('节点地址'),
                 FormUnit::text('administrators.name%%')->placeholder('操作人员'),
                 FormUnit::time('i.create_time_~')->placeholder('创建时间'),

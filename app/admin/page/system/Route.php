@@ -23,7 +23,7 @@ class Route extends BasePage
      * @throws \ReflectionException
      * @throws \app\common\SdException
      */
-    public function listPageData(): array
+    public function listPageData(): PageData
     {
         $table = PageData::create([
             Column::checkbox(),
@@ -47,18 +47,6 @@ class Route extends BasePage
             ->setJs(EventHandle::ajax(url('delete'), '节点删除会同时删除对应的所有子节点，确认删除吗？')
                 ->setConfig(['icon' => 3])->successCallback('tableRender();'));
 
-        return array_merge(parent::listPageData(), compact('table'));
+        return $table;
     }
-
-    /**
-     * 生成表单的数据
-     * @param string $scene
-     * @param array $default_data
-     * @return DefaultForm
-     */
-    public function formPageData(string $scene, array $default_data = []): DefaultForm
-    {
-        return DefaultForm::create([]);
-    }
-
 }

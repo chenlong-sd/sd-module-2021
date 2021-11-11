@@ -24,7 +24,7 @@ class SwitchSc extends UnitBase
 
         $itemDom  = $this->getItem();
         $inputDiv = Dom::create();
-        $input    = Dom::create('input')->setIsSingleLabel()->addAttr([
+        $input    = Dom::create('input')->setSingleLabel()->addAttr([
             'type'          => 'checkbox',
             'lay-filter'    => $this->name,
             'lay-skin'      => 'switch',
@@ -35,7 +35,7 @@ class SwitchSc extends UnitBase
         if ($this->default == array_key_first($this->options)) {
             $input->addAttr('checked', '');
         }
-        $hidden = Dom::create('input')->setIsSingleLabel()->addAttr([
+        $hidden = Dom::create('input')->setSingleLabel()->addAttr([
             'type' => 'hidden',
             'name' => $this->name,
             'value' => $this->default ?: array_key_last($this->options)

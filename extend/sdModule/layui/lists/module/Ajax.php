@@ -159,6 +159,7 @@ class Ajax
             'title'    => $message,
             'area'     => ['400px', '200px'],
             'formType' => 2,
+            'shade'    => 0,
         ];
 
         $this->prompt = array_merge($this->prompt, $config);
@@ -182,12 +183,13 @@ class Ajax
         if ($this->confirm) {
             $config = json_encode($this->confirm['config'] ?? []);
             $code = <<<JS
-        let sc_data = {$data};
+         let sc_data = typeof $data === 'object' ? $data : {};
         if (typeof value !== 'undefined')sc_data.prompt_value = value;
         ScXHR.confirm('{$this->confirm['tip']}',{$config}).ajax({url:"{$this->url}",type:"{$this->method}",data:sc_data,success(res){
                 layer.close(window.load___);
                 if (res.code === 200) {
                     layNotice.success('成功');
+                    if(typeof prompt_index !== 'undefined') layer.close(prompt_index);
                     {$successExecute}
                 } else {
                     layNotice.warning(res.msg);
@@ -201,13 +203,14 @@ JS;
         }
 
         $code = <<<JS
-        let sc_data = {$data};
+         let sc_data = typeof $data === 'object' ? $data : {};
         if (typeof value !== 'undefined')sc_data.prompt_value = value;
         let load = custom.loading();
         layui.jquery.ajax({url:"{$this->url}",type:"{$this->method}",data:sc_data,success(res){
                 layer.close(load);
                 if (res.code === 200) {
                     layNotice.success('成功');
+                    if(typeof prompt_index !== 'undefined') layer.close(prompt_index);
                      {$successExecute}
                 } else {
                     layNotice.warning(res.msg);
@@ -264,6 +267,7 @@ JS;
             layer.alert('输入值不能为空');
             return false;
         }
+        let prompt_index = index;
         %s
         layer.close(index);
     });

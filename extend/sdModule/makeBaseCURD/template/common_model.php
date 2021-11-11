@@ -25,8 +25,5 @@ class //=={Table}==// extends BaseModel
         //=={schema}==//
     ];
 
-
-    //=={attr}==//
-
 }
 

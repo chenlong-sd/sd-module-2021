@@ -39,6 +39,7 @@ return [
         ['tag' => 2,    'title' => 'model'],
         ['tag' => 4,    'title' => 'validate'],
         ['tag' => 8,    'title' => 'page'],
+        ['tag' => 16,   'title' => 'service'],
     ],
 
     // 文件路径，键对应创建项目的 tag
@@ -49,7 +50,10 @@ return [
             'admin'     => $rootPath . '/app/admin/model/{:class}.php'
         ],
         4   => $rootPath . '/app/common/validate/{:class}.php',
-        8   => $rootPath . '/app/admin/page/{:class}.php',
+        8   => $rootPath . '/app/admin/page/{:class}Page.php',
+        16  => $rootPath . '/app/admin/service/{:class}Service.php',
+
+        'enum'  => $rootPath . '/app/common/enum/{:class}.php',
 
         // 测试路径
 //        1   => __DIR__ . '/cache/admin/controller/{:class}.php',
@@ -66,6 +70,8 @@ return [
         'model'         => __DIR__ . '/template/model.php',
         'validate'      => __DIR__ . '/template/validate.php',
         'page'          => __DIR__ . '/template/page.php',
+        'service'       => __DIR__ . '/template/service.php',
+        'enum'       => __DIR__ . '/template/enum.php',
 
     ],
     // 类的命名空间
@@ -80,6 +86,10 @@ return [
         'validate'      => 'app\\common\\validate',
         // page 命名空间
         'page'          => 'app\\admin\\page',
+        // service
+        'service'       => 'app\\admin\\service',
+        // enum
+        'enum'          => 'app\\common\\enum',
     ],
 ];
 

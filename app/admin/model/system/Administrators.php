@@ -61,7 +61,7 @@ class Administrators extends BaseModel
      */
     public function getStatusAttr($value): string
     {
-        return AdministratorsEnumStatus::create($value)->getDescription();
+        return AdministratorsEnumStatus::create($value)->getDes();
     }
 
     /**

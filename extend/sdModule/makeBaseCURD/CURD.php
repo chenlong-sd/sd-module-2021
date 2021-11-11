@@ -7,9 +7,11 @@ use app\common\ResponseJson;
 use app\common\SdException;
 use sdModule\makeBaseCURD\item\CommonModel;
 use sdModule\makeBaseCURD\item\Controller;
-use sdModule\makeBaseCURD\item\Item;
+use sdModule\makeBaseCURD\item\Enum;
+use sdModule\makeBaseCURD\item\ItemI;
 use sdModule\makeBaseCURD\item\Model;
 use sdModule\makeBaseCURD\item\Page;
+use sdModule\makeBaseCURD\item\Service;
 use sdModule\makeBaseCURD\item\Validate;
 use think\facade\App;
 use think\facade\Db;
@@ -25,6 +27,7 @@ class CURD
     const MODEL = 2;
     const VALIDATE = 4;
     const PAGE = 8;
+    const SERVICE = 16;
 
     /**
      * @var array 配置数据
@@ -63,6 +66,16 @@ class CURD
      * @var string 创建子目录
      */
     public $childrenDir = '';
+
+    /**
+     * @var array|mixed 控制器可创建的方法
+     */
+    public $accessible;
+
+    /**
+     * @var bool 是否允许创建admin模块的model
+     */
+    public $isMakeAdminModel = false;
 
     /**
      * 开始工作
@@ -112,10 +125,11 @@ class CURD
         $this->data        = request()->post();
         $this->table       = $this->data['table_name'] ?? '';
         $this->pageName    = $this->data['page_name'] ?? '';
-        $this->makeModule  = $this->data['make'] ?? [];
+        $this->makeModule  = array_sum($this->data['make'] ?? []);
         $this->childrenDir = $this->data['children_dir'] ?? '';
+        $this->accessible  = $this->data['accessible'] ?? [];
 
-        unset($this->data['table_name'], $this->data['page_name'], $this->data['make'], $this->data['children_dir']);
+        unset($this->data['table_name'], $this->data['page_name'], $this->data['make'], $this->data['children_dir'], $this->data['accessible']);
 
         $this->fieldInfo    = array_column($this->getTableInfo($this->table), null, 'column_name');
         $this->tableComment = $this->getTableComment($this->table);
@@ -141,54 +155,75 @@ class CURD
         foreach ($data as $item) {
             list($key, $value) = explode('=', $item);
             $new_data[$key] = $value;
+            // 有状态字段， 可能会有替换显示，允许创建admin模块的model
+            $this->isMakeAdminModel = true;
         }
         return $new_data;
     }
 
     /**
      * 模块文件创建
-     * @param Item|null $item
+     * @param ItemI|null $item
      * @return mixed|void
      * @throws SdException
      */
-    private function fileGenerate(Item $item = null)
+    private function fileGenerate(ItemI $item = null)
     {
         if ($item !== null) {
             return $item->make();
         }
 
-        foreach ($this->makeModule as $v){
-            switch (true) {
-                case ($v & self::CONTROLLER) > 0:
-                    $this->moduleFileCreate(new Controller($this), $this->config("file_path.{$v}"));
-                    break;
-                case ($v & self::MODEL) > 0:
-                    $this->moduleFileCreate(new CommonModel($this), $this->config("file_path.{$v}.common"));
-                    $this->moduleFileCreate(new Model($this), $this->config("file_path.{$v}.admin"));
-                    break;
-                case ($v & self::VALIDATE) > 0:
-                    $this->moduleFileCreate(new Validate($this), $this->config("file_path.{$v}"));
-                    break;
-                case ($v & self::PAGE) > 0:
-                    $this->moduleFileCreate(new Page($this), $this->config("file_path.{$v}"));
-                    break;
+        // 创建枚举
+        foreach ($this->data as $field => $datum) {
+            if (!empty($datum['join']) && is_array($datum['join'])) {
+                $path = strtr($this->config('file_path.enum'), [
+                    '{:class}' => parse_name($this->table, 1) . 'Enum' . parse_name($field, 1),
+                ]);
+                $this->moduleFileCreate((new Enum($this))->setField($field), $path);
             }
         }
+
+        if (($this->makeModule & self::CONTROLLER) > 0)
+            $this->moduleFileCreate(new Controller($this), $this->config("file_path." . self::CONTROLLER));
+
+        if (($this->makeModule & self::MODEL) > 0) {
+            $this->moduleFileCreate(new CommonModel($this), $this->config("file_path." . self::MODEL . ".common"));
+
+            // 创建admin模块的model
+            if ($this->isMakeAdminModel) {
+                $this->moduleFileCreate(new Model($this), $this->config("file_path." . self::MODEL . ".admin"));
+            }
+        }
+
+        if (($this->makeModule & self::VALIDATE) > 0)
+            $this->moduleFileCreate(new Validate($this), $this->config("file_path." . self::VALIDATE));
+
+        if (($this->makeModule & self::PAGE) > 0)
+            $this->moduleFileCreate(new Page($this), $this->config("file_path." . self::PAGE));
+
+        if (($this->makeModule & self::SERVICE) > 0)
+            $this->moduleFileCreate(new Service($this), $this->config("file_path." . self::SERVICE));
+
     }
 
     /**
      * 模块文件创建
-     * @param Item $model
+     * @param ItemI $model
      * @param string $path
      * @throws SdException
      */
-    private function moduleFileCreate(Item $model, string $path)
+    public function moduleFileCreate(ItemI $model, string $path)
     {
+        // 子文件夹判断
         $children_dir   = $this->childrenDir ? strtr($this->childrenDir, ['\\' => '/']) . '/' : '';
+        // 文件名替换
         $replace_pairs  = ['{:class}' => $children_dir . parse_name($this->table, 1)];
+        // 文件内容获取
         $content        = $this->fileGenerate($model);
+        // 文件路径获取
         $file_path      = $this->dirMake(strtr($path, $replace_pairs));
 
+        // 写入代码到文件
         file_put_contents($file_path, $content);
     }
 
@@ -200,7 +235,7 @@ class CURD
     private function dirMake($url)
     {
         if (!is_dir(dirname($url))){
-            mkdir(dirname($url), 0777, true);
+            mkdir(dirname($url), 0755, true);
         }
         return $url;
     }
@@ -246,17 +281,16 @@ class CURD
         $replace_pairs     = ['{:class}' => $children_dir . parse_name($table, 1)];
         $replace_pairs1    = ['{:table}' => $children_dir . parse_name($table)];
         foreach ($make_item as $item) {
-            if (in_array($item, [1, 4, 8]) &&
+            if (in_array($item, [self::CONTROLLER, self::VALIDATE, self::PAGE, self::SERVICE]) &&
                 file_exists( $filename2 = strtr($this->config("file_path.{$item}"), $replace_pairs))) {
                 $have_item[] = $filename2;
-
-            } else if ($item == 2) {
+            } else if ($item == self::MODEL) {
                 $filename  = strtr($this->config("file_path.{$item}.common"), $replace_pairs);
                 $filename1 = strtr($this->config("file_path.{$item}.admin"), $replace_pairs);
                 file_exists($filename)  and $have_item[] = $filename;
                 file_exists($filename1) and $have_item[] = $filename1;
 
-            } else {
+            }else {
                 $strtr = strtr($this->config("file_path.{$item}"), $replace_pairs1);
                 file_exists($strtr) and $have_item[] = $strtr;
             }

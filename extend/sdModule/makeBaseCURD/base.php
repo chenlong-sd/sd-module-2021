@@ -11,7 +11,17 @@
     <style>
         body{padding: 10px}
         td .layui-form-checkbox[lay-skin=primary]{
-            padding-left: 0!important;
+           left: 22px!important;
+        }
+        td input.layui-input,td select.layui-input{
+            border: none;
+            text-align: center;
+        }
+        td dd {
+            text-align: center;
+        }
+        td {
+            padding: 0!important;
         }
     </style>
     <script>
@@ -22,17 +32,6 @@
         const UPLOAD_URL = '<?=admin_url("image")?>';
         const RESOURCE_URL = '<?=url("system.system/resource")?>';
 
-        // 以下为表格的多语言设置
-        const PAGE_TO = "<?=lang('page_to')?>";
-        const PAGE_PAGE = "<?=lang('page_page')?>";
-        const PAGE_TOTAL = function (num) {
-            return "<?=lang('page_total')?>".replace(1, num);
-        };
-        const CONFIRM = "<?=lang('confirm')?>";
-        const PAGE_ARTICLE = "<?=lang('page_article')?>";
-        const FILTER_COLUMN = "<?=lang('Filter column')?>";
-        const EXPORT = "<?=lang('Export')?>";
-        const PRINT = "<?=lang('print')?>";
         let confirm_tip = {icon:3,title:'{:lang("warning")}',btn:['{:lang("confirm")}', '{:lang("cancel")}']}
 
     </script>
@@ -50,8 +49,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">表名</label>
                     <div class="layui-input-inline">
-                        <input type="tel" name="table_name" lay-verify="required" placeholder="table_name"
-                               autocomplete="off" class="layui-input">
+                        <input type="tel" name="table_name" lay-verify="required" placeholder="table_name" autocomplete="off" class="layui-input">
                     </div>
                     <button lay-event="pull" onclick="return false" class="layui-btn"><i class="layui-icon layui-icon-template-1"></i> 获取</button>
                 </div>
@@ -59,15 +57,13 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">子目录</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="children_dir" placeholder="order | order/pay" autocomplete="off"
-                               class="layui-input">
+                        <input type="text" name="children_dir" placeholder="order | order/pay" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">页面名称</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="page_name" placeholder="新闻" autocomplete="off"
-                               class="layui-input">
+                        <input type="text" name="page_name" placeholder="新闻" autocomplete="off" class="layui-input">
                     </div>
                 </div>
             </div>
@@ -77,13 +73,24 @@
                     <label class="layui-form-label">创建文件</label>
                     <div class="layui-input-block">
                         <?php foreach ($this->config('make_item') as $value){ ?>
-                            <input type="checkbox" name="make[]" lay-skin="primary" value="<?= $value['tag'] ?>" title="<?= $value['title'] ?>" checked autocomplete="off"
-                                   class="layui-input">
+                            <input type="checkbox" name="make[]" lay-filter="make" lay-skin="primary" value="<?= $value['tag'] ?>" title="<?= $value['title'] ?>" checked autocomplete="off" class="layui-input">
                         <?php } ?>
                     </div>
                 </div>
-
             </div>
+            <div class="layui-form-item" id="accessible">
+                <div class="layui-inline">
+                    <label class="layui-form-label">可访问</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="accessible[]" lay-filter="accessible" lay-skin="primary" value="1" title="index(数据列表)" checked autocomplete="off" class="layui-input">
+                        <input type="checkbox" name="accessible[]" lay-filter="accessible" lay-skin="primary" value="2" title="create(数据新增)" checked autocomplete="off" class="layui-input">
+                        <input type="checkbox" name="accessible[]" lay-filter="accessible" lay-skin="primary" value="3" title="update(数据更新)" checked autocomplete="off" class="layui-input">
+                        <input type="checkbox" name="accessible[]" lay-filter="accessible" lay-skin="primary" value="4" title="delete(数据删除)" checked autocomplete="off" class="layui-input">
+                        <input type="checkbox" name="accessible[]" lay-filter="accessible" lay-skin="primary" value="5" title="switchHandle(列表状态更新操作)" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
             <div class="layui-form-item">
                 <div class="layui-input-block">
                     <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
@@ -106,12 +113,12 @@
     <table class="layui-table">
         <thead>
         <tr>
-            <th style="text-align: center">字段名</th>
-            <th style="text-align: center">字段标题</th>
-            <th style="text-align: center">表单类型</th>
-            <th style="text-align: center;width: 10px" class="S">S</th>
-            <th style="text-align: center">列表页展示字段类型</th>
-            <th style="text-align: center" id="inin">字段初始数据展示</th>
+            <th style="text-align: center;width: 150px">字段名</th>
+            <th style="text-align: center;width: 150px">字段标题</th>
+            <th style="text-align: center;width: 100px">表单类型</th>
+            <th style="text-align: center;width: 30px" class="S">搜索</th>
+            <th style="text-align: center;width: 100px">列表展示类型</th>
+            <th style="text-align: center" id="inin">字段关联值</th>
         </tr>
         </thead>
         <tbody>
@@ -169,7 +176,7 @@
         <form class="layui-form" id="join-form" lay-filter="j" action="">
             <div class="layui-form-item">
                 <div class="layui-input-inline">
-                    <input type="text" name="[]" required  lay-verify="required" placeholder="示例：1=正常" autocomplete="off" class="layui-input">
+                    <input type="text" name="join_item[]" required  lay-verify="required" placeholder="示例：1=正常" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-input-inline" >
                     <button type="button" lay-event="add"  class="layui-btn layui-btn-normal">加一个</button>
@@ -188,7 +195,7 @@
 
     <div class="layui-form-item">
         <div class="layui-input-inline">
-            <input type="text" name="[]" required  lay-verify="required" placeholder="示例：1=正常" autocomplete="off" class="layui-input">
+            <input type="text" name="join_item[]" required  lay-verify="required" placeholder="示例：1=正常" autocomplete="off" class="layui-input">
         </div>
         <div class="layui-input-inline" >
             <button type="button" lay-event="del"  class="layui-btn layui-btn-danger"><i class="layui-icon layui-icon-delete"></i></button>
@@ -236,7 +243,11 @@
             },
             // 设置成功
             final: () => {
-                join.value = JSON.stringify(form.val("j"));
+                let v = [];
+                for (let i in form.val("j")) {
+                    v.push(form.val("j")[i]);
+                }
+                join.value = JSON.stringify(v);
                 layer.closeAll()
             }
         });
@@ -325,6 +336,15 @@
             }
             return make_item;
         }
+
+        // 创建文件选择
+        form.on('checkbox(make)', function(data){
+            // 控制器的方法访问设置
+            if (data.value === '1') {
+                data.elem.checked ? $('#accessible').show() : $('#accessible').hide();
+            }
+        });
+
     });
 
 </script>

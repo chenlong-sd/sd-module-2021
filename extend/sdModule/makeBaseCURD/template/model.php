@@ -1,7 +1,6 @@
 /**
  *
  * //=={Table}==//.php
- * User: ChenLong
  * DateTime: //=={date}==//
  */
 
@@ -14,7 +13,6 @@ use //=={commonNamespace}==//\//=={Table}==// as common//=={Table}==//;
  * //=={describe}==// 模型
  * Class //=={Table}==//
  * @package //=={namespace}==//\//=={Table}==//
- * @author chenlong <vip_chenlong@163.com>
  */
 class //=={Table}==// extends common//=={Table}==//
 {

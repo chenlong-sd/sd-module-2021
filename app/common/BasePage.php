@@ -30,18 +30,14 @@ abstract class BasePage
 
 
     /**
-     * @return array
+     * @return PageData
      * @throws SdException
-     * @throws \ReflectionException
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/6
      */
-    public function listPageData(): array
+    public function listPageData(): PageData
     {
-        return [
-            'table'  => PageData::create([]),
-            'search' => Form::create([])->setSubmitHtml()->complete(),
-        ];
+        return PageData::create([]);
     }
 
     /**
@@ -54,6 +50,16 @@ abstract class BasePage
     public function formPageData(string $scene, array $default_data = []): Form
     {
         return Form::create([])->complete();
+    }
+
+    /**
+     * 创建列表搜索表单的数据
+     * @return Form
+     * @throws \ReflectionException
+     */
+    public function listSearchFormData(): Form
+    {
+        return Form::create([])->setSubmitHtml()->complete();
     }
 
 }
