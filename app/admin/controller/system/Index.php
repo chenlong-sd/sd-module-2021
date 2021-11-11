@@ -10,7 +10,6 @@
 namespace app\admin\controller\system;
 
 
-use app\admin\model\system\Administrators as AdministratorsModel;
 use app\admin\model\system\Route;
 use app\admin\service\system\AdministratorsService as AdministratorsService;
 use app\admin\validate\system\Administrators as AdministratorsValidate;
