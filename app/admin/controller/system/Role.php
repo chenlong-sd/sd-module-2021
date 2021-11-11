@@ -9,7 +9,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\system\Role as RoleModel;
-use app\admin\page\system\Role as RolePage;
+use app\admin\page\system\RolePage as RolePage;
 use app\admin\service\system\RoleService;
 use app\common\controller\Admin;
 use app\common\ResponseJson;

@@ -23,7 +23,7 @@ use app\admin\model\system\Dictionary as MyModel;
  * Class Dictionary
  * @package app\admin\page\system\Dictionary
  */
-class Dictionary extends BasePage
+class DictionaryPage extends BasePage
 {
     /**
      * 获取创建列表table的数据

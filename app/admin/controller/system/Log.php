@@ -9,7 +9,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\system\Log as LogModel;
-use app\admin\page\system\Log as LogPage;
+use app\admin\page\system\LogPage as LogPage;
 use app\admin\service\system\LogService;
 use app\common\controller\Admin;
 

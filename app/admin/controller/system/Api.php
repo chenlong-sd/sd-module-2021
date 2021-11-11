@@ -10,7 +10,7 @@ namespace app\admin\controller\system;
 use app\admin\model\system\Api as ApiM;
 use app\admin\model\system\ApiModule as ApiModuleModel;
 use app\admin\model\system\QueryParams as QueryParamsModel;
-use app\admin\page\system\Api as ApiPage;
+use app\admin\page\system\ApiPage as ApiPage;
 use app\admin\service\system\ApiService;
 use app\admin\validate\system\Api as ApiValidate;
 use \app\common\controller\Admin;

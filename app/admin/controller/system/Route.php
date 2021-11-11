@@ -9,7 +9,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\system\Route as RouteModel;
-use app\admin\page\system\Route as RoutePage;
+use app\admin\page\system\RoutePage as RoutePage;
 use app\admin\service\system\RouteService;
 use app\admin\validate\system\Route as RouteValidate;
 use app\common\controller\Admin;

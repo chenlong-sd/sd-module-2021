@@ -19,7 +19,7 @@ use sdModule\layui\form\FormUnit;
  * Class Api
  * @package app\admin\page
  */
-class Api extends BasePage
+class ApiPage extends BasePage
 {
     /**
      * 获取创建列表table的数据

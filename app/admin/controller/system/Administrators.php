@@ -10,7 +10,7 @@
 namespace app\admin\controller\system;
 
 
-use app\admin\page\system\Administrators as MyPage;
+use app\admin\page\system\AdministratorsPage as MyPage;
 use app\admin\service\system\AdministratorsService as MyService;
 use app\admin\validate\system\Administrators as MyValidate;
 use app\common\controller\Admin;

@@ -14,7 +14,7 @@ use sdModule\layui\form\FormUnit;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\PageData;
 
-class Log extends BasePage
+class LogPage extends BasePage
 {
     /**
      * 获取创建列表table的数据

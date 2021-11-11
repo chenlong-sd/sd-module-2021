@@ -13,7 +13,7 @@ use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
 
-class Route extends BasePage
+class RoutePage extends BasePage
 {
     public $list_template = 'common/tree_list_page';
 

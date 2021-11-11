@@ -8,7 +8,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\system\Dictionary as DictionaryModel;
-use app\admin\page\system\Dictionary as DictionaryPage;
+use app\admin\page\system\DictionaryPage as DictionaryPage;
 use app\admin\service\system\DictionaryService;
 use app\admin\validate\system\Dictionary as DictionaryValidate;
 use \app\common\controller\Admin;

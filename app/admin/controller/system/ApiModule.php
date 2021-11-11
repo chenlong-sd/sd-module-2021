@@ -9,7 +9,7 @@ namespace app\admin\controller\system;
 
 use app\admin\AdminBaseService;
 use app\admin\model\system\ApiModule as ApiModuleModel;
-use app\admin\page\system\ApiModule as ApiModulePage;
+use app\admin\page\system\ApiModulePage as ApiModulePage;
 use app\admin\service\system\ApiService;
 use app\admin\validate\system\ApiModule as ApiModuleValidate;
 use \app\common\controller\Admin;

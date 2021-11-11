@@ -16,7 +16,7 @@ use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
 use think\facade\Config;
 
-class Role extends BasePage
+class RolePage extends BasePage
 {
     /**
      * 获取创建列表table的数据
@@ -79,7 +79,7 @@ class Role extends BasePage
                 ->column('auth_id', 'table_names');
 
             foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->options(Administrators::dataAuth($data['table']))
+                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->options(AdministratorsPage::dataAuth($data['table']))
                     ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }

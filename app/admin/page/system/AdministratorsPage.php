@@ -19,7 +19,7 @@ use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
 use think\facade\Db;
 
-class Administrators extends BasePage
+class AdministratorsPage extends BasePage
 {
     /**
      * 获取创建列表table的数据
