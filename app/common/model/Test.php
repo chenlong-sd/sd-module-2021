@@ -3,14 +3,14 @@
  *
  * Test.php
  * User: ChenLong
- * DateTime: 2021-09-24 18:04:21
+ * DateTime: 2021-11-11 16:57:19
  */
 
 
 namespace app\common\model;
 
 use app\common\BaseModel;
-use sdModule\layui\Layui;
+
 
 /**
  * 测试表 模型
@@ -48,29 +48,6 @@ class Test extends BaseModel
         'delete_time' => 'int',
         
     ];
-
-
-    
-    /**
-     * 状态返回值处理
-     * @param bool $tag
-     * @return array
-     */   
-    public static function getStatusSc(bool $tag = true): array
-    {
-        return $tag === true 
-            ? [
-                '1' => Layui::tag()->green('正常'),
-                '2' => Layui::tag()->rim('冻结'),
-                
-            ]
-            : [
-                '1' => '正常',
-                '2' => '冻结',
-                
-            ];
-    }
-
 
 }
 

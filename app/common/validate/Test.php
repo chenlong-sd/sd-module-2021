@@ -2,8 +2,7 @@
 /**
  *
  * Test.php
- * User: ChenLong
- * DateTime: 2021-09-24 18:04:21
+ * DateTime: 2021-11-11 16:57:19
  */
 
 namespace app\common\validate;
@@ -14,7 +13,6 @@ use app\common\BaseValidate;
  * 测试表 验证器
  * Class Test
  * @package app\common\validate\Test
- * @author chenlong <vip_chenlong@163.com>
  */
 class Test extends BaseValidate
 {
@@ -31,7 +29,7 @@ class Test extends BaseValidate
     ];
 
     protected $scene = [
-        'add' => ['title', 'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
-        'edit' => ['id', 'title',  'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
+        'create' => ['title', 'cover', 'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
+        'update' => ['id', 'title', 'cover', 'show_images', 'intro', 'status', 'administrators_id', 'pid', 'content'],
     ];
 }

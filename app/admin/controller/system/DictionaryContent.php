@@ -1,26 +1,27 @@
 <?php
 /**
- * Test.php
+ * DictionaryContent.php
  * User: ChenLong
- * DateTime: 2021-11-11 16:58:26
+ * DateTime: 2021-11-24 23:26:33
  */
 
-namespace app\admin\controller;
+namespace app\admin\controller\system;
 
 use app\common\controller\Admin;
+use app\common\ResponseJson;
 use app\common\SdException;
-use app\admin\service\TestService as MyService;
-use app\admin\model\Test as MyModel;
-use app\admin\page\TestPage as MyPage;
-use app\common\validate\Test as MyValidate;
+use app\admin\service\system\DictionaryContentService as MyService;
+use app\admin\model\system\DictionaryContent as MyModel;
+use app\admin\page\system\DictionaryContentPage as MyPage;
+use app\admin\validate\system\DictionaryContent as MyValidate;
 
 /**
- * 测试表 控制器
- * Class Test
- * @package app\admin\controller\Test
+ * 字典内容 控制器
+ * Class DictionaryContent
+ * @package app\admin\controller\system\DictionaryContent
  * @author chenlong <vip_chenlong@163.com>
  */
-class Test extends Admin
+class DictionaryContent extends Admin
 {
 
     /**
@@ -49,6 +50,15 @@ class Test extends Admin
      */
     public function create(MyService $service, MyModel $model, MyPage $page)
     {
+        if ($this->request->isPost()) {
+            $data = $service->fieldFilter($this->request->post());
+            $this->validate($data, MyValidate::class . ".create");
+
+            $service->dataSave($data, $model);
+
+            return ResponseJson::success();
+        }
+
         return parent::create_($service, $model, $page, MyValidate::class);
     }
 
@@ -64,6 +74,15 @@ class Test extends Admin
      */
     public function update(MyService $service, MyModel $model, MyPage $page)
     {
+        if ($this->request->isPost()) {
+            $data = $service->fieldFilter($this->request->post());
+            $this->validate($data, MyValidate::class . ".update");
+
+            $service->dataSave($data, $model);
+
+            return ResponseJson::success();
+        }
+
         return parent::update_($service, $model, $page, MyValidate::class);
     }
 

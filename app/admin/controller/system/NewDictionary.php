@@ -1,26 +1,26 @@
 <?php
 /**
- * Test.php
+ * NewDictionary.php
  * User: ChenLong
- * DateTime: 2021-11-11 16:58:26
+ * DateTime: 2021-11-24 23:14:44
  */
 
-namespace app\admin\controller;
+namespace app\admin\controller\system;
 
 use app\common\controller\Admin;
 use app\common\SdException;
-use app\admin\service\TestService as MyService;
-use app\admin\model\Test as MyModel;
-use app\admin\page\TestPage as MyPage;
-use app\common\validate\Test as MyValidate;
+use app\admin\service\system\NewDictionaryService as MyService;
+use app\admin\model\system\NewDictionary as MyModel;
+use app\admin\page\system\NewDictionaryPage as MyPage;
+use app\admin\validate\system\NewDictionary as MyValidate;
 
 /**
- * 测试表 控制器
- * Class Test
- * @package app\admin\controller\Test
+ * 新字典表 控制器
+ * Class NewDictionary
+ * @package app\admin\controller\system\NewDictionary
  * @author chenlong <vip_chenlong@163.com>
  */
-class Test extends Admin
+class NewDictionary extends Admin
 {
 
     /**
