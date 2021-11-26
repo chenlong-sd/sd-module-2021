@@ -6,6 +6,7 @@ namespace app\common\traits\admin;
 
 use app\common\BaseModel;
 use app\common\SdException;
+use think\exception\HttpResponseException;
 use think\facade\Log;
 
 /**
@@ -42,6 +43,9 @@ trait DataUpdate
             $model->commit();
         } catch (\Throwable $exception) {
             $model->rollback();
+            if ($exception instanceof HttpResponseException) {
+                throw new HttpResponseException($exception->getResponse());
+            }
             throw new SdException($exception->getMessage());
         }
     }

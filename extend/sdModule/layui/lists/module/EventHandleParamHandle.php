@@ -29,18 +29,18 @@ trait EventHandleParamHandle
         }
 
         $url_str = array_shift($url);
-        $url_str = strpos($url_str, '?') !== false ? "'{$url_str}'" : "'{$url_str}?1'";
+        $url_str = strpos($url_str, '?') !== false ? "$url_str" : "$url_str?";
 
         foreach ($url as $value) {
             if (!is_array($value)) {
-                $url_str .= " + '&{$value}=' + obj.{$value}";
+                $url_str .= "$value=\${obj.$value}&";
                 continue;
             }
             $field = array_key_first($value);
-            $url_str .= " + '&{$value[$field]}=' + obj.{$field}";
+            $url_str .= "$value[$field]=\${obj.$field}&";
         }
 
-        return $url_str;
+        return sprintf('`%s`', rtrim($url_str, '&'));
     }
 
 
@@ -52,7 +52,7 @@ trait EventHandleParamHandle
     protected static function paramReplace(string $string)
     {
         return preg_replace_callback('/\{(\w+)\}/', function ($v) {
-            return "'+ obj.{$v[1]} +'";
+            return "'+ obj.$v[1] +'";
         }, $string);
     }
 }

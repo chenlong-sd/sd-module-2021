@@ -8,11 +8,11 @@
 namespace app\admin\page\system;
 
 use app\common\BasePage;
-use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\form4\FormProxy as DefaultForm;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\form4\FormUnit;
 
 
 /**
@@ -30,10 +30,10 @@ class ApiPage extends BasePage
     {
         $table = PageData::create([
             Column::checkbox(),
-            Column::normal('接口名', 'method')->setFormat('{method} {api_name}'),
+            Column::normal('请求方式', 'method')->moreConfiguration(['width' => 100]),
+            Column::normal('接口名', 'api_name'),
             Column::normal('路径', 'path'),
-            Column::normal('对接状态', 'status')
-                ->setTemplate("return obj.status_1 == 1 ? obj.status + ' <span style=\"color: #FFB800\">对接完请改变状态</span>' : obj.status"),
+            Column::normal('对接状态', 'status'),
             Column::normal('修改时间', 'update_time'),
         ]);
 
@@ -66,8 +66,6 @@ class ApiPage extends BasePage
      * @param string $scene
      * @param array $default_data
      * @return DefaultForm
-     * @throws \ReflectionException
-     * @throws \app\common\SdException
      */
     public function formPageData(string $scene, array $default_data = []): DefaultForm
     {
@@ -79,28 +77,26 @@ class ApiPage extends BasePage
             FormUnit::text('describe', '描述'),
             FormUnit::uEditor('response', '响应示例'),
         ];
-        $form = DefaultForm::create($unit)->setDefaultData($default_data);
+        $form = DefaultForm::create($unit, $default_data);
 
-        return $form->complete();
+        return $form;
     }
 
 
     /**
      * DefaultForm
      * @return DefaultForm
-     * @throws \ReflectionException
      */
     public function listSearchFormData():DefaultForm
     {
         $form_data = [
-            FormUnit::build(
+            FormUnit::group(
                 FormUnit::text('i.api_name%%')->placeholder('接口名'),
                 FormUnit::text('i.path%%')->placeholder("路径"),
                 FormUnit::time('i.update_time_~')->placeholder('修改时间'),
-                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             ),
         ];
-        return DefaultForm::create($form_data)->setSubmitHtml()->complete();
+        return DefaultForm::create($form_data)->setSearchSubmitElement();
     }
 
 }

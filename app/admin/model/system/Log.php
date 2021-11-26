@@ -14,6 +14,15 @@ use sdModule\layui\Layui;
 
 /**
  * Class Log
+ * @property $id
+ * @property $method
+ * @property $route_id
+ * @property $administrators_id
+ * @property $param
+ * @property $route
+ * @property $create_time
+ * @property $update_time
+ * @property $delete_time
  * @package app\admin\model\system
  * @author chenlong <vip_chenlong@163.com>
  */

@@ -12,8 +12,8 @@ use app\admin\model\system\Administrators as AdministratorsM;
 use app\admin\model\system\DataAuth;
 use app\admin\model\system\Role;
 use app\common\BasePage;
-use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\form4\FormProxy as DefaultForm;
+use sdModule\layui\form4\FormUnit;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
@@ -23,8 +23,7 @@ class AdministratorsPage extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return array
-     * @throws \ReflectionException
+     * @return PageData
      * @throws \app\common\SdException
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/6
@@ -61,19 +60,17 @@ class AdministratorsPage extends BasePage
      * @param string $scene
      * @param array $default_data
      * @return DefaultForm
-     * @throws \ReflectionException
-     * @throws \app\common\SdException
      */
     public function formPageData(string $scene, array $default_data = []): DefaultForm
     {
         $form_data = [
             FormUnit::hidden('id'),
             FormUnit::text('name', lang('administrator.name')),
-            FormUnit::text('account', lang('administrator.account')),
-            FormUnit::password('password', lang('administrator.password')),
-            FormUnit::password('password_confirm', lang('administrator.password confirm')),
+            FormUnit::text('account', lang('administrator.account'))->shortTip(lang('administrator.login account')),
+            FormUnit::password('password', lang('administrator.password'))->shortTip(lang('administrator.6-16 digit password')),
+            FormUnit::password('password_confirm', lang('administrator.password confirm'))->shortTip(lang('administrator.6-16 digit password')),
             FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => admin_session('id')])->column('role', 'id')),
-            FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsM::getStatusSc())->defaultValue(AdministratorsEnumStatus::AVAILABLE),
+            FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsEnumStatus::getAllMap(true))->defaultValue(AdministratorsEnumStatus::AVAILABLE),
         ];
         if (env('APP.DATA_AUTH', false)){
             $default = DataAuth::where(['delete_time' => 0])->where(['administrators_id' => request()->get('id')])
@@ -87,10 +84,7 @@ class AdministratorsPage extends BasePage
 
         unset($default_data['password']);
 
-        $form = DefaultForm::create($form_data)->setDefaultData($default_data);
-        $form->setShortForm($this->shortInput());
-
-        return $form->complete();
+        return DefaultForm::create($form_data, $default_data);
     }
 
     /**
@@ -114,12 +108,11 @@ class AdministratorsPage extends BasePage
 
     /**
      * @return DefaultForm
-     * @throws \ReflectionException
      */
     public function listSearchFormData():DefaultForm
     {
         $form_data = [
-            FormUnit::build(
+            FormUnit::group(
                 FormUnit::text('account%%')->placeholder(lang('administrator.account')),
                 FormUnit::text('name%%')->placeholder(lang('administrator.administrator')),
                 FormUnit::text('r.role%%')->placeholder(lang('administrator.role')),
@@ -127,23 +120,11 @@ class AdministratorsPage extends BasePage
                     AdministratorsEnumStatus::AVAILABLE => lang('normal'),
                     AdministratorsEnumStatus::DISABLE   => lang('disable'),
                 ])->placeholder(lang('administrator.status')),
-                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             ),
 
         ];
 
-        return DefaultForm::create($form_data)->setSubmitHtml()->complete();
+        return DefaultForm::create($form_data)->setSearchSubmitElement();
     }
 
-    /**
-     * @return array
-     */
-    public function shortInput(): array
-    {
-        return [
-            'password' => lang('administrator.6-16 digit password'),
-            'password_confirm' => lang('administrator.6-16 digit password'),
-            'account' => lang('administrator.login account'),
-        ];
-    }
 }

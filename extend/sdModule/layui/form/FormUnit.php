@@ -33,6 +33,7 @@ use think\helper\Str;
  * @method static UnitData custom(string $name = '')
  * @method static UnitData color(string $name = '', string $label = '')
  * @method static UnitData slider(string $name = '', string $label = '')
+ * @deprecated
  * @package sdModule\layui\defaultForm
  */
 class FormUnit

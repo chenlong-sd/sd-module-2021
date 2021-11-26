@@ -11,9 +11,7 @@ namespace app\admin\model\system;
 
 use app\admin\enum\AdministratorsEnumStatus;
 use app\common\BaseModel;
-use app\common\Enum;
 use app\common\SdException;
-use sdModule\layui\Layui;
 
 /**
  * Class Administrators

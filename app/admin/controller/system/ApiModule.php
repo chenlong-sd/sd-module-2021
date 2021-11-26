@@ -33,13 +33,13 @@ class ApiModule extends Admin
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    public function index(ApiService $service, ApiModulePage $page)
+    public function index(ApiService $service, ApiModuleModel $mode, ApiModulePage $page)
     {
         if ($this->request->isAjax()) {
             return $service->apiModuleListData(new BackstageListsService());
         }
 
-        return view($page->list_template, $page->listPageData());
+        return parent::index_($service, $mode, $page);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace app\common;
 use sdModule\common\MultipleCases;
-use think\helper\Str;
+use sdModule\layui\Dom;
 
 /**
  * 枚举值实现
@@ -86,6 +86,17 @@ abstract class Enum extends MultipleCases
     }
 
     /**
+     * 获取当前值
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/16
+     */
+    final public function getValue(): string
+    {
+        return $this->enumValue;
+    }
+
+    /**
      * 获取所有枚举值
      * @param bool $isEnumInstance 是否是枚举实例
      * @return array|Enum[]
@@ -107,12 +118,21 @@ abstract class Enum extends MultipleCases
 
     /**
      * 获取所有的映射枚举值
+     * @param bool $isPure 是否映射存文字
+     * @return array
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    final public static function getAllMap(): array
+    final public static function getAllMap(bool $isPure = false): array
     {
-        return static::setMap();
+        $map = static::setMap();
+        if ($isPure){
+            $map = array_map(function ($v) {
+                return $v instanceof Dom ? current($v->getContent()) : $v;
+            }, $map);
+        }
+
+        return $map;
     }
 
     /**

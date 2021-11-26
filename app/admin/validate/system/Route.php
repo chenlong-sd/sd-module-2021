@@ -22,7 +22,7 @@ class Route extends BaseValidate
         'title' => 'require',
         'route' => 'require',
         'pid' => 'require|number',
-        'type' => 'require|number|in:1,2',
+        'type' => 'require|number|in:1,2,3',
         'weigh' => 'require|number',
         'icon' => 'require',
         'id' => 'require|number',

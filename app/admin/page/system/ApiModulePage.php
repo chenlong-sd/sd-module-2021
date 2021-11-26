@@ -8,11 +8,11 @@
 namespace app\admin\page\system;
 
 use app\common\BasePage;
-use sdModule\layui\form\Form as DefaultForm;
+use sdModule\layui\form4\FormProxy as DefaultForm;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\form4\FormUnit;
 
 
 /**
@@ -63,10 +63,9 @@ class ApiModulePage extends BasePage
             FormUnit::text('describe', '描述'),
         ];
 
-        $form = DefaultForm::create($unit);
-        $form->setDefaultData($default_data);
+        $form = DefaultForm::create($unit, $default_data);
 
-        return $form->complete();
+        return $form;
     }
 
 
@@ -79,13 +78,12 @@ class ApiModulePage extends BasePage
     public function listSearchFormData():DefaultForm
     {
         $form_data = [
-            FormUnit::build(
+            FormUnit::group(
                 FormUnit::text('i.item_name%%')->placeholder('模块名'),
-                FormUnit::time('i.update_time_~')->setTime('datetime', '~')->placeholder('修改时间'),
-                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
+                FormUnit::time('i.update_time')->dateType('datetime')->jsConfig(['range' => "~"])->placeholder('修改时间'),
             ),
         ];
-        return DefaultForm::create($form_data)->setSubmitHtml()->complete();
+        return DefaultForm::create($form_data)->setSearchSubmitElement();
     }
 
 }

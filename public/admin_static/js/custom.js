@@ -8,25 +8,7 @@ custom = {
     /**
      * 自定义百度编辑器上传路径锁
      */
-    lock_editor_custom_url: false,
-    /**
-     * 设置需要的属性
-     * @param need
-     * @param needValue
-     * @returns {custom}
-     */
-    setNeed: function (need, needValue) {
-        this[need] = needValue;
-        return this;
-    },
-    /**
-     * 获取需要的属性
-     * @param need
-     * @returns {*}
-     */
-    getNeed: function (need) {
-        return this[need];
-    }
+    lock_editor_custom_url: false
     /**
      * 自定义加载层
      * @param msg   文字提示或关闭后的回调函数
@@ -60,7 +42,7 @@ custom = {
         let frame = {
             type: 2,
             content: url
-            , area: ['80%', '80%']
+            , area: ['80%', '90%']
             , maxmin: true
             , shade: false
             , title: title
@@ -72,7 +54,7 @@ custom = {
                 iframeWin.closeLayerIndex = index;
                 if (layero.find('.layui-layer-setwin').find('[id^=sc-window-tab]').length < 1) {
                     layero.find('.layui-layer-setwin').prepend('<a id="sc-window-tab'+ layer1.zIndex +'" href="#"><i class="layui-icon layui-icon-up"></i></a>');
-                    layui.jquery(iframeWin.document).on('click', '#sc-window-tab' + layer1.zIndex, function () {
+                    layui.jquery(layero).on('click', '#sc-window-tab' + layer1.zIndex, function () {
                         let hf = /\?/.test(iframeWin.location.href) ? "&__sc_tab__=1" : "?__sc_tab__=1";
                         custom.openTabsPage(layero.find('iframe').attr('src') + hf + '#' + layero.attr('times'), layero.find('.layui-layer-title').text());
                         layer1.close(index);
@@ -131,20 +113,6 @@ custom = {
     , closeTabsPage() {
         let url = window.location.href.replace(location.origin, '');
         top.layui.jquery('#LAY_app_tabsheader').find("li[lay-id='" + url + "']>i").click();
-    }
-    /**
-     * 百度编辑器的自定义配置
-     */
-    , UEditorConfig: {
-        toolbars: [
-            ['fullscreen', 'source', 'undo', 'redo', 'bold', 'indent', 'italic', 'underline', 'strikethrough', 'fontborder', 'horizontal', 'justifyleft', 'justifyright', 'justifycenter',
-                'justifyjustify', 'forecolor', 'backcolor', 'lineheight', 'touppercase', 'tolowercase', '|', 'removeformat', 'formatmatch', '|',
-                'inserttable', 'mergeright', 'mergedown', 'deletetable', 'insertrow', 'insertcol'],
-            ['date', 'time', 'fontfamily', 'fontsize', 'paragraph', 'simpleupload', 'insertimage', 'link', 'background', 'spechars', 'imagenone', 'imageleft', 'imageright', 'imagecenter',]
-        ]
-        , initialFrameWidth: '100%'
-        , initialFrameHeight: 300
-        , zIndex: 100
     },
     /**
      * 渲染百度编辑器
@@ -154,40 +122,56 @@ custom = {
      * @returns {*}
      */
     editorRender(UE, id, config) {
-        let c_config = config ? this.setUEditorConfig(config) : this.UEditorConfig;
-        let sc = UE.getEditor(id, c_config);
+        let UEditorConfig = {
+            toolbars: [
+                ['fullscreen', 'source', 'undo', 'redo', 'bold', 'indent', 'italic', 'underline', 'strikethrough', 'fontborder', 'horizontal', 'justifyleft', 'justifyright', 'justifycenter',
+                    'justifyjustify', 'forecolor', 'backcolor', 'lineheight', 'touppercase', 'tolowercase', '|', 'removeformat', 'formatmatch', '|',
+                    'inserttable', 'mergeright', 'mergedown', 'deletetable', 'insertrow', 'insertcol'],
+                ['date', 'time', 'fontfamily', 'fontsize', 'paragraph', 'simpleupload', 'insertimage', 'link', 'background', 'spechars', 'imagenone', 'imageleft', 'imageright', 'imagecenter',]
+            ]
+            , initialFrameWidth: '100%'
+            , initialFrameHeight: 300
+            , zIndex: 100
+        };
+
+        let c_config = config ? setUEditorConfig(config) : UEditorConfig;
+        let sc_ue = UE.getEditor(id, c_config);
         if (EDITOR_UPLOAD && !this.lock_editor_custom_url) {
-            this.editorRedirect(UE, EDITOR_UPLOAD);
+            editorRedirect(EDITOR_UPLOAD);
             this.lock_editor_custom_url = true;
         }
-        return sc;
-    },
-    /**
-     * 重定向百度编辑器上传地址
-     * @param UE
-     * @param url
-     */
-    editorRedirect: function (UE, url) {
-        UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
-        UE.Editor.prototype.getActionUrl = function (action) {
-            if (action == 'uploadimage' || action == 'uploadfile' || action == 'uploadvideo') {
-                return url;  //此处改需要把图片上传到哪个Action（Controller）中
-            } else {
-                return this._bkGetActionUrl.call(this, action);
-            }
-        };
-    }
-    /**
-     * 设置百度编辑器的自定义配置
-     */
-    , setUEditorConfig: function (config) {
-        let c = this.UEditorConfig;
-        for (let i in c) {
-            if (!config.hasOwnProperty(i)) {
-                config[i] = c[i];
-            }
+
+        /**
+         * 重定向百度编辑器上传地址
+         * @param url
+         */
+        function editorRedirect(url) {
+            UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+            UE.Editor.prototype.getActionUrl = function (action) {
+                if (action == 'uploadimage' || action == 'uploadfile' || action == 'uploadvideo') {
+                    return url;  //此处改需要把图片上传到哪个Action（Controller）中
+                } else {
+                    return this._bkGetActionUrl.call(this, action);
+                }
+            };
         }
-        return config;
+
+        /**
+         * 设置百度编辑器的自定义配置
+         * @param config
+         * @returns {*}
+         */
+        function setUEditorConfig(config) {
+            let c = UEditorConfig;
+            for (let i in c) {
+                if (!config.hasOwnProperty(i)) {
+                    config[i] = c[i];
+                }
+            }
+            return config;
+        }
+
+        return sc_ue;
     }
     /**
      * 批量上传文件，配合layui批量上传使用
@@ -202,7 +186,7 @@ custom = {
         let className   = event_id.substr(1);
         let upload_file = {};
         let url_prefix  = ROOT;
-        let current_v   = 1;
+        let current_v   = 0;
 
         /**
          * 初始化内容
@@ -212,10 +196,9 @@ custom = {
         function init(file_url, prefix) {
             let file_arr = file_url ? file_url.filter((v) => Boolean(v)) : [];
             for (let i = 0; i < file_arr.length; i++) {
-                upload_file[current_v++] = file_arr[i];
+                push(file_arr[i]);
             }
             url_prefix = prefix ? prefix : url_prefix;
-            render();
         }
 
         /**
@@ -226,27 +209,28 @@ custom = {
             $(show_id).find('.sc-item').each(function (i, e) {
                 v.push(upload_file[e.getAttribute('data-current')]);
             });
-
             $('input[name="' + name + '"]').val(v.join(','));
         }
 
         /**
          * 渲染页面html
+         * @param {string|void} push_url 追加的新的图片地址
          */
-        function render() {
-            let html = '';
-            for (let item in upload_file) {
-                let url = /^http.*$/.test(upload_file[item]) ? upload_file[item] : url_prefix + '/' + upload_file[item];
-                html += `<div class="sc-item" data-current="${item}" draggable="true" style="width: 200px;border-radius: 5px;overflow: hidden;border: 1px solid grey;padding: 5px;margin-right: 10px;display: inline-block">` +
-                    `      <img src="${custom.thumbnailUrl(url)}" alt="" onerror="${url}" width="100%" class="layui-upload-img">` +
-                    `      <div style="margin-top: 2px">` +
-                    `          <button type="button" class="sc-del${className} layui-btn layui-btn-fluid layui-btn-danger layui-btn-sm">` +
-                    `              <i class="layui-icon layui-icon-delete"></i>` +
-                    `          </button>` +
-                    `      </div>` +
-                    `   </div>`;
+        function render(push_url) {
+            let url = /^http.*$/.test(push_url) ? push_url : url_prefix + '/' + push_url;
+            $(show_id).append(make_html(url, current_v));
+            setVal();
+
+            function make_html(url, current) {
+                return `<div class="sc-item" data-current="${current}" draggable="true" style="width: 125px;border-radius: 5px;overflow: hidden;border: 1px solid grey;padding: 5px;margin-right: 10px;display: inline-block">` +
+                `      <img src="${custom.thumbnailUrl(url)}"  draggable="false"  alt="" layer-src="${url}" onerror="${url}" width="100%" class="ad layui-upload-img">` +
+                `      <div style="margin-top: 2px">` +
+                `          <button type="button" class="sc-del${className} layui-btn layui-btn-fluid layui-btn-danger layui-btn-sm">` +
+                `              <i class="layui-icon layui-icon-delete"></i>` +
+                `          </button>` +
+                `      </div>` +
+                `   </div>`;
             }
-            $(show_id).html(html);
         }
 
         /**
@@ -254,9 +238,8 @@ custom = {
          * @param {string} url
          */
         function push(url) {
-            upload_file[current_v++] = url;
-            render();
-            setVal();
+            upload_file[++current_v] = url;
+            render(url);
         }
 
         /**
@@ -266,17 +249,32 @@ custom = {
         function drag(elem) {
             let tmp_over;
             elem.on('dragend', function (e) {
-                if ($(e.target).hasClass('sc-item')) {
-                    tmp_over.before(e.target);
-                    setVal();
+                if (!$(e.target).hasClass('sc-item')) return;
+
+                if (tmp_over.hasClass('sc-item')) {
+                    $(show_id).find(tmp_over).index() > $(show_id).find(e.target).index()
+                        ? tmp_over.after(e.target)
+                        : tmp_over.before(e.target);
+                }else{
+                    elem.append(e.target);
                 }
+
+                setVal();
             }).on('dragover', function (e) {
                 if ($(e.target).hasClass('sc-item')) {
                     tmp_over = $(e.target);
                 } else if($(e.target).parents('.sc-item')){
                     tmp_over = $(e.target).parents('.sc-item');
                 }
-            })
+            });
+        }
+
+        /**
+         * 图片放大
+         * @param url
+         */
+        function fd(url) {
+            layer.photos({photos:{"data": [{"src": url}]}})
         }
 
         /**
@@ -287,8 +285,10 @@ custom = {
                 let current = $(this).parents('.sc-item').data('current');
                 delete upload_file[current];
                 $(this).parents('.sc-item').remove();
-                console.log(upload_file, current)
                 setVal();
+            }).off('click', '.ad').on('click', '.ad', function () {
+                let url = $(this).attr('layer-src');
+                fd(url);
             });
         }
 
@@ -384,6 +384,7 @@ custom = {
      */
     tableImageShow: function (url, alt) {
         let show_url, layer_url;
+        url += '';
         if (/^http.*$/.test(url)) {
             show_url = url;
             layer_url = url;
@@ -402,9 +403,9 @@ custom = {
      * @param $
      * @param upload
      * @param name
-     * @param defaults
+     * @returns {{defaults: defaults, name}}
      */
-    upload($, upload, name, defaults) {
+    upload: function ($, upload, name) {
         let load;
         let up = upload.render({
             elem: "#" + name
@@ -441,15 +442,13 @@ custom = {
             custom.frame(RESOURCE_URL + '?type=radio&vars=' + name, '资源选择');
         });
 
-        let ones = {
+        return {
             name: name,
             defaults: (defaults) => {
                 $('#' + name + '_show').attr('src', /^http.*$/.test(defaults) ? defaults : ROOT + '/' + defaults);
                 $('input[name=' + name + ']').val(defaults);
             }
         };
-        if (defaults) ones.defaults(defaults);
-        return ones;
     },
     /**
      * 文件上传
@@ -534,6 +533,8 @@ custom = {
     },
     /**
      * 视频上传
+     * @param name
+     * @returns {{defaults: defaults, name}}
      */
     videoUpload(name){
         let load;
@@ -568,6 +569,36 @@ custom = {
                 $('input[name=' + name + ']').val(defaults);
             }
         };
+    },
+    /**
+     * 数子集判断
+     * @param {Array} array         子集数组
+     * @param {Array} arrayStack    要查询的数组
+     */
+    arraySub(array, arrayStack){
+        if (!(array instanceof Array) || !(arrayStack instanceof Array) || ((arrayStack.length < array.length))) {
+            return false;
+        }
+        let len = array.length;
+        for (let i = 0 ;i < len;i++) {
+            if(arrayStack.indexOf(array[i]) < 0) return false;
+        }
+        return true;
+    },
+    /**
+     * 数组交集
+     * @param {Array} array1
+     * @param {Array} array2
+     */
+    arrayBeMixed(array1, array2){
+        if (!(array1 instanceof Array) || !(array2 instanceof Array)) {
+            return false;
+        }
+        let len = array1.length;
+        for (let i = 0 ;i < len;i++) {
+            if(array2.indexOf(array1[i]) >= 0) return true;
+        }
+        return false;
     }
 };
 

@@ -74,7 +74,10 @@ class System extends Admin
             ]);
         }
 
-        return view('common/list_page_3_5', $page->dataBackUp());
+        return view('common/list_page_3_5', [
+            'table' => $page->dataBackUp(),
+            'search' => $page->listSearchFormData()
+        ]);
     }
 
     /**
@@ -133,7 +136,10 @@ class System extends Admin
             ]);
         }
 
-        return view('common/list_page_3_5', $page->viewBackupFiles());
+        return view('common/list_page_3_5', [
+            'table' => $page->viewBackupFiles(),
+            'search' => $page->listSearchFormData()
+        ]);
     }
 
     /**
@@ -243,7 +249,7 @@ class System extends Admin
             return ResponseJson::success();
         }
 
-        return view('common/save_page', [
+        return view('common/save_page_4', [
             'form' => $page->baseInfoItem($group_id),
         ]);
     }

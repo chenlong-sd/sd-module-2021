@@ -9,9 +9,10 @@ namespace app\admin\page\system;
 use app\admin\model\system\BaseConfig as BaseConfigM;
 use app\common\BasePage;
 use app\common\service\BaseConfigService;
-use sdModule\layui\form\Form;
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\form4\FormProxy as Form;
+use sdModule\layui\form4\FormUnit;
 use sdModule\layui\form\UnitData;
+use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
@@ -22,13 +23,12 @@ class SystemPage extends BasePage
 {
     /**
      * 数据备份页面
-     * @return array
-     * @throws \ReflectionException
+     * @return PageData
      * @throws \app\common\SdException
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/6
      */
-    public function dataBackUp(): array
+    public function dataBackUp(): PageData
     {
         $table = PageData::create([
             Column::normal('表名', "name", ),
@@ -54,18 +54,17 @@ class SystemPage extends BasePage
             'width' => 220
         ]);
 
-        return array_merge(parent::listPageData(), get_defined_vars());
+        return $table;
     }
 
     /**
      * 查看备份文件的页面
-     * @return array
-     * @throws \ReflectionException
+     * @return PageData
      * @throws \app\common\SdException
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/6
      */
-    public function viewBackupFiles(): array
+    public function viewBackupFiles(): PageData
     {
         $tables = PageData::create([
             Column::normal('文件', 'filename'),
@@ -91,14 +90,13 @@ class SystemPage extends BasePage
 
         $tables->setConfig(['page' => false]);
 
-        return array_merge(parent::listPageData(), ['table' => $tables]);
+        return $tables;
     }
 
     /**
      * 基础信息设置组页面
      * @param string $group_id 分组标识
      * @return Form
-     * @throws \ReflectionException
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/7
      */
@@ -122,21 +120,37 @@ class SystemPage extends BasePage
         foreach ($data as $v) {
             $form_type = Str::camel($v->form_type);
             $v->id     = "id$v->id";
-            /** @var UnitData $form_unit */
+            /** @var BaseFormUnitProxy| $form_unit */
             $form_unit = FormUnit::$form_type($v->id,  $v->key_name . BaseConfigService::getDebugParamInfo($v->group_id, $v->key_id, $v->sort));
             // 选项值设置
-            $v->options and $form_unit->options(json_decode($v->options, true));
+            if ($v->options){
+                try {
+                    $form_unit->options(json_decode($v->options, true));
+                }catch (\Throwable $exception){}
+            }
             // 必选设置
-            $v->getData('required') == 1  and $form_unit->required();
+            if ($v->getData('required')) {
+                try {
+                    $form_unit->required();
+                } catch (\Throwable $exception) {}
+            }
             // placeholder 设置
-            $v->placeholder and $form_unit->placeholder($v->placeholder);
-            // 短标签设置
-            $v->short_tip and $short_form[$v->id] = $v->short_tip;
+            if ($v->placeholder){
+                try {
+                    $form_unit->placeholder($v->placeholder);
+                }catch (\Throwable $exception){}
+            }
+             // 短标签设置
+            if ($v->short_tip){
+                try {
+                    $form_unit->showTip($v->short_tip);
+                }catch (\Throwable $exception){}
+            }
 
             // 当前的排序值不等于上一次的排序值
             if ($v->sort != $init_sort_value && $form_group) {
                 // 有行内表单的时候，看看行内表单的个数，大于一个则加入行内，否则不处理
-                $form_data[]     = count($form_group) > 1 ? FormUnit::build(...$form_group) : current($form_group);
+                $form_data[]     = count($form_group) > 1 ? FormUnit::group(...$form_group) : current($form_group);
                 // 更新排序值
                 $init_sort_value = $v->sort;
                 $form_group = [];
@@ -144,10 +158,10 @@ class SystemPage extends BasePage
             $form_group[] = $form_unit;
         }
         // 处理最后一组表单
-        $form_data[] = count($form_group) > 1 ? FormUnit::build(...$form_group) : current($form_group);
-        $form = Form::create($form_data)
-            ->setDefaultData(array_column($data->toArray(), 'key_value', 'id'))
-            ->setSkinToPane()->setJs('
+        $form_data[] = count($form_group) > 1 ? FormUnit::group(...$form_group) : current($form_group);
+
+        return Form::create($form_data, array_column($data->toArray(), 'key_value', 'id'))
+            ->setPane()->addJs('
             layui.jquery(".layui-form-label").on("mouseover", function(){ 
                 if(layui.jquery(this).find(".sc-key")){
                   layui.jquery(this).css({overflow:"visible"}).find(".sc-key").show();
@@ -156,11 +170,7 @@ class SystemPage extends BasePage
                 if(layui.jquery(this).find(".sc-key")){
                   layui.jquery(this).css({overflow:"hidden"}).find(".sc-key").hide();
                 }
-            })
+            });
             ');
-        // 短标签设置
-        $short_form and $form->setShortForm($short_form);
-
-        return $form->complete();
     }
 }

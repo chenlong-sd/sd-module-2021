@@ -24,7 +24,7 @@ class LogService extends AdminBaseService
     {
         $model = Log::join('route', 'i.route_id = route.id ', 'left')
             ->join('administrators', 'i.administrators_id = administrators.id ', 'left')
-            ->field('i.id,i.method,route.title route_title,route.id route_id,administrators.name administrators_name,i.param,i.route,i.create_time');
+            ->field('i.id,i.method,route.title route_title,route.id route_id,administrators.name administrators_name,i.route,i.create_time');
 
         return $service->setModel($model)->getListsData();
     }

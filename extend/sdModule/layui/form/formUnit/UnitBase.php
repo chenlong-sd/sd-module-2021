@@ -54,6 +54,7 @@ abstract class UnitBase
      * @var string
      */
     public $shortTip = '';
+
     /**
      * @var bool 是否必填
      */

@@ -15,6 +15,13 @@ use sdModule\layui\form\formUnit\UEditor;
 use sdModule\layui\form\formUnit\UnitBase;
 use think\helper\Str;
 
+/**
+ * Class Form
+ * @deprecated
+ * @package sdModule\layui\form
+ * @author chenlong<vip_chenlong@163.com>
+ * @date 2021/11/25
+ */
 class Form
 {
     /**

@@ -177,7 +177,7 @@ class CURD
         foreach ($this->data as $field => $datum) {
             if (!empty($datum['join']) && is_array($datum['join'])) {
                 $path = strtr($this->config('file_path.enum'), [
-                    '{:class}' => parse_name($this->table, 1) . 'Enum' . parse_name($field, 1),
+                    '{:class}' => '{:class}Enum' . parse_name($field, 1),
                 ]);
                 $this->moduleFileCreate((new Enum($this))->setField($field), $path);
             }

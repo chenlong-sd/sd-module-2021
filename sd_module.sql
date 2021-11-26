@@ -120,6 +120,7 @@ CREATE TABLE `sd_base_config`  (
     `form_type` varchar(32) NOT NULL DEFAULT '' COMMENT '表单类型',
     `options` json DEFAULT NULL COMMENT '表单选项值',
     `key_value` text COMMENT '值',
+    `sort` int(11) NOT NULL COMMENT '排序值',
     `required` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否必填：0=否，1=是',
     `placeholder` varchar(32) NOT NULL DEFAULT '' COMMENT 'placeholder',
     `short_tip` varchar(32) NOT NULL DEFAULT '' COMMENT '短标签提示语',

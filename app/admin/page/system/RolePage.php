@@ -9,8 +9,8 @@ namespace app\admin\page\system;
 
 use app\admin\model\system\DataAuth;
 use app\common\BasePage;
-use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\form4\FormProxy as DefaultForm;
+use sdModule\layui\form4\FormUnit;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
@@ -20,8 +20,7 @@ class RolePage extends BasePage
 {
     /**
      * 获取创建列表table的数据
-     * @return array
-     * @throws \ReflectionException
+     * @return PageData
      * @throws \app\common\SdException
      */
     public function listPageData(): PageData
@@ -56,7 +55,6 @@ class RolePage extends BasePage
      * @param string $scene
      * @param array $default_data
      * @return DefaultForm
-     * @throws \ReflectionException
      */
     public function formPageData(string $scene, array $default_data = []): DefaultForm
     {
@@ -70,7 +68,8 @@ class RolePage extends BasePage
             $assign_table = array_map(function ($v) {
                 return $v['name'] ?? '——';
             }, $assign_table);
-            $form_data[] = FormUnit::select('assign_table', '账户可用')->options($assign_table);
+            $form_data[] = FormUnit::select('assign_table', '账户可用')
+                ->shortTip('该类型账户可使用该角色权限登录使用系统')->options($assign_table);
         }
 
         if (env('APP.DATA_AUTH', false)){
@@ -83,34 +82,29 @@ class RolePage extends BasePage
                     ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }
-        $form = DefaultForm::create($form_data)
-            ->setShortForm([
-                'assign_table' => '该类型账户可使用该角色权限登录使用系统'
-            ])->setDefaultData($default_data);
+        $form = DefaultForm::create($form_data, $default_data);
 
-        return $form->complete();
+        return $form;
     }
 
     /**
      * @return DefaultForm
-     * @throws \ReflectionException
      * @author chenlong<vip_chenlong@163.com>
-     * @date 2021/11/9
+     * @date 2021/11/26
      */
     public function listSearchFormData():DefaultForm
     {
         $form_data = [
-            FormUnit::inline('')->setChildrenItem(
+            FormUnit::group(
                 FormUnit::text('i.id')->placeholder('ID'),
                 FormUnit::text('i.role%%')->placeholder('角色名'),
                 FormUnit::text('ip.role%%')->placeholder('父级角色'),
                 FormUnit::text('administrators.name%%')->placeholder('创建者'),
-                FormUnit::time('i.create_time_~')->setTime('datetime', '~')->placeholder('创建时间'),
-                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
+                FormUnit::time('i.create_time_~')->dateType('datetime', '~')->placeholder('创建时间'),
             )
         ];
 
-        return DefaultForm::create($form_data)->setSubmitHtml('')->complete();
+        return DefaultForm::create($form_data)->setSearchSubmitElement();
     }
 
 }

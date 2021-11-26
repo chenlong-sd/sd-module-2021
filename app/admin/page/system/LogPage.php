@@ -8,11 +8,16 @@ namespace app\admin\page\system;
 
 
 use app\admin\enum\LogEnumMethod;
+use app\admin\model\system\Log as LogModel;
 use app\common\BasePage;
-use sdModule\layui\form\Form as DefaultForm;
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\Dom;
+use sdModule\layui\form4\FormProxy as DefaultForm;
+use sdModule\layui\form4\FormUnit;
 use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
+use sdModule\layui\tableDetail\Page;
+use sdModule\layui\tableDetail\Table;
 
 class LogPage extends BasePage
 {
@@ -28,13 +33,15 @@ class LogPage extends BasePage
             Column::normal('请求方式', 'method'),
             Column::normal('权限节点名', 'route_title'),
             Column::normal('操作管理员', 'administrators_name'),
-            Column::normal('请求参数', 'param'),
             Column::normal('节点地址', 'route'),
             Column::normal('创建时间', 'create_time'),
         ]);
 
         $table->removeEvent();
         $table->removeBarEvent();
+
+        $table->addEvent()->setNormalBtn('详情', 'read')
+            ->setJs(EventHandle::openPage([url('detail'), 'id'], '请求详情')->popUps());
 
         return $table;
     }
@@ -48,16 +55,50 @@ class LogPage extends BasePage
     public function listSearchFormData():DefaultForm
     {
         $form_data = [
-            FormUnit::build(
+            FormUnit::group(
                 FormUnit::text('route.title%%')->placeholder('节点名'),
                 FormUnit::select('i.method')->placeholder("请求方式")->options(LogEnumMethod::getAllMap()),
                 FormUnit::text('i.route%%')->placeholder('节点地址'),
                 FormUnit::text('administrators.name%%')->placeholder('操作人员'),
                 FormUnit::time('i.create_time_~')->placeholder('创建时间'),
-                FormUnit::custom()->customHtml(DefaultForm::searchSubmit())
             )
         ];
 
-        return DefaultForm::create($form_data)->setSubmitHtml()->complete();
+        return DefaultForm::create($form_data)->setSearchSubmitElement();
+    }
+
+    /**
+     * 日志详情
+     * @param $id
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/27
+     */
+    public function detail($id): string
+    {
+        $info = LogModel::alias('i')
+            ->join('route', 'i.route_id = route.id ', 'left')
+            ->join('administrators', 'i.administrators_id = administrators.id ', 'left')
+            ->field('i.id,i.method,route.title route_title,route.id route_id,administrators.name administrators_name,i.param,i.route,i.create_time')
+            ->where('i.id', $id)->findOrEmpty()->toArray();
+
+        if (!empty($info['param'])){
+            $info['param'] = Dom::create('div')->addContent(highlight_string(var_export(json_decode($info['param'], true), true), true));
+        }
+
+        $page = new  Page('请求日志详情');
+
+        $table = Table::create('明细')->data($info)
+        ->field([
+            ['method' => '请求类型', 'route' => '请求地址'],
+            ['route_title' => '地址映射', 'administrators_name' => '操作人员'],
+            ['create_time(3)' => '请求时间',],
+            ['param(3)' => '详细参数',],
+        ])->fieldAttr([
+            '-' => 'style="width:100px;background:#fafafa;text-align:center;"',
+            ])
+            ->complete();
+
+        return $page->addTable($table)->render();
     }
 }

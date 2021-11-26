@@ -7,7 +7,7 @@
 namespace app\common;
 
 use app\common\traits\Lang;
-use sdModule\layui\form\Form;
+use sdModule\layui\form4\FormProxy as Form;
 use sdModule\layui\lists\PageData;
 
 /**
@@ -26,7 +26,7 @@ abstract class BasePage
     /**
      * @var string 表单页面模板
      */
-    public $form_template = 'common/save_page';
+    public $form_template = 'common/save_page_4';
 
 
     /**
@@ -45,21 +45,19 @@ abstract class BasePage
      * @param string $scene 场景值
      * @param array $default_data 默认值
      * @return Form
-     * @throws \ReflectionException
      */
     public function formPageData(string $scene, array $default_data = []): Form
     {
-        return Form::create([])->complete();
+        return Form::create([]);
     }
 
     /**
      * 创建列表搜索表单的数据
      * @return Form
-     * @throws \ReflectionException
      */
-    public function listSearchFormData(): Form
+    public function  listSearchFormData(): Form
     {
-        return Form::create([])->setSubmitHtml()->complete();
+        return Form::create([])->setSearchSubmitElement();
     }
 
 }

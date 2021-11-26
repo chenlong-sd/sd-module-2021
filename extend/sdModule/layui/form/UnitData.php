@@ -11,6 +11,7 @@ use sdModule\layui\form\formUnit\UnitBase;
 
 /**
  * Class UnitData
+ * @deprecated
  * @package sdModule\layui\defaultForm
  */
 class UnitData

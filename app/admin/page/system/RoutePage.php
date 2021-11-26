@@ -8,7 +8,6 @@ namespace app\admin\page\system;
 
 
 use app\common\BasePage;
-use sdModule\layui\form\Form as DefaultForm;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
@@ -19,8 +18,7 @@ class RoutePage extends BasePage
 
     /**
      * 获取创建列表table的数据
-     * @return array
-     * @throws \ReflectionException
+     * @return PageData
      * @throws \app\common\SdException
      */
     public function listPageData(): PageData
@@ -46,6 +44,9 @@ class RoutePage extends BasePage
         $table->addEvent('delete')->setDangerBtn('删除', 'delete', 'xs')
             ->setJs(EventHandle::ajax(url('delete'), '节点删除会同时删除对应的所有子节点，确认删除吗？')
                 ->setConfig(['icon' => 3])->successCallback('tableRender();'));
+
+        $table->addBarEvent()->setWarmBtn('自动检测', '', 'sm')
+            ->setJs(EventHandle::openPage(url('automaticDetection'), '自动检测')->popUps());
 
         return $table;
     }

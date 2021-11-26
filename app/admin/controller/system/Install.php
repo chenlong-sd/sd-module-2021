@@ -54,21 +54,14 @@ class Install
     }
 
     /**
-     * Install constructor.
-     */
-    public function __construct()
-    {
-        if (file_exists(App::getRootPath() . '.env')) {
-            redirect(admin_url('/'));
-        }
-    }
-
-    /**
-     * @return \think\response\Json|\think\response\View
+     * @return \think\response\Json|\think\response\Redirect|\think\response\View
      * @throws SdException
      */
     public function index()
     {
+        if (file_exists(App::getRootPath() . '.env')) {
+            return redirect(admin_url());
+        }
         if (request()->isPost()) {
             if (!file_exists($this->getDatabaseSqlFile())) {
                 return ResponseJson::fail('数据库文件sd_module.sql缺失！');

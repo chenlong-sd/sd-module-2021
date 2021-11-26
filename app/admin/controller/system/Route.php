@@ -15,6 +15,7 @@ use app\admin\validate\system\Route as RouteValidate;
 use app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
+use sdModule\common\Sc;
 use think\facade\View;
 
 /**
@@ -98,16 +99,43 @@ class Route extends Admin
     }
 
     /**
-     * 获取节点
+     * @title("获取节点")
      * @param RouteModel $route
      * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getNode(RouteModel $route)
+    public function getNode(RouteModel $route): \think\response\Json
     {
         return ResponseJson::mixin($route->getNode());
     }
 
+    /**
+     * @title('自动检测地址')
+     * @param RouteService $service
+     * @param RouteModel $route
+     * @return \think\response\Json|\think\response\View
+     * @throws SdException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/12
+     */
+    public function automaticDetection(RouteService $service, RouteModel $route)
+    {
+        if ($this->request->isAjax()) {
+
+            $service->saveAutomaticDetectionRoute($this->request->post('new_route', []), $this->request->post('parent', []), $this->request->post('controller', []));
+
+            return ResponseJson::success();
+        }
+
+        $accessible = $service->automaticDetection();
+        $parentNode = $route->field('id value,title name,pid')->select()->toArray();
+        $parentNode = Sc::infinite($parentNode)->setPrimaryKye('value')->setSeries(2, 'del')->handle();
+
+        return \view('', compact('accessible', 'parentNode'));
+    }
 }

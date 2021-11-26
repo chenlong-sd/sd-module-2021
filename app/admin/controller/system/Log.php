@@ -12,6 +12,7 @@ use app\admin\model\system\Log as LogModel;
 use app\admin\page\system\LogPage as LogPage;
 use app\admin\service\system\LogService;
 use app\common\controller\Admin;
+use sdModule\layui\Dom;
 
 /**
  * Class Log
@@ -36,5 +37,16 @@ class Log extends Admin
         return parent::index_($service, $model, $page);
     }
 
+    /**
+     * @title('请求日志详情')
+     * @param LogPage $page
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/27
+     */
+    public function detail(LogPage $page): string
+    {
+        return $page->detail($this->request->get('id'));
+    }
 
 }
