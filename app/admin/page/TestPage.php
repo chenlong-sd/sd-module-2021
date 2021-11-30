@@ -1,7 +1,7 @@
 <?php
 /**
  * Test.php
- * Date: 2021-11-11 16:58:26
+ * Date: 2021-11-29 15:12:17
  */
 
 namespace app\admin\page;
@@ -10,8 +10,8 @@ use app\common\BasePage;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
-use sdModule\layui\form\Form;
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\form4\FormProxy as Form;
+use sdModule\layui\form4\FormUnit;
 use app\common\enum\TestEnumStatus;
 use app\admin\model\system\Administrators;
 use app\common\SdException;
@@ -56,8 +56,6 @@ class TestPage extends BasePage
     * @param string $scene
     * @param array $default_data
     * @return Form
-    * @throws \ReflectionException
-    * @throws \app\common\SdException
     */
     public function formPageData(string $scene, array $default_data = []): Form
     {
@@ -67,21 +65,34 @@ class TestPage extends BasePage
             FormUnit::image('cover', '封面'),
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
-            FormUnit::radio('status', '状态')->options(TestEnumStatus::getAllMap()),
+            FormUnit::radio('status', '状态')->options(TestEnumStatus::getAllMap(true)),
             FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
             FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
             FormUnit::uEditor('content', '详情'),
-            FormUnit::table(
-                FormUnit::text('asd', 'sss')
-            ),
         ];
 
-        $form = Form::create($unit, $scene)->setDefaultData($default_data);
+        $form = Form::create($unit, $default_data)->setScene($scene);
 
-        return $form->complete();
+        return $form;
     }
 
 
+    /**
+     * 创建列表搜索表单的数据
+     * @return Form
+     */
+    public function listSearchFormData(): Form
+    {
+        $form_data = [
+            FormUnit::group(
+                FormUnit::text('i.title%%')->placeholder('标题'),
+                FormUnit::select('i.status')->placeholder('状态')->options(TestEnumStatus::getAllMap(true)),
+                FormUnit::time('i.create_time_~',)->dateType('datetime', '~')->placeholder('创建时间'),
+            ),
+        ];
+        
+        return Form::create($form_data)->setSearchSubmitElement();
+    }
 
 
 }

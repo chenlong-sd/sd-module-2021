@@ -40,8 +40,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">{:lang('route.route_parent')}</label>
                     <div class="layui-input-block">
-                        <select id="pid" name="pid" lay-search>
-                        </select>
+                        <div id="demo3" class="xm-select-demo"></div>
                     </div>
                 </div>
 
@@ -77,23 +76,12 @@
 
 {/block}
 {block name="js"}
-
+<script src="__PUBLIC__/admin_static/layui/dist/xm-select.js"></script>
 
 <script>
 
     layui.use(['form', 'jquery', 'notice', 'iconPicker'], function () {
         var form = layui.form, $ = layui.jquery, notice = layui.notice, iconPicker = layui.iconPicker;
-
-        let top, menu;
-        $.ajax({
-            url: "{:url('getNode')}"
-            , success: function (res) {
-                top = res.data.top;
-                menu = res.data.menu;
-                nodeRender('{$data.type ?: 1}');
-                formVal();
-            }
-        });
 
         iconPicker.render({
             // 选择器，推荐使用input
@@ -118,40 +106,51 @@
             }
         });
 
+        let top, left, node;
+        $.ajax({
+            url: "{:url('getNode')}?type=1"
+            , success: function (res) {
+                top = res.data.top;
+                left = res.data.left;
+                node = res.data.node;
+                formVal();
+            }
+        })
+
         form.on('radio(type)', function (data) {
-            nodeRender(data.value)
+            pRender([[],left, top, node][data.value * 1]);
         });
 
-
-        function nodeRender(type) {
-            let node = type == 1 ? top : menu;
-            let html = '<option value=""></option>';
-            if (type == 1) {
-                for (let topKey in node) {
-                    if (node.hasOwnProperty(topKey)) {
-                        html += '<option value="' + node[topKey].id + '">' + node[topKey].title + '</option>';
+        function pRender(nodeData, select) {
+            let x = xmSelect.render({
+                el: '#demo3',
+                model: { label: { type: 'text' } },
+                filterable: true,
+                height: 'auto',
+                name: 'pid',
+                tree: {
+                    show: true,
+                    strict: false,
+                    expandedKeys: [ -1 ],
+                },
+                //处理方式
+                on: function(data){
+                    if(data.isAdd){
+                        return data.change.slice(0, 1)
                     }
+                },
+                prop: {
+                    name: 'title',
+                    value: 'id',
+                },
+                data(){
+                    return nodeData;
                 }
-            } else {
-                for (let topKey in node) {
-                    if (node.hasOwnProperty(topKey)) {
-                        html += '<optgroup label="' + node[topKey].title + '">';
-
-                        if (node[topKey].hasOwnProperty('children')) {
-                            for (const menuKey in node[topKey].children) {
-                                if (node[topKey].children.hasOwnProperty(menuKey)) {
-                                    html += '<option value="' + node[topKey].children[menuKey].id + '">' + node[topKey].children[menuKey].title + '</option>';
-                                }
-                            }
-                        }
-                        html += '</optgroup>';
-                    }
-                }
-            }
-
-            $('#pid').html(html);
-            form.render();
+            });
+            x.setValue(select);
+            return x;
         }
+
 
 
         form.on('submit(formDemo)', function (data) {
@@ -184,6 +183,7 @@
 
         window.formVal = function () {
             iconPicker.checkIcon('iconPicker', '{$data.icon ?: ""}');
+            pRender([[],left, top, node][{$data.type}], [{$data.pid}]);
             form.val('sd', {:json_encode($data)});
             return false;
         }

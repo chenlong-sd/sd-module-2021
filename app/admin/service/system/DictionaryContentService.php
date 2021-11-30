@@ -28,7 +28,7 @@ class DictionaryContentService extends AdminBaseService
      */
     public function listData(BackstageListsService $service): \think\response\Json
     {
-        $model = MyModel::field('i.id,i.new_dictionary_id,i.dictionary_content,i.update_time');
+        $model = MyModel::field('i.id,i.new_dictionary_id,i.dictionary_content,i.sort,i.update_time');
         $dictionary = NewDictionary::findOrEmpty(request()->get('search.new_dictionary_id'));
 
         $fields =  [
@@ -78,10 +78,30 @@ class DictionaryContentService extends AdminBaseService
         if (!$data) {
             throw new SdException('数据为空');
         }
+        // 搜索字段和排序字段处理
+        $search = '';
+        $sort   = 0;
+        $dictionary = NewDictionary::findOrEmpty($dictionary_id);
+        if ($dictionary->customize && $dictionary->getData('type') == NewDictionaryEnumType::STRONG) {
+            foreach (json_decode($dictionary->customize, true) as $customize){
+                if (empty($customize['d_search'])) continue;
+
+                if (in_array(1, $customize['d_search']) && !$search){
+                    $search = $data[$customize['d_key']] ?? '';
+                }
+
+                if (in_array(2, $customize['d_search']) && !$sort){
+                    $sort = $data[$customize['d_key']] ?? '';
+                }
+            }
+
+        }
 
         $data = ['dictionary_content' => json_encode($data, JSON_UNESCAPED_UNICODE)];
         empty($id) or $data['id'] = $id;
         $data['new_dictionary_id'] = $dictionary_id;
+        $data['search']            = $search;
+        $data['sort']              = $sort;
     }
 
     /**

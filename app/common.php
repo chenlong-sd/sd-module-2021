@@ -155,7 +155,7 @@ if (!function_exists('access_control')) {
      */
     function access_control($url, $exception = false)
     {
-        if (admin_session('is_admin') && admin_session('id') == 1) {
+        if (\app\admin\service\system\AdministratorsService::isSuper()) {
             return true;
         }
         if (!$pathinfo = pathinfo($url)) {

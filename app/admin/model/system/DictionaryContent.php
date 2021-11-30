@@ -18,6 +18,8 @@ use app\common\BaseModel;
  * @property $id
  * @property $new_dictionary_id
  * @property $dictionary_content
+ * @property $search
+ * @property $sort
  * @property $create_time
  * @property $update_time
  * @property $delete_time
@@ -31,6 +33,8 @@ class DictionaryContent extends BaseModel
         'id' => 'int',
         'new_dictionary_id' => 'int',
         'dictionary_content' => 'json',
+        'search' => 'varchar',
+        'sort' => 'int',
         'create_time' => 'datetime',
         'update_time' => 'datetime',
         'delete_time' => 'int',

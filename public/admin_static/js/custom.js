@@ -223,7 +223,7 @@ custom = {
 
             function make_html(url, current) {
                 return `<div class="sc-item" data-current="${current}" draggable="true" style="width: 125px;border-radius: 5px;overflow: hidden;border: 1px solid grey;padding: 5px;margin-right: 10px;display: inline-block">` +
-                `      <img src="${custom.thumbnailUrl(url)}"  draggable="false"  alt="" layer-src="${url}" onerror="${url}" width="100%" class="ad layui-upload-img">` +
+                `      <img src="${/^http.*$/.test(push_url) ? url : custom.thumbnailUrl(url)}"  draggable="false"  alt="" layer-src="${url}" onerror="${url}" width="100%" class="ad layui-upload-img">` +
                 `      <div style="margin-top: 2px">` +
                 `          <button type="button" class="sc-del${className} layui-btn layui-btn-fluid layui-btn-danger layui-btn-sm">` +
                 `              <i class="layui-icon layui-icon-delete"></i>` +
@@ -319,7 +319,12 @@ custom = {
             }
         });
 
-        return {init,push};
+        let exports = {init(file_url, prefix){
+                init(file_url, prefix);
+                return exports;
+            },push};
+
+        return exports;
     }
 
     /**
@@ -442,13 +447,15 @@ custom = {
             custom.frame(RESOURCE_URL + '?type=radio&vars=' + name, '资源选择');
         });
 
-        return {
+        let exports = {
             name: name,
             defaults: (defaults) => {
                 $('#' + name + '_show').attr('src', /^http.*$/.test(defaults) ? defaults : ROOT + '/' + defaults);
                 $('input[name=' + name + ']').val(defaults);
+                return exports;
             }
         };
+        return exports;
     },
     /**
      * 文件上传

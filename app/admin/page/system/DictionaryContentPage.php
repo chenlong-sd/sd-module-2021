@@ -43,11 +43,17 @@ class DictionaryContentPage extends BasePage
             $column = [
                 Column::checkbox(),
             ];
+            $isSort = false; // 是否有排序字段了
             foreach (json_decode($Dictionary->customize, true) as $value){
                 if (in_array($value['d_type'], ['images', 'uEditor', 'video'])) {
                     continue;
                 }
-                $currentColumn = Column::normal($value['d_title'], $value['d_key']);
+                if (!empty($value['d_search']) && in_array(2, $value['d_search']) && !$isSort) {
+                    $isSort = true;
+                    $currentColumn = Column::normal($value['d_title'], 'sort')->addSort();
+                }else{
+                    $currentColumn = Column::normal($value['d_title'], $value['d_key']);
+                }
                 if ($value['d_type']  === 'image') $currentColumn->showImage();
                 $column[] = $currentColumn;
             }
@@ -109,7 +115,30 @@ class DictionaryContentPage extends BasePage
         return $form;
     }
 
+    /**
+     * @return Form
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/30
+     */
+    public function listSearchFormData(): Form
+    {
+        $dictionary_id = request()->get('id');
+        $Dictionary    = NewDictionary::findOrEmpty($dictionary_id);
+        // 有自定义字段
+        if ($Dictionary->getData('type') == NewDictionaryEnumType::STRONG && $Dictionary->customize) {
+            foreach (json_decode($Dictionary->customize, true) as $value){
+                if (!empty($value['d_search']) && in_array(1, $value['d_search'])){
+                    return Form::create([
+                        FormUnit::group(
+                            FormUnit::text('search%%')->placeholder($value['d_title'])
+                        )
+                    ])->setSearchSubmitElement();
+                }
+            }
+        }
 
+        return parent::listSearchFormData();
+    }
 
 
 }

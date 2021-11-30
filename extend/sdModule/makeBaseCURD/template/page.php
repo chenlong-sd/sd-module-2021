@@ -9,7 +9,7 @@ use app\common\BasePage;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
-use sdModule\layui\form\Form;
+use sdModule\layui\form4\FormProxy as Form;
 //=={use}==//
 
 
@@ -41,8 +41,6 @@ class //=={Table}==//Page extends BasePage
     * @param string $scene
     * @param array $default_data
     * @return Form
-    * @throws \ReflectionException
-    * @throws \app\common\SdException
     */
     public function formPageData(string $scene, array $default_data = []): Form
     {
@@ -50,9 +48,9 @@ class //=={Table}==//Page extends BasePage
             //=={form_data}==//
         ];
 
-        $form = Form::create($unit, $scene)->setDefaultData($default_data);
+        $form = Form::create($unit, $default_data)->setScene($scene);
 
-        return $form->complete();
+        return $form;
     }
 
 

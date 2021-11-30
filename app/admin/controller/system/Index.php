@@ -10,6 +10,7 @@
 namespace app\admin\controller\system;
 
 
+use app\admin\enum\RouteEnumType;
 use app\admin\model\system\Route;
 use app\admin\service\system\AdministratorsService as AdministratorsService;
 use app\admin\validate\system\Administrators as AdministratorsValidate;
@@ -24,6 +25,9 @@ use sdModule\layui\form4\FormUnit;
 use sdModule\layui\form4\formUnit\unitProxy\TextProxy;
 use think\facade\Config;
 use think\facade\Db;
+use think\Request;
+use think\route\dispatch\Url;
+use think\route\RuleGroup;
 
 /**
  * Class Index
@@ -129,7 +133,7 @@ class Index extends Admin
         dump('系统资源BUG');
         dump('日志查看优化');
         dump('数据库检查');
-        $route_data = array_filter($route->getMenuRoute(), function ($v) {
+        $route_data = array_filter($route->getRouteFromType(RouteEnumType::create(RouteEnumType::LEFT_MENU)), function ($v) {
             return ($v['pid'] != 0);
         });
         $unit = [

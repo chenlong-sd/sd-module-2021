@@ -293,7 +293,8 @@ JS;
     private function checkbox(CheckboxProxy $unitBase, array $default): Dom
     {
         $inputDiv = Dom::create();
-        $default = isset($default[$unitBase->getName()]) ? explode(',', $default[$unitBase->getName()] ?: '') : ($unitBase->getDefaultValue() ?: []);
+        $default = isset($default[$unitBase->getName()]) ? $default[$unitBase->getName()] ?: [] : ($unitBase->getDefaultValue() ?: []);
+        $default = is_array($default) ? $default : explode(',', $default);
 
         foreach ($unitBase->getOptions() as $value => $label) {
             $customAttr = [

@@ -8,6 +8,7 @@
 
 namespace app\admin\controller\system;
 
+use app\admin\enum\RouteEnumType;
 use app\admin\model\system\Route as RouteModel;
 use app\admin\page\system\RoutePage as RoutePage;
 use app\admin\service\system\RouteService;
@@ -70,7 +71,7 @@ class Route extends Admin
     {
         if (!$this->request->isAjax()) {
             $page->form_template = 'add';
-            View::assign('type_data', RouteModel::getType());
+            View::assign('type_data', RouteEnumType::getAllMap());
         }
 
         return parent::create_($service, $model, $page, RouteValidate::class);
@@ -91,7 +92,7 @@ class Route extends Admin
     {
         if (!$this->request->isAjax()) {
             $page->form_template = 'edit';
-            View::assign('type_data', RouteModel::getType());
+            View::assign('type_data', RouteEnumType::getAllMap());
             View::assign('data', $model->findOrEmpty($this->request->get('id'))->getData());
         }
 
@@ -102,13 +103,13 @@ class Route extends Admin
      * @title("获取节点")
      * @param RouteModel $route
      * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \Exception
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/29
      */
     public function getNode(RouteModel $route): \think\response\Json
     {
-        return ResponseJson::mixin($route->getNode());
+        return ResponseJson::mixin($route->getNode(RouteEnumType::create(request()->get('type', 1)), request()->get('default', '')));
     }
 
     /**

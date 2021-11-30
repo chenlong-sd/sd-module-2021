@@ -23,7 +23,8 @@ use sdModule\common\helper\{ALiYunSms,
     FileStorage,
     ReflexCall,
     Excel,
-    Resources};
+    Resources,
+    Tree};
 
 /**
  * 自定义的扩展基类
@@ -34,6 +35,7 @@ use sdModule\common\helper\{ALiYunSms,
  * @method static Download      download() 远程文件下载
  * @method static FileStorage   fileStorage(string $group = null) 本地文件存储数据
  * @method static Infinite      infinite(array $data) 无限极数据处理
+ * @method static Tree          tree(array $data, bool $currentIsTreeData = false) 无限极数据处理
  * @method static JWT           jwt(array $data = [])
  * @method static Password      password() 密码加密， 验证
  * @method static Pinyin        pinyin() 拼音

@@ -41,9 +41,10 @@ class RoleService extends AdminBaseService
                     $all_role = RoleModel::field('id,pid,role,open_id administrators_id')
                         ->where('open_table', admin_session('table'))->select()->toArray();
                 }
-                $mySubordinate = Sc::infinite($all_role)->handle(['administrators_id' => admin_session('id')], true);
-
-                $model->whereIn('i.id', array_column($mySubordinate, 'id'));
+                $mySubordinate = Sc::tree($all_role)->setInheritedChain('administrators_id')->getLineData();
+                $model->whereIn('i.id', array_column(array_filter($mySubordinate, function ($v){
+                    return in_array(admin_session('id'), $v['_inherited_chain_']);
+                }), 'id'));
             }else{
                 if (admin_session('is_admin')) {
                     $model->where('i.administrators_id', admin_session('id'));
@@ -104,7 +105,7 @@ class RoleService extends AdminBaseService
      */
     public function powerSet(int $role_id, array $data)
     {
-        $data = Sc::infinite($data)->reveres();
+        $data = Sc::tree($data, true)->getLineData();
 
         // 当前为超级管理员，不做此判断
         if (!AdministratorsService::isSuper()) {
@@ -180,7 +181,8 @@ class RoleService extends AdminBaseService
             $role_have_route = [];
         }
 
-        return Sc::infinite($tree_data)->setCall(function ($value) use ($role_have_route){
+
+        return Sc::tree($tree_data)->setEach(function ($value) use ($role_have_route) {
             if (in_array($value['id'], $role_have_route)) {
                 // 没有子集的时候才给checked true属性, 避免重复抵消
                 if (empty($value['children'])) {
@@ -190,6 +192,6 @@ class RoleService extends AdminBaseService
                 $value['spread'] = true;
             }
             return $value;
-        }, true)->handle();
+        })->getTreeData();
     }
 }

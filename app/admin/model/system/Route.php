@@ -11,8 +11,10 @@ namespace app\admin\model\system;
 
 
 use app\admin\enum\RouteEnumType;
+use app\admin\service\system\AdministratorsService;
 use app\common\BaseModel;
 use app\common\SdException;
+use sdModule\common\helper\Tree;
 use sdModule\common\Sc;
 use think\facade\Config;
 use think\facade\Log;
@@ -61,84 +63,61 @@ class Route extends BaseModel
     }
 
     /**
-     * 获取指定属性的值
-     * @return array
-     */
-    public static function getType(): array
-    {
-        return RouteEnumType::getAllMap();
-    }
-
-    /**
      * 获取菜单
      * @return array
      * @throws SdException
      */
     public function getMenu(): array
     {
-        return Sc::infinite($this->getMenuRoute())->handle();
+        return Sc::tree($this->getRouteFromType(RouteEnumType::create(RouteEnumType::LEFT_MENU)))->getTreeData();
     }
 
     /**
-     * 获取菜单路由
+     * @param RouteEnumType $routeEnumType 当前请求的节点类型
+     * @param string $default 当前默认值
      * @return array
-     * @throws SdException
+     * @throws \Exception
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/29
      */
-    public function getMenuRoute(): array
+    public function getNode(RouteEnumType $routeEnumType, string $default): array
     {
-        try {
-            if (admin_session('is_admin') && admin_session('id') == Config::get('admin.super', 1)) {
-                $left_route = $this->routeFromType(RouteEnumType::LEFT_MENU, 'id,title,route,pid,icon');
-            }else{
-                $left_route = self::where([
-                    ['p.role_id', 'in', explode(',', admin_session('role_id'))],
-                    ['i.type', '=', RouteEnumType::LEFT_MENU],
-                ])->alias('i')->order('weigh')
-                    ->join('power p', 'p.route_id = i.id')
-                    ->field('i.id,i.title,i.route,i.pid,i.icon')
-                    ->select()->toArray();
-            }
-
-        } catch (\Throwable $exception) {
-            throw new SdException($exception->getMessage());
-        }
-        return $left_route;
-    }
-
-
-    /**
-     * 获取节点
-     * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function getNode()
-    {
-        $top = $this->routeFromType(RouteEnumType::LEFT_MENU, 'id,title,route,pid,icon');
-
         return [
-            'top'  => Sc::infinite($top)->handle(0),
-            'menu' => $this->getMenu()
+            'top'  => Sc::tree($this->getRouteFromType(RouteEnumType::create(RouteEnumType::TOP_MENU)))->setLevel(1)->getTreeData(),
+            'left' => Sc::tree($this->getRouteFromType(RouteEnumType::create(RouteEnumType::LEFT_MENU)))->setLevel(1)->getTreeData(),
+            'node' => Sc::tree($this->getRouteFromType())->setLevel(3)->getTreeData(),
         ];
     }
 
 
     /**
      * 根据类型找路由
-     * @param null $type
-     * @param string $field
+     * @param RouteEnumType|null $type
      * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/11/28
      */
-    public function routeFromType($type = null, $field = '*')
+    public function getRouteFromType(RouteEnumType $type = null): array
     {
-        if ($type === null) {
-            return self::field($field)->order('weigh')->select()->toArray();
+        $route = $this->alias('i')->field('i.id,i.title,i.route,i.pid,i.icon,i.type node_type')->order('weigh');
+
+        // 有类型的时候
+        if ($type instanceof RouteEnumType) {
+            $route = $route->where('i.type', $type->getValue());
         }
-        return  self::field($field)->order('weigh')->where('type',$type)->select()->toArray();
+
+        // 不是超管
+        if (!AdministratorsService::isSuper()) {
+            $route = $route->join('power p', 'p.route_id = i.id')
+            ->where('p.role_id', 'in', explode(',', admin_session('role_id')));
+        }
+
+        try {
+            return  $route->select()->toArray();
+        } catch (\Exception $exception) {
+            Log::write($exception->getMessage(), 'error');
+            return [];
+        }
     }
 
 

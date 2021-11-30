@@ -7,7 +7,7 @@
 namespace sdModule\makeBaseCURD\item;
 
 
-use sdModule\layui\form\FormUnit;
+use sdModule\layui\form4\FormUnit;
 use sdModule\makeBaseCURD\CURD;
 
 class Page extends Item
@@ -37,7 +37,6 @@ class Page extends Item
         $this->searchHandle();
 
         if ($this->replace['search_form']) {
-            $this->replace['search_form'][] = "FormUnit::custom()->customHtml(Form::searchSubmit()),";
             $this->listSearchFormDataMethodCode();
         }
     }
@@ -67,17 +66,16 @@ class Page extends Item
     /**
      * 创建列表搜索表单的数据
      * @return Form
-     * @throws \\ReflectionException
      */
     public function listSearchFormData(): Form
     {
         \$form_data = [
-            FormUnit::build(
+            FormUnit::group(
                 $form
             ),
         ];
         
-        return Form::create(\$form_data)->setSubmitHtml()->complete();
+        return Form::create(\$form_data)->setSearchSubmitElement();
     }
 
 CODE;
@@ -106,9 +104,9 @@ CODE;
             if ($item['join'] && is_array($item['join'])){
                 $field       = parse_name($field, 1);
                 $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.enum')) . "\\{$this->replace['Table']}Enum$field");
-                $select_data = "->options({$this->replace['Table']}Enum$field::getAllMap())";
+                $select_data = "->options({$this->replace['Table']}Enum$field::getAllMap(true))";
             }elseif (in_array($type, ['date', 'time', 'month', 'range'])){
-                $select_data = $type === 'range' ? "->setTime('date', '~')" : "->setTime('{$type}')";
+                $select_data = $type === 'range' ? "->dateType('date', '~')" : "->dateType('$type')";
                 $type        = 'time';
             }else if (strpos($item['join'], ':') !== false
                 && strpos($item['join'], '=') !== false){
@@ -132,7 +130,7 @@ CODE;
                 $select_data = "->options({$table}::column('{$title}', '{$value}'))";
             }
             $field = parse_name($field);
-            $this->replace['form_data'][] = "FormUnit::$type('$field', '{$item['label']}'){$select_data},";
+            $this->replace['form_data'][] = "FormUnit::$type('$field', '{$item['label']}')$select_data,";
         }
     }
 
@@ -215,7 +213,7 @@ CODE;
     private function timeRangeSearch(string $field, string $placeholder, string $alias)
     {
         $replace = [$alias, $field, $this->CURD->fieldInfo[$field]['data_type'], $placeholder];
-        $this->replace['search_form'][] = sprintf("FormUnit::time('%s.%s_~',)->setTime('%s', '~')->placeholder('%s'),", ...$replace);
+        $this->replace['search_form'][] = sprintf("FormUnit::time('%s.%s_~',)->dateType('%s', '~')->placeholder('%s'),", ...$replace);
     }
 
     /**
@@ -261,7 +259,7 @@ CODE;
     {
         $field = parse_name($field, 1);
         $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.enum')) . '\\'  . $this->replace['Table'] . 'Enum' .parse_name($field, 1));
-        return $this->replace['Table'] . 'Enum' .parse_name($field, 1) . "::getAllMap()";
+        return $this->replace['Table'] . 'Enum' .parse_name($field, 1) . "::getAllMap(true)";
     }
 
 }

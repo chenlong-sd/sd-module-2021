@@ -175,7 +175,11 @@ class Event
         $is_bar     = $this->isBar;
         $temp_call  = function () use ($event, $event_name, $is_bar) {
             $event_type = $is_bar ? 'barEvent' : 'event';
-            $this->data[$event_type][$event_name] = $event;
+            if ($event->js === 'false') {
+                unset($this->data[$event_type][$event_name]);
+            }else{
+                $this->data[$event_type][$event_name] = $event;
+            }
         };
         $temp_call->call($this->pageData);
         return $event;

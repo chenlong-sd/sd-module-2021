@@ -6,6 +6,8 @@ namespace sdModule\common\helper;
 /**
  * 无限极数据处理
  * Class Infinite
+ * @deprecated 4.0 废弃 新的采用 Tree
+ * @see Tree 4.0 以后的重构
  * @package app\common\controller
  */
 class Infinite

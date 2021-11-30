@@ -55,9 +55,11 @@ class AdministratorsService extends AdminBaseService
         return $service->setModel($model)->setCustomSearch(function (array $search, BaseQuery $model){
             if (isset($search['mode']) && $search['mode'] === 'all'){
                 $all_role = RoleModel::field('id,pid,role,administrators_id')->select()->toArray();
-                $mySubordinate = Sc::infinite($all_role)->handle(['administrators_id' => admin_session('id')], true);
+                $mySubordinate = Sc::tree($all_role)->setInheritedChain('administrators_id')->getLineData();
 
-                $model->whereIn('r.id', array_column($mySubordinate, 'id'));
+                $model->whereIn('r.id', array_column(array_filter($mySubordinate, function ($v){
+                    return in_array(admin_session('id'), $v['_inherited_chain_']);
+                }), 'id'));
             }else{
                 $model->where('r.administrators_id', admin_session('id'));
             }

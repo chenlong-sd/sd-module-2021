@@ -9,33 +9,36 @@
     .layui-form-checkbox[lay-skin=primary]{
         position: absolute;
     }
-    .cs-is{
-        width: 100px;
-        max-height: 100px;
-        margin: 5px;
-        overflow: hidden;
-        position: relative;
-    }
-    .cs-iss{
-        display: inline-block;
-        border-radius: 3px;
-        box-shadow: 1px 1px 5px #aaa;
-        margin: 10px;
-    }
-    .cs-iss:hover {
-        box-shadow: 2px 2px 5px #666;
-    }
-    .cs-is img{
-        max-width: 100%;
-    }
+
     #sc-confirm{
         float: right;
         text-align: center;
         position: fixed;
-        right: 10px;
+        left: 50%;
         bottom: 10px;
+        margin-left: -60px;
     }
 
+    .resource-box{
+        margin: 2%;
+        border-radius: 3px;
+        overflow: hidden;
+        width: 18%;
+        min-width: 100px;
+        box-shadow: 0 0 5px grey;
+        display: inline-block;
+        font-size: 12px;
+        line-height: 20px;
+    }
+    .resource-box .resource-show{
+        margin: 4px;
+    }
+    .resource-show img{
+        width: 100%;
+    }
+    body{
+        padding-bottom: 60px;
+    }
 </style>
 
 {/block}
@@ -90,12 +93,15 @@
                     if (res.data.hasOwnProperty(pro)) {
                         let path = /^http.*$/.test(res.data[pro].path) ? res.data[pro].path
                             : '__PUBLIC__/' + thumbnailUrl(res.data[pro].path);
-                        html += '<div class="cs-iss" title="' + res.data[pro].tag + '">' +
-                            '<div class="cs-is">' +
-                            '<input type="checkbox" name="r[]" value="' + res.data[pro].path + '" lay-skin="primary">' +
-                            '<img src="' + path + '" alt="' + path + '">' +
-                            '</div>' +
-                            '</div>';
+                        html += `<div class="resource-box">
+                                    <div class="resource-show">
+                                        <input type="checkbox" name="r[]" value="${res.data[pro].path}" lay-skin="primary">
+                                        <img src="${path}" alt="">
+                                    </div>
+                                    <div class="resource-info">
+                                        <p style="padding-left: 5px">${res.data[pro].tag}</p>
+                                    </div>
+                                </div>`
                     }
                 }
                 layui.jquery('#box-sc').html(html);
@@ -117,8 +123,26 @@
         arr.join('.')
         return arr.join('.') + '_thumbnail.' + suffix;
     }
+    let $ = layui.jquery;
+
+    $(document).on('click', '.resource-show', function (e){
+       $(this).find('.layui-form-checkbox').click();
+        if ((type === 'radio' && Object.values(layui.form.val("formTest")).length > 1)
+            || (type !== 'radio' && Object.values(layui.form.val("formTest")).length > 9)) {
+            $(this).find('.layui-form-checkbox').click();
+            notice.warning('选择数量已达最大值');
+            return false;
+        }
+        value = layui.form.val("formTest");
+        layui.form.render();
+        layui.form.val("formTest", value);
+    }).on('click', '.layui-form-checkbox', function (e){
+        e.stopPropagation();
+    })
+
 
     layui.jquery(document).off('click', '.cs-is').on('click', '.cs-is', function (e) {
+        e.stopPropagation();
         let v = layui.jquery(this).find('input[type=checkbox]').prop('checked');
 
         if (!v && ((type === 'radio' && Object.values(layui.form.val("formTest")).length >= 1)
@@ -135,7 +159,7 @@
     layui.jquery('#sc-confirm').on('click', function () {
         type === 'radio'
             ? parent.window[vars].defaults(Object.values(value).join(','))
-            : parent.window[vars].push(Object.values(value));
+            : Object.values(value).map((v)=>parent.window[vars].push(v));
         parent.layer.closeAll();
     })
 

@@ -84,6 +84,7 @@ class NewDictionaryPage extends BasePage
                     'images'    => '多图上传',
                     'video'     => '视频上传',
                 ]),
+                FormUnit::checkbox('d_search', '各允许一个')->options(['1' => '索引', '2' => '排序']),
                 FormUnit::text('d_options', '可选项（可不填）')->placeholder('示例：1=正常,2=禁用,.....'),
             )->showWhere('type', 2)
         ];

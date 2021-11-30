@@ -31,7 +31,7 @@
                     <label class="layui-form-label">{:lang('route.route_type')}</label>
                     <div class="layui-input-block">
                         {foreach $type_data as $value => $title}
-                        <input type="radio" name="type" lay-filter="type" value="{$value}" title="{$title}"
+                        <input type="radio" {$value == 1 ? 'checked' : ''} name="type" lay-filter="type" value="{$value}" title="{$title}"
                                autocomplete="off" class="layui-input">
                         {/foreach}
                     </div>
@@ -40,8 +40,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">{:lang('route.route_parent')}</label>
                     <div class="layui-input-block">
-                        <select id="pid" name="pid" lay-search>
-                        </select>
+                        <div id="demo3" class="xm-select-demo"></div>
                     </div>
                 </div>
 
@@ -85,7 +84,7 @@
 
 {/block}
 {block name="js"}
-
+<script src="__PUBLIC__/admin_static/layui/dist/xm-select.js"></script>
 
 <script>
 
@@ -116,47 +115,48 @@
         });
 
 
-        let top, menu;
+        let top, left, node;
         $.ajax({
-            url: "{:url('getNode')}"
+            url: "{:url('getNode')}?type=1"
             , success: function (res) {
                 top = res.data.top;
-                menu = res.data.menu;
+                left = res.data.left;
+                node = res.data.node;
+                pRender(left, []);
             }
         })
 
         form.on('radio(type)', function (data) {
-            let node = data.value == 1 ? top : menu;
-            let html = '<option value=""></option>';
-
-            if (data.value == 1) {
-                for (let topKey in node) {
-                    if (node.hasOwnProperty(topKey)) {
-                        html += '<option value="' + node[topKey].id + '">' + node[topKey].title + '</option>';
-                    }
-                }
-                $('#children').removeClass('layui-hide');
-            } else {
-                $('#children').addClass('layui-hide');
-                for (let topKey in node) {
-                    if (node.hasOwnProperty(topKey)) {
-                        html += '<optgroup label="' + node[topKey].title + '">';
-
-                        if (node[topKey].hasOwnProperty('children')) {
-                            for (const menuKey in node[topKey].children) {
-                                if (node[topKey].children.hasOwnProperty(menuKey)) {
-                                    html += '<option value="' + node[topKey].children[menuKey].id + '">' + node[topKey].children[menuKey].title + '</option>';
-                                }
-                            }
-                        }
-                        html += '</optgroup>';
-                    }
-                }
-            }
-
-            $('#pid').html(html);
-            form.render();
+            pRender([[],left, top, node][data.value * 1]);
         });
+
+        function pRender(nodeData, select) {
+            xmSelect.render({
+                el: '#demo3',
+                model: { label: { type: 'text' } },
+                height: 'auto',
+                filterable: true,
+                name: 'pid',
+                tree: {
+                    show: true,
+                    strict: false,
+                    expandedKeys: [ -1 ],
+                },
+                //处理方式
+                on: function(data){
+                    if(data.isAdd){
+                        return data.change.slice(0, 1)
+                    }
+                },
+                prop: {
+                    name: 'title',
+                    value: 'id',
+                },
+                data(){
+                    return nodeData;
+                }
+            }).setValue(select);
+        }
 
         form.on('submit(formDemo)', function (data) {
             layer.confirm('{:lang("Confirm this operation")}?', {title: "{:lang('information')}" ,btn:['{:lang("confirm")}', '{:lang("cancel")}']}, function (index) {

@@ -90,7 +90,7 @@ class PageRender
     {
         $event = $this->getPageData($is_bar ? 'barEvent' : 'event');
         $js    = array_map(function ($v) {
-            return "$v->event(obj){ $v->js }";
+            return "$v->event(obj){ $v->js; }";
         }, $event);
         return implode(',', $js);
     }
