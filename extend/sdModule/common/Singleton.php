@@ -14,22 +14,22 @@ namespace sdModule\common;
 abstract class Singleton
 {
     /**
-     * @var Singleton|null
+     * @var Singleton[]
      */
-    private static $instance = null;
+    private static $instance = [];
 
     /**
      * 获取自身
      * @return static
      */
-    final public static function getInstance()
+    final public static function getInstance(): Singleton
     {
-        if (!self::$instance instanceof static){
-            self::$instance = new static();
-            self::$instance->init();
+        if (empty(self::$instance[static::class])){
+            self::$instance[static::class] = new static();
+            self::$instance[static::class]->init();
         }
 
-        return self::$instance;
+        return self::$instance[static::class];
     }
 
     /**

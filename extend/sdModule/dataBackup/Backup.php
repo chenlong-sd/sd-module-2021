@@ -63,7 +63,7 @@ class Backup
         $this->driver = $driver;
         self::$dir = self::getDir();
         if (!is_dir(self::$dir)) {
-            mkdir(self::$dir, '0777', true);
+            mkdir(self::$dir, 0777, true);
         }
         $this->dsn = sprintf(self::DSN, $driver, $host, $database, $port, $charset);
         $this->resetIni();
@@ -103,7 +103,7 @@ class Backup
         $this->table = $table;
         self::$filename = implode(DIRECTORY_SEPARATOR, [self::$dir, 'table', $table, 'table_' . date('YmdHis') . '.sql']);
         if (!is_dir(dirname(self::$filename))) {
-            mkdir(dirname(self::$filename), '0777', true);
+            mkdir(dirname(self::$filename), 0777, true);
         }
         $this->backup($type);
     }
@@ -130,10 +130,10 @@ class Backup
             self::outputTip('--end--');
             fclose(self::$fd);
         } catch (\Throwable $exception) {
-            fclose(self::$fd);
-            unlink(self::$filename);
             self::outputTip($exception->getMessage());
             self::outputTip('--end--');
+            fclose(self::$fd);
+            unlink(self::$filename);
         }
     }
 

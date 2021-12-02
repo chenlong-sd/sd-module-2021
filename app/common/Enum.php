@@ -24,11 +24,6 @@ abstract class Enum extends MultipleCases
     private static $availableEnumValue;
 
     /**
-     * @var array 描述映射
-     */
-    private $descriptionMap = [];
-
-    /**
      * 判断该实例是否被允许
      * @param string $tag
      * @return bool
@@ -37,8 +32,7 @@ abstract class Enum extends MultipleCases
      */
     protected static function isAvailable(string $tag): bool
     {
-        $selfConstants = self::getAvailableEnumValue();
-
+        $selfConstants = static::getAvailableEnumValue();
         return in_array($tag, $selfConstants);
     }
 
@@ -51,7 +45,6 @@ abstract class Enum extends MultipleCases
     protected function init(string $tag)
     {
         $this->enumValue      = $tag;
-        $this->descriptionMap = $this->setMap();
     }
 
     /**
@@ -68,21 +61,22 @@ abstract class Enum extends MultipleCases
      */
     private static function getAvailableEnumValue(): array
     {
-        if (!self::$availableEnumValue) {
-            self::$availableEnumValue = (new \ReflectionClass(static::class))->getConstants();
+        if (empty(self::$availableEnumValue[static::class])) {
+            self::$availableEnumValue[static::class] = (new \ReflectionClass(static::class))->getConstants();
         }
-        return self::$availableEnumValue;
+        return self::$availableEnumValue[static::class];
     }
 
     /**
      * 获取对应的描述
+     * @param bool $isPure 是否获取纯文字
      * @return mixed|string
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    final public function getDes()
+    final public function getDes(bool $isPure = false)
     {
-        return $this->descriptionMap[$this->enumValue] ?? $this->enumValue;
+        return self::getAllMap($isPure)[$this->enumValue] ?? $this->enumValue;
     }
 
     /**
@@ -106,7 +100,7 @@ abstract class Enum extends MultipleCases
      */
     final public static function getAll(bool $isEnumInstance = false): array
     {
-        $availableEnumValue = self::getAvailableEnumValue();
+        $availableEnumValue = static::getAvailableEnumValue();
         if (!$isEnumInstance) {
             return array_values($availableEnumValue);
         }
@@ -141,6 +135,6 @@ abstract class Enum extends MultipleCases
      */
     final public function __toString()
     {
-        return $this->enumValue;
+        return $this->getValue();
     }
 }

@@ -82,7 +82,6 @@
         }
     });
 
-    console.log(Thumbnail)
 
     function getResource(page, limit, where) {
         layui.jquery.ajax({

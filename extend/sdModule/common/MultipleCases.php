@@ -29,18 +29,19 @@ abstract class MultipleCases
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/5
      */
-    final public static function create(string $tag)
+    final public static function create(string $tag): MultipleCases
     {
         if (!static::isAvailable($tag)) {
-            throw new \Exception("Unable to create the instance");
+            throw new \Exception("Unable to create the instance, Supplied tag $tag");
         }
 
-        if (!isset(self::$instances[$tag])) {
-            self::$instances[$tag] = new static();
-            self::$instances[$tag]->init($tag);
+        $classTag = static::class . '@' . $tag;
+        if (!isset(self::$instances[$classTag])) {
+            self::$instances[$classTag] = new static();
+            self::$instances[$classTag]->init($tag);
         }
 
-        return self::$instances[$tag];
+        return self::$instances[$classTag];
     }
 
     /**

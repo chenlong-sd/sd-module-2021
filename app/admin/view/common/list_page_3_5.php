@@ -157,28 +157,18 @@
      * 排序事件
      */
     table.on('sort(sc)', function(obj){
-        let is_have_where = false;
-        if (table_render_data.hasOwnProperty('where') && table_render_data.where.hasOwnProperty('search')) {
-            is_have_where = true;
-        }
         table.reload('sc', {
             initSort: obj
             ,where: {
                 sort:`${obj.field},${obj.type}`,
-                search: is_have_where ? table_render_data.where.search : {}
             }
-        });
+        }, true);
     });
 
     form.on('submit(sc-form)', function (object) {
-        let is_have_where = false;
-        if (table_render_data.hasOwnProperty('where') && table_render_data.where.hasOwnProperty('search')) {
-            is_have_where = true;
-        }
-
         let reload = {
             where: {
-                search: Object.assign({}, is_have_where ? table_render_data.where.search : {}, object.field)
+                search: object.field
             }
         };
         if (table_render_data.page === true) {
@@ -187,7 +177,7 @@
             }
         }
 
-        table.reload('sc', reload);
+        table.reload('sc', reload, true);
         return false;
     });
 

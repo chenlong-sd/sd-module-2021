@@ -34,7 +34,7 @@ class TestPage extends BasePage
     {
         $table = PageData::create([
             Column::checkbox(),
-            Column::normal('ID', 'id'),
+            Column::normal('ID', 'id')->addSort(),
             Column::normal('标题', 'title'),
             Column::normal('封面', 'cover')->showImage(),
             Column::normal('简介', 'intro'),
