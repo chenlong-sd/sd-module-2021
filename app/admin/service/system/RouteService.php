@@ -48,9 +48,10 @@ class RouteService extends AdminBaseService
         $all = Route::field('id,pid')->select()->toArray();
 
         // 查找该路由的所有子权限
-        $delArr = Sc::infinite($all)->handle(current($ids), true);
+        $delArr = Sc::tree($all)->setWhere(['id' => current($ids)])->getLineData();
+        halt($all, Sc::tree($all)->setWhere(['id' => (int)current($ids)])->getTreeData());
         $ids    = array_column($delArr, 'id');
-
+halt($ids, $delArr);
         // 删除对应路由的权限
         Power::where(['route_id' => $ids])->update(['delete_time' => time()]);
     }
@@ -164,7 +165,7 @@ class RouteService extends AdminBaseService
      * 保存自动检测出的权限节点
      * @param array $routes 新增的路由数据
      * @param array $parents 对应的父级数据
-     * @param array $controller
+     * @param array $controllers
      * @throws SdException
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/13

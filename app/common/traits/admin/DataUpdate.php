@@ -44,7 +44,7 @@ trait DataUpdate
         } catch (\Throwable $exception) {
             $model->rollback();
             if ($exception instanceof HttpResponseException) {
-                throw new HttpResponseException($exception->getResponse());
+                throw $exception;
             }
             throw new SdException($exception->getMessage());
         }
@@ -84,11 +84,21 @@ trait DataUpdate
             }
 
             $model->$field = $handle_value;
+            $this->switchValueUpdateCustomize($model);
+
             $model->save();
         } catch (\Throwable $exception) {
             Log::write($exception->getMessage(), 'error');
             throw new SdException("非法操作，请求数据不完整");
         }
     }
+
+    /**
+     * 自定义处理选项切换的数据
+     * @param BaseModel $model
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/3
+     */
+    protected function switchValueUpdateCustomize($model){}
 }
 

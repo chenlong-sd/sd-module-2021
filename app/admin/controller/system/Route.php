@@ -109,7 +109,7 @@ class Route extends Admin
      */
     public function getNode(RouteModel $route): \think\response\Json
     {
-        return ResponseJson::mixin($route->getNode(RouteEnumType::create(request()->get('type', 1)), request()->get('default', '')));
+        return ResponseJson::mixin($route->getNode());
     }
 
     /**
@@ -135,7 +135,8 @@ class Route extends Admin
 
         $accessible = $service->automaticDetection();
         $parentNode = $route->field('id value,title name,pid')->select()->toArray();
-        $parentNode = Sc::infinite($parentNode)->setPrimaryKye('value')->setSeries(2, 'del')->handle();
+        $parentNode = Sc::tree($parentNode)->setNode('value')->setLevel(3)->getTreeData();
+
 
         return \view('', compact('accessible', 'parentNode'));
     }

@@ -42,7 +42,7 @@ custom = {
         let frame = {
             type: 2,
             content: url
-            , area: ['80%', '90%']
+            , area: ['85%', '90%']
             , maxmin: true
             , shade: false
             , title: title

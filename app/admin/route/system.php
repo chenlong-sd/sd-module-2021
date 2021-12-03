@@ -40,3 +40,9 @@ Route::get('data-auth', 'system.Index/dataAuth');/** @see \app\admin\controller\
 Route::get('login-out', 'system.Index/loginOut');/** @see \app\admin\controller\system\Index::loginOut() */
 // 数据 备份
 Route::get('data-back-up', 'system.System/databaseBackUp');/** @see \app\admin\controller\system\System::databaseBackUp() */
+// 快捷入口设置页面
+Route::get('quick-entrance', 'system.QuickOperation/index');/** @see \app\admin\controller\system\QuickOperation::index() */
+// 快捷入口设置
+Route::post('quick-entrance-set', 'system.QuickOperation/switchHandle');/** @see \app\admin\controller\system\QuickOperation::switchHandle() */
+// 快捷入口坐标设置
+Route::post('quick-entrance-coordinate-set', 'system.QuickOperation/indexCoordinateUpdate');/** @see \app\admin\controller\system\QuickOperation::indexCoordinateUpdate() */

@@ -11,6 +11,7 @@ namespace app\common\traits\admin;
 
 use app\common\BaseModel;
 use app\common\SdException;
+use think\exception\HttpResponseException;
 
 /**
  * 数据删除
@@ -45,6 +46,9 @@ trait DataDelete
             $model->commit();
         } catch (\Throwable $exception) {
             $model->rollback();
+            if ($exception instanceof HttpResponseException) {
+                throw $exception;
+            }
             throw new SdException($exception->getMessage());
         }
     }

@@ -14,6 +14,8 @@ use app\admin\enum\AdministratorsEnumStatus;
 use app\admin\enum\RouteEnumType;
 use app\admin\model\system\Route;
 use app\admin\service\system\AdministratorsService as AdministratorsService;
+use app\admin\service\system\QuickOperationService;
+use app\admin\service\system\RouteService;
 use app\admin\validate\system\Administrators as AdministratorsValidate;
 use app\common\controller\Admin;
 use app\common\middleware\admin\PowerAuth;
@@ -124,21 +126,17 @@ class Index extends Admin
 
     /**
      * 主页
-     * @param Route $route
+     * @param QuickOperationService $routeService
      * @return \think\response\View
-     * @throws SdException
      */
-    public function home(Route $route): \think\response\View
+    public function home(QuickOperationService $routeService): \think\response\View
     {
-        dump('权限BUG, 推荐');
-        dump('跳转tab');
-        dump('生成代码调整');
-        dump('系统资源BUG');
-        dump('日志查看优化');
-        dump('数据库检查');
-        $route_data = array_filter($route->getRouteFromType(RouteEnumType::create(RouteEnumType::LEFT_MENU)), function ($v) {
-            return ($v['pid'] != 0);
-        });
+//        dump('权限BUG, 推荐');
+//        dump('跳转tab');
+//        dump('系统资源BUG');
+//        dump('数据权限');
+//        dump("左右滑动的页面");
+        $route_data = $routeService->indexShowNode();
         $unit = [
             FormUnit::text('test1', '测试一')->required()->defaultValue(1),
             FormUnit::text('test2', '测试二')->showWhere('test1', 2),
@@ -182,12 +180,9 @@ class Index extends Admin
         ];
 
 
-        $f = FormProxy::create($unit,  ['test1' => 'asdasdsa', 'test4' => [1]])->setScene('test')->setPane()
-            ;
-        $f->getCss();
-        return view('common/save_page_4', ['form' => $f]);
-        halt("左右滑动的页面", $f->getHtml());
-
+        $f = FormProxy::create($unit,  ['test1' => 'asdasdsa', 'test4' => [1]])->setScene('test')->setPane();
+        //        return view('common/save_page_4', ['form' => $f]);
+//halt($route_data);
         return view('', compact('route_data'));
     }
 

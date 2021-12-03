@@ -9,7 +9,6 @@ namespace sdModule\layui\lists\module;
 
 use sdModule\layui\Dom;
 use sdModule\layui\lists\error\ColumnTypeIsNotSupportedException;
-use sdModule\layui\tablePage\module\Ajax;
 use think\helper\Str;
 
 /**

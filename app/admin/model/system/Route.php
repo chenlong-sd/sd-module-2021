@@ -14,9 +14,7 @@ use app\admin\enum\RouteEnumType;
 use app\admin\service\system\AdministratorsService;
 use app\common\BaseModel;
 use app\common\SdException;
-use sdModule\common\helper\Tree;
 use sdModule\common\Sc;
-use think\facade\Config;
 use think\facade\Log;
 
 /**
@@ -73,14 +71,12 @@ class Route extends BaseModel
     }
 
     /**
-     * @param RouteEnumType $routeEnumType 当前请求的节点类型
-     * @param string $default 当前默认值
      * @return array
      * @throws \Exception
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/29
      */
-    public function getNode(RouteEnumType $routeEnumType, string $default): array
+    public function getNode(): array
     {
         return [
             'top'  => Sc::tree($this->getRouteFromType(RouteEnumType::create(RouteEnumType::TOP_MENU)))->setLevel(1)->getTreeData(),

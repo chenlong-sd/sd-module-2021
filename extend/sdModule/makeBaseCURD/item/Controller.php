@@ -66,7 +66,12 @@ class Controller extends Item
         }
     }
 
-    private function indexMethod()
+    /**
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/3
+     */
+    private function indexMethod(): string
     {
         $this->useService();
         $this->useModel();
@@ -75,7 +80,7 @@ class Controller extends Item
         return <<<CODE
 
     /**
-     * @title("列表数据")
+     * @title("{$this->replace['describe']}列表")
      * @param MyService \$service
      * @param MyModel \$model
      * @param MyPage \$page
@@ -91,8 +96,12 @@ class Controller extends Item
 CODE;
     }
 
-
-    private function createMethod()
+    /**
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/3
+     */
+    private function createMethod(): string
     {
         $this->useService();
         $this->useModel();
@@ -102,7 +111,7 @@ CODE;
         return <<<CODE
 
     /**
-     * @title("数据创建")
+     * @title("新增{$this->replace['describe']}")
      * @param MyService \$service
      * @param MyModel \$model
      * @param MyPage \$page
@@ -119,8 +128,12 @@ CODE;
     }
 
 
-
-    private function updateMethod()
+    /**
+     * @return string
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/3
+     */
+    private function updateMethod(): string
     {
         $this->useService();
         $this->useModel();
@@ -130,7 +143,7 @@ CODE;
         return <<<CODE
 
     /**
-     * @title("数据更新")
+     * @title("更新{$this->replace['describe']}")
      * @param MyService \$service
      * @param MyModel \$model
      * @param MyPage \$page
@@ -152,7 +165,7 @@ CODE;
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/10
      */
-    private function deleteMethod()
+    private function deleteMethod(): string
     {
         $this->useService();
         $this->useModel();
@@ -160,7 +173,7 @@ CODE;
         return <<<CODE
 
     /**
-     * @title("数据删除")
+     * @title("删除{$this->replace['describe']}")
      * @param MyService \$service
      * @param MyModel \$model
      * @return \\think\\response\\Json
@@ -182,7 +195,7 @@ CODE;
         return <<<CODE
 
     /**
-     * @title("状态更新")
+     * @title("{$this->replace['describe']}状态更新")
      * @param MyService \$service
      * @param MyModel \$model
      * @return \\think\\response\\Json
