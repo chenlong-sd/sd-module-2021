@@ -63,7 +63,7 @@ class Route extends BaseModel
     /**
      * 获取菜单
      * @return array
-     * @throws SdException
+     * @throws SdException|\Exception
      */
     public function getMenu(): array
     {

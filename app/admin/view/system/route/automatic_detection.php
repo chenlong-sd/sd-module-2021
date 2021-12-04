@@ -18,7 +18,15 @@
     <div class="layui-row layui-form">
 
         <?php if (!empty($accessible)){ ?>
-
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend style="">提示</legend>
+                <div class="layui-field-box">
+                    <p style="color: red">1、新增的节点类型全为<span class="layui-badge">节点</span>类型，如是菜单需要新增后自行修改</p>
+                    <p style="color: red">2、权限名字的自动检测需要在方法注释加上 <span class="layui-badge">@title("权限名字")</span> </p>
+                    <p style="color: red">3、自动创建的父级没有路由 </p>
+                    <p style="color: red">4、手动定义了路由的，不会被检测到 </p>
+                </div>
+            </fieldset>
         <?php foreach ($accessible as $index => $item) {  ?>
             <blockquote class="layui-elem-quote">
                 <?= $item['controller_name']?>
@@ -73,6 +81,7 @@
                 model: { label: { type: 'text' } },
                 radio: true,
                 clickClose: true,
+                tips:'请选择，不选会自动创建一个父级',
                 tree: {
                     show: true,
                     strict: false,
@@ -96,7 +105,9 @@
             type:'post',
             data: data.field,
             success:function (res){
-
+                if (res.code === 200) {
+                    notice.success('成功', () => location.reload());
+                }
             }
         });
         return false;

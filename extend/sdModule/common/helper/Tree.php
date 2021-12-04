@@ -258,11 +258,11 @@ class Tree
     /**
      * 对每个数据进行自定义的处理
      * @param array $data
-     * @return array|void
+     * @return array
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/28
      */
-    private function dataEachHandle(array $data)
+    private function dataEachHandle(array $data): array
     {
         foreach ($data as &$datum){
             $datum = call_user_func($this->each, $datum);
@@ -277,18 +277,18 @@ class Tree
     /**
      * 数据过滤
      * @param array $data
-     * @return array|mixed
+     * @return array
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/28
      */
-    private function dataFilter(array $data)
+    private function dataFilter(array $data): array
     {
         foreach ($data as $datum){
             if (!array_diff_assoc($this->where, $datum)){
                 return [$datum];
             }
-            if (!empty($datum[$this->childrenNode])) {
-                return $this->dataFilter($datum[$this->childrenNode]);
+            if (!empty($datum[$this->childrenNode]) && ($filter = $this->dataFilter($datum[$this->childrenNode]))) {
+                return $filter;
             }
         }
         return [];
@@ -317,7 +317,7 @@ class Tree
     /**
      * 记录传承链的数据处理
      * @param array $data
-     * @param array $parentsRecord
+     * @param array $parentsInheritedChain
      * @return array
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/28

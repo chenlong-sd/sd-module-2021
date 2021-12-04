@@ -49,9 +49,8 @@ class RouteService extends AdminBaseService
 
         // 查找该路由的所有子权限
         $delArr = Sc::tree($all)->setWhere(['id' => current($ids)])->getLineData();
-        halt($all, Sc::tree($all)->setWhere(['id' => (int)current($ids)])->getTreeData());
         $ids    = array_column($delArr, 'id');
-halt($ids, $delArr);
+
         // 删除对应路由的权限
         Power::where(['route_id' => $ids])->update(['delete_time' => time()]);
     }
