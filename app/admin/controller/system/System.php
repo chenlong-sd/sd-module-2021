@@ -282,4 +282,14 @@ class System extends Admin
         ]);
     }
 
+    /**
+     * @title('代码高亮显示')
+     * @return \think\response\View
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/6
+     */
+    public function codeMirror(): \think\response\View
+    {
+        return view();
+    }
 }

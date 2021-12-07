@@ -68,8 +68,8 @@ class RolePage extends BasePage
             $assign_table = array_map(function ($v) {
                 return $v['name'] ?? '——';
             }, $assign_table);
-            $form_data[] = FormUnit::select('assign_table', '账户可用')
-                ->shortTip('该类型账户可使用该角色权限登录使用系统')->options($assign_table);
+            $form_data[] = FormUnit::select('assign_table', '角色类型')
+                ->shortTip('该类型账户可使用该角色权限登录使用系统,默认为系统用户类型')->options($assign_table);
         }
 
         if (env('APP.DATA_AUTH', false)){

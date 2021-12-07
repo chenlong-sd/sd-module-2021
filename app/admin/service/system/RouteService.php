@@ -117,9 +117,9 @@ class RouteService extends AdminBaseService
             return $v;
         }, $allAccessible);
 
-        return array_filter($allAccessible, function ($v){
+        return array_values(array_filter($allAccessible, function ($v){
             return count($v['accessible']);
-        });
+        }));
     }
 
 

@@ -131,11 +131,7 @@ class Index extends Admin
      */
     public function home(QuickOperationService $routeService): \think\response\View
     {
-//        dump('权限BUG, 推荐');
-//        dump('跳转tab');
-//        dump('系统资源BUG');
-//        dump('数据权限');
-//        dump("左右滑动的页面");
+        dump('数据权限');
         $route_data = $routeService->indexShowNode();
         $unit = [
             FormUnit::text('test1', '测试一')->required()->defaultValue(1),

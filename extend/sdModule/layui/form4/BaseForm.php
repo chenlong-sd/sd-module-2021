@@ -9,6 +9,7 @@ namespace sdModule\layui\form4;
 use sdModule\layui\Dom;
 use sdModule\layui\form4\formUnit\formUnitT;
 use sdModule\layui\form4\formUnit\unitProxy\GroupProxy;
+use sdModule\layui\form4\formUnit\unitProxy\PasswordProxy;
 
 /**
  * Class BaseForm
@@ -66,10 +67,10 @@ abstract class BaseForm
     {
         $this->unit    = $unitIS;
         array_map(function ($v) use ($default) {
-            isset($default[$v->getName()]) and $v->defaultValue($default[$v->getName()]);
+            (isset($default[$v->getName()]) && !$v instanceof PasswordProxy) and $v->defaultValue($default[$v->getName()]);
             if ($v instanceof GroupProxy){
                 array_map(function ($vg) use ($default) {
-                    isset($default[$vg->getName()]) and $vg->defaultValue($default[$vg->getName()]);
+                    (isset($default[$vg->getName()]) && !$vg instanceof PasswordProxy) and $vg->defaultValue($default[$vg->getName()]);
                 }, $v->getChildren());
             }
         }, $this->unit);

@@ -65,12 +65,12 @@ return [
 //           ],
 //       ],
        // 例
-//       'user' => [
-//           'name'     => '用户',
-//           'account'  => 'account',
-//           'password' => 'password',
-//           'session'  => ['name']
-//       ],
+       'user' => [
+           'name'     => '用户',
+           'account'  => 'account',
+           'password' => 'password',
+           'session'  => ['name']
+       ],
    ]
 ];
 
