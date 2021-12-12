@@ -80,6 +80,16 @@
                         <li class="layui-timeline-item">
                             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                             <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">Version 4.0 </h3>
+                                <p>2021-12-12</p>
+                                <ul>
+                                    <li>详情查看 <a target="_blank" href="https://www.kancloud.cn/chenlon-sd/sd-module-2021/2566301"></a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                            <div class="layui-timeline-content layui-text">
                                 <h3 class="layui-timeline-title">Version 3.3 </h3>
                                 <p>2021-06-07</p>
                                 <ul>
