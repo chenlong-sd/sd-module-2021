@@ -8,6 +8,7 @@ namespace sdModule\layui\form4\formUnit\unitProxy;
 
 use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
 use sdModule\layui\form4\formUnit\unit\Image;
+use sdModule\layui\form4\formUnit\unitEntity\ImageEntity;
 
 /**
  * Class Image
@@ -27,6 +28,6 @@ class ImageProxy extends BaseFormUnitProxy
      */
     protected function proxyUnit(): string
     {
-        return \sdModule\layui\form4\formUnit\unitEntity\ImageEntity::class;
+        return ImageEntity::class;
     }
 }

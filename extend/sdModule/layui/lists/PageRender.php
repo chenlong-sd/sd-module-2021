@@ -8,7 +8,7 @@ namespace sdModule\layui\lists;
 
 use sdModule\layui\Dom;
 use sdModule\layui\Layui;
-use sdModule\layui\lists\module\Column;
+use sdModule\layui\lists\moduleSetProxy\Column;
 use sdModule\layui\lists\module\Event;
 
 /**

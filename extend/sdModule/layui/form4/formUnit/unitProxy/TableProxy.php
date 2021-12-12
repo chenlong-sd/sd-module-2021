@@ -8,6 +8,7 @@ namespace sdModule\layui\form4\formUnit\unitProxy;
 
 use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
 use sdModule\layui\form4\formUnit\unit\Table;
+use sdModule\layui\form4\formUnit\unitEntity\TableEntity;
 
 /**
  * Class Table
@@ -27,6 +28,6 @@ class TableProxy extends BaseFormUnitProxy
      */
     protected function proxyUnit(): string
     {
-        return \sdModule\layui\form4\formUnit\unitEntity\TableEntity::class;
+        return TableEntity::class;
     }
 }

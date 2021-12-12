@@ -50,4 +50,9 @@ abstract class Select extends BaseFormUnit
         return $this;
     }
 
+    public function __construct(string $name = '', string $label = '')
+    {
+        parent::__construct($name, $label);
+        $this->placeholder = '请选择';
+    }
 }

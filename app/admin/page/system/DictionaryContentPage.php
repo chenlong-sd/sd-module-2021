@@ -32,8 +32,8 @@ class DictionaryContentPage extends BasePage
     {
         $column = [
             Column::checkbox(),
-            Column::normal('KEY', 'key'),
-            Column::normal('标题', 'title'),
+            Column::normal('KEY', 'value'),
+            Column::normal('标题', 'name'),
             Column::normal('更新时间', 'update_time'),
         ];
         $dictionary_id = request()->get('id');
@@ -105,8 +105,8 @@ class DictionaryContentPage extends BasePage
                 $unit[] = $currentForm;
             }
         }else{
-            $unit[] = FormUnit::text('key', 'KEY');
-            $unit[] = FormUnit::text('title', '标题');
+            $unit[] = FormUnit::text('value', 'KEY');
+            $unit[] = FormUnit::text('name', '标题');
         }
         $default_data = $default_data ? array_merge($default_data, json_decode($default_data['dictionary_content'], true)) : [];
 

@@ -110,7 +110,7 @@ class Administrators extends Admin
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/5
      */
-    public function passwordUpdate(MyService $administrators)
+    public function passwordUpdate(MyService $administrators, MyPage $page)
     {
         if ($this->request->isPost()) {
             // 密码数据基本验证
@@ -121,7 +121,9 @@ class Administrators extends Admin
             return $result ? ResponseJson::success() : ResponseJson::fail(lang('fail'));
         }
 
-        return view('password_edit');
+        return view($page->form_template, [
+            'form' => $page->updatePassword()
+        ]);
     }
 
 }

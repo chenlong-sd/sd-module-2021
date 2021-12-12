@@ -8,6 +8,7 @@ namespace sdModule\layui\form4\formUnit\unitProxy;
 
 use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
 use sdModule\layui\form4\formUnit\unit\Text;
+use sdModule\layui\form4\formUnit\unitEntity\TextEntity;
 
 /**
  * Class Text
@@ -27,6 +28,6 @@ class TextProxy extends BaseFormUnitProxy
      */
     protected function proxyUnit(): string
     {
-        return \sdModule\layui\form4\formUnit\unitEntity\TextEntity::class;
+        return TextEntity::class;
     }
 }

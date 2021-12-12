@@ -64,9 +64,10 @@ class Form extends BaseForm
     public function getLoadJs(): string
     {
         $loadJs = array_map(function ($v) {return $v->getLoadJs();}, $this->unit);
-        if (!$loadJs){
-            return '';
-        }
+
+        if ($this->loadJs) $loadJs[] = $this->loadJs;
+        if (!$loadJs) return '';
+
         $loadJs = array_unique(array_merge(...$loadJs));
 
         $host = rtrim(strtr(dirname($_SERVER['SCRIPT_NAME']), ['\\' => '/']), '/');

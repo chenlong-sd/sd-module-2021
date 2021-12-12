@@ -8,8 +8,8 @@ namespace sdModule\layui\lists;
 
 use sdModule\layui\item\Button;
 use sdModule\layui\lists\module\Column;
-use sdModule\layui\lists\module\Event;
 use sdModule\layui\lists\module\EventHandle;
+use sdModule\layui\lists\moduleSetProxy\Event;
 
 /**
  * 页面数据

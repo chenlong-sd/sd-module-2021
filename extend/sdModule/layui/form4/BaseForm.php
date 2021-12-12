@@ -35,6 +35,11 @@ abstract class BaseForm
     protected $js = [];
 
     /**
+     * @var array 要加载的js
+     */
+    protected $loadJs = [];
+
+    /**
      * @var string
      */
     protected $successHandle;
@@ -230,6 +235,16 @@ abstract class BaseForm
                 $unit->setAssociationOptions($newAssociationOptions[$unit->getName()]);
             }
         }
+    }
+
+    /**
+     * @param array|string $loadJs
+     * @return BaseForm
+     */
+    public function addLoadJs($loadJs): BaseForm
+    {
+        $this->loadJs = array_merge($this->loadJs, is_array($loadJs) ? $loadJs : [$loadJs]);
+        return $this;
     }
 
     /**

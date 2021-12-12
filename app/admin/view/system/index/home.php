@@ -19,8 +19,9 @@
         background-color: rgba(1,1,1, 0);
     }
     #quick td.i-have:hover{
-        background-color: #00000010;
+        background-image: linear-gradient(to top, #11111115 , #00000010, #11111115);
         cursor: pointer;
+        border-radius: 5px;
     }
 </style>
 

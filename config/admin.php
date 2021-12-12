@@ -38,7 +38,7 @@ return [
     // 数据权限配置
     'data_auth' => [
 //        ['table' => '表名', 'field' => '选取时展示字段', 'remark' => '该权限名字', ],
-//        ['table' => 'test', 'field' => 'title', 'remark' => '测试', ],
+//        ['table' => 'test', 'show_field' => 'title', 'remark' => '测试',],
 
     ],
 

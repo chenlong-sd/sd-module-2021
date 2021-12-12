@@ -26,12 +26,22 @@ class TextEntity extends Text implements UnitI
      */
     public function getElement(string $scene): Dom
     {
-        $inputDiv = Dom::create();
-        $input    = $this->getInputElement()
-            ->addAttr('type', 'text')
-            ->addAttr('placeholder', $this->placeholder)
-            ->addAttr($this->getCurrentSceneInputAttr($scene))
-            ->addAttr('value', $this->defaultValue);
+        $inputDiv = Dom::create()->addClass('layui-input-wrap');
+        if ($this->prefixIconClass) {
+            $inputDiv->addClass('layui-input-wrap-prefix');
+        }
+
+        $inputAttr = array_merge([
+            'type'          => 'text',
+            'placeholder'   => $this->placeholder,
+            'value'         => $this->defaultValue,
+        ], $this->getCurrentSceneInputAttr($scene));
+
+        if ($this->suffixIsFunctionIcon) {
+            $inputAttr['lay-affix'] = $this->suffixIconClass;
+        }
+
+        $input    = $this->getInputElement()->addAttr($inputAttr);
 
         // 表单的预选项
         if ($this->options) {
@@ -46,12 +56,12 @@ class TextEntity extends Text implements UnitI
             // 如果有提示，给标签加上不换行class
             $inputDiv->addClass($this->shortTip ? 'layui-inline' : 'layui-input-block');
 
-            return $item->addContent($inputDiv->addContent($input)) // 追加input的div
+            return $item->addContent($inputDiv->addContent($input)->addContent($this->iconElement())) // 追加input的div
                 ->addContent($this->getShortTipElement($this->shortTip)); // 追加提示的
         }
 
         $inputDiv->addClass('layui-inline');
-        $inputDiv->addContent($input);
+        $inputDiv->addContent($input)->addContent($this->iconElement());
         return $inputDiv;
     }
 

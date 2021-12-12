@@ -7,10 +7,10 @@
 namespace sdModule\layui\form4\formUnit\unit;
 
 use sdModule\layui\form4\formUnit\BaseFormUnit;
-use sdModule\layui\form4\formUnit\unitConfig\{InputAttr, Placeholder, Required, ShortTip};
+use sdModule\layui\form4\formUnit\unitConfig\{InputAttr, Placeholder, Required, ShortTip,Icon};
 
 abstract class Password extends BaseFormUnit
 {
-    use ShortTip,Placeholder,Required,InputAttr;
+    use ShortTip,Placeholder,Required,InputAttr, Icon;
 }
 

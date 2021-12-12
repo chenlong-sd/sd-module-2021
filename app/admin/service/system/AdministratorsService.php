@@ -95,11 +95,6 @@ class AdministratorsService extends AdminBaseService
     {
         $administrators_id = $data['id'];
 
-        // 若果开启了数据权限，设置对应的数据权限
-        if (env('APP.DATA_AUTH')){
-            MyModel::dataAuthSet($administrators_id, request()->post());
-        }
-
         $role_ids = explode(',', $data['role_id']);
 
         // 查出该用户之前的角色和现在的角色对比

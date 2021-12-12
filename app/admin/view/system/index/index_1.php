@@ -123,7 +123,7 @@ function menu_render(array $menu, bool $is_children = false): string
                     </a>
                     <dl class="layui-nav-child">
                         <!--                        <dd><a lay-event="defend">基本资料</a></dd>-->
-                        <dd><a lay-href="<?= url('system.administrators/passwordUpdate') ?>">修改密码</a></dd>
+                        <dd><a lay-event="pwd">修改密码</a></dd>
                         <hr>
                         <dd style="text-align: center;">
                             <a href="<?= admin_url('login-out') ?>">退出</a>
@@ -219,7 +219,7 @@ function menu_render(array $menu, bool $is_children = false): string
     });
     util.event('lay-event', {
         'pwd':()=>{
-            custom.frame("{:url('system.administrators/passwordUpdate')}", '修改密码')
+            custom.frame("{:url('system.administrators/passwordUpdate')}", '修改密码', {area:['600px', "400px"]})
         },
         'defend':()=>{
             custom.frame("{:url('system.administrators/defend')}", '修改资料')

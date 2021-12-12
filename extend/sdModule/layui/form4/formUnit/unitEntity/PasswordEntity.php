@@ -27,20 +27,28 @@ class PasswordEntity extends Password implements UnitI
      */
     public function getElement(string $scene): Dom
     {
-        $inputDiv = Dom::create();
-        $input    = $this->getInputElement()
-            ->addAttr('type', 'password')
-            ->addAttr('placeholder', $this->placeholder)
-            ->addAttr($this->getCurrentSceneInputAttr($scene));
+        $inputDiv = Dom::create()->addClass('layui-input-wrap');
+        if ($this->prefixIconClass) {
+            $inputDiv->addClass('layui-input-wrap-prefix');
+        }
+        $inputAttr = array_merge([
+            'type'          => 'password',
+            'placeholder'   => $this->placeholder,
+        ], $this->getCurrentSceneInputAttr($scene));
+
+        if ($this->suffixIsFunctionIcon) {
+            $inputAttr['lay-affix'] = $this->suffixIconClass;
+        }
+        $input    = $this->getInputElement()->addAttr($inputAttr);
 
         if ($this->label) {
             $itemDom  = $this->getItemElement();
             $itemDom->addContent($this->getLabelElement($this->label));
             $inputDiv->addClass($this->shortTip ? 'layui-inline' : 'layui-input-block');
-            return $itemDom->addContent($inputDiv->addContent($input))
+            return $itemDom->addContent($inputDiv->addContent($input)->addContent($this->iconElement()))
                 ->addContent($this->getShortTipElement($this->shortTip));
         }
 
-        return $inputDiv->addClass('layui-inline')->addContent($input);
+        return $inputDiv->addClass('layui-inline')->addContent($input)->addContent($this->iconElement());
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
 * TestEnumStatus.php
-* Date: 2021-11-29 15:12:17
+* Date: 2021-12-04 10:34:45
 * User: chenlong <vip_chenlong@163.com>
 */
 
@@ -30,8 +30,8 @@ class TestEnumStatus extends Enum
     {
         // TODO 常量名字取的拼音，需要请更改为对应英语
         return [
-            self::ZHENGCHANG => Layui::tag()->gray("正常"),
-            self::DONGJIE => Layui::tag()->rim("冻结"),
+            self::ZHENGCHANG => Layui::tag()->red("正常"),
+            self::DONGJIE => Layui::tag()->cyan("冻结"),
         ];
     }
 

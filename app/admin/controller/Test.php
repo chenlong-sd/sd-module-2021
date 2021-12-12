@@ -2,12 +2,13 @@
 /**
  * Test.php
  * User: ChenLong
- * DateTime: 2021-11-29 15:12:17
+ * DateTime: 2021-12-04 10:34:45
  */
 
 namespace app\admin\controller;
 
 use app\common\controller\Admin;
+use app\common\ResponseJson;
 use app\common\SdException;
 use app\admin\service\TestService as MyService;
 use app\admin\model\Test as MyModel;
@@ -24,7 +25,7 @@ class Test extends Admin
 {
 
     /**
-     * @title("列表数据")
+     * @title("测试表列表")
      * @param MyService $service
      * @param MyModel $model
      * @param MyPage $page
@@ -39,7 +40,7 @@ class Test extends Admin
     
             
     /**
-     * @title("数据创建")
+     * @title("新增测试表")
      * @param MyService $service
      * @param MyModel $model
      * @param MyPage $page
@@ -54,7 +55,7 @@ class Test extends Admin
 
             
     /**
-     * @title("数据更新")
+     * @title("更新测试表")
      * @param MyService $service
      * @param MyModel $model
      * @param MyPage $page
@@ -69,7 +70,7 @@ class Test extends Admin
 
             
     /**
-     * @title("数据删除")
+     * @title("删除测试表")
      * @param MyService $service
      * @param MyModel $model
      * @return \think\response\Json
@@ -79,5 +80,27 @@ class Test extends Admin
     {
         return parent::delete_($service, $model);
     }
+            
+    /**
+     * @title("测试表状态更新")
+     * @param MyService $service
+     * @param MyModel $model
+     * @return \think\response\Json
+     * @throws SdException
+     */
+    public function switchHandle(MyService $service, MyModel $model): \think\response\Json
+    {
+        return parent::switchHandle_($service, $model);
+    }
 
+    /**
+     * @title('测试弹窗表单')
+     * @return \think\response\Json
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/11
+     */
+    public function popups()
+    {
+        return ResponseJson::success();
+    }
 }

@@ -374,7 +374,7 @@ custom = {
      * @returns {string|*}
      */
     thumbnailUrl(path) {
-        if (!Thumbnail || path.length > 255) return path;
+        if (!Thumbnail || path.length > 255 || /^http.*$/.test(path)) return path;
 
         let arr = path.split('.');
         let suffix = arr.pop();
@@ -549,7 +549,6 @@ custom = {
             elem: "#" + name
             , url: UPLOAD_FILE_URL
             , field: 'limit_video'
-            , multiple: true
             , accept: 'video'
             , before: function (obj) {
                 load = custom.loading('视频上传中, 请稍候...');

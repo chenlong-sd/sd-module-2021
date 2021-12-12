@@ -11,7 +11,7 @@ use sdModule\layui\form4\formUnit\unitConfig\DefaultValue;
 use sdModule\layui\form4\formUnit\unitConfig\ShortTip;
 use sdModule\layui\form4\formUnit\unitConfig\SystemResource;
 
-class Video extends BaseFormUnit
+abstract class Video extends BaseFormUnit
 {
     use DefaultValue, ShortTip, SystemResource;
 }

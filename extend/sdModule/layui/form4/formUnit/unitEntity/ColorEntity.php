@@ -25,7 +25,8 @@ class ColorEntity extends Color implements UnitI
     {
         $itemDom  = $this->getItemElement();
         $inputDiv = Dom::create();
-        $input    = $this->getInputElement()->addAttr('type', 'text')->setId("$this->name-color-input")
+        $input    = $this->getInputElement()->addAttr('type', 'text')
+            ->setId("$this->name-color-input")
             ->addAttr($this->getCurrentSceneInputAttr($scene))
             ->addAttr('value', $this->defaultValue);
 

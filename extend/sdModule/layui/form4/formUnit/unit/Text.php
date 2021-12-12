@@ -7,7 +7,7 @@
 namespace sdModule\layui\form4\formUnit\unit;
 
 use sdModule\layui\form4\formUnit\BaseFormUnit;
-use sdModule\layui\form4\formUnit\unitConfig\{DefaultValue, InputAttr, Options, Placeholder, Required, ShortTip};
+use sdModule\layui\form4\formUnit\unitConfig\{DefaultValue, Icon, InputAttr, Options, Placeholder, Required, ShortTip};
 
 /**
  * Class Text
@@ -17,7 +17,7 @@ use sdModule\layui\form4\formUnit\unitConfig\{DefaultValue, InputAttr, Options, 
  */
 abstract class Text extends BaseFormUnit
 {
-    use Options,ShortTip,DefaultValue,Placeholder,Required,InputAttr;
+    use Options,ShortTip,DefaultValue,Placeholder,Required,InputAttr,Icon;
 
 
 }

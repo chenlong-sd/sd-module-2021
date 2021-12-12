@@ -8,7 +8,6 @@
 
 namespace app\admin\controller\system;
 
-use app\admin\enum\RouteEnumType;
 use app\admin\model\system\Route as RouteModel;
 use app\admin\page\system\RoutePage as RoutePage;
 use app\admin\service\system\RouteService;
@@ -17,7 +16,6 @@ use app\common\controller\Admin;
 use app\common\ResponseJson;
 use app\common\SdException;
 use sdModule\common\Sc;
-use think\facade\View;
 
 /**
  * Class Route
@@ -69,11 +67,6 @@ class Route extends Admin
      */
     public function create(RouteService $service, RouteModel $model, RoutePage $page)
     {
-        if (!$this->request->isAjax()) {
-            $page->form_template = 'add';
-            View::assign('type_data', RouteEnumType::getAllMap());
-        }
-
         return parent::create_($service, $model, $page, RouteValidate::class);
     }
 
@@ -90,12 +83,6 @@ class Route extends Admin
      */
     public function update(RouteService $service, RouteModel $model, RoutePage $page)
     {
-        if (!$this->request->isAjax()) {
-            $page->form_template = 'edit';
-            View::assign('type_data', RouteEnumType::getAllMap());
-            View::assign('data', $model->findOrEmpty($this->request->get('id'))->getData());
-        }
-
         return parent::update_($service, $model, $page, RouteValidate::class);
     }
 

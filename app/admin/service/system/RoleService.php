@@ -7,6 +7,7 @@
 namespace app\admin\service\system;
 
 use app\admin\AdminBaseService;
+use app\admin\model\system\DataAuth;
 use app\admin\model\system\Power;
 use app\admin\model\system\Role as RoleModel;
 use app\admin\model\system\Route;
@@ -90,8 +91,33 @@ class RoleService extends AdminBaseService
      */
     protected function afterWrite(string $save_type, array $data)
     {
-        if (env('APP.DATA_AUTH')){
-            RoleModel::dataAuthSet($data['id'], request()->post());
+        if (Config::get('admin.data_auth', '')){
+            $auth_data = [];
+            foreach (request()->post() as $name => $value) {
+                if (preg_match('/^data_auth_table_/', $name)){
+                    $table = strtr($name, ['data_auth_table_' => '']);
+                    $auth_data[$table] = [
+                        'role_id'     => $data['id'],
+                        'table_names' => $table,
+                        'auth_id'     => implode(',', $value),
+                        'create_time' => datetime(),
+                        'update_time' => datetime(),
+                    ];
+                }
+            }
+
+            $have = DataAuth::where(['role_id' => $data['id']])->column('table_names', 'id');
+            // 需要更新的
+            if (($update = data_only($auth_data, $have))){
+                foreach ($update as $name => $value){
+                    DataAuth::update($value, ['id' => array_search($name, $have)]);
+                }
+            }
+
+            // 需要新增的
+            if (($insert_into = data_except($auth_data, $have)) && !DataAuth::insertAll($insert_into)) {
+                throw new SdException('权限新增失败！');
+            }
         }
     }
 

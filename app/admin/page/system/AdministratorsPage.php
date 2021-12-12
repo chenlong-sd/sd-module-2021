@@ -8,8 +8,6 @@ namespace app\admin\page\system;
 
 
 use app\admin\enum\AdministratorsEnumStatus;
-use app\admin\model\system\Administrators as AdministratorsM;
-use app\admin\model\system\DataAuth;
 use app\admin\model\system\Role;
 use app\common\BasePage;
 use sdModule\layui\form4\FormProxy as DefaultForm;
@@ -17,7 +15,6 @@ use sdModule\layui\form4\FormUnit;
 use sdModule\layui\lists\module\Column;
 use sdModule\layui\lists\module\EventHandle;
 use sdModule\layui\lists\PageData;
-use think\facade\Db;
 
 class AdministratorsPage extends BasePage
 {
@@ -72,15 +69,6 @@ class AdministratorsPage extends BasePage
             FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => admin_session('id')])->column('role', 'id')),
             FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsEnumStatus::getAllMap(true))->defaultValue(AdministratorsEnumStatus::AVAILABLE),
         ];
-        if (env('APP.DATA_AUTH', false)){
-            $default = DataAuth::where(['delete_time' => 0])->where(['administrators_id' => request()->get('id')])
-                ->column('auth_id', 'table_names');
-
-            foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->options(self::dataAuth($data['table']))
-                    ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
-            }
-        }
 
         unset($default_data['password']);
 
@@ -88,22 +76,19 @@ class AdministratorsPage extends BasePage
     }
 
     /**
-     * 数据权限的数据获取
-     * @param string $table
-     * @return array|\think\Collection
+     * 修改密码
+     * @return DefaultForm
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/11
      */
-    public static function dataAuth(string $table)
+    public function updatePassword(): DefaultForm
     {
-        $data_auth = array_column(config('admin.data_auth'), null, 'table');
-        if (empty($data_auth[$table])){
-            return [];
-        }
-
-        try {
-            return Db::name($table)->column("{$data_auth[$table]['field']}", "id");
-        } catch (\Exception $exception) {
-           return [];
-        }
+        $form_data = [
+            FormUnit::password('password_old', '原密码')->prefixIcon('password')->suffixIcon('eye', true),
+            FormUnit::password('password', '新密码')->prefixIcon('password')->suffixIcon('eye', true),
+            FormUnit::password('password_confirm', '确认密码')->prefixIcon('password')->suffixIcon('eye', true),
+        ];
+        return DefaultForm::create($form_data);
     }
 
     /**

@@ -10,10 +10,10 @@ namespace app\common\service;
 use app\common\BaseModel;
 use app\common\SdException;
 use think\db\Query;
+use think\exception\HttpResponseException;
 use think\facade\Env;
 use think\facade\Log;
 use think\helper\Arr;
-use think\helper\Str;
 use think\Paginator;
 use think\response\Json;
 
@@ -83,7 +83,6 @@ class BackstageListsService
     /**
      * @param BaseModel|Query|string $model
      * @return $this
-     * @throws \app\common\SdException
      */
     public function setModel($model): BackstageListsService
     {
@@ -96,42 +95,10 @@ class BackstageListsService
         }
 
         $this->alias = current($model->getOptions('alias'));
-        $this->model = $this->dataAuth($model);
+        $this->model = $model;
         return $this;
     }
 
-    /**
-     * 数据权限处理
-     * @param BaseModel|Query $model
-     * @return mixed
-     * @throws \app\common\SdException
-     */
-    private function dataAuth($model)
-    {
-        if ($data_auth = BaseModel::dataAuthWhere(Str::snake($model->getName()))) {
-            $model->whereIn("{$this->alias}.{$model->getPk()}", $data_auth);
-        }
-        return $model;
-    }
-
-    /**
-     * 数据权限的 JOIN 处理
-     * @param array $join
-     * @throws SdException
-     */
-    private function dataAuthJoin(array &$join)
-    {
-        if (env('APP.DATA_AUTH')){
-            $table = strtr(array_key_first(current($join)), [env('DATABASE.PREFIX') => '']);
-            $alias = current(current($join));
-
-            $primary = strtr(config('admin.primary_key'), ['{table}' => $table]);
-
-            if ($where   = \app\common\BaseModel::dataAuthWhere($table)){
-                $join[2] .= " AND {$alias}.$primary IN (". implode(',', $where) .")";
-            }
-        }
-    }
 
     /**
      * 设置where条件
@@ -233,8 +200,12 @@ class BackstageListsService
                 $result = $this->model->select();
             }
         } catch (\Throwable $exception) {
+            if ($exception instanceof HttpResponseException) {
+                throw $exception;
+            }
+
             if (!$exception instanceof SdException) {
-                Log::write($exception->getMessage() . ".{$exception->getFile()}({$exception->getLine()})");
+                Log::write($exception->getMessage() . ".{$exception->getFile()}({$exception->getLine()})", 'error');
                 throw new SdException(Env::get('APP_DEBUG', false) ? $exception->getMessage() : "fail");
             }
             throw new SdException($exception->getMessage());
@@ -283,12 +254,6 @@ class BackstageListsService
         try {
             $this->setWhere()->listsSort();
 
-            if ($joinOptions = $this->model->getOptions('join')) {
-                foreach ($joinOptions as &$join) {
-                    $this->dataAuthJoin($join);
-                }
-                $this->model->setOption('join', $joinOptions);
-            }
         } catch (\Throwable $exception) {
             if (!$exception instanceof SdException) {
                 Log::write($exception->getMessage() . ".{$exception->getFile()}({$exception->getLine()})");
@@ -306,7 +271,7 @@ class BackstageListsService
      * @param array $totalRow
      * @return Json
      */
-    private function returnHandle($data, array $totalRow = [])
+    private function returnHandle($data, array $totalRow = []): Json
     {
         is_callable($this->each) and $data->each($this->each);
         if (is_callable($this->returnHandle)) {

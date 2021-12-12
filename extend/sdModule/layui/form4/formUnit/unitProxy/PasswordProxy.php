@@ -8,6 +8,7 @@ namespace sdModule\layui\form4\formUnit\unitProxy;
 
 use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
 use sdModule\layui\form4\formUnit\unit\Password;
+use sdModule\layui\form4\formUnit\unitEntity\PasswordEntity;
 
 /**
  * Class Password
@@ -27,6 +28,6 @@ class PasswordProxy extends BaseFormUnitProxy
      */
     protected function proxyUnit(): string
     {
-        return \sdModule\layui\form4\formUnit\unitEntity\PasswordEntity::class;
+        return PasswordEntity::class;
     }
 }

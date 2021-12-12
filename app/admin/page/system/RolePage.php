@@ -72,13 +72,13 @@ class RolePage extends BasePage
                 ->shortTip('该类型账户可使用该角色权限登录使用系统,默认为系统用户类型')->options($assign_table);
         }
 
-        if (env('APP.DATA_AUTH', false)){
-            $default = DataAuth::where(['delete_time' => 0])
-                ->where(['role_id' => request()->get('id')])
-                ->column('auth_id', 'table_names');
+        if ($dataAuth = Config::get('admin.data_auth', '')){
+            $default = DataAuth::where(['role_id' => request()->get('id')])->column('auth_id', 'table_names');
 
-            foreach (config('admin.data_auth') as $data){
-                $form_data[] = FormUnit::selects("data_auth_table_{$data['table']}", $data['remark'])->options(AdministratorsPage::dataAuth($data['table']))
+            $form_data[] = FormUnit::auxTitle('指定数据权限');
+
+            foreach ($dataAuth as $data){
+                $form_data[] = FormUnit::checkbox("data_auth_table_{$data['table']}", $data['remark'])->options(DataAuth::canBeSetData($data['table']))
                     ->defaultValue(empty($default[$data['table']]) ? [] : explode(',', $default[$data['table']]));
             }
         }

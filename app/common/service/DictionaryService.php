@@ -5,6 +5,7 @@ namespace app\common\service;
 
 
 use app\admin\model\system\NewDictionary;
+use think\exception\HttpResponseException;
 use think\facade\Log;
 
 /**
@@ -27,8 +28,8 @@ class DictionaryService
                 ->where('sign', $dictionary_sign)
                 ->find()->toArray();
 
-            $data['content'] = self::contentHandle($data['content']);
             $customize = $data['customize'] ? json_decode($data['customize'], true) : [];
+            $data['content'] = self::contentHandle($data['content'], $customize);
             // 处理字段的选项
             $data = array_merge($data, self::optionsMap($customize));
 
@@ -40,22 +41,37 @@ class DictionaryService
 
     /**
      * 获取字典内容
-     * @param string $dictionary_sign
+     * @param string $dictionary_sign       字典标识 sign
+     * @param string|null $searchContent    搜索内容(匹配方式like) 例： ‘龙%’
+     * @param string|null $sort             排序方式，传值： ASC | DESC，默认id倒序
+     * @param callable|null $callable       自定义查询的回调函数，返回查询结果（数组），如使用时间排序，
      * @return array|false|mixed
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/27
      */
-    public static function getContent(string $dictionary_sign)
+    public static function getContent(string $dictionary_sign, string $searchContent = null, string $sort = null, callable $callable = null)
     {
-        return self::suppressErrorsExecute(function () use ($dictionary_sign){
+        return self::suppressErrorsExecute(function () use ($dictionary_sign, $searchContent, $sort, $callable){
+            $where = [['i.sign', '=', $dictionary_sign]];
+            if ($searchContent) $where[] = ['d.search', 'like', $searchContent];
 
-            $data = NewDictionary::alias('i')
+            $model = NewDictionary::alias('i')
                 ->join('dictionary_content d', 'd.new_dictionary_id = i.id')
-                ->field('d.dictionary_content')
-                ->where('i.sign', $dictionary_sign)
-                ->select()->toArray();
+                ->field('i.customize,d.dictionary_content')
+                ->where($where);
+            if ($sort) {
+                $model->order('d.sort', strtoupper($sort) === 'ASC' ? 'ASC' : 'DESC');
+            }
+            $model->order('d.id', 'DESC');
 
-            return self::contentHandle($data);
+            // h获取查询结果
+            $data = is_callable($callable) ? call_user_func($callable, $model) : $model->select()->toArray();
+
+            if (!$data) return [];
+
+            $customize = json_decode(current($data)['customize'], true);
+
+            return self::contentHandle($data, $customize);
         });
     }
 
@@ -78,11 +94,11 @@ class DictionaryService
                 // 处理字段的选项
                 $datum = array_merge($datum, self::optionsMap($customize));
                 // 处理内容
-                $datum['content'] = self::contentHandle($datum['content']);
+                $datum['content'] = self::contentHandle($datum['content'], $customize);
+
                 unset($datum['customize']);
             }
             unset($datum);
-
             return array_column($data, null, 'sign');
         });
     }
@@ -90,16 +106,28 @@ class DictionaryService
     /**
      * 内容处理
      * @param array $data
+     * @param array $customize
      * @return array
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/27
      */
-    private static function contentHandle(array $data): array
+    private static function contentHandle(array $data, array $customize): array
     {
-        return array_map(function ($content){
-            return array_map(function ($v) {
-                return is_array($v) ? array_values($v) : $v;
-            }, json_decode($content['dictionary_content'], true));
+        $fieldConfig = $customize ? array_column($customize, 'd_key') : ['value', 'name'];
+
+        return array_map(function ($content) use ($fieldConfig){
+            $dictionary_content = [];
+            $haveContent        = json_decode($content['dictionary_content'], true);
+            foreach ($fieldConfig as $field){
+                if (!isset($haveContent[$field])){
+                    $dictionary_content[$field] = null;
+                    continue;
+                }
+                $dictionary_content[$field] = is_array($haveContent[$field])
+                    ? array_values($haveContent[$field])
+                    : $haveContent[$field];
+            }
+            return $dictionary_content;
         }, $data);
     }
 
@@ -137,8 +165,11 @@ class DictionaryService
         try {
             $data = call_user_func($callable);
         } catch (\Throwable $throwable) {
-            Log::write($throwable->getMessage());
             $data = [];
+            if ($throwable instanceof HttpResponseException) {
+                throw $throwable;
+            }
+            Log::write($throwable->getMessage());
         } finally {
             return $data;
         }

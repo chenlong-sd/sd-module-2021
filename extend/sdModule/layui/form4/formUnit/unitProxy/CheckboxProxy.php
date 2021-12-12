@@ -8,6 +8,7 @@ namespace sdModule\layui\form4\formUnit\unitProxy;
 
 use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
 use sdModule\layui\form4\formUnit\unit\Checkbox;
+use sdModule\layui\form4\formUnit\unitEntity\CheckboxEntity;
 
 /**
  * Class Checkbox
@@ -27,6 +28,6 @@ class CheckboxProxy extends BaseFormUnitProxy
      */
     protected function proxyUnit(): string
     {
-        return \sdModule\layui\form4\formUnit\unitEntity\CheckboxEntity::class;
+        return CheckboxEntity::class;
     }
 }

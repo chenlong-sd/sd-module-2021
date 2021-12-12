@@ -13,6 +13,7 @@ use sdModule\layui\form4\formUnit\unitProxy\{AuxTitleProxy,
     CustomizeProxy,
     GroupProxy,
     HiddenProxy,
+    IconProxy,
     ImageProxy,
     ImagesProxy,
     PasswordProxy,
@@ -50,6 +51,7 @@ use sdModule\layui\Dom;
  * @method static UploadProxy   upload(string $name, string $label = '')    通用上传
  * @method static VideoProxy    video(string $name, string $label = '')     视频上传
  * @method static TableProxy    table(string $name)                         表格形式的表单
+ * @method static IconProxy     icon(string $name, string $label = '')      图标选择
  * @method static AuxTitleProxy auxTitle(string|Dom $content, string $show_type = 'grey') 辅助标题
  * @package sdModule\layui\form4
  * @author chenlong<vip_chenlong@163.com>

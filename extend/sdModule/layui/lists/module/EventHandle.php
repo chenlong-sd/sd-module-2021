@@ -7,6 +7,12 @@
 namespace sdModule\layui\lists\module;
 
 
+use sdModule\layui\Dom;
+use sdModule\layui\form4\FormUnit;
+use sdModule\layui\form4\formUnit\BaseFormUnit;
+use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
+use sdModule\layui\form4\formUnit\FormUnitT;
+
 /**
  * Class EventHandle
  * @package sdModule\layui\lists\module
@@ -73,8 +79,19 @@ class EventHandle
             , page: {
                 curr: 1
             }
-        });
+        }, true);
 JS;
+    }
+
+
+    /**
+     * @param BaseFormUnitProxy[] $formUnit
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2021/12/10
+     */
+    public static function openForm(...$formUnit)
+    {
+        return new OpenForm($formUnit);
     }
 }
 

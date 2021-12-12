@@ -6,8 +6,6 @@
 
 namespace sdModule\layui\form4\formUnit\unitConfig;
 
-use sdModule\layui\Dom;
-
 trait Placeholder
 {
     /**

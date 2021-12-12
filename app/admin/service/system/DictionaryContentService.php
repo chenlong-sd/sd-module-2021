@@ -32,8 +32,8 @@ class DictionaryContentService extends AdminBaseService
         $dictionary = NewDictionary::findOrEmpty(request()->get('search.new_dictionary_id'));
 
         $fields =  [
-            ['d_key' => 'key'],
-            ['d_key' => 'title'],
+            ['d_key' => 'value'],
+            ['d_key' => 'name'],
         ];
 
         if ($dictionary->getData('type') == NewDictionaryEnumType::STRONG && $dictionary->customize) {
@@ -114,7 +114,7 @@ class DictionaryContentService extends AdminBaseService
     public function fieldFilter(array $data): array
     {
         $dictionary = NewDictionary::findOrEmpty($data['new_dictionary_id']);
-        $allowField = ['key', 'title'];
+        $allowField = ['value', 'name'];
         if ($dictionary->customize && $dictionary->getData('type') == NewDictionaryEnumType::STRONG) {
             $allowField = array_column(json_decode($dictionary->customize, true), 'd_key');
         }

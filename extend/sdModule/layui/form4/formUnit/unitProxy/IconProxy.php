@@ -1,23 +1,23 @@
 <?php
 /**
- * datetime: 2021/11/19 2:11
+ * datetime: 2021/12/11 16:25
  * user    : chenlong<vip_chenlong@163.com>
  **/
 
 namespace sdModule\layui\form4\formUnit\unitProxy;
 
 use sdModule\layui\form4\formUnit\BaseFormUnitProxy;
-use sdModule\layui\form4\formUnit\unit\UEditor;
-use sdModule\layui\form4\formUnit\unitEntity\UEditorEntity;
+use sdModule\layui\form4\formUnit\unit\Icon;
+use sdModule\layui\form4\formUnit\unitEntity\IconEntity;
 
 /**
- * Class UEditor
- * @mixin UEditor
+ * Class IconProxy
+ * @mixin Icon
  * @package sdModule\layui\form4\formUnit\unitProxy
  * @author chenlong<vip_chenlong@163.com>
- * @date 2021/11/19
+ * @date 2021/12/11
  */
-class UEditorProxy extends BaseFormUnitProxy
+class IconProxy extends BaseFormUnitProxy
 {
 
     /**
@@ -28,6 +28,6 @@ class UEditorProxy extends BaseFormUnitProxy
      */
     protected function proxyUnit(): string
     {
-        return UEditorEntity::class;
+        return IconEntity::class;
     }
 }

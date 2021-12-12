@@ -13,7 +13,7 @@ use sdModule\layui\form4\formUnit\unitConfig\Placeholder;
 use sdModule\layui\form4\formUnit\unitConfig\Required;
 use sdModule\layui\form4\formUnit\unitConfig\ShortTip;
 
-class Tag extends BaseFormUnit
+abstract class Tag extends BaseFormUnit
 {
     use DefaultValue, Required, InputAttr, Placeholder, ShortTip;
 }

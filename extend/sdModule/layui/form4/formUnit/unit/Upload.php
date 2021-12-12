@@ -10,7 +10,7 @@ use sdModule\layui\form4\formUnit\BaseFormUnit;
 use sdModule\layui\form4\formUnit\unitConfig\DefaultValue;
 use sdModule\layui\form4\formUnit\unitConfig\ShortTip;
 
-class Upload extends BaseFormUnit
+abstract class Upload extends BaseFormUnit
 {
     use DefaultValue, ShortTip;
 
