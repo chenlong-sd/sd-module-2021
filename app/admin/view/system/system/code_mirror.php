@@ -41,8 +41,8 @@
         matchBrackets: true,
         mode: "application/x-httpd-php",
         indentUnit: 4,
-        indentWithTabs: true
-    });
+        indentWithTabs: true,
+    }).setValue('\<\?php\n\n// 你猜这个是做什么的？\n\n$a = "Hello world!";\necho $a;');
 </script>
 
 
