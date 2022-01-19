@@ -10,6 +10,7 @@
 namespace app\admin\controller\system;
 
 
+use app\admin\AdminLoginSession;
 use app\admin\model\system\Route;
 use app\admin\service\system\AdministratorsService as AdministratorsService;
 use app\admin\service\system\QuickOperationService;
@@ -20,6 +21,9 @@ use app\common\ResponseJson;
 use app\common\SdException;
 use think\facade\Config;
 use think\facade\Db;
+use think\response\Json;
+use think\response\Redirect;
+use think\response\View;
 
 /**
  * Class Index
@@ -42,13 +46,10 @@ class Index extends Admin
     /**
      * 登录
      * @param AdministratorsService $administrators
-     * @return \think\response\Json|\think\response\View
+     * @return Json|View
      * @throws SdException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      * @author chenlong<vip_chenlong@163.com>
-     * @date 2021/11/5
+     * @date 2022/1/19
      */
     public function login(AdministratorsService $administrators)
     {
@@ -70,7 +71,7 @@ class Index extends Admin
     /**
      * 开放登录
      * @param AdministratorsService $administrators
-     * @return \think\response\Json|\think\response\View
+     * @return Json|View
      * @throws SdException
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/5
@@ -100,10 +101,10 @@ class Index extends Admin
     /**
      * 框架主体
      * @param Route $route
-     * @return \think\response\View
+     * @return View
      * @throws SdException
      */
-    public function main(Route $route): \think\response\View
+    public function main(Route $route): View
     {
         return view('index_1', [
             'menu' => $route->getMenu(),
@@ -114,9 +115,9 @@ class Index extends Admin
     /**
      * 主页
      * @param QuickOperationService $routeService
-     * @return \think\response\View
+     * @return View
      */
-    public function home(QuickOperationService $routeService): \think\response\View
+    public function home(QuickOperationService $routeService): View
     {
         $route_data = $routeService->indexShowNode();
         return view('', compact('route_data'));
@@ -124,9 +125,9 @@ class Index extends Admin
 
     /**
      * @param string $table
-     * @return \think\response\Json
+     * @return Json
      */
-    public function dataAuth(string $table = ''): \think\response\Json
+    public function dataAuth(string $table = ''): Json
     {
         $data_auth = array_column(config('admin.data_auth'), null, 'table');
         if (empty($data_auth[$table])){
@@ -144,11 +145,11 @@ class Index extends Admin
 
     /**
      * 退出登录
-     * @return \think\response\Redirect|void
+     * @return Redirect|void
      */
-    public function loginOut(): \think\response\Redirect
+    public function loginOut(): Redirect
     {
-        $open = admin_session('table') ?: '';
+        $open = AdminLoginSession::getTable('');
         $open and $open = "/" . $open;
         session(null);
         return redirect(admin_url('login' . $open));
@@ -156,11 +157,11 @@ class Index extends Admin
 
     /**
      * 休息一下
-     * @return \think\response\View
+     * @return View
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/16
      */
-    public function game(): \think\response\View
+    public function game(): View
     {
         return view();
     }

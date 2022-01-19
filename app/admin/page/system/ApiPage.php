@@ -27,7 +27,7 @@ class ApiPage extends BasePage
      * @throws \app\common\SdException
      */
     public function listPageData(): PageData
-    {
+    {EventHandle::openPage([url('update?see=1'), 'id'], '查看')->popUps(['area' => ['90%', "90%"]]);
         $table = PageData::create([
             Column::checkbox(),
             Column::normal('请求方式', 'method')->moreConfiguration(['width' => 100]),

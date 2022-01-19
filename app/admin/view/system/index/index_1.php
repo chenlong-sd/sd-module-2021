@@ -98,11 +98,12 @@ function menu_render(array $menu, bool $is_children = false): string
                         <dd>
                             <a href="javascript:;" lay-event="surprised">休息一下</a>
                         </dd>
-                        <dd lay-href="<?= admin_url('data-back-up') ?>">
-                            <a href="javascript:;">数据备份</a>
-                        </dd>
                         <dd>
                             <a href="javascript:;" layadmin-event="theme">皮肤设置</a>
+                        </dd>
+                        <?php  if (env('APP_DEBUG') && \app\admin\service\system\AdministratorsService::isSuper()) { ?>
+                        <dd lay-href="<?= admin_url('data-back-up') ?>">
+                            <a href="javascript:;">数据备份</a>
                         </dd>
                         <dd lay-href="<?= admin_url('api') ?>">
                             <a href="javascript:;" >接口管理</a>
@@ -113,13 +114,14 @@ function menu_render(array $menu, bool $is_children = false): string
                         <dd>
                             <a target="_blank" href="https://www.kancloud.cn/chenlon-sd/sd-module-2021" >开发手册</a>
                         </dd>
+                        <?php } ?>
                     </dl>
                 </li>
 
 
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;">
-                        <cite>{:admin_session('name')}</cite>
+                        <cite><?= \app\admin\AdminLoginSession::getName('') ?></cite>
                     </a>
                     <dl class="layui-nav-child">
                         <!--                        <dd><a lay-event="defend">基本资料</a></dd>-->

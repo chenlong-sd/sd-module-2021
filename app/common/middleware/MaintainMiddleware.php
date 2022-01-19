@@ -3,6 +3,7 @@
 
 namespace app\common\middleware;
 
+use app\admin\AdminLoginSession;
 use app\admin\service\system\AdministratorsService;
 use app\common\ResponseJson;
 use think\Response;
@@ -49,7 +50,7 @@ class MaintainMiddleware
      */
     private function adminApp(Request $request, \Closure $closure)
     {
-        if (!AdministratorsService::LoginCheck() || admin_session('maintain') === true) {
+        if (!(new class extends AdminLoginSession{public function loginCheck(): bool{return parent::loginCheck();}})->loginCheck() || AdminLoginSession::getMaintain() === true) {
             return $closure($request);
         }
 

@@ -11,6 +11,7 @@ namespace app\admin\model\system;
 
 
 use app\admin\enum\RouteEnumType;
+use app\admin\AdminLoginSession;
 use app\admin\service\system\AdministratorsService;
 use app\common\BaseModel;
 use app\common\SdException;
@@ -105,7 +106,7 @@ class Route extends BaseModel
         // 不是超管
         if (!AdministratorsService::isSuper()) {
             $route = $route->join('power p', 'p.route_id = i.id')
-            ->where('p.role_id', 'in', explode(',', admin_session('role_id')));
+            ->where('p.role_id', 'in', explode(',', AdminLoginSession::getRoleId()));
         }
 
         try {

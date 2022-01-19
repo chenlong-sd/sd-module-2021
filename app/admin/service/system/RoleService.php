@@ -7,6 +7,7 @@
 namespace app\admin\service\system;
 
 use app\admin\AdminBaseService;
+use app\admin\AdminLoginSession;
 use app\admin\model\system\DataAuth;
 use app\admin\model\system\Power;
 use app\admin\model\system\Role as RoleModel;
@@ -36,23 +37,23 @@ class RoleService extends AdminBaseService
         $open_table = Config::get('admin.open_login_table', []);
         return $service->setModel($model)->setCustomSearch(function (array $search, BaseQuery $model) {
             if (isset($search['mode']) && $search['mode'] === 'all'){
-                if (admin_session('is_admin')) {
+                if (AdminLoginSession::isAdmin()) {
                     $all_role = RoleModel::field('id,pid,role,administrators_id')->select()->toArray();
                 }else{
                     $all_role = RoleModel::field('id,pid,role,open_id administrators_id')
-                        ->where('open_table', admin_session('table'))->select()->toArray();
+                        ->where('open_table', AdminLoginSession::getTable())->select()->toArray();
                 }
                 $mySubordinate = Sc::tree($all_role)->setInheritedChain('administrators_id')->getLineData();
                 $model->whereIn('i.id', array_column(array_filter($mySubordinate, function ($v){
-                    return in_array(admin_session('id'), $v['_inherited_chain_']);
+                    return in_array(AdminLoginSession::getId(), $v['_inherited_chain_']);
                 }), 'id'));
             }else{
-                if (admin_session('is_admin')) {
-                    $model->where('i.administrators_id', admin_session('id'));
+                if (AdminLoginSession::isAdmin()) {
+                    $model->where('i.administrators_id', AdminLoginSession::getId());
                 } else {
                     $model->where([
-                        'i.open_table' => admin_session('table'),
-                        'i.open_id'    => admin_session('id')
+                        'i.open_table' => AdminLoginSession::getTable(),
+                        'i.open_id'    => AdminLoginSession::getId()
                     ]);
                 }
             }
@@ -73,13 +74,13 @@ class RoleService extends AdminBaseService
     {
         if (!empty($data['id'])) return false;
 
-        if (admin_session('is_admin')) {
-            $data['administrators_id'] = admin_session('id');
+        if (AdminLoginSession::isAdmin()) {
+            $data['administrators_id'] = AdminLoginSession::getId();
         }else{
-            $data['open_table'] = admin_session('table');
-            $data['open_id']    = admin_session('id');
+            $data['open_table'] = AdminLoginSession::getTable();
+            $data['open_id']    = AdminLoginSession::getId();
         }
-        $data['pid'] = admin_session('role_id', 0);
+        $data['pid'] = AdminLoginSession::getRoleId(0);
     }
 
     /**
@@ -135,22 +136,22 @@ class RoleService extends AdminBaseService
 
         // 当前为超级管理员，不做此判断
         if (!AdministratorsService::isSuper()) {
-            if ($data && array_diff(array_column($data, 'id'), admin_session('route'))) {
+            if ($data && array_diff(array_column($data, 'id'), AdminLoginSession::getRoute())) {
                 throw new SdException('权限错误！');
             }
 
             $role = RoleModel::findOrEmpty($role_id);
 
-            if (admin_session('is_admin') && $role->administrators_id !== admin_session('id')){
+            if (AdminLoginSession::isAdmin() && $role->administrators_id !== AdminLoginSession::getId()){
                 throw new SdException('该角色不是由你创建，无法操作！');
             }
 
             // 开放表操作判断
-            if(!admin_session('is_admin') && $table = admin_session('table')){
+            if(!AdminLoginSession::isAdmin() && $table = AdminLoginSession::getTable()){
                 if ($role->isEmpty()) {
                     throw new SdException('角色信息错误');
                 }
-                if ($role->open_table != $table || $role->open_id != admin_session('id')) {
+                if ($role->open_table != $table || $role->open_id != AdminLoginSession::getId()) {
                     throw new SdException('该角色不是由你创建，无法操作！');
                 }
             }
@@ -197,7 +198,7 @@ class RoleService extends AdminBaseService
 
             $tree_data = AdministratorsService::isSuper()
                 ? Route::alias('i')->field($field)->select()->toArray()
-                : Route::alias('i')->where(['p.role_id' => explode(',', admin_session('role_id'))], 'i')
+                : Route::alias('i')->where(['p.role_id' => explode(',', AdminLoginSession::getRoleId())], 'i')
                     ->join('power p', 'p.route_id = i.id')
                     ->field($field)->select()->toArray();
 

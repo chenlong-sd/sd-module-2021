@@ -1,6 +1,8 @@
 <?php
 // 应用公共文件
 
+use app\admin\AdminLoginSession;
+
 if (!function_exists('data_except')) {
     /**
      * 排除 $data 里面 key值在 $filter 里面的数据
@@ -91,19 +93,6 @@ if (!function_exists('admin_url')) {
     }
 }
 
-if (!function_exists('admin_session')) {
-    /**
-     * 后台管理员session获取
-     * @param      $key
-     * @param null $default
-     * @return mixed|null
-     */
-    function admin_session($key = null, $default = null)
-    {
-        return \app\admin\service\system\AdministratorsService::getSession($key) ?? $default;
-    }
-}
-
 
 if (!function_exists('lang_load')) {
     /**
@@ -179,7 +168,7 @@ if (!function_exists('access_control')) {
         $all_node = cache(config('admin.route_cache')) ?: [];
         $node_id  = array_search($logo, $all_node);
         if ((!$node_id && !in_array($pathinfo['filename'], ['create', 'update', 'del']))
-            || ($node_id && in_array($node_id, admin_session('route')))
+            || ($node_id && in_array($node_id, AdminLoginSession::getRoute([])))
         ) {
             return true;
         }

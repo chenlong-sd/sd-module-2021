@@ -14,6 +14,8 @@ use app\admin\service\TestService as MyService;
 use app\admin\model\Test as MyModel;
 use app\admin\page\TestPage as MyPage;
 use app\common\validate\Test as MyValidate;
+use think\response\Json;
+use think\response\View;
 
 /**
  * 测试表 控制器
@@ -29,7 +31,7 @@ class Test extends Admin
      * @param MyService $service
      * @param MyModel $model
      * @param MyPage $page
-     * @return \think\response\Json|\think\response\View
+     * @return Json|View
      * @throws SdException
      * @throws \ReflectionException
      */
@@ -44,7 +46,7 @@ class Test extends Admin
      * @param MyService $service
      * @param MyModel $model
      * @param MyPage $page
-     * @return \think\response\Json|\think\response\View
+     * @return Json|View
      * @throws SdException
      * @throws \ReflectionException
      */
@@ -59,7 +61,7 @@ class Test extends Admin
      * @param MyService $service
      * @param MyModel $model
      * @param MyPage $page
-     * @return \think\response\Json|\think\response\View
+     * @return Json|View
      * @throws SdException
      * @throws \ReflectionException
      */
@@ -73,10 +75,10 @@ class Test extends Admin
      * @title("删除测试表")
      * @param MyService $service
      * @param MyModel $model
-     * @return \think\response\Json
+     * @return Json
      * @throws SdException
      */
-    public function delete(MyService $service, MyModel $model): \think\response\Json
+    public function delete(MyService $service, MyModel $model): Json
     {
         return parent::delete_($service, $model);
     }
@@ -85,17 +87,17 @@ class Test extends Admin
      * @title("测试表状态更新")
      * @param MyService $service
      * @param MyModel $model
-     * @return \think\response\Json
+     * @return Json
      * @throws SdException
      */
-    public function switchHandle(MyService $service, MyModel $model): \think\response\Json
+    public function switchHandle(MyService $service, MyModel $model): Json
     {
         return parent::switchHandle_($service, $model);
     }
 
     /**
      * @title('测试弹窗表单')
-     * @return \think\response\Json
+     * @return Json
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/12/11
      */

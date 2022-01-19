@@ -8,6 +8,7 @@ namespace app\admin\page\system;
 
 
 use app\admin\enum\AdministratorsEnumStatus;
+use app\admin\AdminLoginSession;
 use app\admin\model\system\Role;
 use app\common\BasePage;
 use sdModule\layui\form4\FormProxy as DefaultForm;
@@ -66,7 +67,7 @@ class AdministratorsPage extends BasePage
             FormUnit::text('account', lang('administrator.account'))->shortTip(lang('administrator.login account')),
             FormUnit::password('password', lang('administrator.password'))->shortTip(lang('administrator.6-16 digit password')),
             FormUnit::password('password_confirm', lang('administrator.password confirm'))->shortTip(lang('administrator.6-16 digit password')),
-            FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => admin_session('id')])->column('role', 'id')),
+            FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => AdminLoginSession::getId()])->column('role', 'id')),
             FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsEnumStatus::getAllMap(true))->defaultValue(AdministratorsEnumStatus::AVAILABLE),
         ];
 

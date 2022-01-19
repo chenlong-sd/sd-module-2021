@@ -10,6 +10,7 @@
 namespace app\admin\model\system;
 
 
+use app\admin\AdminLoginSession;
 use app\common\BaseModel;
 use app\common\SdException;
 
@@ -56,11 +57,11 @@ class Role extends BaseModel
     public static function selectData(string $table = null): array
     {
         $where = $table ? ['assign_table' => $table] : [];
-        if (admin_session('is_admin')) {
-            $where['administrators_id'] = admin_session('id');
+        if (AdminLoginSession::isAdmin()) {
+            $where['administrators_id'] = AdminLoginSession::getId();
         }else{
-            if (admin_session('table') == $table) {
-                $where = array_merge($where, ['open_id' => admin_session('id'), 'open_table' => admin_session('table')]);
+            if (AdminLoginSession::getTable() == $table) {
+                $where = array_merge($where, ['open_id' => AdminLoginSession::getId(), 'open_table' => AdminLoginSession::getTable()]);
             }
         }
         return self::where($where)->column('role', 'id');

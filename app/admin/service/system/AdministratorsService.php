@@ -8,6 +8,7 @@ namespace app\admin\service\system;
 
 use app\admin\AdminBaseService;
 use app\admin\enum\AdministratorsEnumStatus;
+use app\admin\AdminLoginSession;
 use app\admin\model\system\Administrators;
 use app\admin\model\system\Administrators as MyModel;
 use app\admin\model\system\AdministratorsRole;
@@ -58,10 +59,10 @@ class AdministratorsService extends AdminBaseService
                 $mySubordinate = Sc::tree($all_role)->setInheritedChain('administrators_id')->getLineData();
 
                 $model->whereIn('r.id', array_column(array_filter($mySubordinate, function ($v){
-                    return in_array(admin_session('id'), $v['_inherited_chain_']);
+                    return in_array(AdminLoginSession::getId(), $v['_inherited_chain_']);
                 }), 'id'));
             }else{
-                $model->where('r.administrators_id', admin_session('id'));
+                $model->where('r.administrators_id', AdminLoginSession::getId());
             }
 
             return ['mode'];
@@ -128,15 +129,6 @@ class AdministratorsService extends AdminBaseService
     }
 
     /**
-     * 判断登录
-     * @return mixed
-     */
-    public static function LoginCheck()
-    {
-        return session('?' . self::LOGIN_SESSION_KEY);
-    }
-
-    /**
      * 修改密码
      * @param string $new_password 新密码
      * @param string $old_password 旧密码
@@ -153,9 +145,9 @@ class AdministratorsService extends AdminBaseService
         }
 
         // 判断当前登录的是不是administrators 账号
-        $table    = admin_session('is_admin') ? 'administrators' : admin_session('table');
+        $table    = AdminLoginSession::isAdmin() ? 'administrators' : AdminLoginSession::getTable();
         // 查出原密码加密字符串
-        $password = Db::name($table)->where(['id' => admin_session('id')])->value('password');
+        $password = Db::name($table)->where(['id' => AdminLoginSession::getId()])->value('password');
 
         // 验证原密码错误
         if (!Sc::password()->verify($old_password, $password)){
@@ -163,7 +155,7 @@ class AdministratorsService extends AdminBaseService
         }
 
         try {
-            return Db::name($table)->where(['id' => admin_session('id')])->update([
+            return Db::name($table)->where(['id' => AdminLoginSession::getId()])->update([
                 'password'    => Sc::password()->encryption($new_password),
                 'update_time' => date('Y-m-d H:i:s')
             ]);
@@ -294,7 +286,12 @@ class AdministratorsService extends AdminBaseService
      */
     private static function setSession($data): void
     {
-        session(self::LOGIN_SESSION_KEY, $data);
+        (new class extends AdminLoginSession{
+            public function save(array $data)
+            {
+                return parent::save($data);
+            }
+        })->save($data);
     }
 
     /**
@@ -318,7 +315,7 @@ class AdministratorsService extends AdminBaseService
      */
     public static function isSuper(): bool
     {
-        return admin_session('id') === Config::get('admin.super', 1) && admin_session('is_admin');
+        return AdminLoginSession::getId() === Config::get('admin.super', 1) && AdminLoginSession::isAdmin();
     }
 
 }

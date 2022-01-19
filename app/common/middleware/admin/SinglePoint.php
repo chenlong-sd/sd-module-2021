@@ -4,6 +4,7 @@
 namespace app\common\middleware\admin;
 
 
+use app\admin\AdminLoginSession;
 use think\facade\Session;
 use think\Request;
 
@@ -26,7 +27,7 @@ class SinglePoint
     public function handle(Request $request, \Closure $closure)
     {
         if (!env('APP_DEBUG', false) && !$this->verifySinglePoint()) {
-            $table = admin_session('table', '');
+            $table = AdminLoginSession::getTable('');
             $table and $table = '/' . $table;
             session(null);
             return redirect(admin_url('login' . $table, [
@@ -66,8 +67,6 @@ class SinglePoint
      */
     private static function singlePointKey(): string
     {
-        return admin_session('is_admin')
-            ? self::SINGLE_POINT_PRE . admin_session('id')
-            : self::SINGLE_POINT_PRE . admin_session('table') . admin_session('id');
+        return self::SINGLE_POINT_PRE . (AdminLoginSession::isAdmin() ? '' : AdminLoginSession::getTable('')) . AdminLoginSession::getId();
     }
 }

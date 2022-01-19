@@ -10,7 +10,7 @@
 namespace app\common\middleware\admin;
 
 
-use app\admin\service\system\AdministratorsService;
+use app\admin\AdminLoginSession;
 use think\facade\Cookie;
 use think\Request;
 use think\Response;
@@ -37,13 +37,17 @@ class LoginMiddleware
     public function handle(Request $request, \Closure $closure):Response
     {
         $request = $this->requestAction($request);
+
         // TODO 路径加密 ---
-        if (!AdministratorsService::LoginCheck() && !in_array($request->middleware('route_path'), self::EXCEPT_PATH)) {
+
+        $loginInfo = $this->getLoginInfoChildren();
+
+        if (!$loginInfo->loginCheck() && !in_array($request->middleware('route_path'), self::EXCEPT_PATH)) {
             $route = 'login';
             ($open_table = Cookie::get(self::USER_TYPE_KEY, '')) and $route .= "/$open_table";
             return redirect(admin_url($route));
         }
-
+        $loginInfo->setData();
         return $closure($request);
     }
 
@@ -61,6 +65,26 @@ class LoginMiddleware
 
         $request->withMiddleware(['route_path' => parse_name($requestPath, 1)]);
         return $request;
+    }
+
+    /**
+     * @return AdminLoginSession|__anonymous@1733
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2022/1/19
+     */
+    private function getLoginInfoChildren()
+    {
+        return new class extends AdminLoginSession {
+            public function setData(array $data = [])
+            {
+                parent::setData($data);
+            }
+
+            public function loginCheck(): bool
+            {
+                return parent::loginCheck();
+            }
+        } ;
     }
 
 }

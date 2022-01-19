@@ -7,6 +7,7 @@
 namespace app\common;
 
 
+use app\admin\AdminLoginSession;
 use app\admin\model\system\DataAuth;
 use think\Collection;
 use think\db\Query;
@@ -114,7 +115,7 @@ class BaseQuery extends Query
         $selfTable   = strtr($this->getTable(), [$this->prefix => '']);
 
         // 没有开启数据权限或不是后端或者是数据权限的查询不做处理
-        if (!($openDataAuthTables = Config::get('admin.data_auth')) || !admin_session() || $selfTable === 'data_auth') return;
+        if (!($openDataAuthTables = Config::get('admin.data_auth')) || !AdminLoginSession::getId() || $selfTable === 'data_auth') return;
 
         $openDataAuthTables = array_column($openDataAuthTables, 'table');
 
@@ -131,7 +132,7 @@ class BaseQuery extends Query
         // 表里面没有找到有数据权限的表，不做处理
         if (!$tables = array_intersect($openDataAuthTables, $tables)) return;
 
-        $dataAuth = DataAuth::where('role_id', admin_session('role_id'))
+        $dataAuth = DataAuth::where('role_id', AdminLoginSession::getRoleId())
             ->whereIn('table_names', $tables)
             ->column('auth_id', 'table_names');
 

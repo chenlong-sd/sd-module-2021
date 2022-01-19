@@ -8,6 +8,7 @@ namespace app\admin\service\system;
 
 use app\admin\AdminBaseService;
 use app\admin\enum\QuickOperationEnumIsShow;
+use app\admin\AdminLoginSession;
 use app\admin\model\system\QuickOperation;
 use app\admin\model\system\Route;
 use app\common\service\BackstageListsService;
@@ -30,12 +31,12 @@ class QuickOperationService extends AdminBaseService
     public function listData(BackstageListsService $service): \think\response\Json
     {
         $model = Route::alias('route')->order('route.weigh')
-            ->join('quick_operation i', 'i.route_id = route.id and i.administrators_id = ' . admin_session('id') . ' and i.open_table = "' . admin_session('table', '') . '"', 'left')
+            ->join('quick_operation i', 'i.route_id = route.id and i.administrators_id = ' . AdminLoginSession::getId() . ' and i.open_table = "' . AdminLoginSession::getTable('') . '"', 'left')
             ->field('route.id,route.pid,route.title route_title,i.is_show is_show_true,route.route');
 
         if (!AdministratorsService::isSuper()) {
             $model->join('power p', 'p.route_id = route.id')
-                ->where('p.role_id', admin_session('role_id'));
+                ->where('p.role_id', AdminLoginSession::getRoleId());
         }
 
         return $service->setModel($model)->getListsData();
@@ -53,13 +54,13 @@ class QuickOperationService extends AdminBaseService
         try {
             $quick = QuickOperation::where([
                 'route_id'          => $id,
-                'administrators_id' => admin_session('id'),
-                'open_table'        => admin_session('table', '')
+                'administrators_id' => AdminLoginSession::getId(),
+                'open_table'        => AdminLoginSession::getTable('')
             ])->findOrEmpty();
             if ($quick->isEmpty()) {
                 $quick->route_id          = $id;
-                $quick->administrators_id = admin_session('id');
-                $quick->open_table        = admin_session('table', '');
+                $quick->administrators_id = AdminLoginSession::getId();
+                $quick->open_table        = AdminLoginSession::getTable('');
                 $quick->create_time       = datetime();
                 $quick->is_show           = QuickOperationEnumIsShow::NOT;
             }
@@ -116,15 +117,15 @@ class QuickOperationService extends AdminBaseService
             $node = QuickOperation::alias('i')
                 ->where([
                     'i.is_show'           => QuickOperationEnumIsShow::YES,
-                    'i.administrators_id' => admin_session('id'),
-                    'i.open_table'        => admin_session('table', '')
+                    'i.administrators_id' => AdminLoginSession::getId(),
+                    'i.open_table'        => AdminLoginSession::getTable('')
                 ])
                 ->join('route r', 'r.id = i.route_id')
                 ->field('i.id,i.coordinate,r.title,r.route,r.icon');
             // 不是超管
             if (!AdministratorsService::isSuper()) {
                 $node = $node->join('power p', 'p.route_id = i.route_id')
-                    ->where('p.role_id', 'in', explode(',', admin_session('role_id')));
+                    ->where('p.role_id', 'in', explode(',', AdminLoginSession::getRoleId()));
             }
 
             $node = $node->select()->toArray();

@@ -9,7 +9,9 @@
 
 namespace app\common;
 
+use app\admin\AdminLoginSession;
 use app\admin\model\system\DataAuth;
+use app\admin\service\system\AdministratorsService;
 use app\common\traits\Lang;
 use think\Collection;
 use think\db\Query;
@@ -41,13 +43,13 @@ abstract class BaseModel extends Model
      * @return array|string[]
      * @throws SdException
      */
-    public static function dataAuthWhere(string $table)
+    public static function dataAuthWhere(string $table): array
     {
-        $admin_id = admin_session('id');
-        if (!env('APP.DATA_AUTH') || (admin_session('is_admin') && $admin_id == 1)){
+        $admin_id = AdminLoginSession::getId();
+        if (!env('APP.DATA_AUTH') || AdministratorsService::isSuper()){
             return [];
         }
-        $role_id  = admin_session('role_id');
+        $role_id  = AdminLoginSession::getRoleId();
 
         try {
             $data = DataAuth::where("administrators_id = {$admin_id} OR role_id In ({$role_id})")

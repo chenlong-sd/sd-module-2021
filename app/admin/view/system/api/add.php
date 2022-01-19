@@ -3,7 +3,7 @@
 {block name="title"}{$page_name ?: ''}{/block}
 {block name="meta"}{:token_meta()}
 <style>
-    pre {outline: 1px solid #ddd; background-color:#f2f2f2;padding: 5px; box-sizing: border-box;font-family: auto;}
+    /*pre {outline: 1px solid #ddd; background-color:#f2f2f2;padding: 5px; box-sizing: border-box;font-family: auto;}*/
     .layui-table td{
         padding: 3px;
     }
@@ -15,7 +15,8 @@
         animation: ;
     }
 </style>
-
+<link rel="stylesheet" href="__PUBLIC__/admin_static/codeMirror/codemirror.css">
+<link rel="stylesheet" href="__PUBLIC__/admin_static/codeMirror/darcula.css">
 
 {/block}
 {block name="body"}
@@ -74,6 +75,9 @@
         </ul>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show sc-param-get">
+                <textarea name="s" id="tttt"></textarea>
+            </div>
+            <div class="layui-tab-item sc-param-get">
                 <div class="sc-api-add">
                     新增
                     <input type="number" autocomplete="off" value="1" class="layui-input layui-input-inline" style="width: 50px">
@@ -272,6 +276,40 @@
 {/block}
 {block name="js"}
 
+<script src="__PUBLIC__/admin_static/codeMirror/codemirror.js"></script>
+<script src="__PUBLIC__/admin_static/codeMirror/php.js"></script>
+<script src="__PUBLIC__/admin_static/codeMirror/htmlmixed.js"></script>
+<script src="__PUBLIC__/admin_static/codeMirror/xml.js"></script>
+<script src="__PUBLIC__/admin_static/codeMirror/css.js"></script>
+<script src="__PUBLIC__/admin_static/codeMirror/clike.js"></script>
+<script src="__PUBLIC__/admin_static/codeMirror/javascript.js"></script>
+<script src="__PUBLIC__/admin_static/codeMirror/http.js"></script>
+
+
+<script>
+    let method = 'GET';
+
+
+    let editor = CodeMirror.fromTextArea(document.getElementById('tttt'), {
+        lineNumbers: true,
+        theme: 'darcula',
+        matchBrackets: true,
+        mode: "message/http",
+        indentUnit: 4,
+        indentWithTabs: true,
+    }).setValue(`POST /login HTTP/1.1
+Host: ${location.host}
+Content-Type: application/json;charset=utf-8
+User-Agent: ${navigator.userAgent}
+
+{}
+
+
+    `);
+
+
+
+</script>
 
 <script>
     let defaultData = {}, form = layui.form, $ = layui.jquery, upload = layui.upload;

@@ -29,7 +29,7 @@ trait EventHandleParamHandle
         }
 
         $url_str = array_shift($url);
-        $url_str = strpos($url_str, '?') !== false ? "$url_str" : "$url_str?";
+        $url_str = strpos($url_str, '?') !== false ? "$url_str&" : "$url_str?";
 
         foreach ($url as $value) {
             if (!is_array($value)) {
