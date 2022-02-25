@@ -292,4 +292,29 @@ class System extends Admin
     {
         return view();
     }
+
+    /**
+     * @title('开发数据查询')
+     * @return \think\response\Json
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2022/2/23
+     */
+    public function getTableData(): \think\response\Json
+    {
+        try {
+            $data  = Db::table($this->request->get('table_name', ''))->page($this->request->get('page'), $this->request->get('limit'))->select();
+            $total = Db::table($this->request->get('table_name', ''))->count('id');
+        } catch (\Exception $exception) {
+            return json([
+                'code' => 1,
+                'msg'  => $exception->getMessage()
+            ]);
+        }
+        return json([
+            'code'  => 0,
+            'data'  => $data,
+            'count' => $total,
+            'msg'   => 'success'
+        ]);
+    }
 }

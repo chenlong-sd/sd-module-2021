@@ -57,7 +57,7 @@ class ApiModulePage extends BasePage
     {
         $unit = [
             FormUnit::hidden('id'),
-            FormUnit::text('item_name', '模块名'),
+            FormUnit::text('item_name', '模块名')->inputAttr(),
             FormUnit::tag('url_prefix', '路径前缀'),
             FormUnit::text('token', 'Token参数')->placeholder('key=value&key1=value1'),
             FormUnit::text('describe', '描述'),

@@ -80,11 +80,13 @@ class TestPage extends BasePage
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
             FormUnit::radio('status', '状态')->options(TestEnumStatus::getAllMap(true)),
-            FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
-            FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
+            FormUnit::table('asd')->addChildrenItem(
+                FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
+                FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
+            ),
+
             FormUnit::uEditor('content', '详情'),
         ];
-
         $form = Form::create($unit, $default_data)->setScene($scene)->setPane();
 
         return $form;

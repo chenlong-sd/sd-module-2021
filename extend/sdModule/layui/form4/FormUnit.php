@@ -20,6 +20,7 @@ use sdModule\layui\form4\formUnit\unitProxy\{AuxTitleProxy,
     RadioProxy,
     SelectProxy,
     SelectsProxy,
+    SelectTreeProxy,
     SliderProxy,
     TableProxy,
     TagProxy,
@@ -46,6 +47,7 @@ use sdModule\layui\Dom;
  * @method static ImagesProxy   images(string $name, string $label = '')    多图上传
  * @method static ColorProxy    color(string $name, string $label = '')     颜色
  * @method static SelectsProxy  selects(string $name, string $label = '')   下拉多选
+ * @method static SelectTreeProxy selectTree(string $name, string $label = '')   下拉树
  * @method static SliderProxy   slider(string $name, string $label = '')    滑块
  * @method static TagProxy      tag(string $name, string $label = '')       标签
  * @method static UploadProxy   upload(string $name, string $label = '')    通用上传

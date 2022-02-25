@@ -42,6 +42,15 @@ class Page
      */
     private $table = [];
 
+    /**
+     * @var array
+     */
+    private $loadJs = [];
+
+    private $css = '';
+
+    private $loadCss = [];
+
     
     public function __construct(string $page_name)
     {
@@ -100,6 +109,18 @@ class Page
     }
 
     /**
+     * @param $jsUrl
+     * @return $this
+     * @author chenlong<vip_chenlong@163.com>
+     * @date 2022/2/23
+     */
+    public function addLoadJs($jsUrl)
+    {
+        is_string($jsUrl) ? $this->loadJs[] = $jsUrl : $this->loadJs = array_merge($this->loadJs, $jsUrl);
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function render(): string
@@ -123,5 +144,25 @@ class Page
     public function lang($lang)
     {
         return lang($lang);
+    }
+
+    /**
+     * @param array $loadCss
+     * @return Page
+     */
+    public function setLoadCss(array $loadCss): Page
+    {
+        $this->loadCss = $loadCss;
+        return $this;
+    }
+
+    /**
+     * @param string $css
+     * @return Page
+     */
+    public function setCss(string $css): Page
+    {
+        $this->css = $css;
+        return $this;
     }
 }

@@ -83,7 +83,7 @@ class LogPage extends BasePage
             ->where('i.id', $id)->findOrEmpty()->toArray();
 
         if (!empty($info['param'])){
-            $info['param'] = Dom::create('div')->addContent(highlight_string(var_export(json_decode($info['param'], true), true), true));
+            $info['param'] = var_export(json_decode($info['param'], true), true);
         }
 
         $page = new  Page('请求日志详情');
@@ -96,9 +96,35 @@ class LogPage extends BasePage
             ['param(3)' => '详细参数',],
         ])->fieldAttr([
             '-' => 'style="width:100px;background:#fafafa;text-align:center;"',
+            ])->customField([
+                'param' => " <textarea name=\"s\" id=\"codes\"><?php\n\n {$info["param"]}</textarea>"
             ])
             ->complete();
 
-        return $page->addTable($table)->render();
+        return $page->addTable($table)
+            ->setLoadCss([
+                'admin_static/codeMirror/codemirror.css',
+                'admin_static/codeMirror/darcula.css',
+            ])->addLoadJs([
+                'admin_static/codeMirror/codemirror.js',
+                'admin_static/codeMirror/php.js',
+                'admin_static/codeMirror/htmlmixed.js',
+                'admin_static/codeMirror/xml.js',
+                'admin_static/codeMirror/css.js',
+                'admin_static/codeMirror/clike.js',
+                'admin_static/codeMirror/javascript.js',
+            ])
+            ->customJs(<<<JS
+
+    var editor = CodeMirror.fromTextArea(document.getElementById('codes'), {
+        lineNumbers: true,
+        theme: 'darcula',
+        matchBrackets: true,
+        mode: "application/x-httpd-php",
+        indentUnit: 4,
+        indentWithTabs: true,
+    });
+
+JS)->render();
     }
 }

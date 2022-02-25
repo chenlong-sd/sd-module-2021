@@ -8,7 +8,15 @@
         body{margin: 20px;background-color: white}
         td img{margin-right: 10px;cursor: zoom-in}
         .layui-table th {text-align: center;}
+        <?= $this->css ?>
     </style>
+
+    <?= implode(array_map(function($v){
+        return \sdModule\layui\Dom::create('link', true)->addAttr([
+            'href' => $this->getRoot() . $v,
+            'rel' => 'stylesheet'
+        ]);
+    }, $this->loadCss)) ?>
     <?= include __DIR__ . '/js_var.php'?>
 </head>
 <body>
@@ -51,7 +59,15 @@
 
 </body>
 
-<script>
+<?= implode(array_map(function($v){
+    return \sdModule\layui\Dom::create('script')->addAttr([
+        'src' => $this->getRoot() . $v,
+        'type' => 'text/javascript'
+    ]);
+}, $this->loadJs)) ?>
+
+
+<script type="text/javascript">
     layer.ready(function() {
         custom.enlarge(layer,layui.jquery,'.img-table');
     });
