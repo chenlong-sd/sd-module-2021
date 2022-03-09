@@ -38,7 +38,7 @@ class Gateway extends Worker
      *
      * @var string
      */
-    const VERSION = '3.0.19';
+    const VERSION = '3.0.22';
 
     /**
      * 本机 IP
@@ -132,6 +132,20 @@ class Gateway extends Worker
      * @var bool
      */
     public $protocolAccelerate = false;
+
+    /**
+     * BusinessWorker 连接成功之后触发
+     *
+     * @var callback|null
+     */
+    public $onBusinessWorkerConnected = null;
+
+    /**
+     * BusinessWorker 关闭时触发
+     *
+     * @var callback|null
+     */
+    public $onBusinessWorkerClose = null;
 
     /**
      * 保存客户端的所有 connection 对象
@@ -490,8 +504,10 @@ class Gateway extends Worker
             class_alias('GatewayWorker\Protocols\GatewayProtocol', 'Protocols\GatewayProtocol');
         }
 
+         //如为公网IP监听，直接换成0.0.0.0 ，否则用内网IP
+        $listen_ip=filter_var($this->lanIp,FILTER_VALIDATE_IP,FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)?'0.0.0.0':$this->lanIp;
         // 初始化 gateway 内部的监听，用于监听 worker 的连接已经连接上发来的数据
-        $this->_innerTcpWorker = new Worker("GatewayProtocol://{$this->lanIp}:{$this->lanPort}");
+        $this->_innerTcpWorker = new Worker("GatewayProtocol://{$listen_ip}:{$this->lanPort}");
         $this->_innerTcpWorker->reusePort = false;
         $this->_innerTcpWorker->listen();
         $this->_innerTcpWorker->name = 'GatewayInnerWorker';
@@ -561,6 +577,9 @@ class Gateway extends Worker
 		        $connection->key = $key;
                 $this->_workerConnections[$key] = $connection;
                 $connection->authorized = true;
+                if ($this->onBusinessWorkerConnected) {
+                    call_user_func($this->onBusinessWorkerConnected, $connection);
+                }
                 return;
             // GatewayClient连接Gateway
             case GatewayProtocol::CMD_GATEWAY_CLIENT_CONNECT:
@@ -920,6 +939,9 @@ class Gateway extends Worker
     {
         if (isset($connection->key)) {
             unset($this->_workerConnections[$connection->key]);
+            if ($this->onBusinessWorkerClose) {
+                call_user_func($this->onBusinessWorkerClose, $connection);
+            }
         }
     }
 
