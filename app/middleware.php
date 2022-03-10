@@ -13,5 +13,5 @@ return [
     \app\common\middleware\CrossDomain::class,
     \app\common\middleware\Auth::class,
 //    安装
-//   \app\common\middleware\Install::class,
+   \app\common\middleware\Install::class,
 ];
