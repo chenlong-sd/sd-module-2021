@@ -11,6 +11,7 @@ return [
     \app\common\middleware\MaintainMiddleware::class,
     // 跨域设置
     \app\common\middleware\CrossDomain::class,
+    \app\common\middleware\Auth::class,
 //    安装
-    \app\common\middleware\Install::class,
+//   \app\common\middleware\Install::class,
 ];
