@@ -2,12 +2,15 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation\Engineering;
 
+use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
 
-class ConvertBase
+abstract class ConvertBase
 {
-    protected static function validateValue($value, bool $gnumericCheck = false): string
+    use ArrayEnabled;
+
+    protected static function validateValue($value): string
     {
         if (is_bool($value)) {
             if (Functions::getCompatibilityMode() !== Functions::COMPATIBILITY_OPENOFFICE) {
@@ -16,8 +19,10 @@ class ConvertBase
             $value = (int) $value;
         }
 
-        if ($gnumericCheck && Functions::getCompatibilityMode() == Functions::COMPATIBILITY_GNUMERIC) {
-            $value = floor((float) $value);
+        if (is_numeric($value)) {
+            if (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_GNUMERIC) {
+                $value = floor((float) $value);
+            }
         }
 
         return strtoupper((string) $value);
@@ -30,7 +35,7 @@ class ConvertBase
         }
 
         if (is_numeric($places)) {
-            if ($places < 0) {
+            if ($places < 0 || $places > 10) {
                 throw new Exception(Functions::NAN());
             }
 
