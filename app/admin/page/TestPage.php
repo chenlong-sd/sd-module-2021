@@ -38,7 +38,7 @@ class TestPage extends BasePage
             Column::normal('标题', 'title'),
             Column::normal('封面', 'cover')->showImage(),
             Column::normal('简介', 'intro'),
-            Column::normal('状态', 'status_true')->showSwitch('status', TestEnumStatus::getAllMap(true)),
+            Column::normal('状态', 'status_true')->showSwitch('status', TestEnumStatus::getMap(true)),
             Column::normal('管理员', 'administrators_name'),
             Column::normal('上级', 'parent_title'),
             Column::normal('创建时间', 'create_time'),
@@ -56,7 +56,7 @@ class TestPage extends BasePage
             ->setJs(EventHandle::openForm(
                 FormUnit::time('time', '时间'),
                 FormUnit::text('ttt', '看看那')->prefixIcon('user'),
-                FormUnit::select('ttst', '看看那')->options(TestEnumStatus::getAllMap(true)),
+                FormUnit::select('ttst', '看看那')->options(TestEnumStatus::getMap(true)),
             )->setRowParameter(['id'])->setRequestUrl(url('popups'))->setPopupsConfig(['area' => '500px']));
 
         return $table;
@@ -79,7 +79,7 @@ class TestPage extends BasePage
             FormUnit::icon('icon', '图标'),
             FormUnit::images('show_images', '展示图'),
             FormUnit::text('intro', '简介'),
-            FormUnit::radio('status', '状态')->options(TestEnumStatus::getAllMap(true)),
+            FormUnit::radio('status', '状态')->options(TestEnumStatus::getMap(true)),
             FormUnit::table('asd')->addChildrenItem(
                 FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
                 FormUnit::select('pid', '上级')->options(MyModel::column('title', 'id')),
@@ -102,7 +102,7 @@ class TestPage extends BasePage
         $form_data = [
             FormUnit::group(
                 FormUnit::text('i.title%%')->placeholder('标题'),
-                FormUnit::select('i.status')->placeholder('状态')->options(TestEnumStatus::getAllMap(true)),
+                FormUnit::select('i.status')->placeholder('状态')->options(TestEnumStatus::getMap(true)),
             ),
         ];
         

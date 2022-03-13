@@ -63,7 +63,7 @@ class NewDictionaryPage extends BasePage
                 FormUnit::text('sign', '字典标识ID')->placeholder('用于取值，例：status'),
                 FormUnit::text('name', '字典名称'),
             ),
-            FormUnit::radio('type', '类型')->defaultValue(1)->options(NewDictionaryEnumType::getAllMap(true)),
+            FormUnit::radio('type', '类型')->defaultValue(1)->options(NewDictionaryEnumType::getMap(true)),
             FormUnit::image('image', '图片')->showWhere('type', 2),
             FormUnit::textarea('introduce', '简介')->showWhere('type', 2),
             FormUnit::auxTitle('定制字段')->showWhere('type', 2),

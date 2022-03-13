@@ -46,7 +46,7 @@ class Log
     private function logDataMake(Request $request): array
     {
         return [
-            'method'            => array_search($request->method(), array_map(function ($v){ return current($v->getContent()); },LogEnumMethod::getAllMap())) ?: 1,
+            'method'            => array_search($request->method(), array_map(function ($v){ return current($v->getContent()); },LogEnumMethod::getMap())) ?: 1,
             'route_id'          => array_search($request->middleware('route_path'), cache(config('admin.route_cache')) ?: []) ?: 0,
             'administrators_id' => AdminLoginSession::isAdmin() ? AdminLoginSession::getId(0) : 0,
             'open_table'        => AdminLoginSession::isAdmin() ? "" : AdminLoginSession::getTable(''),

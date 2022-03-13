@@ -37,7 +37,7 @@ class AdministratorsPage extends BasePage
             Column::normal('最近登录', 'lately_time'),
             Column::normal('错误日期', 'error_date'),
             Column::normal('角色', 'role'),
-            Column::normal('状态', 'status_sc')->showSwitch('status', AdministratorsEnumStatus::getAllMap()),
+            Column::normal('状态', 'status_sc')->showSwitch('status', AdministratorsEnumStatus::getMap()),
             Column::normal('创建时间', 'create_time'),
         ];
 
@@ -68,7 +68,7 @@ class AdministratorsPage extends BasePage
             FormUnit::password('password', lang('administrator.password'))->shortTip(lang('administrator.6-16 digit password')),
             FormUnit::password('password_confirm', lang('administrator.password confirm'))->shortTip(lang('administrator.6-16 digit password')),
             FormUnit::selects('role_id', lang('administrator.role'))->options(Role::where(['administrators_id' => AdminLoginSession::getId()])->column('role', 'id')),
-            FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsEnumStatus::getAllMap(true))->defaultValue(AdministratorsEnumStatus::AVAILABLE),
+            FormUnit::radio('status', lang('administrator.status'))->options(AdministratorsEnumStatus::getMap(true))->defaultValue(AdministratorsEnumStatus::AVAILABLE),
         ];
 
         unset($default_data['password']);

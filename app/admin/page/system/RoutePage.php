@@ -70,7 +70,7 @@ class RoutePage extends BasePage
                 FormUnit::text('title', '权限标题'),
                 FormUnit::text('route', '权限路由'),
             ),
-            FormUnit::radio('type', '节点类型')->defaultValue(RouteEnumType::LEFT_MENU)->inputAttr('-', ['lay-filter' => 'type'])->options(RouteEnumType::getAllMap(true)),
+            FormUnit::radio('type', '节点类型')->defaultValue(RouteEnumType::LEFT_MENU)->inputAttr('-', ['lay-filter' => 'type'])->options(RouteEnumType::getMap(true)),
             FormUnit::customize(
                 Dom::create()->addClass('layui-form-item')
                     ->addContent(Dom::create('label')->addClass('layui-form-label')->addContent('上级节点'))

@@ -57,7 +57,7 @@ class LogPage extends BasePage
         $form_data = [
             FormUnit::group(
                 FormUnit::text('route.title%%')->placeholder('节点名'),
-                FormUnit::select('i.method')->placeholder("请求方式")->options(LogEnumMethod::getAllMap()),
+                FormUnit::select('i.method')->placeholder("请求方式")->options(LogEnumMethod::getMap()),
                 FormUnit::text('i.route%%')->placeholder('节点地址'),
                 FormUnit::text('administrators.name%%')->placeholder('操作人员'),
                 FormUnit::time('i.create_time_~')->placeholder('创建时间'),

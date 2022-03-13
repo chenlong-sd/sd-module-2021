@@ -38,7 +38,7 @@ class QuickOperationPage extends BasePage
             Column::normal('节点', 'route_title'),
             Column::normal('是否有效', 'route')->setTemplate('return obj.route ? "有效" : ""'),
             Column::normal('是否展示', 'is_show_true')
-                ->showSwitch('is_show', QuickOperationEnumIsShow::getAllMap(true), new Ajax(admin_url('quick-entrance-set'))),
+                ->showSwitch('is_show', QuickOperationEnumIsShow::getMap(true), new Ajax(admin_url('quick-entrance-set'))),
         ]);
 
         $table->removeEvent();
@@ -62,7 +62,7 @@ class QuickOperationPage extends BasePage
         $unit = [
             FormUnit::hidden('id'),
             FormUnit::select('route_id', '节点')->options(Route::column('title', 'id')),
-            FormUnit::radio('is_show', '是否展示')->options(QuickOperationEnumIsShow::getAllMap(true)),
+            FormUnit::radio('is_show', '是否展示')->options(QuickOperationEnumIsShow::getMap(true)),
             FormUnit::select('administrators_id', '管理员')->options(Administrators::column('name', 'id')),
         ];
 

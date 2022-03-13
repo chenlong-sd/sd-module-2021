@@ -53,7 +53,7 @@ abstract class Enum extends MultipleCases
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    abstract protected static function setMap(): array;
+    abstract protected static function map(): array;
 
     /**
      * 获取可用的枚举值
@@ -76,7 +76,7 @@ abstract class Enum extends MultipleCases
      */
     final public function getDes(bool $isPure = false)
     {
-        return self::getAllMap($isPure)[$this->enumValue] ?? $this->enumValue;
+        return self::getMap($isPure)[$this->enumValue] ?? $this->enumValue;
     }
 
     /**
@@ -117,9 +117,9 @@ abstract class Enum extends MultipleCases
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    final public static function getAllMap(bool $isPure = false): array
+    final public static function getMap(bool $isPure = false): array
     {
-        $map = static::setMap();
+        $map = static::map();
         if ($isPure){
             $map = array_map(function ($v) {
                 return $v instanceof Dom ? current($v->getContent()) : $v;

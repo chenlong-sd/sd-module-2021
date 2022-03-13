@@ -27,7 +27,7 @@ class AvailableAndDisable extends Enum
      * @author chenlong<vip_chenlong@163.com>
      * @date 2021/11/9
      */
-    protected static function setMap(): array
+    protected static function map(): array
     {
         return [
             self::AVAILABLE => Layui::tag()->green('normal'),
