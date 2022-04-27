@@ -107,7 +107,7 @@ class Enum extends Item
      * 设置描述映射
      * @return array
      */
-    protected static function setMap(): array
+    protected static function map(): array
     {
         // TODO 常量名字取的拼音，需要请更改为对应英语
         return [

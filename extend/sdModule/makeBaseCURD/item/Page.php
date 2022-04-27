@@ -259,7 +259,7 @@ CODE;
     {
         $field = parse_name($field, 1);
         $this->useAdd($this->CURD->getNamespace($this->CURD->config('namespace.enum')) . '\\'  . $this->replace['Table'] . 'Enum' .parse_name($field, 1));
-        return $this->replace['Table'] . 'Enum' .parse_name($field, 1) . "::getAllMap(true)";
+        return $this->replace['Table'] . 'Enum' .parse_name($field, 1) . "::getMap(true)";
     }
 
 }
